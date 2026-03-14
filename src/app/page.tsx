@@ -5,8 +5,11 @@ const home = () => {
       <p>joao pedro conectado.</p>
       <p>PC 1</p>
       <p>Caue Conectado</p>
+      <p>kv conectado</p>
     </div>
   );
 }
+
+
 
 export default home;
