@@ -14,7 +14,7 @@ export function Hero() {
       <div className="mx-auto max-w-5xl text-center">
         <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm text-primary">
           <Sparkles className="size-4" />
-          <span>Sistema de produtividade gamificado</span>
+          <span>Olá</span>
         </div>
 
         <h1 className="text-pretty text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
@@ -42,9 +42,7 @@ export function Hero() {
           </Button>
         </div>
 
-        <p className="mt-6 text-sm text-muted-foreground">
-          Grátis para começar. Sem cartão de crédito.
-        </p>
+       
       </div>
 
       <div className="relative mx-auto mt-16 max-w-4xl lg:mt-20">
@@ -106,7 +104,7 @@ function CoreCard({
   const progress = (xp / xpMax) * 100
 
   return (
-    <div className="rounded-lg border border-border/50 bg-card p-4 transition-all hover:border-primary/50 hover:shadow-md">
+    <div className="rounded-lg border border-border/50 bg-card p-4 transition-all hover:border-primary/50 hover:shadow-sm">
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-2xl">{icon}</span>
