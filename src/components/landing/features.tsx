@@ -1,5 +1,7 @@
 import { Target, TrendingUp, Zap, Trophy, Calendar, BarChart3 } from 'lucide-react'
 
+
+
 const features = [
   {
     icon: Target,

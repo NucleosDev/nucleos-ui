@@ -6,6 +6,8 @@ import { Testimonials } from '@/components/landing/testimonials'
 import { Pricing } from '@/components/landing/pricing'
 import { CTA } from '@/components/landing/cta'
 import { Footer } from '@/components/landing/footer'
+import { Nucleos } from "@/components/landing/nucleos"
+import { Impact } from '@/components/landing/impact'
 
 export default function LandingPage() {
   return (
@@ -14,7 +16,9 @@ export default function LandingPage() {
       <main>
         <Hero />
         <Features />
+        <Nucleos />
         <HowItWorks />
+        <Impact />
         <Testimonials />
         <Pricing />
         <CTA />

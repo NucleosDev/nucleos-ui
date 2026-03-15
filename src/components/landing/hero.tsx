@@ -77,7 +77,7 @@ export function Hero() {
                 level={15}
                 xp={4500}
                 xpMax={5000}
-                color="chart-3"
+                color="destructive"
                 icon=""
               />
             </div>

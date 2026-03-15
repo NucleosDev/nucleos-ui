@@ -1,60 +1,79 @@
-import { api } from './api'
+import api from './api'
 import { API_ROUTES } from '@/constants/routes'
-import type { Core, Habit, Activity } from '@/types'
+import type { 
+  Nucleo, 
+  NucleoIcon, 
+  NucleoRelation, 
+  NucleoAchievement 
+} from '@/types/nucleo'
+import type { XpLog, EnergyLog } from '@/types/logs'
 
 export const nucleosService = {
-  // Cores
-  async getCores(): Promise<Core[]> {
-    return api.get<Core[]>(API_ROUTES.CORES.LIST)
+  // CRUD básico
+  async getNucleos(): Promise<Nucleo[]> {
+    const response = await api.get<Nucleo[]>(API_ROUTES.NUCLEOS.LIST)
+    return response.data
   },
 
-  async getCore(id: string): Promise<Core> {
-    return api.get<Core>(API_ROUTES.CORES.GET(id))
+  async getNucleo(id: string): Promise<Nucleo> {
+    const response = await api.get<Nucleo>(API_ROUTES.NUCLEOS.GET(id))
+    return response.data
   },
 
-  async createCore(data: Partial<Core>): Promise<Core> {
-    return api.post<Core>(API_ROUTES.CORES.CREATE, data)
+  async createNucleo(data: Partial<Nucleo>): Promise<Nucleo> {
+    const response = await api.post<Nucleo>(API_ROUTES.NUCLEOS.CREATE, data)
+    return response.data
   },
 
-  async updateCore(id: string, data: Partial<Core>): Promise<Core> {
-    return api.put<Core>(API_ROUTES.CORES.UPDATE(id), data)
+  async updateNucleo(id: string, data: Partial<Nucleo>): Promise<Nucleo> {
+    const response = await api.put<Nucleo>(API_ROUTES.NUCLEOS.UPDATE(id), data)
+    return response.data
   },
 
-  async deleteCore(id: string): Promise<void> {
-    return api.delete(API_ROUTES.CORES.DELETE(id))
+  async deleteNucleo(id: string): Promise<void> {
+    await api.delete(API_ROUTES.NUCLEOS.DELETE(id))
   },
 
-  // Habits
-  async getHabits(): Promise<Habit[]> {
-    return api.get<Habit[]>(API_ROUTES.HABITS.LIST)
+  // Ícones
+  async getIcones(): Promise<NucleoIcon[]> {
+    const response = await api.get<NucleoIcon[]>(API_ROUTES.ICONES.LIST)
+    return response.data
   },
 
-  async getHabit(id: string): Promise<Habit> {
-    return api.get<Habit>(API_ROUTES.HABITS.GET(id))
+  async createIcone(data: Partial<NucleoIcon>): Promise<NucleoIcon> {
+    const response = await api.post<NucleoIcon>(API_ROUTES.ICONES.CREATE, data)
+    return response.data
   },
 
-  async createHabit(data: Partial<Habit>): Promise<Habit> {
-    return api.post<Habit>(API_ROUTES.HABITS.CREATE, data)
+  // Relações entre núcleos
+  async getRelacoes(nucleoId: string): Promise<NucleoRelation[]> {
+    const response = await api.get<NucleoRelation[]>(API_ROUTES.RELACOES.LIST(nucleoId))
+    return response.data
   },
 
-  async updateHabit(id: string, data: Partial<Habit>): Promise<Habit> {
-    return api.put<Habit>(API_ROUTES.HABITS.UPDATE(id), data)
+  async createRelacao(data: Partial<NucleoRelation>): Promise<NucleoRelation> {
+    const response = await api.post<NucleoRelation>(API_ROUTES.RELACOES.CREATE, data)
+    return response.data
   },
 
-  async deleteHabit(id: string): Promise<void> {
-    return api.delete(API_ROUTES.HABITS.DELETE(id))
+  async deleteRelacao(id: string): Promise<void> {
+    await api.delete(API_ROUTES.RELACOES.DELETE(id))
   },
 
-  // Activities
-  async getActivities(): Promise<Activity[]> {
-    return api.get<Activity[]>(API_ROUTES.ACTIVITIES.LIST)
+  // Conquistas do núcleo
+  async getAchievements(nucleoId: string): Promise<NucleoAchievement[]> {
+    const response = await api.get<NucleoAchievement[]>(API_ROUTES.NUCLEOS.ACHIEVEMENTS(nucleoId))
+    return response.data
   },
 
-  async getActivity(id: string): Promise<Activity> {
-    return api.get<Activity>(API_ROUTES.ACTIVITIES.GET(id))
+  // XP e Energy do núcleo
+  async addXp(nucleoId: string, amount: number, source: string): Promise<XpLog> {
+    const response = await api.post<XpLog>(API_ROUTES.NUCLEOS.XP(nucleoId), { amount, source })
+    return response.data
   },
 
-  async createActivity(data: Partial<Activity>): Promise<Activity> {
-    return api.post<Activity>(API_ROUTES.ACTIVITIES.CREATE, data)
-  },
+  async addEnergy(nucleoId: string, amount: number): Promise<EnergyLog> {
+    const response = await api.post<EnergyLog>(API_ROUTES.NUCLEOS.ENERGY(nucleoId), { amount })
+    return response.data
+  }
 }

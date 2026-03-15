@@ -1,15 +1,5 @@
-// ========== RE-EXPORTS ==========
-export * from './auth'
-export * from './user'
-export * from './plan'
-export * from './nucleo'
-export * from './bloco'
-export * from './calendar'
-export * from './logs'
-export * from './ai'
-export * from './common'
-
 // ========== TIPOS COMPARTILHADOS ==========
+
 export interface ApiError {
   message: string
   statusCode: number
@@ -29,4 +19,20 @@ export interface PaginatedResponse<T> {
   page: number
   limit: number
   totalPages: number
+}
+
+export interface DateRange {
+  startDate?: Date | string
+  endDate?: Date | string
+}
+
+export interface SelectOption {
+  value: string
+  label: string
+  disabled?: boolean
+}
+
+export interface StatusResponse {
+  success: boolean
+  message?: string
 }
