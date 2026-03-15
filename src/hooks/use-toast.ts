@@ -1,18 +1,21 @@
 'use client'
 
-// Inspired by react-hot-toast library
 import * as React from 'react'
-
 import type { ToastActionElement, ToastProps } from '@/components/ui/toast'
 
 const TOAST_LIMIT = 1
 const TOAST_REMOVE_DELAY = 1000000
 
-type ToasterToast = ToastProps & {
+// 👇 ESTENDE o tipo original em vez de redefinir
+export type ToastVariant = 'default' | 'destructive' | 'warning' | 'success' | 'info'
+
+// 👇 Cria um novo tipo que combina o original com nossa variant customizada
+type ToasterToast = Omit<ToastProps, 'variant'> & {
   id: string
   title?: React.ReactNode
   description?: React.ReactNode
   action?: ToastActionElement
+  variant?: ToastVariant  // 👈 Agora usa nosso tipo customizado
 }
 
 const actionTypes = {
@@ -90,8 +93,6 @@ export const reducer = (state: State, action: Action): State => {
     case 'DISMISS_TOAST': {
       const { toastId } = action
 
-      // ! Side effects ! - This could be extracted into a dismissToast() action,
-      // but I'll keep it here for simplicity
       if (toastId) {
         addToRemoveQueue(toastId)
       } else {
@@ -139,8 +140,28 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, 'id'>
 
-function toast({ ...props }: Toast) {
+// 👇 Função toast atualizada para aceitar variant customizada
+function toast({ variant = 'default', className, ...props }: Toast & { variant?: ToastVariant }) {
   const id = genId()
+
+  // 👇 Mapeia variantes customizadas para classes CSS
+  const getVariantClasses = (variant: ToastVariant): string => {
+    switch (variant) {
+      case 'warning':
+        return 'bg-yellow-50 border-yellow-200 text-yellow-800'
+      case 'success':
+        return 'bg-green-50 border-green-200 text-green-800'
+      case 'info':
+        return 'bg-blue-50 border-blue-200 text-blue-800'
+      case 'destructive':
+        return '' // A classe destructive já é gerenciada pelo componente
+      default:
+        return ''
+    }
+  }
+
+  const variantClasses = getVariantClasses(variant)
+  const finalClassName = variantClasses ? `${variantClasses} ${className || ''}`.trim() : className
 
   const update = (props: ToasterToast) =>
     dispatch({
@@ -154,6 +175,8 @@ function toast({ ...props }: Toast) {
     toast: {
       ...props,
       id,
+      variant: variant === 'destructive' ? 'destructive' : 'default', // 👈 Só passa destructive para o componente
+      className: finalClassName,
       open: true,
       onOpenChange: (open) => {
         if (!open) dismiss()
@@ -168,6 +191,7 @@ function toast({ ...props }: Toast) {
   }
 }
 
+// 👇 Hook useToast com métodos auxiliares
 function useToast() {
   const [state, setState] = React.useState<State>(memoryState)
 
@@ -184,6 +208,15 @@ function useToast() {
   return {
     ...state,
     toast,
+    // 👇 Métodos auxiliares
+    warning: (props: { title: string; description?: string }) => 
+      toast({ ...props, variant: 'warning' }),
+    success: (props: { title: string; description?: string }) => 
+      toast({ ...props, variant: 'success' }),
+    info: (props: { title: string; description?: string }) => 
+      toast({ ...props, variant: 'info' }),
+    error: (props: { title: string; description?: string }) => 
+      toast({ ...props, variant: 'destructive' }),
     dismiss: (toastId?: string) => dispatch({ type: 'DISMISS_TOAST', toastId }),
   }
 }

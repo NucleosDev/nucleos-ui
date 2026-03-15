@@ -8,15 +8,16 @@ import {
   useCallback,
   type ReactNode,
 } from 'react'
+import authService from '@/services/auth.service' 
 import { usersService } from '@/services/users.service'
-import type { User, LoginCredentials, RegisterCredentials } from '@/types'
+import type { User, LoginCredentials, RegisterData } from '@/types'
 
 interface AuthContextType {
   user: User | null
   isLoading: boolean
   isAuthenticated: boolean
   login: (credentials: LoginCredentials) => Promise<void>
-  register: (credentials: RegisterCredentials) => Promise<void>
+  register: (data: RegisterData) => Promise<void>
   logout: () => Promise<void>
   refreshUser: () => Promise<void>
 }
@@ -46,7 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return
       }
 
-      const currentUser = await usersService.getCurrentUser()
+      const currentUser = await usersService.getCurrentUser()  // ✅ usersService só para getCurrentUser
       setUser(currentUser)
     } catch {
       clearAuth()
@@ -64,24 +65,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [refreshUser])
 
   const login = async (credentials: LoginCredentials) => {
-    const response = await usersService.login(credentials)
+    const response = await authService.login(credentials)  // ✅ authService para login
 
     localStorage.setItem(AUTH_TOKEN_KEY, response.token)
-    localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken)
+    if (response.refreshToken) {
+      localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken)
+    }
     setUser(response.user)
   }
 
-  const register = async (credentials: RegisterCredentials) => {
-    const response = await usersService.register(credentials)
+  const register = async (data: RegisterData) => {
+    const response = await authService.register(data)  // ✅ authService para register
 
     localStorage.setItem(AUTH_TOKEN_KEY, response.token)
-    localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken)
+    if (response.refreshToken) {
+      localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken)
+    }
     setUser(response.user)
   }
 
   const logout = async () => {
     try {
-      await usersService.logout()
+      await authService.logout()  // ✅ authService para logout
     } catch {
       // Ignore logout errors
     } finally {
