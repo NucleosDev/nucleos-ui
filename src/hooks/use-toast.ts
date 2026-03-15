@@ -208,7 +208,7 @@ function useToast() {
   return {
     ...state,
     toast,
-    // 👇 Métodos auxiliares
+    // Métodos auxiliares
     warning: (props: { title: string; description?: string }) => 
       toast({ ...props, variant: 'warning' }),
     success: (props: { title: string; description?: string }) => 

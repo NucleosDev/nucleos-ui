@@ -29,7 +29,7 @@ export function useAuth() {
   const register = useCallback(async (data: RegisterData) => {
     try {
       const response = await authService.register(data)
-      await context.refreshUser() // Atualiza o contexto
+      await context.refreshUser()
       router.push('/verify-email-pending')
       return response
     } catch (err) {
