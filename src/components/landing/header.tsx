@@ -12,6 +12,7 @@ const navLinks = [
   { href: '#como-funciona', label: 'Como funciona' },
   { href: '#depoimentos', label: 'Depoimentos' },
   { href: '#precos', label: 'Preços' },
+  { href: '#faq', label: 'FAQ' },
 ]
 
 export function Header() {
