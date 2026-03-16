@@ -3,7 +3,7 @@ import { Header } from '@/components/landing/header'
 import { Footer } from '@/components/landing/footer'
 //importar os componentes necessários abaixo
 // exemplo 'import { Button } from '@/components/ui/button'
-import { HeroScroll } from '@/components/about/hero-scroll'
+import { Contact2 } from '@/components/contact-2'
 
 // funcao exportavel pra criar a página
 export default function AboutPage() {
@@ -12,16 +12,13 @@ export default function AboutPage() {
         <div className="">
             {/* cabecalho */}
             <Header />
-
+            
             {/* conteudo */}
             <div >
-            <HeroScroll />
-           
-            <h1 className='text-4xl font-bold'>Sobre</h1>
-            {/* <Features/> */}
+            <Contact2 />
             </div>
-            
-        
+
+
             {/* rodape */}
             <Footer />
         </div>
