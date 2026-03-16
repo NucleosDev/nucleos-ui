@@ -1,3 +1,5 @@
+"use client"
+
 import { Header } from '@/components/landing/header'
 import { Hero } from '@/components/landing/hero'
 import { Comparison } from "@/components/landing/comparison"
