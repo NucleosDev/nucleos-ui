@@ -9,6 +9,7 @@ import { Footer } from '@/components/landing/footer'
 import { Nucleos } from "@/components/landing/nucleos"
 import { Impact } from '@/components/landing/impact'
 
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen">
@@ -22,6 +23,7 @@ export default function LandingPage() {
         <Testimonials />
         <Pricing />
         <CTA />
+       
       </main>
       <Footer />
     </div>
