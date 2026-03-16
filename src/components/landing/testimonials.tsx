@@ -1,71 +1,86 @@
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Card, CardContent } from "@/components/ui/card"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Star, Quote } from "lucide-react"
 
 const testimonials = [
   {
-    quote:
-      'O Nucleos mudou completamente minha relação com produtividade. Ver meu progresso em XP me motiva a manter a consistência todos os dias.',
-    name: 'Marina Silva',
-    role: 'Desenvolvedora de Software',
-    initials: 'MS',
+    name: "Lucas Mendes",
+    role: "Estudante de Medicina",
+    content: "O Nucleos transformou minha rotina de estudos. Consegui organizar todas as materias e ver meu progresso diariamente. Passei de media 7 para 9!",
+    rating: 5,
+    avatar: "LM",
+    stats: { level: 24, streak: 45 }
   },
   {
-    quote:
-      'Finalmente encontrei um sistema que não me faz sentir culpado por dias ruins. O foco em progresso gradual é revolucionário.',
-    name: 'Pedro Santos',
-    role: 'Estudante de Medicina',
-    initials: 'PS',
+    name: "Ana Carolina",
+    role: "Empreendedora",
+    content: "Finalmente consegui equilibrar minha vida pessoal e profissional. O sistema de nucleos me ajuda a nao negligenciar nenhuma area importante.",
+    rating: 5,
+    avatar: "AC",
+    stats: { level: 18, streak: 32 }
   },
   {
-    quote:
-      'Uso para organizar meus treinos, estudos e projetos pessoais. A gamificação transforma tarefas chatas em desafios empolgantes.',
-    name: 'Ana Costa',
-    role: 'Designer UX',
-    initials: 'AC',
+    name: "Pedro Santos",
+    role: "Desenvolvedor",
+    content: "A gamificacao faz toda diferenca. Me sinto motivado a completar minhas tarefas todos os dias para manter meu streak e subir de nivel.",
+    rating: 5,
+    avatar: "PS",
+    stats: { level: 31, streak: 67 }
   },
 ]
 
 export function Testimonials() {
   return (
-    <section id="depoimentos" className="px-4 py-20 sm:px-6 lg:px-8 lg:py-32">
-      <div className="mx-auto max-w-7xl">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-medium uppercase tracking-wider text-primary">
+    <section className="px-6 py-24">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-16 text-center">
+          <span className="mb-4 inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
             Depoimentos
-          </p>
-          <h2 className="mt-3 text-pretty text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Amado por pessoas que buscam evolução
+          </span>
+          <h2 className="text-balance text-3xl font-bold tracking-tight md:text-4xl">
+            O que nossos usuarios dizem
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Veja o que nossa comunidade está dizendo sobre a experiência com
-            Nucleos.
+          <p className="mx-auto mt-4 max-w-2xl text-pretty text-muted-foreground">
+            Milhares de pessoas ja transformaram suas vidas com o Nucleos
           </p>
         </div>
 
-        <div className="mt-16 grid gap-8 md:grid-cols-3">
-          {testimonials.map((testimonial) => (
-            <div
-              key={testimonial.name}
-              className="flex flex-col rounded-xl border border-border/50 bg-card/50 p-6"
-            >
-              <blockquote className="flex-1 text-muted-foreground">
-                &ldquo;{testimonial.quote}&rdquo;
-              </blockquote>
-              <div className="mt-6 flex items-center gap-3">
-                <Avatar>
-                  <AvatarFallback className="bg-primary/10 text-primary">
-                    {testimonial.initials}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-medium text-foreground">
-                    {testimonial.name}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {testimonial.role}
-                  </p>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {testimonials.map((testimonial, index) => (
+            <Card key={index} className="relative overflow-hidden border-0 bg-card shadow-md transition-all hover:-translate-y-1 hover:shadow-lg">
+              <CardContent className="p-6">
+                <Quote className="absolute right-4 top-4 size-8 text-primary/10" />
+                
+                <div className="mb-4 flex gap-1">
+                  {Array.from({ length: testimonial.rating }).map((_, i) => (
+                    <Star key={i} className="size-4 fill-primary text-primary" />
+                  ))}
                 </div>
-              </div>
-            </div>
+
+                <p className="mb-6 text-pretty text-muted-foreground">
+                  {`"${testimonial.content}"`}
+                </p>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="size-10 border-2 border-primary/20">
+                      <AvatarFallback className="bg-primary/10 text-sm font-medium text-primary">
+                        {testimonial.avatar}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-semibold">{testimonial.name}</p>
+                      <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                    </div>
+                  </div>
+
+                  <div className="text-right">
+                    <p className="text-xs text-muted-foreground">Nivel {testimonial.stats.level}</p>
+                    <p className="text-sm font-medium text-primary">{testimonial.stats.streak} dias</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>
