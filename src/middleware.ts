@@ -32,7 +32,7 @@ const PROTECTED_ROUTES = [
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
-  
+
   // Tentar obter token de várias fontes
   const token = 
     request.cookies.get('auth_token')?.value || // Cookie (HTTP-only é mais seguro)
