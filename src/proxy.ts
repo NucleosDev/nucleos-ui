@@ -4,8 +4,8 @@ import type { NextRequest } from 'next/server'
 // Rotas públicas que não precisam de autenticação
 const PUBLIC_ROUTES = [
   '/',
-  '/login',
-  '/register',
+  '/entrar',
+  '/cadastro',
   '/forgot-password',
   '/reset-password',
   '/pricing',
@@ -30,9 +30,9 @@ const PROTECTED_ROUTES = [
   '/blocos'
 ]
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
-  
+
   // Tentar obter token de várias fontes
   const token = 
     request.cookies.get('auth_token')?.value || // Cookie (HTTP-only é mais seguro)

@@ -1,38 +1,38 @@
 export const API_ROUTES = {
   // ========== AUTENTICAÇÃO ==========
   AUTH: {
-    LOGIN: '/auth/login',
-    REGISTER: '/auth/register',
-    LOGOUT: '/auth/logout',
-    REFRESH: '/auth/refresh',
-    VERIFY_EMAIL: '/auth/verify-email',
-    FORGOT_PASSWORD: '/auth/forgot-password',
-    RESET_PASSWORD: '/auth/reset-password',
-    CHANGE_PASSWORD: '/auth/change-password',
+    LOGIN: "/auth/login",
+    REGISTER: "/auth/register",
+    LOGOUT: "/auth/logout",
+    REFRESH: "/auth/refresh",
+    VERIFY_EMAIL: "/auth/verify-email",
+    FORGOT_PASSWORD: "/auth/forgot-password",
+    RESET_PASSWORD: "/auth/reset-password",
+    CHANGE_PASSWORD: "/auth/change-password",
   },
 
   // ========== USUÁRIOS ==========
   USERS: {
-    ME: '/users/me',
-    PROFILE: '/users/me/profile',
-    AVATAR: '/users/me/avatar',
-    LEVEL: '/users/me/level',
-    NOTIFICATIONS: '/users/me/notifications',
-    XP_LOGS: '/users/me/xp-logs',
-    ENERGY_LOGS: '/users/me/energy-logs',
-    AI_CONTEXT: '/users/me/ai-context',
-    AI_INTERACTIONS: '/users/me/ai-interactions',
-    AI_INSIGHTS: '/users/me/ai-insights',
+    ME: "/users/me",
+    PROFILE: "/users/me/profile",
+    AVATAR: "/users/me/avatar",
+    LEVEL: "/users/me/level",
+    NOTIFICATIONS: "/users/me/notifications",
+    XP_LOGS: "/users/me/xp-logs",
+    ENERGY_LOGS: "/users/me/energy-logs",
+    AI_CONTEXT: "/users/me/ai-context",
+    AI_INTERACTIONS: "/users/me/ai-interactions",
+    AI_INSIGHTS: "/users/me/ai-insights",
   },
 
-  // ========== NÚCLEOS ==========
+  // ========== NucleoS ==========
   NUCLEOS: {
-    LIST: '/nucleos',
-    CREATE: '/nucleos',
+    LIST: "/nucleos",
+    CREATE: "/nucleos",
     GET: (id: string) => `/nucleos/${id}`,
     UPDATE: (id: string) => `/nucleos/${id}`,
     DELETE: (id: string) => `/nucleos/${id}`,
-    ICONS: '/nucleos/icons',
+    ICONS: "/nucleos/icons",
     RELATIONS: (id: string) => `/nucleos/${id}/relations`,
     ACHIEVEMENTS: (id: string) => `/nucleos/${id}/achievements`,
     XP: (id: string) => `/nucleos/${id}/xp`,
@@ -41,9 +41,9 @@ export const API_ROUTES = {
 
   // ========== ÍCONES ==========
   ICONES: {
-    LIST: '/icones',
+    LIST: "/icones",
     GET: (id: string) => `/icones/${id}`,
-    CREATE: '/icones',
+    CREATE: "/icones",
     UPDATE: (id: string) => `/icones/${id}`,
     DELETE: (id: string) => `/icones/${id}`,
   },
@@ -88,15 +88,16 @@ export const API_ROUTES = {
   // ========== VALORES DOS ITENS ==========
   ITEM_VALORES: {
     LIST: (itemId: string) => `/itens/${itemId}/valores`,
-    CREATE: (itemId: string, campoId: string) => `/itens/${itemId}/campos/${campoId}/valores`,
+    CREATE: (itemId: string, campoId: string) =>
+      `/itens/${itemId}/campos/${campoId}/valores`,
     UPDATE: (id: string) => `/valores/${id}`,
     DELETE: (id: string) => `/valores/${id}`,
   },
 
-  // ========== RELAÇÕES ENTRE NÚCLEOS ==========
+  // ========== RELAÇÕES ENTRE NucleoS ==========
   RELACOES: {
     LIST: (nucleoId: string) => `/nucleos/${nucleoId}/relacoes`,
-    CREATE: '/relacoes',
+    CREATE: "/relacoes",
     DELETE: (id: string) => `/relacoes/${id}`,
   },
 
@@ -124,88 +125,88 @@ export const API_ROUTES = {
 
   // ========== LOGS ==========
   LOGS: {
-    XP: '/logs/xp',
-    ENERGY: '/logs/energy',
-    ACTIVITY: '/logs/activity',
+    XP: "/logs/xp",
+    ENERGY: "/logs/energy",
+    ACTIVITY: "/logs/activity",
   },
 
   // ========== CONQUISTAS ==========
   ACHIEVEMENTS: {
-    LIST: '/achievements',
+    LIST: "/achievements",
     NUCLEO: (nucleoId: string) => `/nucleos/${nucleoId}/achievements`,
     UNLOCK: (id: string) => `/achievements/${id}/unlock`,
   },
 
   // ========== IA ==========
   AI: {
-    INTERACT: '/ai/interact',
-    CONTEXT: '/ai/context',
-    INSIGHTS: '/ai/insights',
+    INTERACT: "/ai/interact",
+    CONTEXT: "/ai/context",
+    INSIGHTS: "/ai/insights",
     INSIGHT_APPLY: (id: string) => `/ai/insights/${id}/apply`,
   },
 
   // ========== NOTIFICAÇÕES ==========
   NOTIFICATIONS: {
-    LIST: '/notifications',
+    LIST: "/notifications",
     MARK_READ: (id: string) => `/notifications/${id}/read`,
-    MARK_ALL_READ: '/notifications/read-all',
+    MARK_ALL_READ: "/notifications/read-all",
     DELETE: (id: string) => `/notifications/${id}`,
   },
 
   // ========== PLANOS E ASSINATURAS ==========
   PLANS: {
-    LIST: '/plans',
-    CURRENT: '/subscriptions/current',
+    LIST: "/plans",
+    CURRENT: "/subscriptions/current",
     SUBSCRIBE: (planId: string) => `/plans/${planId}/subscribe`,
-    CANCEL: '/subscriptions/cancel',
+    CANCEL: "/subscriptions/cancel",
   },
 
   // ========== ADMIN (se tiver) ==========
   ADMIN: {
-    USERS: '/admin/users',
+    USERS: "/admin/users",
     USER: (id: string) => `/admin/users/${id}`,
-    NUCLEOS: '/admin/nucleos',
-    STATS: '/admin/stats',
+    NUCLEOS: "/admin/nucleos",
+    STATS: "/admin/stats",
   },
-} as const
+} as const;
 
 // ========== ROTAS DO FRONT-END ==========
 export const ROUTES = {
   // Públicas
-  HOME: '/',
-  LOGIN: '/login',
-  REGISTER: '/register',
-  FORGOT_PASSWORD: '/forgot-password',
-  RESET_PASSWORD: '/reset-password',
-  VERIFY_EMAIL: '/verify-email',
-  
+  HOME: "/",
+  LOGIN: "/login",
+  REGISTER: "/register",
+  FORGOT_PASSWORD: "/forgot-password",
+  RESET_PASSWORD: "/reset-password",
+  VERIFY_EMAIL: "/verify-email",
+
   // Privadas
-  DASHBOARD: '/dashboard',
-  NUCLEOS: '/nucleos',
+  DASHBOARD: "/dashboard",
+  NUCLEOS: "/nucleos",
   NUCLEO: (id: string) => `/nucleos/${id}`,
   NUCLEO_EDIT: (id: string) => `/nucleos/${id}/edit`,
   NUCLEO_BLOCOS: (id: string) => `/nucleos/${id}/blocos`,
-  
+
   // Perfil
-  PROFILE: '/profile',
-  PROFILE_EDIT: '/profile/edit',
-  SETTINGS: '/settings',
-  
+  PROFILE: "/profile",
+  PROFILE_EDIT: "/profile/edit",
+  SETTINGS: "/settings",
+
   // Notificações
-  NOTIFICATIONS: '/notifications',
-  
+  NOTIFICATIONS: "/notifications",
+
   // Calendário
-  CALENDAR: '/calendar',
-  
+  CALENDAR: "/calendar",
+
   // Timers
-  TIMERS: '/timers',
-  
+  TIMERS: "/timers",
+
   // IA
-  AI_ASSISTANT: '/ai/assistant',
-  AI_INSIGHTS: '/ai/insights',
-  
+  AI_ASSISTANT: "/ai/assistant",
+  AI_INSIGHTS: "/ai/insights",
+
   // Admin
-  ADMIN: '/admin',
-  ADMIN_USERS: '/admin/users',
-  ADMIN_NUCLEOS: '/admin/nucleos',
-} as const
+  ADMIN: "/admin",
+  ADMIN_USERS: "/admin/users",
+  ADMIN_NUCLEOS: "/admin/nucleos",
+} as const;
