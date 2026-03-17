@@ -1,40 +1,43 @@
-'use client'
+"use client";
 
-import { useAuth } from '@/hooks/useAuth'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
-import { 
-  TrendingUp, 
-  Zap, 
-  Award, 
-  Calendar,
-  Clock,
-  Target
-} from 'lucide-react'
+import { useAuth } from "@/hooks/useAuth";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { TrendingUp, Zap, Award, Calendar, Clock, Target } from "lucide-react";
 
 export function DashboardContent() {
-  const { user } = useAuth()
+  const { user } = useAuth();
 
   // Mock data - substituir por dados reais da API
   const stats = [
-    { label: 'XP Total', value: '1,234', icon: TrendingUp, color: 'text-green-500' },
-    { label: 'Energy', value: '78/100', icon: Zap, color: 'text-yellow-500' },
-    { label: 'Conquistas', value: '12', icon: Award, color: 'text-purple-500' },
-    { label: 'Dias seguidos', value: '7', icon: Calendar, color: 'text-blue-500' },
-  ]
+    {
+      label: "XP Total",
+      value: "1,234",
+      icon: TrendingUp,
+      color: "text-green-500",
+    },
+    { label: "Energy", value: "78/100", icon: Zap, color: "text-yellow-500" },
+    { label: "Conquistas", value: "12", icon: Award, color: "text-purple-500" },
+    {
+      label: "Dias seguidos",
+      value: "7",
+      icon: Calendar,
+      color: "text-blue-500",
+    },
+  ];
 
   const recentActivity = [
-    { id: 1, action: 'Completou tarefa', xp: '+50 XP', time: 'há 2 horas' },
-    { id: 2, action: 'Criou novo núcleo', xp: '+100 XP', time: 'há 5 horas' },
-    { id: 3, action: 'Bateu meta diária', xp: '+200 XP', time: 'ontem' },
-  ]
+    { id: 1, action: "Completou tarefa", xp: "+50 XP", time: "há 2 horas" },
+    { id: 2, action: "Criou novo Nucleo", xp: "+100 XP", time: "há 5 horas" },
+    { id: 3, action: "Bateu meta diária", xp: "+200 XP", time: "ontem" },
+  ];
 
   const nextLevel = {
     current: 5,
     next: 6,
     progress: 65,
-    xpNeeded: '350 XP',
-  }
+    xpNeeded: "350 XP",
+  };
 
   return (
     <div className="space-y-6">
@@ -98,7 +101,7 @@ export function DashboardContent() {
           </CardHeader>
           <CardContent className="space-y-2">
             <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-              ➕ Criar novo núcleo
+              ➕ Criar novo Nucleo
             </button>
             <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
               ⏱️ Iniciar timer
@@ -143,5 +146,5 @@ export function DashboardContent() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

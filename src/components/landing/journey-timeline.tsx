@@ -1,106 +1,257 @@
-import { 
-  UserPlus, Target, Trophy, TrendingUp, Crown, Sparkles
-} from "lucide-react"
+import {
+  UserPlus,
+  Target,
+  Trophy,
+  TrendingUp,
+  Crown,
+  Sparkles,
+  Flame,
+  Zap,
+} from "lucide-react";
+import { motion } from "framer-motion";
+import { Badge } from "@/components/ui/badge";
 
 const etapas = [
   {
     icon: UserPlus,
-    titulo: "Dia 1 - Comeco",
-    descricao: "Crie sua conta e configure seus primeiros nucleos de acordo com seus objetivos.",
-    nivel: "Nivel 1",
+    titulo: "Dia 1 - Começo",
+    descricao:
+      "Crie sua conta e configure seus primeiros núcleos de acordo com seus objetivos.",
+    nivel: "Nível 1",
+    cor: "#4D7CFF", // chart-1
+    xp: "0 XP",
   },
   {
     icon: Target,
-    titulo: "Semana 1 - Habitos",
-    descricao: "Adicione tarefas diarias e comece a construir sua rotina. Ganhe seus primeiros XPs.",
-    nivel: "Nivel 5",
+    titulo: "Semana 1 - Hábitos",
+    descricao:
+      "Adicione tarefas diárias e comece a construir sua rotina. Ganhe seus primeiros XPs.",
+    nivel: "Nível 5",
+    cor: "#00C9A7", // chart-2
+    xp: "+500 XP",
   },
   {
     icon: Trophy,
-    titulo: "Mes 1 - Conquistas",
-    descricao: "Desbloqueie suas primeiras conquistas e veja seu progresso nos graficos.",
-    nivel: "Nivel 15",
+    titulo: "Mês 1 - Conquistas",
+    descricao:
+      "Desbloqueie suas primeiras conquistas e veja seu progresso nos gráficos.",
+    nivel: "Nível 15",
+    cor: "#2EBD59", // chart-3
+    xp: "+2.5k XP",
   },
   {
     icon: TrendingUp,
-    titulo: "Mes 3 - Evolucao",
-    descricao: "Seus habitos estao consolidados. Voce ja nota a diferenca na sua produtividade.",
-    nivel: "Nivel 30",
+    titulo: "Mês 3 - Evolução",
+    descricao:
+      "Seus hábitos estão consolidados. Você já nota a diferença na sua produtividade.",
+    nivel: "Nível 30",
+    cor: "#0077BE", // chart-4
+    xp: "+8k XP",
   },
   {
     icon: Crown,
-    titulo: "Mes 6 - Dominio",
-    descricao: "Voce domina suas areas de desenvolvimento e inspira outros usuarios.",
-    nivel: "Nivel 50",
+    titulo: "Mês 6 - Domínio",
+    descricao:
+      "Você domina suas áreas de desenvolvimento e inspira outros usuários.",
+    nivel: "Nível 50",
+    cor: "#8CD47E", // chart-5
+    xp: "+25k XP",
   },
   {
     icon: Sparkles,
-    titulo: "Ano 1 - Transformacao",
-    descricao: "Uma pessoa completamente transformada. Seus objetivos do ano passado sao realidade.",
-    nivel: "Nivel 100",
+    titulo: "Ano 1 - Transformação",
+    descricao:
+      "Uma pessoa completamente transformada. Seus objetivos do ano passado são realidade.",
+    nivel: "Nível 100",
+    cor: "#FF8C42", // laranja personalizado
+    xp: "+100k XP",
   },
-]
+];
 
 export function JourneyTimeline() {
   return (
-    <section className="px-6 py-24">
-      <div className="mx-auto max-w-4xl">
-        <div className="mb-4 text-center">
-          <span className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
-            Sua Jornada
+    <section className="relative pb-60 pt-30 overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8">
+      {/* GRADIENTE SUPERIOR */}
+      <div className="absolute top-0 left-0 right-0 h-100 pointer-events-none z-10 bg-gradient-to-b from-white via-white/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
+
+      {/* GRADIENTE INFERIOR */}
+      <div className="absolute bottom-0 left-0 right-0 h-64 pointer-events-none z-10 bg-gradient-to-t from-white via-white/60 to-transparent dark:from-black dark:via-black/60 dark:to-transparent" />
+
+      {/* SEGUNDA CAMADA DE DEGRADÊ */}
+      <div className="absolute bottom-0 left-0 right-0 h-80 pointer-events-none z-5 bg-gradient-to-t from-white/40 via-transparent to-transparent dark:from-black/40 dark:via-transparent dark:to-transparent" />
+
+      {/* Background elements com parallax */}
+      <motion.div className="absolute inset-0 -z-10">
+        <div className="absolute top-1/4 left-1/4 size-96 rounded-full bg-background/20 blur-3xl animate-pulse" />
+        <div className="absolute right-1/4 bottom-1/4 size-96 rounded-full bg-accent/20 blur-3xl animate-pulse delay-700" />
+      </motion.div>
+      {/* Grid pattern sutil */}
+      <div className="absolute inset-0 -z-20 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px]" />
+
+      <div className="mx-auto max-w-4xl relative z-20">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="mb-4 text-center"
+        >
+          <Badge
+            variant="outline"
+            className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 text-[#4D7CFF]"
+          >
+            <Sparkles className="size-4" />
+            <span>Sua Jornada</span>
+          </Badge>
+        </motion.div>
+
+        <motion.h2
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          viewport={{ once: true }}
+          className="text-balance text-center text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl"
+        >
+          Como você vai{" "}
+          <span className="bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
+            evoluir
           </span>
-        </div>
+          .
+        </motion.h2>
 
-        <h2 className="text-balance text-center text-3xl font-bold tracking-tight md:text-4xl">
-          O caminho para a sua melhor versao
-        </h2>
-
-        <p className="mx-auto mt-4 max-w-2xl text-center text-muted-foreground">
-          Veja o que esperar em cada etapa da sua jornada no Nucleos.
-        </p>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          viewport={{ once: true }}
+          className="mx-auto mt-4 max-w-2xl text-center text-muted-foreground"
+        >
+          Veja o que esperar sendo um usuário do Nucleos.
+        </motion.p>
 
         <div className="mt-12 relative">
-          {/* Linha central */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-border -translate-x-1/2 hidden md:block" />
+          {/* Linha central com gradiente */}
+          <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#4D7CFF] via-[#00C9A7] to-[#8CD47E] -translate-x-1/2 hidden md:block opacity-50" />
 
           <div className="space-y-8 md:space-y-0">
             {etapas.map((etapa, index) => (
-              <div 
+              <motion.div
                 key={index}
+                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: index * 0.1 }}
+                viewport={{ once: true }}
                 className={`relative flex flex-col md:flex-row items-center gap-4 md:gap-8 ${
                   index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
                 }`}
               >
-                {/* Conteudo */}
-                <div className={`flex-1 ${index % 2 === 0 ? "md:text-right" : "md:text-left"}`}>
-                  <div className={`p-6 rounded-2xl border bg-card hover:shadow-lg transition-shadow ${
-                    index % 2 === 0 ? "md:ml-auto md:mr-8" : "md:mr-auto md:ml-8"
-                  } max-w-sm`}>
-                    <div className={`flex items-center gap-3 mb-3 ${index % 2 === 0 ? "md:flex-row-reverse" : ""}`}>
-                      <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10">
-                        <etapa.icon className="size-5 text-primary" />
+                {/* Conteúdo */}
+                <div
+                  className={`flex-1 ${index % 2 === 0 ? "md:text-right" : "md:text-left"}`}
+                >
+                  <motion.div
+                    whileHover={{ y: -4, scale: 1.02 }}
+                    className={`p-6 rounded-2xl border bg-card/80 backdrop-blur-sm hover:shadow-xl transition-all ${
+                      index % 2 === 0
+                        ? "md:ml-auto md:mr-8"
+                        : "md:mr-auto md:ml-8"
+                    } max-w-sm`}
+                    style={{
+                      borderColor: `${etapa.cor}30`,
+                      boxShadow: `0 4px 20px ${etapa.cor}10`,
+                    }}
+                  >
+                    <div
+                      className={`flex items-center gap-3 mb-3 ${index % 2 === 0 ? "md:flex-row-reverse" : ""}`}
+                    >
+                      <div
+                        className="flex size-12 items-center justify-center rounded-xl"
+                        style={{ backgroundColor: `${etapa.cor}15` }}
+                      >
+                        <etapa.icon
+                          className="size-6"
+                          style={{ color: etapa.cor }}
+                        />
                       </div>
-                      <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-1 rounded-full">
-                        {etapa.nivel}
-                      </span>
+                      <div className="flex flex-col items-start gap-1">
+                        <Badge
+                          variant="outline"
+                          className="text-xs font-semibold"
+                          style={{
+                            backgroundColor: `${etapa.cor}10`,
+                            borderColor: `${etapa.cor}30`,
+                            color: etapa.cor,
+                          }}
+                        >
+                          {etapa.nivel}
+                        </Badge>
+                        <span
+                          className="text-xs font-medium"
+                          style={{ color: etapa.cor }}
+                        >
+                          {etapa.xp}
+                        </span>
+                      </div>
                     </div>
-                    <h3 className="font-semibold text-lg">{etapa.titulo}</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">{etapa.descricao}</p>
-                  </div>
+                    <h3 className="font-semibold text-lg text-foreground">
+                      {etapa.titulo}
+                    </h3>
+                    <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                      {etapa.descricao}
+                    </p>
+
+                    {/* Barra de progresso decorativa */}
+                    <div className="mt-4 h-1 w-full bg-secondary/50 rounded-full overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${(index + 1) * 16.67}%` }}
+                        transition={{ duration: 1, delay: 0.5 }}
+                        className="h-full rounded-full"
+                        style={{ backgroundColor: etapa.cor }}
+                      />
+                    </div>
+                  </motion.div>
                 </div>
 
-                {/* Circulo central */}
-                <div className="relative z-10 flex size-12 items-center justify-center rounded-full border-4 border-background bg-primary text-primary-foreground font-bold shadow-lg">
-                  {index + 1}
-                </div>
+                {/* Círculo central animado */}
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  className="relative z-10 flex size-14 items-center justify-center rounded-full border-4 border-background shadow-xl"
+                  style={{
+                    background: `linear-gradient(135deg, ${etapa.cor} 0%, ${etapa.cor}80 100%)`,
+                  }}
+                >
+                  <span className="text-white font-bold text-lg">
+                    {index + 1}
+                  </span>
 
-                {/* Espacador */}
+                  {/* Efeito de brilho */}
+                  <div
+                    className="absolute inset-0 rounded-full animate-ping opacity-20"
+                    style={{ backgroundColor: etapa.cor }}
+                  />
+                </motion.div>
+
+                {/* Espaçador */}
                 <div className="flex-1 hidden md:block" />
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
+
+        {/* Badge de conquista final */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+          viewport={{ once: true }}
+          className="mt-12 flex justify-center"
+        >
+          <div className="flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-[#4D7CFF]/10 to-[#00C9A7]/10 border border-[#4D7CFF]/20">
+            <span className="text-sm font-medium">Dê o primeiro passo.</span>
+          </div>
+        </motion.div>
       </div>
     </section>
-  )
+  );
 }

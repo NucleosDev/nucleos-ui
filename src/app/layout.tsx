@@ -1,18 +1,23 @@
-import type { Metadata, Viewport } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
-import { siteConfig } from '@/config/site'
-import './globals.css'
+// /app/layout.tsx
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { siteConfig } from "@/config/site";
+import { ThemeProvider } from "@/components/theme-provider";
+import { AuthProvider } from "@/auth/auth-provider";
+import { Header } from "@/components/landing/header";
+import { Footer } from "@/components/landing/footer";
+import "./globals.css";
 
 const geistSans = Geist({
-  subsets: ['latin'],
-  variable: '--font-geist-sans',
-})
+  subsets: ["latin"],
+  variable: "--font-geist-sans",
+});
 
 const geistMono = Geist_Mono({
-  subsets: ['latin'],
-  variable: '--font-geist-mono',
-})
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -21,72 +26,89 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   keywords: [
-    'produtividade',
-    'hábitos',
-    'gamificação',
-    'Nucleos',
-    'foco',
-    'XP',
-    'level up',
-    'organização',
+    "produtividade",
+    "hábitos",
+    "gamificação",
+    "Nucleos",
+    "foco",
+    "XP",
+    "level up",
+    "organização",
   ],
   authors: [{ name: siteConfig.creator }],
   creator: siteConfig.creator,
   openGraph: {
-    type: 'website',
-    locale: 'pt_BR',
+    type: "website",
+    locale: "pt_BR",
     url: siteConfig.url,
     title: siteConfig.name,
     description: siteConfig.description,
     siteName: siteConfig.name,
   },
   twitter: {
-    card: 'summary_large_image',
+    card: "summary_large_image",
     title: siteConfig.name,
     description: siteConfig.description,
-    creator: '@nucleosapp',
+    creator: "@nucleosapp",
   },
   icons: {
     icon: [
       {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
+        url: "/icon.svg",
+        media: "(prefers-color-scheme: light)",
+        type: "image/svg+xml",
       },
       {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
+        url: "/icon.svg",
+        media: "(prefers-color-scheme: dark)",
+        type: "image/svg+xml",
       },
       {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
+        url: "/icon.svg",
+        type: "image/svg+xml",
       },
     ],
-    apple: '/apple-icon.png',
+    apple: "/icon.svg",
+    shortcut: "/icon.svg",
   },
-}
+};
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f9fafb' },
-    { media: '(prefers-color-scheme: dark)', color: '#0a0a0f' },
+    { media: "(prefers-color-scheme: light)", color: "#f9fafb" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0f" },
   ],
-  width: 'device-width',
+  width: "device-width",
   initialScale: 1,
-}
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className="default">
+    <html lang="pt-BR" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
+        className={`min-h-dvh ${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
+        suppressHydrationWarning
       >
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            <div className="relative flex min-h-dvh flex-col">
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+          </AuthProvider>
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>
-  )
+  );
 }
