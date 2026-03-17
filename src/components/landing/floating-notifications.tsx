@@ -117,15 +117,21 @@ function NotificationCard({
   notificacao: (typeof notificacoesMock)[0];
   isVisible: boolean;
 }) {
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
   return (
     <div
       className={`absolute transition-all duration-500 ${
-        isVisible ? "opacity-100 scale-100" : "opacity-0 scale-90"
+        isVisible ? "opacity-100 scale-100" : "opacity-0 scale-75"
       }`}
       style={{
-        left: `calc(50% + ${notificacao.position.x}px)`,
-        top: `calc(50% + ${notificacao.position.y}px)`,
-        transform: "translate(-50%, -50%)",
+        left: `calc(20% + ${
+          isMobile ? notificacao.position.x * 0.4 : notificacao.position.x
+        }px)`,
+        top: `calc(30% + ${
+          isMobile ? notificacao.position.y * 0.4 : notificacao.position.y
+        }px)`,
+        transform: `translate(-50%, -50%) scale(${isMobile ? 0.55 : 1})`,
         zIndex: 20,
       }}
     >
@@ -171,10 +177,7 @@ export function FloatingNotifications() {
   }, []);
 
   return (
-<section
-
-      className="relative pb-60 pt-40 overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8"
-    >
+    <section className="relative pb-60 pt-40 overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8">
       {/* GRADIENTES */}
       <div className="absolute top-0 left-0 right-0 h-100 pointer-events-none z-10 bg-gradient-to-b from-white via-white/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 h-64 pointer-events-none z-10 bg-gradient-to-t from-white via-white/60 to-transparent dark:from-black dark:via-black/60 dark:to-transparent" />

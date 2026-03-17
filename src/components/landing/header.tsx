@@ -64,12 +64,15 @@ export function Header() {
 
   return (
     <header
-      className={cn("sticky top-0 z-50 w-full border-b border-transparent", {
-        "bg-background/95 supports-[backdrop-filter]:bg-background/50 backdrop-blur-lg":
-          scrolled,
-      })}
-    >
-      <nav className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+  className={cn(
+    "sticky top-0 z-50 w-full overflow-x-hidden border-b border-transparent",
+    {
+      "bg-background/95 supports-[backdrop-filter]:bg-background/50 backdrop-blur-lg":
+        scrolled,
+    }
+  )}
+>
+<nav className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 overflow-x-hidden">
         <div className="flex items-center gap-6">
           <Link
             href="/"
@@ -485,20 +488,23 @@ function MobileMenu({
 
       {/* Menu com slide lateral */}
       <div
-        id="mobile-menu"
-        className={cn(
-          "bg-background/95 supports-[backdrop-filter]:bg-background/50 backdrop-blur-lg",
-          "fixed top-16 right-0 bottom-0 left-0 z-40 flex flex-col overflow-hidden border-y md:hidden",
-          "transition-all duration-300 ease-in-out transform",
-          open
-            ? "translate-y-0 opacity-100"
-            : "-translate-y-2 opacity-0 pointer-events-none",
-        )}
-      >
+  id="mobile-menu"
+  className={cn(
+    "bg-background/95 supports-[backdrop-filter]:bg-background/50 backdrop-blur-lg",
+    "fixed inset-x-0 top-16 bottom-0 z-40 flex flex-col overflow-hidden border-y md:hidden",
+    "w-screen max-w-full overflow-x-hidden",
+    "transition-all duration-300 ease-in-out transform",
+    open
+      ? "translate-y-0 opacity-100"
+      : "-translate-y-2 opacity-0 pointer-events-none",
+  )}
+>
         <div
-          className={cn("size-full p-4 overflow-y-auto", className)}
-          {...props}
-        >
+  className={cn(
+    "size-full p-4 overflow-y-auto overflow-x-hidden",
+    className
+  )}
+>
           {children}
         </div>
       </div>
