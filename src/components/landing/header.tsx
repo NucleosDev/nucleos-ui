@@ -17,14 +17,11 @@ import {
 } from "@/components/ui/navigation-menu";
 import { LucideIcon } from "lucide-react";
 import {
-  LayersIcon,
   Users,
   Star,
   FileText,
   Shield,
   HelpCircle,
-  Sparkles,
-  Rocket,
   Zap,
   BookOpen,
   Heart,
@@ -49,6 +46,11 @@ export function Header() {
   const [open, setOpen] = React.useState(false);
   const scrolled = useScroll(10);
 
+  // Função para fechar o menu
+  const closeMenu = React.useCallback(() => {
+    setOpen(false);
+  }, []);
+
   React.useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
@@ -72,6 +74,7 @@ export function Header() {
           <Link
             href="/"
             className="flex items-center gap-2 hover:opacity-10 transition-opacity"
+            onClick={closeMenu} // Fecha o menu se estiver aberto
           >
             <Image
               src="/icon.svg"
@@ -265,10 +268,7 @@ export function Header() {
             asChild
             className="w-full sm:w-auto group relative overflow-hidden bg-foreground text-primary-foreground shadow-lg shadow-foreground/25 hover:shadow-xl transition-all duration-300 hover:bg-foreground hover:text-primary"
           >
-            <Link href="/cadastro">
-              Criar Conta
-              {/* <ArrowRight className="w-3 h-3 w-translate-x-2 opacity-1 transition-all duration-300 group-hover:translate-x-2 group-hover:opacity-100" /> */}
-            </Link>
+            <Link href="/cadastro">Criar Conta</Link>
           </Button>
         </div>
 
@@ -288,33 +288,47 @@ export function Header() {
 
       <MobileMenu
         open={open}
+        onClose={closeMenu}
         className="flex flex-col justify-between gap-4 overflow-y-auto"
       >
-        <div className="flex items-center gap-2">
-          <ModeToggle /> {/* ← ModeToggle agora à esquerda */}
-          <span className="text-sm font-medium text-muted-foreground">
-            Tema
-          </span>
-        </div>
-
         <NavigationMenu className="max-w-full">
           <div className="flex w-full flex-col gap-y-3">
             <div className="space-y-1">
               <span className="text-sm font-medium text-muted-foreground px-2">
+                Menu
+              </span>
+              <ListItem
+                title="Home"
+                href="/"
+                icon={Home}
+                mobile
+                onClick={closeMenu}
+              />
+              <ListItemTheme mobile onClose={closeMenu} />
+
+              <span className="text-sm font-medium text-muted-foreground px-2 pt-2">
                 Produto
               </span>
-              <ListItem title="Produto" href="/produto" icon={Gem} mobile />
               <ListItem
-                title="Demonstração"
-                href="/painel"
+                title="Produto"
+                href="/produto"
+                icon={Gem}
+                mobile
+                onClick={closeMenu}
+              />
+              <ListItem
+                title="Dashboard"
+                href="/dashboard"
                 icon={LayoutDashboard}
                 mobile
+                onClick={closeMenu}
               />
               <ListItem
                 title="Explorar"
                 href="/explorar"
                 icon={Compass}
                 mobile
+                onClick={closeMenu}
               />
             </div>
 
@@ -324,51 +338,93 @@ export function Header() {
               </span>
               <ListItem
                 title="Para Estudos"
-                href="/recursos"
+                href="/recursos?tipo=estudos"
                 icon={BookOpen}
                 mobile
+                onClick={closeMenu}
               />
               <ListItem
                 title="Para Saúde"
-                href="/recursos"
+                href="/recursos?tipo=saude"
                 icon={Heart}
                 mobile
+                onClick={closeMenu}
               />
               <ListItem
                 title="Para Finanças"
-                href="/recursos"
+                href="/recursos?tipo=financas"
                 icon={Wallet}
                 mobile
+                onClick={closeMenu}
               />
               <ListItem
                 title="Explorar"
                 href="/explorar"
                 icon={Compass}
                 mobile
+                onClick={closeMenu}
               />
-              <ListItem title="Blog" href="/blog" icon={Zap} mobile />
+              <ListItem
+                title="Blog"
+                href="/blog"
+                icon={Zap}
+                mobile
+                onClick={closeMenu}
+              />
             </div>
 
             <div className="space-y-1">
               <span className="text-sm font-medium text-muted-foreground px-2">
                 Empresa
               </span>
-              <ListItem title="Sobre" href="/sobre" icon={Users} mobile />
-              <ListItem title="Blog" href="/blog" icon={Star} mobile />
-              <ListItem title="Contatos" href="/contato" icon={Mail} mobile />
-              <ListItem title="Termos" href="/termos" icon={FileText} mobile />
+              <ListItem
+                title="Sobre"
+                href="/sobre"
+                icon={Users}
+                mobile
+                onClick={closeMenu}
+              />
+              <ListItem
+                title="Blog"
+                href="/blog"
+                icon={Star}
+                mobile
+                onClick={closeMenu}
+              />
+              <ListItem
+                title="Contato"
+                href="/contato"
+                icon={Mail}
+                mobile
+                onClick={closeMenu}
+              />
+              <ListItem
+                title="Termos"
+                href="/termos"
+                icon={FileText}
+                mobile
+                onClick={closeMenu}
+              />
               <ListItem
                 title="Privacidade"
                 href="/privacidade"
                 icon={Shield}
                 mobile
+                onClick={closeMenu}
               />
-              <ListItem title="Ajuda" href="/ajuda" icon={HelpCircle} mobile />
+              <ListItem
+                title="Ajuda"
+                href="/ajuda"
+                icon={HelpCircle}
+                mobile
+                onClick={closeMenu}
+              />
             </div>
 
             <Link
               href="/planos"
-              className="flex p-2 hover: rounded-md items-center gap-x-2 transition-colors"
+              className="flex p-2 hover:bg-accent rounded-md items-center gap-x-2 transition-colors"
+              onClick={closeMenu}
             >
               <CreditCard className="size-4" />
               <span className="font-medium">Planos</span>
@@ -377,10 +433,15 @@ export function Header() {
         </NavigationMenu>
 
         <div className="flex flex-col gap-2 pt-4 border-t">
-          <Button variant="outline" className="w-full" asChild>
+          <Button
+            variant="outline"
+            className="w-full"
+            asChild
+            onClick={closeMenu}
+          >
             <Link href="/entrar">Entrar</Link>
           </Button>
-          <Button className="w-full" asChild>
+          <Button className="w-full" asChild onClick={closeMenu}>
             <Link href="/cadastro">Começar grátis</Link>
           </Button>
         </div>
@@ -391,32 +452,143 @@ export function Header() {
 
 type MobileMenuProps = React.ComponentProps<"div"> & {
   open: boolean;
+  onClose: () => void;
 };
 
-function MobileMenu({ open, children, className, ...props }: MobileMenuProps) {
-  if (!open || typeof window === "undefined") return null;
+function MobileMenu({
+  open,
+  onClose,
+  children,
+  className,
+  ...props
+}: MobileMenuProps) {
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  if (!mounted) return null;
 
   return createPortal(
-    <div
-      id="mobile-menu"
-      className={cn(
-        "bg-background/95 supports-[backdrop-filter]:bg-background/50 backdrop-blur-lg",
-        "fixed top-16 right-0 bottom-0 left-0 z-40 flex flex-col overflow-hidden border-y md:hidden",
-      )}
-    >
+    <>
+      {/* Overlay com fade */}
       <div
-        data-slot={open ? "open" : "closed"}
         className={cn(
-          "data-[slot=open]:animate-in data-[slot=open]:zoom-in-97 ease-out",
-          "size-full p-4 overflow-y-auto",
-          className,
+          "fixed inset-0 bg-black/20 backdrop-blur-sm z-40 md:hidden transition-opacity duration-300",
+          open ? "opacity-100" : "opacity-0 pointer-events-none",
         )}
-        {...props}
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
+      {/* Menu com slide lateral */}
+      <div
+        id="mobile-menu"
+        className={cn(
+          "bg-background/95 supports-[backdrop-filter]:bg-background/50 backdrop-blur-lg",
+          "fixed top-16 right-0 bottom-0 left-0 z-40 flex flex-col overflow-hidden border-y md:hidden",
+          "transition-all duration-300 ease-in-out transform",
+          open
+            ? "translate-y-0 opacity-100"
+            : "-translate-y-2 opacity-0 pointer-events-none",
+        )}
       >
-        {children}
+        <div
+          className={cn("size-full p-4 overflow-y-auto", className)}
+          {...props}
+        >
+          {children}
+        </div>
       </div>
-    </div>,
+    </>,
     document.body,
+  );
+}
+
+function ListItemTheme({
+  mobile,
+  onClose,
+}: {
+  mobile?: boolean;
+  onClose?: () => void;
+}) {
+  const [theme, setTheme] = React.useState<"light" | "dark">("light");
+
+  React.useEffect(() => {
+    const isDark = document.documentElement.classList.contains("dark");
+    setTheme(isDark ? "dark" : "light");
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+
+    if (newTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+
+    localStorage.setItem("theme", newTheme);
+    // Não fechamos o menu ao trocar o tema
+  };
+
+  return (
+    <NavigationMenuLink
+      className="w-full flex flex-row gap-x-2 rounded-sm p-2 transition-colors cursor-pointer hover:bg-accent"
+      asChild
+    >
+      <div onClick={toggleTheme}>
+        <div
+          className={cn(
+            "flex aspect-square items-center justify-center rounded-md border shadow-sm",
+            mobile ? "size-10" : "size-12 bg-background/40",
+          )}
+        >
+          {theme === "light" ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-4"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
+              />
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-4"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"
+              />
+            </svg>
+          )}
+        </div>
+        <div className="flex flex-col items-start justify-center">
+          <span className="font-medium">
+            Tema {theme === "light" ? "Claro" : "Escuro"}
+          </span>
+          <span className="text-muted-foreground text-xs line-clamp-1">
+            Clique para alternar
+          </span>
+        </div>
+      </div>
+    </NavigationMenuLink>
   );
 }
 
@@ -427,19 +599,20 @@ function ListItem({
   className,
   href,
   mobile,
+  onClick,
   ...props
 }: React.ComponentProps<typeof NavigationMenuLink> &
-  LinkItem & { mobile?: boolean }) {
+  LinkItem & { mobile?: boolean; onClick?: () => void }) {
   return (
     <NavigationMenuLink
       className={cn(
-        "w-full flex flex-row gap-x-2 data-[active=true]:focus: data-[active=true]:hover: data-[active=true]:/50 data-[active=true]:text-accent-foreground hover: hover:text-accent focus: focus:text-accent-foreground rounded-sm p-2 transition-colors",
+        "w-full flex flex-row gap-x-2 rounded-sm p-2 transition-colors hover:bg-accent",
         className,
       )}
       {...props}
       asChild
     >
-      <Link href={href}>
+      <Link href={href} onClick={onClick}>
         <div
           className={cn(
             "flex aspect-square items-center justify-center rounded-md border shadow-sm",

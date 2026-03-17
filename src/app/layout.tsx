@@ -1,4 +1,3 @@
-// /app/layout.tsx
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
@@ -54,22 +53,19 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: "/icon.svg",
+        url: "/icon-light-32x32.png",
         media: "(prefers-color-scheme: light)",
-        type: "image/svg+xml",
       },
       {
-        url: "/icon.svg",
+        url: "/icon-dark-32x32.png",
         media: "(prefers-color-scheme: dark)",
-        type: "image/svg+xml",
       },
       {
         url: "/icon.svg",
         type: "image/svg+xml",
       },
     ],
-    apple: "/icon.svg",
-    shortcut: "/icon.svg",
+    apple: "/apple-icon.png",
   },
 };
 
@@ -88,7 +84,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html className={`min-h-dvh`} lang="pt-BR" suppressHydrationWarning>
       <body
         className={`min-h-dvh ${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
         suppressHydrationWarning

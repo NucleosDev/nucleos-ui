@@ -40,7 +40,6 @@ export function HeroHome({
 
       {/* SEGUNDA CAMADA DE DEGRADÊ */}
 
-
       {/* Grid background com fade in suave */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -197,7 +196,7 @@ export function HeroHome({
             lg:text-8xl
           "
         >
-          {title}
+          <span dangerouslySetInnerHTML={{ __html: title }} />
         </motion.h1>
 
         {/* Subtitle */}
