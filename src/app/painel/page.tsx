@@ -1,4 +1,3 @@
-// /app/dashboard/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -190,14 +189,14 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header do Dashboard */}
-      <header className="sticky top-0 z-40 border-b border-border/50 bg-background/80 backdrop-blur-lg">
+      <header className="top-0 border-b border-border/50 bg-background/80 backdrop-blur-lg">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link href="/dashboard" className="flex items-center gap-2">
+              {/* <Link href="/dashboard" className="flex items-center gap-2">
                 <Image src="/icon.svg" alt="Nucleos" width={32} height={32} />
                 <span className="text-xl font-semibold">Nucleos</span>
-              </Link>
+              </Link> */}
               <Badge
                 variant="outline"
                 className="hidden md:flex gap-1 border-[#4D7CFF]/30 text-[#4D7CFF]"
@@ -231,7 +230,7 @@ export default function DashboardPage() {
       <div className="container mx-auto px-4 py-8">
         {/* Boas-vindas */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold">Olá, {usuario.nome}! 👋</h1>
+          <h1 className="text-3xl font-bold">Olá, usuário! 👋</h1>
           <p className="text-muted-foreground mt-1">
             Aqui está seu resumo de hoje. Continue evoluindo!
           </p>
