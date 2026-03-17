@@ -1,4 +1,4 @@
-// tipos para os núcleos, incluindo informações básicas, ícones, blocos, conquistas e relações
+// tipos para os Nucleos, incluindo informações básicas, ícones, blocos, conquistas e relações
 import { Bloco } from './bloco'
 import { User } from './user'
 

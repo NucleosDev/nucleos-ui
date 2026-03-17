@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,7 @@ interface Contact2Props {
 
 export const Contact2 = ({
   title = "Contate-nos",
-  description = "O Núcleos é uma plataforma digital de organização pessoal e produtividade que permite aos usuários estruturar suas atividades e objetivos por meio da criação de núcleos de foco.",
+  description = "O Nucleos é uma plataforma digital de organização pessoal e produtividade que permite aos usuários estruturar suas atividades e objetivos por meio da criação de Nucleos de foco.",
   phone = "(24) 992479145",
   email = "nucleos@me.com",
   web = { label: "nucleos.bio", url: "nucleos.bio" },
@@ -76,9 +76,12 @@ export const Contact2 = ({
             </div>
             <div className="grid w-full gap-1.5">
               <Label htmlFor="message">Mensagem</Label>
-              <Textarea placeholder="Escreva sua mensagem aqui." id="Mensagem" />
+              <Textarea
+                placeholder="Escreva sua mensagem aqui."
+                id="Mensagem"
+              />
             </div>
-            <Button className="w-full">Enviar Mensagem</Button> 
+            <Button className="w-full">Enviar Mensagem</Button>
           </div>
         </div>
       </div>
