@@ -66,10 +66,10 @@ const secoes = [
   },
   {
     id: "nucleos",
-    titulo: "Núcleos",
+    titulo: "Nucleos",
     icon: Layers,
     cor: "#FFD700",
-    descricao: "Criação e gerenciamento de núcleos",
+    descricao: "Criação e gerenciamento de Nucleos",
   },
   {
     id: "blocos",
@@ -103,7 +103,7 @@ const guiasRapidos = [
   },
   {
     titulo: "Configurar blocos",
-    descricao: "Adicione e personalize blocos nos seus núcleos",
+    descricao: "Adicione e personalize blocos nos seus Nucleos",
     tempo: "8 min",
     nivel: "Intermediário",
   },

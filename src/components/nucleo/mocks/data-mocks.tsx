@@ -1,6 +1,6 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
-// ========== DADOS COMPLETOS PARA TODOS OS NÚCLEOS ==========
+// ========== DADOS COMPLETOS PARA TODOS OS Nucleos ==========
 
 // Blocos para o núcleo 1 (Estudos de React)
 export const blocosNucleo1 = [
@@ -32,8 +32,8 @@ useEffect(() => {
 - [ ] useReducer
 - [ ] useContext
 - [ ] useMemo
-- [ ] useCallback`
-    }
+- [ ] useCallback`,
+    },
   },
   {
     id: "bloco-colecao-1",
@@ -47,23 +47,26 @@ useEffect(() => {
     dados: {
       colecao: {
         id: "colecao-livros",
-        nome: "Biblioteca de Programação"
+        nome: "Biblioteca de Programação",
       },
       campos: [
         { id: "campo-titulo", nome: "Título", tipo_campo: "texto" },
         { id: "campo-autor", nome: "Autor", tipo_campo: "texto" },
         { id: "campo-paginas", nome: "Páginas", tipo_campo: "numero" },
-        { id: "campo-status", nome: "Status", tipo_campo: "select" }
+        { id: "campo-status", nome: "Status", tipo_campo: "select" },
       ],
       itens: [
         {
           id: "item-1",
           valores: [
-            { campo_id: "campo-titulo", valor_texto: "O Programador Pragmático" },
+            {
+              campo_id: "campo-titulo",
+              valor_texto: "O Programador Pragmático",
+            },
             { campo_id: "campo-autor", valor_texto: "Andrew Hunt" },
             { campo_id: "campo-paginas", valor_numerico: 320 },
-            { campo_id: "campo-status", valor_texto: "Lendo" }
-          ]
+            { campo_id: "campo-status", valor_texto: "Lendo" },
+          ],
         },
         {
           id: "item-2",
@@ -71,8 +74,8 @@ useEffect(() => {
             { campo_id: "campo-titulo", valor_texto: "Código Limpo" },
             { campo_id: "campo-autor", valor_texto: "Robert Martin" },
             { campo_id: "campo-paginas", valor_numerico: 425 },
-            { campo_id: "campo-status", valor_texto: "Quero ler" }
-          ]
+            { campo_id: "campo-status", valor_texto: "Quero ler" },
+          ],
         },
         {
           id: "item-3",
@@ -80,11 +83,11 @@ useEffect(() => {
             { campo_id: "campo-titulo", valor_texto: "Entendendo Algoritmos" },
             { campo_id: "campo-autor", valor_texto: "Aditya Bhargava" },
             { campo_id: "campo-paginas", valor_numerico: 280 },
-            { campo_id: "campo-status", valor_texto: "Lido" }
-          ]
-        }
-      ]
-    }
+            { campo_id: "campo-status", valor_texto: "Lido" },
+          ],
+        },
+      ],
+    },
   },
   {
     id: "bloco-calendario-1",
@@ -102,24 +105,24 @@ useEffect(() => {
           titulo: "Estudar Next.js",
           descricao: "App Router e Server Components",
           data_evento: new Date().toISOString(),
-          duracao_minutos: 90
+          duracao_minutos: 90,
         },
         {
           id: "evento-2",
           titulo: "Revisão de TypeScript",
           descricao: "Types, interfaces e generics",
           data_evento: new Date(Date.now() + 86400000).toISOString(),
-          duracao_minutos: 60
+          duracao_minutos: 60,
         },
         {
           id: "evento-3",
           titulo: "Projeto prático",
           descricao: "Iniciar o projeto do dashboard",
           data_evento: new Date(Date.now() + 2 * 86400000).toISOString(),
-          duracao_minutos: 120
-        }
-      ]
-    }
+          duracao_minutos: 120,
+        },
+      ],
+    },
   },
   {
     id: "bloco-timer-1",
@@ -136,21 +139,21 @@ useEffect(() => {
           id: "timer-foco",
           titulo: "Foco",
           duracao_segundos: 1500, // 25 minutos
-          inicio: new Date().toISOString()
+          inicio: new Date().toISOString(),
         },
         {
           id: "timer-pausa",
           titulo: "Pausa Curta",
-          duracao_segundos: 300 // 5 minutos
+          duracao_segundos: 300, // 5 minutos
         },
         {
           id: "timer-pausa-longa",
           titulo: "Pausa Longa",
-          duracao_segundos: 900 // 15 minutos
-        }
-      ]
-    }
-  }
+          duracao_segundos: 900, // 15 minutos
+        },
+      ],
+    },
+  },
 ];
 
 // Blocos para o núcleo 2 (Fitness Diário)
@@ -180,8 +183,8 @@ export const blocosNucleo2 = [
 ## Sexta - Pernas
 - Agachamento: 4x10
 - Leg press: 3x15
-- Cadeira extensora: 3x12`
-    }
+- Cadeira extensora: 3x12`,
+    },
   },
   {
     id: "bloco-colecao-2",
@@ -195,40 +198,46 @@ export const blocosNucleo2 = [
     dados: {
       colecao: {
         id: "colecao-peso",
-        nome: "Evolução"
+        nome: "Evolução",
       },
       campos: [
         { id: "campo-data", nome: "Data", tipo_campo: "data" },
         { id: "campo-peso", nome: "Peso (kg)", tipo_campo: "numero" },
-        { id: "campo-observacao", nome: "Observação", tipo_campo: "texto" }
+        { id: "campo-observacao", nome: "Observação", tipo_campo: "texto" },
       ],
       itens: [
         {
           id: "item-peso-1",
           valores: [
-            { campo_id: "campo-data", valor_data: new Date(Date.now() - 7 * 86400000).toISOString() },
+            {
+              campo_id: "campo-data",
+              valor_data: new Date(Date.now() - 7 * 86400000).toISOString(),
+            },
             { campo_id: "campo-peso", valor_numerico: 78.5 },
-            { campo_id: "campo-observacao", valor_texto: "Início" }
-          ]
+            { campo_id: "campo-observacao", valor_texto: "Início" },
+          ],
         },
         {
           id: "item-peso-2",
           valores: [
-            { campo_id: "campo-data", valor_data: new Date(Date.now() - 3 * 86400000).toISOString() },
+            {
+              campo_id: "campo-data",
+              valor_data: new Date(Date.now() - 3 * 86400000).toISOString(),
+            },
             { campo_id: "campo-peso", valor_numerico: 77.8 },
-            { campo_id: "campo-observacao", valor_texto: "Progresso" }
-          ]
+            { campo_id: "campo-observacao", valor_texto: "Progresso" },
+          ],
         },
         {
           id: "item-peso-3",
           valores: [
             { campo_id: "campo-data", valor_data: new Date().toISOString() },
             { campo_id: "campo-peso", valor_numerico: 77.2 },
-            { campo_id: "campo-observacao", valor_texto: "Atual" }
-          ]
-        }
-      ]
-    }
+            { campo_id: "campo-observacao", valor_texto: "Atual" },
+          ],
+        },
+      ],
+    },
   },
   {
     id: "bloco-calendario-2",
@@ -246,25 +255,25 @@ export const blocosNucleo2 = [
           titulo: "Treino A",
           descricao: "Peito e Tríceps",
           data_evento: new Date().toISOString(),
-          duracao_minutos: 60
+          duracao_minutos: 60,
         },
         {
           id: "evento-treino-2",
           titulo: "Treino B",
           descricao: "Costas e Bíceps",
           data_evento: new Date(Date.now() + 2 * 86400000).toISOString(),
-          duracao_minutos: 60
+          duracao_minutos: 60,
         },
         {
           id: "evento-treino-3",
           titulo: "Treino C",
           descricao: "Pernas",
           data_evento: new Date(Date.now() + 4 * 86400000).toISOString(),
-          duracao_minutos: 75
-        }
-      ]
-    }
-  }
+          duracao_minutos: 75,
+        },
+      ],
+    },
+  },
 ];
 
 // Blocos para o núcleo 3 (Projeto Cliente)
@@ -295,8 +304,8 @@ export const blocosNucleo3 = [
 
 ## Prazo
 - Entrega: 15/04/2024
-- Revisões: até 3`
-    }
+- Revisões: até 3`,
+    },
   },
   {
     id: "bloco-colecao-3",
@@ -310,13 +319,13 @@ export const blocosNucleo3 = [
     dados: {
       colecao: {
         id: "colecao-tarefas",
-        nome: "Tarefas"
+        nome: "Tarefas",
       },
       campos: [
         { id: "campo-tarefa", nome: "Tarefa", tipo_campo: "texto" },
         { id: "campo-status", nome: "Status", tipo_campo: "select" },
         { id: "campo-prazo", nome: "Prazo", tipo_campo: "data" },
-        { id: "campo-concluida", nome: "Concluída", tipo_campo: "booleano" }
+        { id: "campo-concluida", nome: "Concluída", tipo_campo: "booleano" },
       ],
       itens: [
         {
@@ -324,31 +333,43 @@ export const blocosNucleo3 = [
           valores: [
             { campo_id: "campo-tarefa", valor_texto: "Criar componentes UI" },
             { campo_id: "campo-status", valor_texto: "Em andamento" },
-            { campo_id: "campo-prazo", valor_data: new Date(Date.now() + 2 * 86400000).toISOString() },
-            { campo_id: "campo-concluida", valor_booleano: false }
-          ]
+            {
+              campo_id: "campo-prazo",
+              valor_data: new Date(Date.now() + 2 * 86400000).toISOString(),
+            },
+            { campo_id: "campo-concluida", valor_booleano: false },
+          ],
         },
         {
           id: "item-tarefa-2",
           valores: [
-            { campo_id: "campo-tarefa", valor_texto: "Implementar responsividade" },
+            {
+              campo_id: "campo-tarefa",
+              valor_texto: "Implementar responsividade",
+            },
             { campo_id: "campo-status", valor_texto: "Pendente" },
-            { campo_id: "campo-prazo", valor_data: new Date(Date.now() + 5 * 86400000).toISOString() },
-            { campo_id: "campo-concluida", valor_booleano: false }
-          ]
+            {
+              campo_id: "campo-prazo",
+              valor_data: new Date(Date.now() + 5 * 86400000).toISOString(),
+            },
+            { campo_id: "campo-concluida", valor_booleano: false },
+          ],
         },
         {
           id: "item-tarefa-3",
           valores: [
             { campo_id: "campo-tarefa", valor_texto: "Configurar API" },
             { campo_id: "campo-status", valor_texto: "Concluído" },
-            { campo_id: "campo-prazo", valor_data: new Date(Date.now() - 2 * 86400000).toISOString() },
-            { campo_id: "campo-concluida", valor_booleano: true }
-          ]
-        }
-      ]
-    }
-  }
+            {
+              campo_id: "campo-prazo",
+              valor_data: new Date(Date.now() - 2 * 86400000).toISOString(),
+            },
+            { campo_id: "campo-concluida", valor_booleano: true },
+          ],
+        },
+      ],
+    },
+  },
 ];
 
 // Blocos para o núcleo 4 (Finanças Pessoais)
@@ -365,13 +386,13 @@ export const blocosNucleo4 = [
     dados: {
       colecao: {
         id: "colecao-orcamento",
-        nome: "Gastos"
+        nome: "Gastos",
       },
       campos: [
         { id: "campo-categoria", nome: "Categoria", tipo_campo: "texto" },
         { id: "campo-descricao", nome: "Descrição", tipo_campo: "texto" },
         { id: "campo-valor", nome: "Valor (R$)", tipo_campo: "numero" },
-        { id: "campo-data", nome: "Data", tipo_campo: "data" }
+        { id: "campo-data", nome: "Data", tipo_campo: "data" },
       ],
       itens: [
         {
@@ -379,31 +400,40 @@ export const blocosNucleo4 = [
           valores: [
             { campo_id: "campo-categoria", valor_texto: "Alimentação" },
             { campo_id: "campo-descricao", valor_texto: "Supermercado" },
-            { campo_id: "campo-valor", valor_numerico: 450.00 },
-            { campo_id: "campo-data", valor_data: new Date(Date.now() - 5 * 86400000).toISOString() }
-          ]
+            { campo_id: "campo-valor", valor_numerico: 450.0 },
+            {
+              campo_id: "campo-data",
+              valor_data: new Date(Date.now() - 5 * 86400000).toISOString(),
+            },
+          ],
         },
         {
           id: "item-gasto-2",
           valores: [
             { campo_id: "campo-categoria", valor_texto: "Transporte" },
             { campo_id: "campo-descricao", valor_texto: "Uber" },
-            { campo_id: "campo-valor", valor_numerico: 120.50 },
-            { campo_id: "campo-data", valor_data: new Date(Date.now() - 3 * 86400000).toISOString() }
-          ]
+            { campo_id: "campo-valor", valor_numerico: 120.5 },
+            {
+              campo_id: "campo-data",
+              valor_data: new Date(Date.now() - 3 * 86400000).toISOString(),
+            },
+          ],
         },
         {
           id: "item-gasto-3",
           valores: [
             { campo_id: "campo-categoria", valor_texto: "Lazer" },
             { campo_id: "campo-descricao", valor_texto: "Cinema" },
-            { campo_id: "campo-valor", valor_numerico: 80.00 },
-            { campo_id: "campo-data", valor_data: new Date(Date.now() - 1 * 86400000).toISOString() }
-          ]
-        }
-      ]
-    }
-  }
+            { campo_id: "campo-valor", valor_numerico: 80.0 },
+            {
+              campo_id: "campo-data",
+              valor_data: new Date(Date.now() - 1 * 86400000).toISOString(),
+            },
+          ],
+        },
+      ],
+    },
+  },
 ];
 
 // Blocos para o núcleo 5 (Curso de Inglês)
@@ -430,9 +460,9 @@ export const blocosNucleo5 = [
 - **Groceries** - Compras
 - **Neighborhood** - Vizinhança
 - **Weather** - Clima
-- **Hobbies** - Passatempos`
-    }
-  }
+- **Hobbies** - Passatempos`,
+    },
+  },
 ];
 
 // Blocos para o núcleo 6 (Leitura)
@@ -449,13 +479,13 @@ export const blocosNucleo6 = [
     dados: {
       colecao: {
         id: "colecao-livros-lidos",
-        nome: "Biblioteca Pessoal"
+        nome: "Biblioteca Pessoal",
       },
       campos: [
         { id: "campo-livro", nome: "Livro", tipo_campo: "texto" },
         { id: "campo-autor", nome: "Autor", tipo_campo: "texto" },
         { id: "campo-ano", nome: "Ano", tipo_campo: "numero" },
-        { id: "campo-nota", nome: "Nota", tipo_campo: "numero" }
+        { id: "campo-nota", nome: "Nota", tipo_campo: "numero" },
       ],
       itens: [
         {
@@ -464,8 +494,8 @@ export const blocosNucleo6 = [
             { campo_id: "campo-livro", valor_texto: "1984" },
             { campo_id: "campo-autor", valor_texto: "George Orwell" },
             { campo_id: "campo-ano", valor_numerico: 1949 },
-            { campo_id: "campo-nota", valor_numerico: 10 }
-          ]
+            { campo_id: "campo-nota", valor_numerico: 10 },
+          ],
         },
         {
           id: "item-livro-2",
@@ -473,12 +503,12 @@ export const blocosNucleo6 = [
             { campo_id: "campo-livro", valor_texto: "Duna" },
             { campo_id: "campo-autor", valor_texto: "Frank Herbert" },
             { campo_id: "campo-ano", valor_numerico: 1965 },
-            { campo_id: "campo-nota", valor_numerico: 9 }
-          ]
-        }
-      ]
-    }
-  }
+            { campo_id: "campo-nota", valor_numerico: 9 },
+          ],
+        },
+      ],
+    },
+  },
 ];
 
 // Mapa de blocos por ID do núcleo
@@ -488,7 +518,7 @@ export const blocosPorNucleo: Record<string, any[]> = {
   "nucleo-3": blocosNucleo3,
   "nucleo-4": blocosNucleo4,
   "nucleo-5": blocosNucleo5,
-  "nucleo-6": blocosNucleo6
+  "nucleo-6": blocosNucleo6,
 };
 
 // Função segura que sempre retorna um array (vazio se não encontrar)

@@ -24,30 +24,30 @@ import {
 
 const faqs = [
   {
-    question: "O que são os Núcleos?",
+    question: "O que são os Nucleos?",
     answer:
-      "Núcleos são áreas da sua vida que você deseja organizar e evoluir, como estudos, saúde, finanças e produtividade. Cada núcleo possui suas próprias tarefas, metas e sistema de progressão.",
+      "Nucleos são áreas da sua vida que você deseja organizar e evoluir, como estudos, saúde, finanças e produtividade. Cada núcleo possui suas próprias tarefas, metas e sistema de progressão.",
     icon: Layers,
     color: "#4D7CFF",
   },
   {
     question: "Como funciona o sistema de XP e níveis?",
     answer:
-      "Ao completar tarefas dentro dos seus núcleos, você ganha pontos de experiência (XP). Conforme acumula XP, você sobe de nível, desbloqueando novas funcionalidades e conquistas. O sistema foi projetado para manter você motivado.",
+      "Ao completar tarefas dentro dos seus Nucleos, você ganha pontos de experiência (XP). Conforme acumula XP, você sobe de nível, desbloqueando novas funcionalidades e conquistas. O sistema foi projetado para manter você motivado.",
     icon: Trophy,
     color: "#FFD700",
   },
   {
-    question: "Posso criar meus próprios núcleos personalizados?",
+    question: "Posso criar meus próprios Nucleos personalizados?",
     answer:
-      "Sim! Além dos núcleos padrão (Estudos, Saúde, Finanças e Produtividade), você pode criar núcleos totalmente personalizados para qualquer área da sua vida que deseja organizar.",
+      "Sim! Além dos Nucleos padrão (Estudos, Saúde, Finanças e Produtividade), você pode criar Nucleos totalmente personalizados para qualquer área da sua vida que deseja organizar.",
     icon: Layers,
     color: "#00C9A7",
   },
   {
     question: "O Nucleos é gratuito?",
     answer:
-      "O Nucleos oferece um plano gratuito com funcionalidades essenciais. Para recursos avançados como analytics detalhados, núcleos ilimitados e integração com outros apps, temos planos premium a partir de R$ 29,90/mês.",
+      "O Nucleos oferece um plano gratuito com funcionalidades essenciais. Para recursos avançados como analytics detalhados, Nucleos ilimitados e integração com outros apps, temos planos premium a partir de R$ 29,90/mês.",
     icon: Coins,
     color: "#2EBD59",
   },

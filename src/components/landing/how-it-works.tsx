@@ -6,7 +6,7 @@ import Link from "next/link";
 const steps = [
   {
     number: "01",
-    title: "Crie seus Núcleos",
+    title: "Crie seus Nucleos",
     description:
       "Defina as áreas da sua vida que deseja desenvolver. Cada Núcleo representa um centro de energia focado no seu crescimento.",
     icon: <Zap className="size-6 text-[#4D7CFF]" />,
@@ -40,10 +40,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section
-
-      className="relative pb-60 pt-60 overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8"
-    >
+    <section className="relative pb-60 pt-60 overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8">
       {/* GRADIENTE SUPERIOR */}
       <div className="absolute top-0 left-0 right-0 h-100 pointer-events-none z-10 bg-gradient-to-b from-white via-white/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
 
@@ -54,10 +51,7 @@ export function HowItWorks() {
       <div className="absolute bottom-0 left-0 right-0 h-80 pointer-events-none z-5 bg-gradient-to-t from-white/40 via-transparent to-transparent dark:from-black/40 dark:via-transparent dark:to-transparent" />
 
       {/* Background elements com parallax */}
-      <motion.div
-
-        className="absolute inset-0 -z-10"
-      >
+      <motion.div className="absolute inset-0 -z-10">
         <div className="absolute top-1/4 left-1/4 size-96 rounded-full bg-background/20 blur-3xl animate-pulse" />
         <div className="absolute right-1/4 bottom-1/4 size-96 rounded-full bg-accent/20 blur-3xl animate-pulse delay-700" />
       </motion.div>

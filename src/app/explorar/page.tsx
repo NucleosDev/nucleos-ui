@@ -58,7 +58,8 @@ const templatesPopulares = [
   {
     id: "template-1",
     nome: "Estudos para Provas",
-    descricao: "Template completo para organizar estudos para concursos e provas",
+    descricao:
+      "Template completo para organizar estudos para concursos e provas",
     autor: "Ana Silva",
     usos: 234,
     avaliacao: 4.8,
@@ -120,14 +121,14 @@ const templatesPopulares = [
 // Função para gerar XP aleatório
 const gerarXpAleatorio = () => Math.floor(Math.random() * 5000) + 500;
 
-// Tipos válidos para núcleos
+// Tipos válidos para Nucleos
 type NucleoTipo = "pessoal" | "profissional" | "projeto" | "estudo" | "hobby";
 
-// Núcleos públicos tipados corretamente
+// Nucleos públicos tipados corretamente
 const nucleosPublicos: NucleoWithStats[] = [
-  ...mockNucleos.map(n => ({ 
-    ...n, 
-    autor: "Usuário Nucleos", 
+  ...mockNucleos.map((n) => ({
+    ...n,
+    autor: "Usuário Nucleos",
     usos: Math.floor(Math.random() * 100) + 20,
   })),
   {
@@ -246,7 +247,7 @@ export default function ExplorarPage() {
             <div>
               <h1 className="text-2xl font-bold">Explorar</h1>
               <p className="text-sm text-muted-foreground">
-                Descubra núcleos e templates criados pela comunidade
+                Descubra Nucleos e templates criados pela comunidade
               </p>
             </div>
           </div>
@@ -259,7 +260,7 @@ export default function ExplorarPage() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
-              placeholder="Buscar núcleos, templates, autores..."
+              placeholder="Buscar Nucleos, templates, autores..."
               className="pl-9"
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
@@ -280,7 +281,9 @@ export default function ExplorarPage() {
             return (
               <Button
                 key={cat.nome}
-                variant={categoriaSelecionada === cat.nome ? "default" : "outline"}
+                variant={
+                  categoriaSelecionada === cat.nome ? "default" : "outline"
+                }
                 size="sm"
                 className="rounded-full gap-2"
                 onClick={() => setCategoriaSelecionada(cat.nome)}
@@ -330,8 +333,14 @@ export default function ExplorarPage() {
                       <CardContent className="p-5">
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex items-center gap-2">
-                            <div className="size-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${template.cor}20` }}>
-                              <Zap className="size-4" style={{ color: template.cor }} />
+                            <div
+                              className="size-8 rounded-lg flex items-center justify-center"
+                              style={{ backgroundColor: `${template.cor}20` }}
+                            >
+                              <Zap
+                                className="size-4"
+                                style={{ color: template.cor }}
+                              />
                             </div>
                             <h3 className="font-semibold">{template.nome}</h3>
                           </div>
@@ -343,7 +352,9 @@ export default function ExplorarPage() {
                           {template.descricao}
                         </p>
                         <div className="flex items-center justify-between text-xs">
-                          <span className="text-muted-foreground">por {template.autor}</span>
+                          <span className="text-muted-foreground">
+                            por {template.autor}
+                          </span>
                           <div className="flex items-center gap-1">
                             <Star className="size-3 text-[#FFD700] fill-[#FFD700]" />
                             <span>{template.avaliacao}</span>
@@ -351,7 +362,10 @@ export default function ExplorarPage() {
                         </div>
                         <div className="flex flex-wrap gap-1 mt-3">
                           {template.tags.map((tag) => (
-                            <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-muted">
+                            <span
+                              key={tag}
+                              className="text-[10px] px-2 py-0.5 rounded-full bg-muted"
+                            >
                               #{tag}
                             </span>
                           ))}
@@ -366,11 +380,11 @@ export default function ExplorarPage() {
               </div>
             </div>
 
-            {/* Núcleos da Comunidade */}
+            {/* Nucleos da Comunidade */}
             <div>
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                 <Users className="size-5 text-[#4D7CFF]" />
-                Núcleos da comunidade
+                Nucleos da comunidade
               </h2>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {nucleosPublicos.map((nucleo, index) => (
@@ -386,13 +400,13 @@ export default function ExplorarPage() {
 
           <TabsContent value="recentes">
             <div className="text-center py-12 text-muted-foreground">
-              Núcleos recentes aparecerão aqui
+              Nucleos recentes aparecerão aqui
             </div>
           </TabsContent>
 
           <TabsContent value="seguindo">
             <div className="text-center py-12 text-muted-foreground">
-              Núcleos de pessoas que você segue aparecerão aqui
+              Nucleos de pessoas que você segue aparecerão aqui
             </div>
           </TabsContent>
         </Tabs>

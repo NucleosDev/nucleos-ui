@@ -393,11 +393,11 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            {/* Meus Núcleos */}
+            {/* Meus Nucleos */}
             <Card>
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">Meus Núcleos</CardTitle>
+                  <CardTitle className="text-lg">Meus Nucleos</CardTitle>
                   <div className="flex items-center gap-2">
                     <Button variant="outline" size="sm" className="gap-2">
                       <Filter className="size-4" />

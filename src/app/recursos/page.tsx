@@ -52,9 +52,13 @@ const recursosPrincipais = [
     cor: "#4D7CFF",
     recursos: [
       {
-        titulo: "Núcleos Personalizados",
+        titulo: "Nucleos Personalizados",
         descricao: "Crie espaços dedicados para cada área da sua vida",
-        detalhes: ["Ilimitados no plano Pro", "Cores personalizáveis", "Ícones exclusivos"],
+        detalhes: [
+          "Ilimitados no plano Pro",
+          "Cores personalizáveis",
+          "Ícones exclusivos",
+        ],
       },
       {
         titulo: "Blocos Versáteis",
@@ -64,7 +68,7 @@ const recursosPrincipais = [
       {
         titulo: "Hierarquia Flexível",
         descricao: "Organize suas ideias em diferentes níveis",
-        detalhes: ["Sub-núcleos", "Categorias", "Tags", "Filtros avançados"],
+        detalhes: ["Sub-Nucleos", "Categorias", "Tags", "Filtros avançados"],
       },
     ],
   },
@@ -98,7 +102,11 @@ const recursosPrincipais = [
       {
         titulo: "Streaks Diários",
         descricao: "Mantenha a consistência dia após dia",
-        detalhes: ["Contador de dias", "Bônus crescentes", "Alertas de recuperação"],
+        detalhes: [
+          "Contador de dias",
+          "Bônus crescentes",
+          "Alertas de recuperação",
+        ],
       },
       {
         titulo: "Estatísticas Detalhadas",
@@ -137,18 +145,58 @@ const recursosPrincipais = [
 ];
 
 const tiposDeNucleo = [
-  { nome: "Estudos", icon: BookOpen, cor: "#4D7CFF", exemplos: ["Matérias", "Idiomas", "Cursos"] },
-  { nome: "Saúde", icon: Heart, cor: "#FF8C42", exemplos: ["Exercícios", "Alimentação", "Meditação"] },
-  { nome: "Finanças", icon: Wallet, cor: "#00C9A7", exemplos: ["Orçamento", "Investimentos", "Gastos"] },
-  { nome: "Trabalho", icon: Briefcase, cor: "#2EBD59", exemplos: ["Projetos", "Tarefas", "Reuniões"] },
-  { nome: "Pessoal", icon: Home, cor: "#0077BE", exemplos: ["Metas", "Hábitos", "Rotina"] },
-  { nome: "Criativo", icon: Palette, cor: "#8CD47E", exemplos: ["Arte", "Música", "Escrita"] },
-  { nome: "Tecnologia", icon: Code, cor: "#4D7CFF", exemplos: ["Programação", "Estudos tech", "Projetos"] },
-  { nome: "Social", icon: Users, cor: "#00C9A7", exemplos: ["Relacionamentos", "Eventos", "Networking"] },
+  {
+    nome: "Estudos",
+    icon: BookOpen,
+    cor: "#4D7CFF",
+    exemplos: ["Matérias", "Idiomas", "Cursos"],
+  },
+  {
+    nome: "Saúde",
+    icon: Heart,
+    cor: "#FF8C42",
+    exemplos: ["Exercícios", "Alimentação", "Meditação"],
+  },
+  {
+    nome: "Finanças",
+    icon: Wallet,
+    cor: "#00C9A7",
+    exemplos: ["Orçamento", "Investimentos", "Gastos"],
+  },
+  {
+    nome: "Trabalho",
+    icon: Briefcase,
+    cor: "#2EBD59",
+    exemplos: ["Projetos", "Tarefas", "Reuniões"],
+  },
+  {
+    nome: "Pessoal",
+    icon: Home,
+    cor: "#0077BE",
+    exemplos: ["Metas", "Hábitos", "Rotina"],
+  },
+  {
+    nome: "Criativo",
+    icon: Palette,
+    cor: "#8CD47E",
+    exemplos: ["Arte", "Música", "Escrita"],
+  },
+  {
+    nome: "Tecnologia",
+    icon: Code,
+    cor: "#4D7CFF",
+    exemplos: ["Programação", "Estudos tech", "Projetos"],
+  },
+  {
+    nome: "Social",
+    icon: Users,
+    cor: "#00C9A7",
+    exemplos: ["Relacionamentos", "Eventos", "Networking"],
+  },
 ];
 
 const comparativo = [
-  { recurso: "Núcleos", gratis: "3", pro: "Ilimitados" },
+  { recurso: "Nucleos", gratis: "3", pro: "Ilimitados" },
   { recurso: "Hábitos por núcleo", gratis: "10", pro: "Ilimitados" },
   { recurso: "Blocos de texto", gratis: "✓", pro: "✓" },
   { recurso: "Blocos de coleção", gratis: "✓", pro: "✓" },
@@ -173,14 +221,24 @@ export default function RecursosPage() {
         </div>
 
         <div className="mx-auto max-w-5xl text-center relative z-20">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <Badge variant="outline" className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 text-[#4D7CFF] mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <Badge
+              variant="outline"
+              className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 text-[#4D7CFF] mb-6"
+            >
               <Sparkles className="size-4" />
               <span>Tudo que você precisa</span>
             </Badge>
           </motion.div>
 
-          <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
             className="text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl"
           >
             Recursos{" "}
@@ -189,10 +247,14 @@ export default function RecursosPage() {
             </span>
           </motion.h1>
 
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
             className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground"
           >
-            Descubra todas as ferramentas que o Nucleos oferece para transformar sua produtividade e evolução pessoal.
+            Descubra todas as ferramentas que o Nucleos oferece para transformar
+            sua produtividade e evolução pessoal.
           </motion.p>
         </div>
       </section>
@@ -200,7 +262,9 @@ export default function RecursosPage() {
       {/* Tipos de Núcleo */}
       <section className="px-4 py-16 bg-muted/30 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
-          <h2 className="text-3xl font-bold text-center mb-12">Tipos de Núcleo</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">
+            Tipos de Núcleo
+          </h2>
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
             {tiposDeNucleo.map((tipo, index) => (
               <motion.div
@@ -213,13 +277,22 @@ export default function RecursosPage() {
               >
                 <Card className="h-full border-border/50 hover:border-[#4D7CFF]/30 transition-all hover:shadow-lg">
                   <CardContent className="p-6">
-                    <div className="mb-4 flex size-12 items-center justify-center rounded-xl" style={{ backgroundColor: `${tipo.cor}15` }}>
-                      <tipo.icon className="size-6" style={{ color: tipo.cor }} />
+                    <div
+                      className="mb-4 flex size-12 items-center justify-center rounded-xl"
+                      style={{ backgroundColor: `${tipo.cor}15` }}
+                    >
+                      <tipo.icon
+                        className="size-6"
+                        style={{ color: tipo.cor }}
+                      />
                     </div>
                     <h3 className="mb-2 font-semibold">{tipo.nome}</h3>
                     <ul className="space-y-1">
                       {tipo.exemplos.map((exemplo) => (
-                        <li key={exemplo} className="text-xs text-muted-foreground flex items-center gap-1">
+                        <li
+                          key={exemplo}
+                          className="text-xs text-muted-foreground flex items-center gap-1"
+                        >
                           <Check className="size-3 text-[#00C9A7]" />
                           {exemplo}
                         </li>
@@ -239,7 +312,11 @@ export default function RecursosPage() {
           <Tabs defaultValue="Organização" className="w-full">
             <TabsList className="grid w-full grid-cols-4 mb-8">
               {recursosPrincipais.map((cat) => (
-                <TabsTrigger key={cat.categoria} value={cat.categoria} className="gap-2">
+                <TabsTrigger
+                  key={cat.categoria}
+                  value={cat.categoria}
+                  className="gap-2"
+                >
                   <cat.icon className="size-4" />
                   <span className="hidden sm:inline">{cat.categoria}</span>
                 </TabsTrigger>
@@ -256,14 +333,27 @@ export default function RecursosPage() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: idx * 0.1 }}
                     >
-                      <Card className="h-full border-l-4" style={{ borderLeftColor: cat.cor }}>
+                      <Card
+                        className="h-full border-l-4"
+                        style={{ borderLeftColor: cat.cor }}
+                      >
                         <CardContent className="p-6">
-                          <h3 className="text-lg font-semibold mb-2">{recurso.titulo}</h3>
-                          <p className="text-sm text-muted-foreground mb-4">{recurso.descricao}</p>
+                          <h3 className="text-lg font-semibold mb-2">
+                            {recurso.titulo}
+                          </h3>
+                          <p className="text-sm text-muted-foreground mb-4">
+                            {recurso.descricao}
+                          </p>
                           <ul className="space-y-2">
                             {recurso.detalhes.map((det) => (
-                              <li key={det} className="text-xs flex items-center gap-2">
-                                <Check className="size-3" style={{ color: cat.cor }} />
+                              <li
+                                key={det}
+                                className="text-xs flex items-center gap-2"
+                              >
+                                <Check
+                                  className="size-3"
+                                  style={{ color: cat.cor }}
+                                />
                                 {det}
                               </li>
                             ))}
@@ -282,22 +372,42 @@ export default function RecursosPage() {
       {/* Comparativo Planos */}
       <section className="px-4 py-16 bg-muted/30 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl">
-          <h2 className="text-3xl font-bold text-center mb-4">Comparativo de Planos</h2>
-          <p className="text-center text-muted-foreground mb-12">Veja o que você ganha em cada plano</p>
+          <h2 className="text-3xl font-bold text-center mb-4">
+            Comparativo de Planos
+          </h2>
+          <p className="text-center text-muted-foreground mb-12">
+            Veja o que você ganha em cada plano
+          </p>
 
           <Card>
             <CardContent className="p-6">
               <div className="space-y-4">
                 {comparativo.map((item) => (
-                  <div key={item.recurso} className="flex items-center justify-between py-2 border-b last:border-0">
+                  <div
+                    key={item.recurso}
+                    className="flex items-center justify-between py-2 border-b last:border-0"
+                  >
                     <span className="font-medium">{item.recurso}</span>
                     <div className="flex items-center gap-8">
-                      <span className={`text-sm w-16 text-center ${item.gratis === "✓" ? "text-[#00C9A7]" : item.gratis === "✗" ? "text-muted-foreground" : ""}`}>
-                        {item.gratis === "✓" ? <Check className="size-4 mx-auto text-[#00C9A7]" /> : 
-                         item.gratis === "✗" ? "—" : item.gratis}
+                      <span
+                        className={`text-sm w-16 text-center ${item.gratis === "✓" ? "text-[#00C9A7]" : item.gratis === "✗" ? "text-muted-foreground" : ""}`}
+                      >
+                        {item.gratis === "✓" ? (
+                          <Check className="size-4 mx-auto text-[#00C9A7]" />
+                        ) : item.gratis === "✗" ? (
+                          "—"
+                        ) : (
+                          item.gratis
+                        )}
                       </span>
-                      <span className={`text-sm w-16 text-center font-medium ${item.pro === "✓" ? "text-[#4D7CFF]" : ""}`}>
-                        {item.pro === "✓" ? <Check className="size-4 mx-auto text-[#4D7CFF]" /> : item.pro}
+                      <span
+                        className={`text-sm w-16 text-center font-medium ${item.pro === "✓" ? "text-[#4D7CFF]" : ""}`}
+                      >
+                        {item.pro === "✓" ? (
+                          <Check className="size-4 mx-auto text-[#4D7CFF]" />
+                        ) : (
+                          item.pro
+                        )}
                       </span>
                     </div>
                   </div>
@@ -307,7 +417,10 @@ export default function RecursosPage() {
           </Card>
 
           <div className="mt-8 text-center">
-            <Button size="lg" className="group bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7]">
+            <Button
+              size="lg"
+              className="group bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7]"
+            >
               <Link href="/planos" className="flex items-center gap-2">
                 Ver todos os planos
                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
@@ -322,10 +435,14 @@ export default function RecursosPage() {
         <div className="mx-auto max-w-3xl">
           <h2 className="text-3xl font-bold mb-4">Pronto para começar?</h2>
           <p className="text-muted-foreground mb-8">
-            Experimente gratuitamente e descubra como o Nucleos pode transformar sua produtividade.
+            Experimente gratuitamente e descubra como o Nucleos pode transformar
+            sua produtividade.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Button size="lg" className="group bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7]">
+            <Button
+              size="lg"
+              className="group bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7]"
+            >
               <Link href="/cadastro" className="flex items-center gap-2">
                 Começar grátis
                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />

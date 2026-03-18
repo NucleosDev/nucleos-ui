@@ -26,7 +26,8 @@ const posts = [
   {
     id: 1,
     titulo: "Como criar hábitos duradouros com gamificação",
-    excerpt: "Descubra como o sistema de XP e níveis pode transformar sua rotina e criar hábitos que duram.",
+    excerpt:
+      "Descubra como o sistema de XP e níveis pode transformar sua rotina e criar hábitos que duram.",
     autor: "Ana Silva",
     autorAvatar: "/placeholder-user.jpg",
     data: "15 Mar 2024",
@@ -39,7 +40,8 @@ const posts = [
   {
     id: 2,
     titulo: "O poder dos streaks: por que consistência importa",
-    excerpt: "Entenda a psicologia por trás dos streaks e como eles podem te ajudar a manter o foco.",
+    excerpt:
+      "Entenda a psicologia por trás dos streaks e como eles podem te ajudar a manter o foco.",
     autor: "Carlos Santos",
     autorAvatar: "/placeholder-user.jpg",
     data: "10 Mar 2024",
@@ -51,8 +53,9 @@ const posts = [
   },
   {
     id: 3,
-    titulo: "Organizando suas finanças com núcleos",
-    excerpt: "Aprenda a usar o Nucleos para controlar gastos, definir metas financeiras e investir melhor.",
+    titulo: "Organizando suas finanças com Nucleos",
+    excerpt:
+      "Aprenda a usar o Nucleos para controlar gastos, definir metas financeiras e investir melhor.",
     autor: "Mariana Costa",
     autorAvatar: "/placeholder-user.jpg",
     data: "5 Mar 2024",
@@ -65,7 +68,8 @@ const posts = [
   {
     id: 4,
     titulo: "Técnica Pomodoro: maximize seu foco",
-    excerpt: "Como usar o timer do Nucleos para aplicar a técnica Pomodoro e aumentar sua produtividade.",
+    excerpt:
+      "Como usar o timer do Nucleos para aplicar a técnica Pomodoro e aumentar sua produtividade.",
     autor: "Pedro Oliveira",
     autorAvatar: "/placeholder-user.jpg",
     data: "28 Fev 2024",
@@ -78,7 +82,8 @@ const posts = [
   {
     id: 5,
     titulo: "Equilibrando vida profissional e pessoal",
-    excerpt: "Use núcleos separados para trabalho e vida pessoal e encontre o equilíbrio ideal.",
+    excerpt:
+      "Use Nucleos separados para trabalho e vida pessoal e encontre o equilíbrio ideal.",
     autor: "Juliana Lima",
     autorAvatar: "/placeholder-user.jpg",
     data: "20 Fev 2024",
@@ -91,7 +96,8 @@ const posts = [
   {
     id: 6,
     titulo: "A ciência por trás da gamificação",
-    excerpt: "Entenda como a gamificação ativa os circuitos de recompensa do cérebro e aumenta a motivação.",
+    excerpt:
+      "Entenda como a gamificação ativa os circuitos de recompensa do cérebro e aumenta a motivação.",
     autor: "Dr. Roberto Mendes",
     autorAvatar: "/placeholder-user.jpg",
     data: "12 Fev 2024",
@@ -124,14 +130,24 @@ export default function BlogPage() {
         </div>
 
         <div className="mx-auto max-w-5xl text-center relative z-20">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <Badge variant="outline" className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 text-[#4D7CFF] mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <Badge
+              variant="outline"
+              className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 text-[#4D7CFF] mb-6"
+            >
               <Sparkles className="size-4" />
               <span>Blog</span>
             </Badge>
           </motion.div>
 
-          <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
             className="text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl"
           >
             Histórias de{" "}
@@ -140,13 +156,20 @@ export default function BlogPage() {
             </span>
           </motion.h1>
 
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
             className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground"
           >
-            Dicas, histórias e insights sobre produtividade, hábitos e desenvolvimento pessoal.
+            Dicas, histórias e insights sobre produtividade, hábitos e
+            desenvolvimento pessoal.
           </motion.p>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
             className="mt-8 max-w-md mx-auto"
           >
             <div className="relative">
@@ -192,11 +215,19 @@ export default function BlogPage() {
                     <div className="relative h-48 overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10" />
                       <div className="absolute bottom-4 left-4 z-20">
-                        <Badge style={{ backgroundColor: post.cor }} className="text-white border-0">
+                        <Badge
+                          style={{ backgroundColor: post.cor }}
+                          className="text-white border-0"
+                        >
                           {post.categoria}
                         </Badge>
                       </div>
-                      <div className="w-full h-full bg-gradient-to-br" style={{ background: `linear-gradient(135deg, ${post.cor}40 0%, ${post.cor}10 100%)` }} />
+                      <div
+                        className="w-full h-full bg-gradient-to-br"
+                        style={{
+                          background: `linear-gradient(135deg, ${post.cor}40 0%, ${post.cor}10 100%)`,
+                        }}
+                      />
                     </div>
                     <CardContent className="p-6">
                       <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
@@ -220,9 +251,16 @@ export default function BlogPage() {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <div className="size-6 rounded-full bg-muted overflow-hidden">
-                            <Image src={post.autorAvatar} alt={post.autor} width={24} height={24} />
+                            <Image
+                              src={post.autorAvatar}
+                              alt={post.autor}
+                              width={24}
+                              height={24}
+                            />
                           </div>
-                          <span className="text-xs font-medium">{post.autor}</span>
+                          <span className="text-xs font-medium">
+                            {post.autor}
+                          </span>
                         </div>
                         <span className="text-xs text-[#4D7CFF] group-hover:translate-x-1 transition-transform">
                           Ler mais →
@@ -231,7 +269,10 @@ export default function BlogPage() {
 
                       <div className="flex flex-wrap gap-1 mt-4">
                         {post.tags.map((tag) => (
-                          <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                          <span
+                            key={tag}
+                            className="text-[10px] px-2 py-0.5 rounded-full bg-muted text-muted-foreground"
+                          >
                             #{tag}
                           </span>
                         ))}
@@ -257,7 +298,8 @@ export default function BlogPage() {
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-3xl font-bold mb-4">Receba novidades</h2>
           <p className="text-muted-foreground mb-8">
-            Inscreva-se para receber dicas de produtividade e novidades do Nucleos.
+            Inscreva-se para receber dicas de produtividade e novidades do
+            Nucleos.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <Input placeholder="Seu melhor email" type="email" />

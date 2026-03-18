@@ -21,7 +21,7 @@ const plans = [
     description: "Comece sua jornada hoje.",
     price: "R$ 0",
     period: "/mês",
-    features: ["3 Núcleos", "XP e níveis", "Streaks", "Conquistas básicas"],
+    features: ["3 Nucleos", "XP e níveis", "Streaks", "Conquistas básicas"],
     cta: "Começar agora",
     icon: Sparkles,
     color: "#4D7CFF",
@@ -33,7 +33,7 @@ const plans = [
     price: "R$ 29,90",
     period: "/mês",
     features: [
-      "Núcleos ilimitados",
+      "Nucleos ilimitados",
       "Hábitos ilimitados",
       "Analytics avançado",
       "Conquistas exclusivas",

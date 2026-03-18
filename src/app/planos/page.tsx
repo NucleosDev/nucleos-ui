@@ -2,7 +2,14 @@
 "use client";
 
 import { PricingSection } from "@/components/nucleo/pricing-section";
-import { ArrowLeft, Sparkles, HelpCircle, Check, Star, Zap } from "lucide-react";
+import {
+  ArrowLeft,
+  Sparkles,
+  HelpCircle,
+  Check,
+  Star,
+  Zap,
+} from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +26,7 @@ export const TIERS = [
     },
     description: "Para começar sua jornada",
     features: [
-      "3 Núcleos",
+      "Até 5 Nucleos",
       "10 hábitos por núcleo",
       "Sistema de XP e níveis",
       "Streaks diários",
@@ -34,12 +41,12 @@ export const TIERS = [
     id: "pro",
     name: "Pro",
     price: {
-      mensal: 29.90,
+      mensal: 29.9,
       anual: 287, // 20% de desconto
     },
     description: "Para quem quer evoluir mais rápido",
     features: [
-      "Núcleos ilimitados",
+      "Nucleos ilimitados",
       "Hábitos ilimitados",
       "Analytics avançado",
       "Conquistas exclusivas",
@@ -85,7 +92,7 @@ export const TIERS = [
     description: "Para times e organizações",
     features: [
       "Até 10 membros",
-      "Núcleos compartilhados",
+      "Nucleos compartilhados",
       "Desafios em equipe",
       "Rankings",
       "Dashboard administrativo",
@@ -102,8 +109,6 @@ export const TIERS = [
 export default function PlanosPage() {
   return (
     <div className="min-h-screen bg-gradient-to-r from-[#4D7CFF]/5 via-transparent to-[#00C9A7]/5">
-      
-
       {/* Pricing Section */}
       <div className="container mx-auto px-4 py-12">
         <PricingSection
@@ -123,7 +128,8 @@ export default function PlanosPage() {
               <h3 className="font-semibold">Garantia de 30 dias</h3>
             </div>
             <p className="text-sm text-muted-foreground">
-              Teste qualquer plano premium por 30 dias. Se não gostar, devolvemos 100% do seu dinheiro.
+              Teste qualquer plano premium por 30 dias. Se não gostar,
+              devolvemos 100% do seu dinheiro.
             </p>
           </div>
 
@@ -135,7 +141,8 @@ export default function PlanosPage() {
               <h3 className="font-semibold">Cancele quando quiser</h3>
             </div>
             <p className="text-sm text-muted-foreground">
-              Sem multas, sem burocracia. Você pode cancelar sua assinatura a qualquer momento.
+              Sem multas, sem burocracia. Você pode cancelar sua assinatura a
+              qualquer momento.
             </p>
           </div>
 
@@ -147,7 +154,8 @@ export default function PlanosPage() {
               <h3 className="font-semibold">Suporte incluso</h3>
             </div>
             <p className="text-sm text-muted-foreground">
-              Todos os planos incluem suporte por email. Planos premium têm suporte prioritário.
+              Todos os planos incluem suporte por email. Planos premium têm
+              suporte prioritário.
             </p>
           </div>
         </div>
@@ -167,15 +175,24 @@ export default function PlanosPage() {
 
         {/* Selos de confiança */}
         <div className="mt-12 flex flex-wrap justify-center gap-4">
-          <Badge variant="outline" className="gap-2 border-[#4D7CFF]/30 text-[#4D7CFF]">
+          <Badge
+            variant="outline"
+            className="gap-2 border-[#4D7CFF]/30 text-[#4D7CFF]"
+          >
             <Check className="size-3" />
             Pagamento seguro
           </Badge>
-          <Badge variant="outline" className="gap-2 border-[#00C9A7]/30 text-[#00C9A7]">
+          <Badge
+            variant="outline"
+            className="gap-2 border-[#00C9A7]/30 text-[#00C9A7]"
+          >
             <Check className="size-3" />
             Sem fidelidade
           </Badge>
-          <Badge variant="outline" className="gap-2 border-[#FFD700]/30 text-[#FFD700]">
+          <Badge
+            variant="outline"
+            className="gap-2 border-[#FFD700]/30 text-[#FFD700]"
+          >
             <Check className="size-3" />
             Atualizações gratuitas
           </Badge>

@@ -23,47 +23,56 @@ import { Card, CardContent } from "@/components/ui/card";
 const secoes = [
   {
     titulo: "1. Informações que coletamos",
-    conteudo: "Coletamos informações que você nos fornece diretamente, como nome, email, dados de perfil e conteúdo que você cria nos núcleos. Também coletamos automaticamente informações sobre seu uso da plataforma, como endereço IP, tipo de dispositivo e interações.",
+    conteudo:
+      "Coletamos informações que você nos fornece diretamente, como nome, email, dados de perfil e conteúdo que você cria nos Nucleos. Também coletamos automaticamente informações sobre seu uso da plataforma, como endereço IP, tipo de dispositivo e interações.",
     icon: Database,
   },
   {
     titulo: "2. Como usamos suas informações",
-    conteudo: "Utilizamos suas informações para fornecer, manter e melhorar nossos serviços, personalizar sua experiência, processar transações, enviar comunicações e garantir a segurança da plataforma.",
+    conteudo:
+      "Utilizamos suas informações para fornecer, manter e melhorar nossos serviços, personalizar sua experiência, processar transações, enviar comunicações e garantir a segurança da plataforma.",
     icon: Eye,
   },
   {
     titulo: "3. Compartilhamento de dados",
-    conteudo: "Não vendemos seus dados pessoais. Compartilhamos apenas com seu consentimento, para fins legais, ou com prestadores de serviços que nos auxiliam na operação da plataforma sob estritas obrigações de confidencialidade.",
+    conteudo:
+      "Não vendemos seus dados pessoais. Compartilhamos apenas com seu consentimento, para fins legais, ou com prestadores de serviços que nos auxiliam na operação da plataforma sob estritas obrigações de confidencialidade.",
     icon: Globe,
   },
   {
     titulo: "4. Armazenamento e segurança",
-    conteudo: "Seus dados são armazenados em servidores seguros com criptografia. Implementamos medidas técnicas e organizacionais para proteger suas informações contra acesso não autorizado, perda ou destruição.",
+    conteudo:
+      "Seus dados são armazenados em servidores seguros com criptografia. Implementamos medidas técnicas e organizacionais para proteger suas informações contra acesso não autorizado, perda ou destruição.",
     icon: Lock,
   },
   {
     titulo: "5. Seus direitos",
-    conteudo: "Você tem direito a acessar, corrigir ou excluir seus dados pessoais. Pode exportar seus dados a qualquer momento nas configurações da conta. Para solicitações, entre em contato com privacy@nucleos.com",
+    conteudo:
+      "Você tem direito a acessar, corrigir ou excluir seus dados pessoais. Pode exportar seus dados a qualquer momento nas configurações da conta. Para solicitações, entre em contato com privacy@nucleos.com",
     icon: Shield,
   },
   {
     titulo: "6. Cookies e tecnologias similares",
-    conteudo: "Utilizamos cookies para melhorar sua experiência, analisar tráfego e personalizar conteúdo. Você pode gerenciar preferências de cookies nas configurações do seu navegador.",
+    conteudo:
+      "Utilizamos cookies para melhorar sua experiência, analisar tráfego e personalizar conteúdo. Você pode gerenciar preferências de cookies nas configurações do seu navegador.",
     icon: Cookie,
   },
   {
     titulo: "7. Transferência internacional",
-    conteudo: "Seus dados podem ser transferidos e processados em países diferentes do seu. Garantimos que todas as transferências cumprem as leis de proteção de dados aplicáveis.",
+    conteudo:
+      "Seus dados podem ser transferidos e processados em países diferentes do seu. Garantimos que todas as transferências cumprem as leis de proteção de dados aplicáveis.",
     icon: Globe,
   },
   {
     titulo: "8. Retenção de dados",
-    conteudo: "Mantemos seus dados enquanto sua conta estiver ativa. Após o encerramento, podemos reter algumas informações por período limitado para cumprir obrigações legais.",
+    conteudo:
+      "Mantemos seus dados enquanto sua conta estiver ativa. Após o encerramento, podemos reter algumas informações por período limitado para cumprir obrigações legais.",
     icon: Database,
   },
   {
     titulo: "9. Alterações nesta política",
-    conteudo: "Podemos atualizar esta política periodicamente. Notificaremos sobre alterações significativas por email ou através da plataforma. O uso continuado após alterações constitui aceitação.",
+    conteudo:
+      "Podemos atualizar esta política periodicamente. Notificaremos sobre alterações significativas por email ou através da plataforma. O uso continuado após alterações constitui aceitação.",
     icon: FileText,
   },
 ];
@@ -99,13 +108,20 @@ export default function PrivacidadePage() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-12 text-center"
           >
-            <Badge variant="outline" className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 text-[#4D7CFF] mb-4">
+            <Badge
+              variant="outline"
+              className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 text-[#4D7CFF] mb-4"
+            >
               <Shield className="size-4" />
               <span>Protegendo seus dados</span>
             </Badge>
-            <h2 className="text-3xl font-bold mb-4">Sua privacidade é importante</h2>
+            <h2 className="text-3xl font-bold mb-4">
+              Sua privacidade é importante
+            </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              No Nucleos, levamos a sério a proteção dos seus dados. Esta política explica como coletamos, usamos e protegemos suas informações.
+              No Nucleos, levamos a sério a proteção dos seus dados. Esta
+              política explica como coletamos, usamos e protegemos suas
+              informações.
             </p>
           </motion.div>
 
@@ -120,21 +136,27 @@ export default function PrivacidadePage() {
               <CardContent className="p-4 text-center">
                 <Check className="size-8 mx-auto mb-2 text-green-500" />
                 <h3 className="font-semibold text-sm">Não vendemos dados</h3>
-                <p className="text-xs text-muted-foreground mt-1">Seus dados são seus</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Seus dados são seus
+                </p>
               </CardContent>
             </Card>
             <Card className="border-blue-500/20 bg-blue-500/5">
               <CardContent className="p-4 text-center">
                 <Lock className="size-8 mx-auto mb-2 text-blue-500" />
                 <h3 className="font-semibold text-sm">Criptografia</h3>
-                <p className="text-xs text-muted-foreground mt-1">Dados protegidos</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Dados protegidos
+                </p>
               </CardContent>
             </Card>
             <Card className="border-purple-500/20 bg-purple-500/5">
               <CardContent className="p-4 text-center">
                 <Eye className="size-8 mx-auto mb-2 text-purple-500" />
                 <h3 className="font-semibold text-sm">Você controla</h3>
-                <p className="text-xs text-muted-foreground mt-1">Acesse e exporte quando quiser</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Acesse e exporte quando quiser
+                </p>
               </CardContent>
             </Card>
           </motion.div>
@@ -157,8 +179,12 @@ export default function PrivacidadePage() {
                           <Icon className="size-5 text-[#4D7CFF]" />
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold mb-2">{secao.titulo}</h3>
-                          <p className="text-muted-foreground leading-relaxed">{secao.conteudo}</p>
+                          <h3 className="text-lg font-semibold mb-2">
+                            {secao.titulo}
+                          </h3>
+                          <p className="text-muted-foreground leading-relaxed">
+                            {secao.conteudo}
+                          </p>
                         </div>
                       </div>
                     </CardContent>
@@ -178,7 +204,8 @@ export default function PrivacidadePage() {
             <div className="text-center">
               <h3 className="text-xl font-semibold mb-2">Fale com nosso DPO</h3>
               <p className="text-muted-foreground mb-4">
-                Se tiver dúvidas sobre como tratamos seus dados, entre em contato com nosso Encarregado de Proteção de Dados.
+                Se tiver dúvidas sobre como tratamos seus dados, entre em
+                contato com nosso Encarregado de Proteção de Dados.
               </p>
               <div className="flex flex-col items-center gap-2">
                 <div className="flex items-center gap-2 text-sm">

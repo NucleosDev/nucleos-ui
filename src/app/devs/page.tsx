@@ -181,7 +181,7 @@ export default function DemoNucleosPage() {
           <TabsList className="grid w-full grid-cols-5 lg:w-auto">
             <TabsTrigger value="nucleos" className="gap-2">
               <Layers className="size-4" />
-              <span className="hidden sm:inline">Núcleos</span>
+              <span className="hidden sm:inline">Nucleos</span>
             </TabsTrigger>
             <TabsTrigger value="cards" className="gap-2">
               <LayoutGrid className="size-4" />
@@ -201,13 +201,13 @@ export default function DemoNucleosPage() {
             </TabsTrigger>
           </TabsList>
 
-          {/* ===== ABA 1: NÚCLEOS (Demo principal) ===== */}
+          {/* ===== ABA 1: Nucleos (Demo principal) ===== */}
           <TabsContent value="nucleos" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>📦 Demonstração de Núcleos</CardTitle>
+                <CardTitle>📦 Demonstração de Nucleos</CardTitle>
                 <CardDescription>
-                  Navegação completa entre lista e detalhe de núcleos com blocos
+                  Navegação completa entre lista e detalhe de Nucleos com blocos
                 </CardDescription>
               </CardHeader>
               <CardContent>

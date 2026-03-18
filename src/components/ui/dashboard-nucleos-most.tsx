@@ -43,7 +43,6 @@ export default function NucleosMost() {
   }, []);
 
   return (
-    
     <div className="p-6 overflow-hidden rounded-xl">
       <div className="relative w-full">
         <div
@@ -64,7 +63,7 @@ export default function NucleosMost() {
         <div className="pt-4 pb-10 sm:pt-6 sm:pb-12 text-center">
           <div className="relative max-w-2xl mx-auto">
             <h1 className="text-3xl sm:text-5xl md:text-6xl text-gray-800 dark:text-gray-200 font-bold tracking-tight">
-              Nucleos: Organize sua vida como nunca antes
+              Organize-se como nunca antes
             </h1>
             <p className="mt-4 text-lg text-gray-500 dark:text-gray-400">
               Crie espaços dedicados para cada área da sua vida, acompanhe seu

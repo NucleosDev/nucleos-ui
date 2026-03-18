@@ -32,7 +32,7 @@ import { mockNucleos } from "@/components/nucleo/mocks/nucleo-card.mock";
 const features = [
   {
     icon: Layers,
-    title: "Núcleos Personalizados",
+    title: "Nucleos Personalizados",
     description:
       "Crie espaços dedicados para cada área da sua vida: estudos, saúde, finanças, projetos e muito mais.",
     color: "#4D7CFF",
@@ -55,7 +55,7 @@ const features = [
     icon: Calendar,
     title: "Calendário Integrado",
     description:
-      "Visualize seus eventos e prazos em um calendário completo, sincronizado com seus núcleos.",
+      "Visualize seus eventos e prazos em um calendário completo, sincronizado com seus Nucleos.",
     color: "#2EBD59",
   },
   {
@@ -175,7 +175,7 @@ export default function ProdutoPage() {
           </motion.div>
         </div>
 
-        {/* Preview dos núcleos */}
+        {/* Preview dos Nucleos */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -190,7 +190,7 @@ export default function ProdutoPage() {
               <div className="size-3 rounded-full bg-chart-3/60" />
               <div className="size-3 rounded-full bg-accent/60" />
               <span className="ml-2 text-xs text-muted-foreground">
-                Seus Núcleos • visão geral
+                Seus Nucleos • visão geral
               </span>
             </div>
             <CardContent className="p-6">

@@ -16,7 +16,7 @@ const etapas = [
     icon: UserPlus,
     titulo: "Dia 1 - Começo",
     descricao:
-      "Crie sua conta e configure seus primeiros núcleos de acordo com seus objetivos.",
+      "Crie sua conta e configure seus primeiros Nucleos de acordo com seus objetivos.",
     nivel: "Nível 1",
     cor: "#4D7CFF", // chart-1
     xp: "0 XP",

@@ -58,7 +58,7 @@ const categorias = [
   },
   {
     id: "nucleos",
-    nome: "Núcleos",
+    nome: "Nucleos",
     icon: BookOpen,
     cor: "#FFD700",
     count: 12,
@@ -84,7 +84,8 @@ const duvidas = [
     id: 1,
     categoria: "geral",
     pergunta: "O que é o Nucleos?",
-    resposta: "Nucleos é uma plataforma de produtividade personalizada com gamificação. Você cria espaços (núcleos) para diferentes áreas da sua vida, adiciona tarefas e hábitos, e ganha XP e níveis conforme evolui.",
+    resposta:
+      "Nucleos é uma plataforma de produtividade personalizada com gamificação. Você cria espaços (Nucleos) para diferentes áreas da sua vida, adiciona tarefas e hábitos, e ganha XP e níveis conforme evolui.",
     util: 45,
     links: [
       { texto: "Conheça o produto", url: "/produto" },
@@ -95,14 +96,16 @@ const duvidas = [
     id: 2,
     categoria: "geral",
     pergunta: "Como começar a usar o Nucleos?",
-    resposta: "É simples! Crie uma conta gratuita, defina seus primeiros núcleos (estudos, saúde, trabalho, etc.) e comece a adicionar tarefas. O sistema vai guiando você nos primeiros passos.",
+    resposta:
+      "É simples! Crie uma conta gratuita, defina seus primeiros Nucleos (estudos, saúde, trabalho, etc.) e comece a adicionar tarefas. O sistema vai guiando você nos primeiros passos.",
     util: 38,
   },
   {
     id: 3,
     categoria: "contas",
     pergunta: "Qual a diferença entre os planos?",
-    resposta: "O plano Gratuito inclui 3 núcleos e funcionalidades básicas. O plano Pro oferece núcleos ilimitados, estatísticas avançadas, temas personalizados e suporte prioritário. Veja a página de planos para detalhes completos.",
+    resposta:
+      "O plano Gratuito inclui 3 Nucleos e funcionalidades básicas. O plano Pro oferece Nucleos ilimitados, estatísticas avançadas, temas personalizados e suporte prioritário. Veja a página de planos para detalhes completos.",
     util: 52,
     links: [{ texto: "Comparar planos", url: "/planos" }],
   },
@@ -110,56 +113,64 @@ const duvidas = [
     id: 4,
     categoria: "contas",
     pergunta: "Como cancelar minha assinatura?",
-    resposta: "Você pode cancelar a qualquer momento nas Configurações da sua conta, seção 'Assinatura'. O cancelamento é imediato e sem multa. Seu acesso continua até o fim do período já pago.",
+    resposta:
+      "Você pode cancelar a qualquer momento nas Configurações da sua conta, seção 'Assinatura'. O cancelamento é imediato e sem multa. Seu acesso continua até o fim do período já pago.",
     util: 27,
   },
   {
     id: 5,
     categoria: "nucleos",
-    pergunta: "O que são núcleos?",
-    resposta: "Núcleos são espaços dedicados que você cria para organizar diferentes áreas da sua vida. Cada núcleo tem seu próprio conjunto de blocos, tarefas e progresso. Exemplos: Estudos, Fitness, Finanças, Trabalho.",
+    pergunta: "O que são Nucleos?",
+    resposta:
+      "Nucleos são espaços dedicados que você cria para organizar diferentes áreas da sua vida. Cada núcleo tem seu próprio conjunto de blocos, tarefas e progresso. Exemplos: Estudos, Fitness, Finanças, Trabalho.",
     util: 63,
   },
   {
     id: 6,
     categoria: "nucleos",
-    pergunta: "Quantos núcleos posso criar?",
-    resposta: "No plano Gratuito, você pode criar até 3 núcleos. No plano Pro, o número de núcleos é ilimitado.",
+    pergunta: "Quantos Nucleos posso criar?",
+    resposta:
+      "No plano Gratuito, você pode criar até 3 Nucleos. No plano Pro, o número de Nucleos é ilimitado.",
     util: 41,
   },
   {
     id: 7,
     categoria: "nucleos",
-    pergunta: "Posso compartilhar núcleos com outras pessoas?",
-    resposta: "Atualmente, núcleos são pessoais. Estamos desenvolvendo funcionalidades de compartilhamento e colaboração para equipes, previstas para o segundo semestre.",
+    pergunta: "Posso compartilhar Nucleos com outras pessoas?",
+    resposta:
+      "Atualmente, Nucleos são pessoais. Estamos desenvolvendo funcionalidades de compartilhamento e colaboração para equipes, previstas para o segundo semestre.",
     util: 19,
   },
   {
     id: 8,
     categoria: "gamificacao",
     pergunta: "Como funciona o sistema de XP?",
-    resposta: "Você ganha XP ao completar tarefas, manter streaks e desbloquear conquistas. Cada tarefa tem um valor de XP que você define. Quanto mais XP acumula, mais sobe de nível.",
+    resposta:
+      "Você ganha XP ao completar tarefas, manter streaks e desbloquear conquistas. Cada tarefa tem um valor de XP que você define. Quanto mais XP acumula, mais sobe de nível.",
     util: 57,
   },
   {
     id: 9,
     categoria: "gamificacao",
     pergunta: "O que são streaks?",
-    resposta: "Streak é a contagem de dias consecutivos que você completa pelo menos uma tarefa. Manter streaks altos dá bônus de XP e desbloqueia conquistas especiais.",
+    resposta:
+      "Streak é a contagem de dias consecutivos que você completa pelo menos uma tarefa. Manter streaks altos dá bônus de XP e desbloqueia conquistas especiais.",
     util: 34,
   },
   {
     id: 10,
     categoria: "gamificacao",
     pergunta: "Quantos níveis existem?",
-    resposta: "Não há limite! O sistema é infinito, com níveis cada vez mais desafiadores. A cada 10 níveis você desbloqueia conquistas especiais e novos recursos.",
+    resposta:
+      "Não há limite! O sistema é infinito, com níveis cada vez mais desafiadores. A cada 10 níveis você desbloqueia conquistas especiais e novos recursos.",
     util: 28,
   },
   {
     id: 11,
     categoria: "privacidade",
     pergunta: "Meus dados são seguros?",
-    resposta: "Sim! Todos os dados são criptografados e armazenados com segurança. O Nucleos segue as melhores práticas de segurança da indústria e está em conformidade com a LGPD.",
+    resposta:
+      "Sim! Todos os dados são criptografados e armazenados com segurança. O Nucleos segue as melhores práticas de segurança da indústria e está em conformidade com a LGPD.",
     util: 49,
     links: [{ texto: "Política de Privacidade", url: "/privacidade" }],
   },
@@ -167,7 +178,8 @@ const duvidas = [
     id: 12,
     categoria: "privacidade",
     pergunta: "Posso exportar meus dados?",
-    resposta: "Sim! Você pode exportar todos os seus dados em formato CSV ou JSON nas configurações da sua conta. Isso permite backup ou migração para outras ferramentas.",
+    resposta:
+      "Sim! Você pode exportar todos os seus dados em formato CSV ou JSON nas configurações da sua conta. Isso permite backup ou migração para outras ferramentas.",
     util: 23,
   },
 ];
@@ -175,15 +187,18 @@ const duvidas = [
 const perguntasFrequentes = [
   {
     pergunta: "Esqueci minha senha, o que faço?",
-    resposta: "Clique em 'Esqueci minha senha' na página de login e siga as instruções enviadas para seu email.",
+    resposta:
+      "Clique em 'Esqueci minha senha' na página de login e siga as instruções enviadas para seu email.",
   },
   {
     pergunta: "O Nucleos tem app mobile?",
-    resposta: "Sim! Temos apps para iOS e Android disponíveis nas lojas oficiais. A versão web também é totalmente responsiva.",
+    resposta:
+      "Sim! Temos apps para iOS e Android disponíveis nas lojas oficiais. A versão web também é totalmente responsiva.",
   },
   {
     pergunta: "Como entro em contato com o suporte?",
-    resposta: "Você pode nos contactar por email (suporte@nucleos.com), chat ao vivo no site ou através do Discord da comunidade.",
+    resposta:
+      "Você pode nos contactar por email (suporte@nucleos.com), chat ao vivo no site ou através do Discord da comunidade.",
   },
 ];
 
@@ -197,7 +212,7 @@ export default function DuvidasPage() {
       (categoriaAtiva === "todas" || d.categoria === categoriaAtiva) &&
       (busca === "" ||
         d.pergunta.toLowerCase().includes(busca.toLowerCase()) ||
-        d.resposta.toLowerCase().includes(busca.toLowerCase()))
+        d.resposta.toLowerCase().includes(busca.toLowerCase())),
   );
 
   const toggleDuvida = (id: number) => {
@@ -232,7 +247,10 @@ export default function DuvidasPage() {
           animate={{ opacity: 1, y: 0 }}
           className="max-w-3xl mx-auto"
         >
-          <Badge variant="outline" className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 text-[#4D7CFF] mb-4">
+          <Badge
+            variant="outline"
+            className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 text-[#4D7CFF] mb-4"
+          >
             <HelpCircle className="size-4" />
             <span>Central de Ajuda</span>
           </Badge>
@@ -280,7 +298,8 @@ export default function DuvidasPage() {
                 className="rounded-full gap-2"
                 onClick={() => setCategoriaAtiva(cat.id)}
                 style={{
-                  backgroundColor: categoriaAtiva === cat.id ? cat.cor : "transparent",
+                  backgroundColor:
+                    categoriaAtiva === cat.id ? cat.cor : "transparent",
                   borderColor: `${cat.cor}30`,
                   color: categoriaAtiva === cat.id ? "white" : cat.cor,
                 }}
@@ -324,7 +343,7 @@ export default function DuvidasPage() {
                               <p className="text-muted-foreground leading-relaxed">
                                 {duvida.resposta}
                               </p>
-                              
+
                               {duvida.links && (
                                 <div className="mt-4 flex flex-wrap gap-3">
                                   {duvida.links.map((link, idx) => (
@@ -345,11 +364,21 @@ export default function DuvidasPage() {
                                   Esta resposta foi útil?
                                 </span>
                                 <div className="flex items-center gap-2">
-                                  <Button variant="ghost" size="sm" className="h-8 px-2">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 px-2"
+                                  >
                                     <ThumbsUp className="size-4 mr-1" />
-                                    <span className="text-xs">{duvida.util}</span>
+                                    <span className="text-xs">
+                                      {duvida.util}
+                                    </span>
                                   </Button>
-                                  <Button variant="ghost" size="sm" className="h-8 px-2">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-8 px-2"
+                                  >
                                     <ThumbsDown className="size-4" />
                                   </Button>
                                 </div>
@@ -406,7 +435,9 @@ export default function DuvidasPage() {
               {perguntasFrequentes.map((item, index) => (
                 <div key={index} className="p-4 rounded-lg bg-background/50">
                   <h4 className="font-medium mb-2">{item.pergunta}</h4>
-                  <p className="text-sm text-muted-foreground">{item.resposta}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {item.resposta}
+                  </p>
                 </div>
               ))}
             </div>
@@ -420,7 +451,8 @@ export default function DuvidasPage() {
           <CardContent className="p-12">
             <h3 className="text-2xl font-bold mb-4">Ainda tem dúvidas?</h3>
             <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-              Nossa equipe está pronta para ajudar com qualquer questão não respondida aqui.
+              Nossa equipe está pronta para ajudar com qualquer questão não
+              respondida aqui.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Button

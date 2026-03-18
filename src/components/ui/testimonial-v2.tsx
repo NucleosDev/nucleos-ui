@@ -145,7 +145,7 @@ const testimonials: Testimonial[] = [
 
   // Psicólogos
   {
-    text: "Acompanho meus pacientes e exercícios de terapia com os núcleos. Ferramenta essencial.",
+    text: "Acompanho meus pacientes e exercícios de terapia com os Nucleos. Ferramenta essencial.",
     image: "/placeholder-user.jpg",
     name: "Dra. Beatriz Rocha",
     role: "Psicóloga",
@@ -368,10 +368,11 @@ const TestimonialsSection = () => {
             id="testimonials-heading"
             className="text-4xl md:text-5xl font-extrabold tracking-tight mt-6 text-center text-neutral-900 dark:text-white transition-colors"
           >
-            Quem já está{" "}
+            Feito para{" "}
             <span className="bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
-              evoluindo
+              Todos
             </span>
+            .
           </h2>
           <p className="text-center mt-5 text-neutral-500 dark:text-neutral-400 text-lg leading-relaxed max-w-md transition-colors">
             Profissionais de diversas áreas já transformaram suas rotinas com o
@@ -416,7 +417,6 @@ export default function App() {
   return (
     <div className="w-screen min-h-screen bg-white dark:bg-neutral-950 transition-colors duration-300 flex flex-col justify-center relative selection:bg-[#4D7CFF] selection:text-white">
       {/* Dark Mode Toggle */}
-      
 
       <TestimonialsSection />
     </div>

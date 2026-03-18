@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Progress } from "@/components/ui/progress"
-import { 
-  ChevronRight, 
-  Sparkles, 
-  Zap, 
-  Brain, 
-  Dumbbell, 
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
+import {
+  ChevronRight,
+  Sparkles,
+  Zap,
+  Brain,
+  Dumbbell,
   Briefcase,
   Trophy,
   Flame,
@@ -29,12 +29,12 @@ import {
   Medal,
   Heart,
   Wallet,
-  BookOpen
-} from "lucide-react"
-import { motion } from "framer-motion"
+  BookOpen,
+} from "lucide-react";
+import { motion } from "framer-motion";
 
 interface AboutPageProps {
-  achievements?: Array<{ label: string; value: string }>
+  achievements?: Array<{ label: string; value: string }>;
 }
 
 const defaultAchievements = [
@@ -42,7 +42,7 @@ const defaultAchievements = [
   { label: "Tarefas completas", value: "2M+" },
   { label: "Conquistas", value: "500K+" },
   { label: "Avaliação média", value: "4.9" },
-]
+];
 
 const nucleosData = [
   {
@@ -52,7 +52,7 @@ const nucleosData = [
     xpMax: 3000,
     progresso: 82,
     icon: Brain,
-    cor: "primary"
+    cor: "primary",
   },
   {
     nome: "Fitness",
@@ -61,7 +61,7 @@ const nucleosData = [
     xpMax: 2000,
     progresso: 60,
     icon: Dumbbell,
-    cor: "accent"
+    cor: "accent",
   },
   {
     nome: "Trabalho",
@@ -70,9 +70,9 @@ const nucleosData = [
     xpMax: 5000,
     progresso: 90,
     icon: Briefcase,
-    cor: "primary"
-  }
-]
+    cor: "primary",
+  },
+];
 
 const notifications = [
   { icon: Trophy, text: "Nível 12 - 2.847/3.000 XP", color: "primary" },
@@ -81,11 +81,19 @@ const notifications = [
   { icon: Star, text: "Meditar +30 XP", color: "accent" },
   { icon: TrendingUp, text: "21 dias +15%", color: "primary" },
   { icon: Award, text: "Nova conquista! 'Primeira Semana'", color: "accent" },
-  { icon: Flame, text: "Streak em chamas! 7 dias consecutivos", color: "primary" },
+  {
+    icon: Flame,
+    text: "Streak em chamas! 7 dias consecutivos",
+    color: "primary",
+  },
   { icon: Crown, text: "Level Up! Nível 5 alcançado", color: "accent" },
-  { icon: Trophy, text: "Meta atingida! 100% das tarefas +250 XP", color: "primary" },
+  {
+    icon: Trophy,
+    text: "Meta atingida! 100% das tarefas +250 XP",
+    color: "primary",
+  },
   { icon: Star, text: "Bônus de consistência", color: "accent" },
-]
+];
 
 const comparisons = [
   {
@@ -111,103 +119,245 @@ const comparisons = [
   {
     feature: "Personalização",
     semNucleos: "Limitada",
-    comNucleos: "Núcleos personalizados",
+    comNucleos: "Nucleos personalizados",
   },
-]
+];
 
 const journeySteps = [
-  { nivel: "Nível 1", titulo: "Dia 1 - Começo", desc: "Crie sua conta e configure seus primeiros núcleos.", icon: Star },
-  { nivel: "Nível 5", titulo: "Semana 1 - Hábitos", desc: "Adicione tarefas diárias e ganhe seus primeiros XPs.", icon: Target },
-  { nivel: "Nível 15", titulo: "Mês 1 - Conquistas", desc: "Desbloqueie suas primeiras conquistas.", icon: Trophy },
-  { nivel: "Nível 30", titulo: "Mês 3 - Evolução", desc: "Hábitos consolidados, produtividade em alta.", icon: TrendingUp },
-  { nivel: "Nível 50", titulo: "Mês 6 - Domínio", desc: "Você domina suas áreas e inspira outros.", icon: Crown },
-  { nivel: "Nível 100", titulo: "Ano 1 - Transformação", desc: "Uma pessoa completamente transformada.", icon: Rocket },
-]
+  {
+    nivel: "Nível 1",
+    titulo: "Dia 1 - Começo",
+    desc: "Crie sua conta e configure seus primeiros Nucleos.",
+    icon: Star,
+  },
+  {
+    nivel: "Nível 5",
+    titulo: "Semana 1 - Hábitos",
+    desc: "Adicione tarefas diárias e ganhe seus primeiros XPs.",
+    icon: Target,
+  },
+  {
+    nivel: "Nível 15",
+    titulo: "Mês 1 - Conquistas",
+    desc: "Desbloqueie suas primeiras conquistas.",
+    icon: Trophy,
+  },
+  {
+    nivel: "Nível 30",
+    titulo: "Mês 3 - Evolução",
+    desc: "Hábitos consolidados, produtividade em alta.",
+    icon: TrendingUp,
+  },
+  {
+    nivel: "Nível 50",
+    titulo: "Mês 6 - Domínio",
+    desc: "Você domina suas áreas e inspira outros.",
+    icon: Crown,
+  },
+  {
+    nivel: "Nível 100",
+    titulo: "Ano 1 - Transformação",
+    desc: "Uma pessoa completamente transformada.",
+    icon: Rocket,
+  },
+];
 
 const howItWorks = [
-  { number: "01", title: "Crie seus Núcleos", desc: "Defina as áreas da sua vida que deseja desenvolver." },
-  { number: "02", title: "Estabeleça Hábitos", desc: "Adicione hábitos e configure a frequência e XP." },
-  { number: "03", title: "Complete Atividades", desc: "Registre atividades diárias e ganhe experiência." },
-  { number: "04", title: "Evolua e Celebre", desc: "Suba de nível e desbloqueie conquistas." },
-]
+  {
+    number: "01",
+    title: "Crie seus Nucleos",
+    desc: "Defina as áreas da sua vida que deseja desenvolver.",
+  },
+  {
+    number: "02",
+    title: "Estabeleça Hábitos",
+    desc: "Adicione hábitos e configure a frequência e XP.",
+  },
+  {
+    number: "03",
+    title: "Complete Atividades",
+    desc: "Registre atividades diárias e ganhe experiência.",
+  },
+  {
+    number: "04",
+    title: "Evolua e Celebre",
+    desc: "Suba de nível e desbloqueie conquistas.",
+  },
+];
 
 const badges = [
-  { nome: "Primeiro Passo", desc: "Complete sua primeira tarefa", tier: "bronze", icon: Star, unlocked: true },
-  { nome: "Em Chamas", desc: "3 dias consecutivos", tier: "bronze", icon: Flame, unlocked: true },
-  { nome: "Focado", desc: "Complete 10 tarefas em um dia", tier: "prata", icon: Target, unlocked: true },
-  { nome: "Produtivo", desc: "50 tarefas completadas", tier: "prata", icon: Zap, unlocked: true },
-  { nome: "Semana Perfeita", desc: "7 dias consecutivos", tier: "ouro", icon: Trophy, unlocked: true },
-  { nome: "Estudioso", desc: "100 tarefas de estudo", tier: "ouro", icon: BookOpen, unlocked: false },
-  { nome: "Vida Saudável", desc: "30 dias de exercícios", tier: "ouro", icon: Heart, unlocked: false },
-  { nome: "Economista", desc: "Meta financeira atingida", tier: "ouro", icon: Wallet, unlocked: false },
-  { nome: "Veterano", desc: "100 dias usando o app", tier: "platina", icon: Medal, unlocked: false },
-  { nome: "Mestre", desc: "Nível 50 alcançado", tier: "platina", icon: Crown, unlocked: false },
-  { nome: "Lendário", desc: "1000 tarefas completadas", tier: "diamante", icon: Rocket, unlocked: false },
-  { nome: "Perfeição", desc: "365 dias consecutivos", tier: "diamante", icon: Award, unlocked: false },
-]
+  {
+    nome: "Primeiro Passo",
+    desc: "Complete sua primeira tarefa",
+    tier: "bronze",
+    icon: Star,
+    unlocked: true,
+  },
+  {
+    nome: "Em Chamas",
+    desc: "3 dias consecutivos",
+    tier: "bronze",
+    icon: Flame,
+    unlocked: true,
+  },
+  {
+    nome: "Focado",
+    desc: "Complete 10 tarefas em um dia",
+    tier: "prata",
+    icon: Target,
+    unlocked: true,
+  },
+  {
+    nome: "Produtivo",
+    desc: "50 tarefas completadas",
+    tier: "prata",
+    icon: Zap,
+    unlocked: true,
+  },
+  {
+    nome: "Semana Perfeita",
+    desc: "7 dias consecutivos",
+    tier: "ouro",
+    icon: Trophy,
+    unlocked: true,
+  },
+  {
+    nome: "Estudioso",
+    desc: "100 tarefas de estudo",
+    tier: "ouro",
+    icon: BookOpen,
+    unlocked: false,
+  },
+  {
+    nome: "Vida Saudável",
+    desc: "30 dias de exercícios",
+    tier: "ouro",
+    icon: Heart,
+    unlocked: false,
+  },
+  {
+    nome: "Economista",
+    desc: "Meta financeira atingida",
+    tier: "ouro",
+    icon: Wallet,
+    unlocked: false,
+  },
+  {
+    nome: "Veterano",
+    desc: "100 dias usando o app",
+    tier: "platina",
+    icon: Medal,
+    unlocked: false,
+  },
+  {
+    nome: "Mestre",
+    desc: "Nível 50 alcançado",
+    tier: "platina",
+    icon: Crown,
+    unlocked: false,
+  },
+  {
+    nome: "Lendário",
+    desc: "1000 tarefas completadas",
+    tier: "diamante",
+    icon: Rocket,
+    unlocked: false,
+  },
+  {
+    nome: "Perfeição",
+    desc: "365 dias consecutivos",
+    tier: "diamante",
+    icon: Award,
+    unlocked: false,
+  },
+];
 
 const testimonials = [
   {
-    quote: "O Nucleos transformou minha rotina de estudos. Consegui organizar todas as matérias e ver meu progresso diariamente. Passei de média 7 para 9!",
+    quote:
+      "O Nucleos transformou minha rotina de estudos. Consegui organizar todas as matérias e ver meu progresso diariamente. Passei de média 7 para 9!",
     author: "Lucas Mendes",
     role: "Estudante de Medicina",
     initials: "LM",
     nivel: 24,
-    days: 45
+    days: 45,
   },
   {
-    quote: "Finalmente consegui equilibrar minha vida pessoal e profissional. O sistema de núcleos me ajuda a não negligenciar nenhuma área importante.",
+    quote:
+      "Finalmente consegui equilibrar minha vida pessoal e profissional. O sistema de Nucleos me ajuda a não negligenciar nenhuma área importante.",
     author: "Ana Carolina",
     role: "Empreendedora",
     initials: "AC",
     nivel: 18,
-    days: 32
+    days: 32,
   },
   {
-    quote: "A gamificação faz toda diferença. Me sinto motivado a completar minhas tarefas todos os dias para manter meu streak e subir de nível.",
+    quote:
+      "A gamificação faz toda diferença. Me sinto motivado a completar minhas tarefas todos os dias para manter meu streak e subir de nível.",
     author: "Pedro Santos",
     role: "Desenvolvedor",
     initials: "PS",
     nivel: 31,
-    days: 67
-  }
-]
+    days: 67,
+  },
+];
 
 const faqs = [
-  "O que são os Núcleos?",
+  "O que são os Nucleos?",
   "Como funciona o sistema de XP e níveis?",
-  "Posso criar meus próprios núcleos personalizados?",
+  "Posso criar meus próprios Nucleos personalizados?",
   "O Nucleos é gratuito?",
   "Como funciona o streak?",
-  "Posso usar em múltiplos dispositivos?"
-]
+  "Posso usar em múltiplos dispositivos?",
+];
 
 const plans = [
   {
     name: "Grátis",
     price: "R$ 0/mês",
     description: "Perfeito para começar sua jornada",
-    features: ["Até 3 Núcleos", "10 hábitos por núcleo", "Tracking de atividades", "Sistema de XP e níveis", "Estatísticas básicas"],
+    features: [
+      "Até 3 Nucleos",
+      "10 hábitos por núcleo",
+      "Tracking de atividades",
+      "Sistema de XP e níveis",
+      "Estatísticas básicas",
+    ],
     cta: "Começar grátis",
-    popular: false
+    popular: false,
   },
   {
     name: "Pro",
     price: "R$ 19/mês",
     description: "Para quem leva a evolução a sério",
-    features: ["Núcleos ilimitados", "Hábitos ilimitados", "Conquistas exclusivas", "Estatísticas avançadas", "Temas personalizados", "Backup na nuvem", "Suporte prioritário"],
+    features: [
+      "Nucleos ilimitados",
+      "Hábitos ilimitados",
+      "Conquistas exclusivas",
+      "Estatísticas avançadas",
+      "Temas personalizados",
+      "Backup na nuvem",
+      "Suporte prioritário",
+    ],
     cta: "Assinar Pro",
-    popular: true
+    popular: true,
   },
   {
     name: "Equipe",
     price: "R$ 49/mês",
     description: "Para grupos e organizações",
-    features: ["Tudo do Pro", "Até 10 membros", "Desafios em grupo", "Ranking de equipe", "Dashboard administrativo", "Integrações"],
+    features: [
+      "Tudo do Pro",
+      "Até 10 membros",
+      "Desafios em grupo",
+      "Ranking de equipe",
+      "Dashboard administrativo",
+      "Integrações",
+    ],
     cta: "Fale conosco",
-    popular: false
-  }
-]
+    popular: false,
+  },
+];
 
 export default function AboutPage({
   achievements = defaultAchievements,
@@ -218,17 +368,46 @@ export default function AboutPage({
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between px-6 mx-auto max-w-7xl">
           <div className="flex items-center gap-8">
-            <Link href="/" className="text-xl font-bold">Nucleos</Link>
+            <Link href="/" className="text-xl font-bold">
+              Nucleos
+            </Link>
             <nav className="hidden md:flex gap-6">
-              <Link href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground">Produto</Link>
-              <Link href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground">Recursos</Link>
-              <Link href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground">Empresa</Link>
-              <Link href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground">Preços</Link>
+              <Link
+                href="#"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+              >
+                Produto
+              </Link>
+              <Link
+                href="#"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+              >
+                Recursos
+              </Link>
+              <Link
+                href="#"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+              >
+                Empresa
+              </Link>
+              <Link
+                href="#"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+              >
+                Preços
+              </Link>
             </nav>
           </div>
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm">Entrar</Button>
-            <Button size="sm" className="bg-foreground text-primary-foreground hover:bg-foreground/90">Começar grátis</Button>
+            <Button variant="ghost" size="sm">
+              Entrar
+            </Button>
+            <Button
+              size="sm"
+              className="bg-foreground text-primary-foreground hover:bg-foreground/90"
+            >
+              Começar grátis
+            </Button>
           </div>
         </div>
       </header>
@@ -237,7 +416,7 @@ export default function AboutPage({
       <section className="py-16 md:py-28 bg-background relative overflow-hidden">
         {/* Grid background */}
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
-        
+
         <div className="mx-auto max-w-6xl space-y-8 px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -245,7 +424,10 @@ export default function AboutPage({
             transition={{ duration: 0.6 }}
             className="flex justify-center"
           >
-            <Badge variant="outline" className="gap-2 border-primary/20 bg-primary/5 px-4 py-2 text-primary animate-border-pulse">
+            <Badge
+              variant="outline"
+              className="gap-2 border-primary/20 bg-primary/5 px-4 py-2 text-primary animate-border-pulse"
+            >
               <Sparkles className="size-4" />
               <span>BEM VINDO.</span>
             </Badge>
@@ -257,7 +439,11 @@ export default function AboutPage({
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-5xl md:text-7xl font-bold text-center max-w-4xl mx-auto leading-tight"
           >
-            Tudo começa com um <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">Nucleo</span>.
+            Tudo começa com um{" "}
+            <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
+              Nucleo
+            </span>
+            .
           </motion.h1>
 
           <motion.p
@@ -266,7 +452,8 @@ export default function AboutPage({
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-xl text-muted-foreground text-center max-w-2xl mx-auto"
           >
-            O espaço certo para cada ideia. Organize. Realize. Evolua. Simples, flexível e ao seu alcance.
+            O espaço certo para cada ideia. Organize. Realize. Evolua. Simples,
+            flexível e ao seu alcance.
           </motion.p>
 
           <motion.div
@@ -275,11 +462,18 @@ export default function AboutPage({
             transition={{ duration: 0.8, delay: 0.6 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <Button size="lg" className="bg-foreground text-primary-foreground hover:bg-foreground/90 group">
+            <Button
+              size="lg"
+              className="bg-foreground text-primary-foreground hover:bg-foreground/90 group"
+            >
               Começar agora
               <ChevronRight className="size-4 ml-1 transition-transform group-hover:translate-x-1" />
             </Button>
-            <Button size="lg" variant="outline" className="border-2 border-primary/30 bg-background/50 backdrop-blur-sm group">
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-2 border-primary/30 bg-background/50 backdrop-blur-sm group"
+            >
               Ver demonstração
               <Zap className="size-4 ml-1 transition-all group-hover:rotate-12" />
             </Button>
@@ -297,7 +491,10 @@ export default function AboutPage({
             viewport={{ once: true }}
             className="flex justify-center mb-6"
           >
-            <Badge variant="outline" className="gap-2 border-primary/20 bg-primary/5 px-4 py-2 text-primary">
+            <Badge
+              variant="outline"
+              className="gap-2 border-primary/20 bg-primary/5 px-4 py-2 text-primary"
+            >
               <Sparkles className="size-4" />
               <span>Apresentamos NUCLEOS</span>
             </Badge>
@@ -311,12 +508,13 @@ export default function AboutPage({
               viewport={{ once: true }}
               className="text-4xl md:text-5xl font-bold leading-tight"
             >
-              Use seu potencial para<br />
+              Use seu potencial para
+              <br />
               <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
                 sua própria evolução!
               </span>
             </motion.h2>
-            
+
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -325,9 +523,11 @@ export default function AboutPage({
               className="space-y-6"
             >
               <p className="text-lg text-muted-foreground">
-                Crie Nucleos para cada área da sua vida. Acompanhe seu progresso, ganhe XP, desbloqueie conquistas e veja sua evolução em tempo real. Produtividade que parece jogo.
+                Crie Nucleos para cada área da sua vida. Acompanhe seu
+                progresso, ganhe XP, desbloqueie conquistas e veja sua evolução
+                em tempo real. Produtividade que parece jogo.
               </p>
-              
+
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -340,7 +540,10 @@ export default function AboutPage({
                 </div>
                 <div>
                   <p className="font-medium">Maria S. completou</p>
-                  <p className="text-sm text-muted-foreground">Estudar inglês <span className="text-primary font-semibold">+150 XP</span></p>
+                  <p className="text-sm text-muted-foreground">
+                    Estudar inglês{" "}
+                    <span className="text-primary font-semibold">+150 XP</span>
+                  </p>
                 </div>
               </motion.div>
             </motion.div>
@@ -361,8 +564,12 @@ export default function AboutPage({
                 viewport={{ once: true }}
                 className="text-center"
               >
-                <p className="text-3xl md:text-4xl font-bold text-foreground">{achievement.value}</p>
-                <p className="text-sm text-muted-foreground mt-1">{achievement.label}</p>
+                <p className="text-3xl md:text-4xl font-bold text-foreground">
+                  {achievement.value}
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {achievement.label}
+                </p>
               </motion.div>
             ))}
           </div>
@@ -374,29 +581,35 @@ export default function AboutPage({
         <div className="mx-auto max-w-6xl px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex -space-x-2">
-              {[1,2,3,4,5].map((i) => (
+              {[1, 2, 3, 4, 5].map((i) => (
                 <Avatar key={i} className="border-2 border-background">
-                  <AvatarFallback className="bg-primary/10 text-primary">U{i}</AvatarFallback>
+                  <AvatarFallback className="bg-primary/10 text-primary">
+                    U{i}
+                  </AvatarFallback>
                 </Avatar>
               ))}
               <div className="size-10 rounded-full bg-primary/10 border-2 border-background flex items-center justify-center text-xs font-medium text-primary">
                 +50K
               </div>
             </div>
-            
+
             <div className="text-center md:text-left">
               <p className="font-semibold">Junte-se à comunidade</p>
-              <p className="text-sm text-muted-foreground">Usuários evoluindo juntos</p>
+              <p className="text-sm text-muted-foreground">
+                Usuários evoluindo juntos
+              </p>
             </div>
-            
+
             <div className="flex items-center gap-2">
               <div className="flex">
-                {[1,2,3,4,5].map((i) => (
+                {[1, 2, 3, 4, 5].map((i) => (
                   <Star key={i} className="size-4 fill-primary text-primary" />
                 ))}
               </div>
               <span className="font-medium">4.9</span>
-              <span className="text-sm text-muted-foreground">de 5 · +10.000 avaliações</span>
+              <span className="text-sm text-muted-foreground">
+                de 5 · +10.000 avaliações
+              </span>
             </div>
           </div>
         </div>
@@ -418,22 +631,35 @@ export default function AboutPage({
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className={`size-10 rounded-lg bg-${nucleo.cor}/10 flex items-center justify-center`}>
+                    <div
+                      className={`size-10 rounded-lg bg-${nucleo.cor}/10 flex items-center justify-center`}
+                    >
                       <nucleo.icon className={`size-5 text-${nucleo.cor}`} />
                     </div>
                     <span className="font-semibold text-lg">{nucleo.nome}</span>
                   </div>
-                  <Badge variant="outline" className={`border-${nucleo.cor}/20 bg-${nucleo.cor}/5 text-${nucleo.cor}`}>
+                  <Badge
+                    variant="outline"
+                    className={`border-${nucleo.cor}/20 bg-${nucleo.cor}/5 text-${nucleo.cor}`}
+                  >
                     Nv. {nucleo.nivel}
                   </Badge>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{nucleo.xpAtual.toLocaleString()} / {nucleo.xpMax.toLocaleString()} XP</span>
-                    <span className={`text-${nucleo.cor} font-medium`}>{nucleo.progresso}%</span>
+                    <span className="text-muted-foreground">
+                      {nucleo.xpAtual.toLocaleString()} /{" "}
+                      {nucleo.xpMax.toLocaleString()} XP
+                    </span>
+                    <span className={`text-${nucleo.cor} font-medium`}>
+                      {nucleo.progresso}%
+                    </span>
                   </div>
-                  <Progress value={nucleo.progresso} className={`h-2 [&>div]:bg-${nucleo.cor}`} />
+                  <Progress
+                    value={nucleo.progresso}
+                    className={`h-2 [&>div]:bg-${nucleo.cor}`}
+                  />
                 </div>
               </motion.div>
             ))}
@@ -445,12 +671,19 @@ export default function AboutPage({
       <section className="py-20 bg-secondary/30">
         <div className="mx-auto max-w-6xl px-6">
           <div className="text-center mb-12">
-            <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary mb-4">
+            <Badge
+              variant="outline"
+              className="border-primary/20 bg-primary/5 text-primary mb-4"
+            >
               <Bell className="size-4 mr-2" />
               Celebre cada conquista
             </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold">Notificações motivacionais</h2>
-            <p className="text-muted-foreground mt-2">em tempo real para manter você engajado</p>
+            <h2 className="text-3xl md:text-4xl font-bold">
+              Notificações motivacionais
+            </h2>
+            <p className="text-muted-foreground mt-2">
+              em tempo real para manter você engajado
+            </p>
           </div>
 
           <div className="grid gap-3 max-w-2xl mx-auto">
@@ -463,7 +696,9 @@ export default function AboutPage({
                 viewport={{ once: true }}
                 className="flex items-center gap-3 p-3 rounded-lg border border-border/50 bg-card hover:shadow-md transition-all"
               >
-                <div className={`size-8 rounded-full bg-${notif.color}/10 flex items-center justify-center`}>
+                <div
+                  className={`size-8 rounded-full bg-${notif.color}/10 flex items-center justify-center`}
+                >
                   <notif.icon className={`size-4 text-${notif.color}`} />
                 </div>
                 <span className="flex-1 text-sm">{notif.text}</span>
@@ -478,10 +713,15 @@ export default function AboutPage({
       <section className="py-20">
         <div className="mx-auto max-w-4xl px-6">
           <div className="text-center mb-12">
-            <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary mb-4">
+            <Badge
+              variant="outline"
+              className="border-primary/20 bg-primary/5 text-primary mb-4"
+            >
               Antes e Depois
             </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold">A diferença que o Nucleos faz</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">
+              A diferença que o Nucleos faz
+            </h2>
           </div>
 
           <div className="overflow-hidden rounded-2xl border">
@@ -491,7 +731,10 @@ export default function AboutPage({
               <div className="text-center">Com Nucleos</div>
             </div>
             {comparisons.map((item, index) => (
-              <div key={index} className={`grid grid-cols-3 p-4 ${index !== comparisons.length - 1 ? "border-b" : ""}`}>
+              <div
+                key={index}
+                className={`grid grid-cols-3 p-4 ${index !== comparisons.length - 1 ? "border-b" : ""}`}
+              >
                 <div className="font-medium">{item.feature}</div>
                 <div className="text-center border-x flex items-center justify-center gap-2 text-muted-foreground">
                   <X className="size-4 text-destructive" />
@@ -511,37 +754,56 @@ export default function AboutPage({
       <section className="py-20 bg-secondary/30">
         <div className="mx-auto max-w-4xl px-6">
           <div className="text-center mb-12">
-            <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary mb-4">
+            <Badge
+              variant="outline"
+              className="border-primary/20 bg-primary/5 text-primary mb-4"
+            >
               Sua Jornada
             </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold">O caminho para a sua melhor versão</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">
+              O caminho para a sua melhor versão
+            </h2>
           </div>
 
           <div className="relative">
             <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-border -translate-x-1/2 hidden md:block" />
-            
+
             <div className="space-y-8">
               {journeySteps.map((step, index) => (
-                <div key={index} className={`relative flex flex-col md:flex-row items-center gap-4 ${index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}>
-                  <div className={`flex-1 ${index % 2 === 0 ? "md:text-right" : "md:text-left"}`}>
-                    <div className={`p-6 rounded-2xl border bg-card hover:shadow-lg transition-all max-w-sm ${index % 2 === 0 ? "md:ml-auto md:mr-8" : "md:mr-auto md:ml-8"}`}>
-                      <div className={`flex items-center gap-3 mb-3 ${index % 2 === 0 ? "md:flex-row-reverse" : ""}`}>
+                <div
+                  key={index}
+                  className={`relative flex flex-col md:flex-row items-center gap-4 ${index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}
+                >
+                  <div
+                    className={`flex-1 ${index % 2 === 0 ? "md:text-right" : "md:text-left"}`}
+                  >
+                    <div
+                      className={`p-6 rounded-2xl border bg-card hover:shadow-lg transition-all max-w-sm ${index % 2 === 0 ? "md:ml-auto md:mr-8" : "md:mr-auto md:ml-8"}`}
+                    >
+                      <div
+                        className={`flex items-center gap-3 mb-3 ${index % 2 === 0 ? "md:flex-row-reverse" : ""}`}
+                      >
                         <div className="size-10 rounded-lg bg-primary/10 flex items-center justify-center">
                           <step.icon className="size-5 text-primary" />
                         </div>
-                        <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary">
+                        <Badge
+                          variant="outline"
+                          className="border-primary/20 bg-primary/5 text-primary"
+                        >
                           {step.nivel}
                         </Badge>
                       </div>
                       <h3 className="font-semibold text-lg">{step.titulo}</h3>
-                      <p className="text-sm text-muted-foreground mt-1">{step.desc}</p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {step.desc}
+                      </p>
                     </div>
                   </div>
-                  
+
                   <div className="relative z-10 size-12 rounded-full border-4 border-background bg-primary text-primary-foreground flex items-center justify-center font-bold shadow-lg">
                     {index + 1}
                   </div>
-                  
+
                   <div className="flex-1 hidden md:block" />
                 </div>
               ))}
@@ -554,10 +816,15 @@ export default function AboutPage({
       <section className="py-20">
         <div className="mx-auto max-w-6xl px-6">
           <div className="text-center mb-12">
-            <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary mb-4">
+            <Badge
+              variant="outline"
+              className="border-primary/20 bg-primary/5 text-primary mb-4"
+            >
               Como funciona
             </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold">Simples de usar, poderoso para evoluir</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">
+              Simples de usar, poderoso para evoluir
+            </h2>
           </div>
 
           <div className="grid gap-6 md:grid-cols-4">
@@ -585,10 +852,15 @@ export default function AboutPage({
       <section className="py-20 bg-secondary/30">
         <div className="mx-auto max-w-6xl px-6">
           <div className="text-center mb-12">
-            <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary mb-4">
+            <Badge
+              variant="outline"
+              className="border-primary/20 bg-primary/5 text-primary mb-4"
+            >
               Sistema de Conquistas
             </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold">Colecione conquistas e mostre sua evolução</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">
+              Colecione conquistas e mostre sua evolução
+            </h2>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -600,21 +872,32 @@ export default function AboutPage({
                 transition={{ duration: 0.3, delay: index * 0.05 }}
                 viewport={{ once: true }}
                 className={`relative p-4 rounded-xl border-2 text-center transition-all ${
-                  badge.unlocked 
-                    ? "bg-primary/10 border-primary/30" 
+                  badge.unlocked
+                    ? "bg-primary/10 border-primary/30"
                     : "bg-muted border-border/50 opacity-60 grayscale"
                 }`}
               >
-                <div className={`size-12 rounded-full mx-auto mb-2 flex items-center justify-center ${
-                  badge.unlocked ? "bg-primary/20" : "bg-muted"
-                }`}>
-                  <badge.icon className={`size-6 ${badge.unlocked ? "text-primary" : "text-muted-foreground"}`} />
+                <div
+                  className={`size-12 rounded-full mx-auto mb-2 flex items-center justify-center ${
+                    badge.unlocked ? "bg-primary/20" : "bg-muted"
+                  }`}
+                >
+                  <badge.icon
+                    className={`size-6 ${badge.unlocked ? "text-primary" : "text-muted-foreground"}`}
+                  />
                 </div>
                 <p className="text-sm font-semibold">{badge.nome}</p>
-                <p className="text-xs text-muted-foreground mt-1">{badge.desc}</p>
-                <Badge variant="outline" className={`absolute -top-2 -right-2 text-xs capitalize ${
-                  badge.unlocked ? "bg-primary/20 border-primary/30 text-primary" : "bg-muted border-border/50 text-muted-foreground"
-                }`}>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {badge.desc}
+                </p>
+                <Badge
+                  variant="outline"
+                  className={`absolute -top-2 -right-2 text-xs capitalize ${
+                    badge.unlocked
+                      ? "bg-primary/20 border-primary/30 text-primary"
+                      : "bg-muted border-border/50 text-muted-foreground"
+                  }`}
+                >
                   {badge.tier}
                 </Badge>
               </motion.div>
@@ -622,7 +905,11 @@ export default function AboutPage({
           </div>
 
           <p className="text-center mt-8 text-sm text-muted-foreground">
-            Você desbloqueou <span className="font-bold text-primary">{badges.filter(b => b.unlocked).length}</span> de {badges.length} conquistas
+            Você desbloqueou{" "}
+            <span className="font-bold text-primary">
+              {badges.filter((b) => b.unlocked).length}
+            </span>{" "}
+            de {badges.length} conquistas
           </p>
         </div>
       </section>
@@ -631,12 +918,18 @@ export default function AboutPage({
       <section className="py-20">
         <div className="mx-auto max-w-6xl px-6">
           <div className="text-center mb-12">
-            <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary mb-4">
+            <Badge
+              variant="outline"
+              className="border-primary/20 bg-primary/5 text-primary mb-4"
+            >
               Resultados Reais
             </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold">Impacto do Projeto</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">
+              Impacto do Projeto
+            </h2>
             <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-              O Nucleos foi pensado como uma ferramenta de desenvolvimento pessoal que pode ajudar estudantes e membros da comunidade.
+              O Nucleos foi pensado como uma ferramenta de desenvolvimento
+              pessoal que pode ajudar estudantes e membros da comunidade.
             </p>
           </div>
 
@@ -650,7 +943,9 @@ export default function AboutPage({
               <Card key={index} className="text-center p-6">
                 <CardContent className="p-0">
                   <p className="text-3xl font-bold">{stat.value}</p>
-                  <p className="text-sm text-muted-foreground mt-1">{stat.label}</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {stat.label}
+                  </p>
                   <Progress value={stat.progress} className="mt-4 h-1.5" />
                 </CardContent>
               </Card>
@@ -658,15 +953,20 @@ export default function AboutPage({
           </div>
 
           <div className="rounded-2xl bg-secondary/50 p-8">
-            <h3 className="text-xl font-semibold text-center mb-6">O que você vai conquistar</h3>
+            <h3 className="text-xl font-semibold text-center mb-6">
+              O que você vai conquistar
+            </h3>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {[
                 "Organização de estudos",
                 "Planejamento pessoal",
                 "Desenvolvimento de hábitos saudáveis",
-                "Apoio ao crescimento profissional"
+                "Apoio ao crescimento profissional",
               ].map((benefit, index) => (
-                <div key={index} className="flex items-center gap-3 rounded-lg bg-card p-4">
+                <div
+                  key={index}
+                  className="flex items-center gap-3 rounded-lg bg-card p-4"
+                >
                   <div className="size-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">
                     {index + 1}
                   </div>
@@ -682,11 +982,18 @@ export default function AboutPage({
       <section className="py-20 bg-secondary/30">
         <div className="mx-auto max-w-6xl px-6">
           <div className="text-center mb-12">
-            <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary mb-4">
+            <Badge
+              variant="outline"
+              className="border-primary/20 bg-primary/5 text-primary mb-4"
+            >
               Depoimentos
             </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold">O que nossos usuários dizem</h2>
-            <p className="text-muted-foreground mt-2">Milhares de pessoas já transformaram suas vidas com o Nucleos</p>
+            <h2 className="text-3xl md:text-4xl font-bold">
+              O que nossos usuários dizem
+            </h2>
+            <p className="text-muted-foreground mt-2">
+              Milhares de pessoas já transformaram suas vidas com o Nucleos
+            </p>
           </div>
 
           <div className="grid gap-6 md:grid-cols-3">
@@ -702,21 +1009,33 @@ export default function AboutPage({
               >
                 <div className="flex items-center gap-4 mb-4">
                   <Avatar>
-                    <AvatarFallback className="bg-primary/10 text-primary">{testimonial.initials}</AvatarFallback>
+                    <AvatarFallback className="bg-primary/10 text-primary">
+                      {testimonial.initials}
+                    </AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="font-semibold">{testimonial.author}</p>
-                    <p className="text-xs text-muted-foreground">{testimonial.role}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {testimonial.role}
+                    </p>
                   </div>
                 </div>
-                
-                <p className="text-sm text-muted-foreground mb-4">"{testimonial.quote}"</p>
-                
+
+                <p className="text-sm text-muted-foreground mb-4">
+                  "{testimonial.quote}"
+                </p>
+
                 <div className="flex items-center gap-3 text-xs border-t pt-4">
-                  <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary">
+                  <Badge
+                    variant="outline"
+                    className="border-primary/20 bg-primary/5 text-primary"
+                  >
                     Nv. {testimonial.nivel}
                   </Badge>
-                  <Badge variant="outline" className="border-accent/20 bg-accent/5 text-accent">
+                  <Badge
+                    variant="outline"
+                    className="border-accent/20 bg-accent/5 text-accent"
+                  >
                     <Flame className="size-3 mr-1" />
                     {testimonial.days} dias
                   </Badge>
@@ -731,10 +1050,15 @@ export default function AboutPage({
       <section className="py-20">
         <div className="mx-auto max-w-4xl px-6">
           <div className="text-center mb-12">
-            <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary mb-4">
+            <Badge
+              variant="outline"
+              className="border-primary/20 bg-primary/5 text-primary mb-4"
+            >
               FAQ
             </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold">Perguntas frequentes</h2>
+            <h2 className="text-3xl md:text-4xl font-bold">
+              Perguntas frequentes
+            </h2>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
@@ -758,11 +1082,18 @@ export default function AboutPage({
       <section className="py-20 bg-secondary/30">
         <div className="mx-auto max-w-6xl px-6">
           <div className="text-center mb-12">
-            <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary mb-4">
+            <Badge
+              variant="outline"
+              className="border-primary/20 bg-primary/5 text-primary mb-4"
+            >
               PREÇOS
             </Badge>
-            <h2 className="text-3xl md:text-4xl font-bold">Escolha seu plano de evolução</h2>
-            <p className="text-muted-foreground mt-2">Comece grátis e evolua conforme suas necessidades. Sem surpresas.</p>
+            <h2 className="text-3xl md:text-4xl font-bold">
+              Escolha seu plano de evolução
+            </h2>
+            <p className="text-muted-foreground mt-2">
+              Comece grátis e evolua conforme suas necessidades. Sem surpresas.
+            </p>
           </div>
 
           <div className="grid gap-6 md:grid-cols-3">
@@ -774,7 +1105,9 @@ export default function AboutPage({
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
                 className={`relative rounded-2xl border bg-card p-6 ${
-                  plan.popular ? "shadow-xl scale-105 border-primary/30" : "shadow-lg"
+                  plan.popular
+                    ? "shadow-xl scale-105 border-primary/30"
+                    : "shadow-lg"
                 }`}
               >
                 {plan.popular && (
@@ -782,11 +1115,13 @@ export default function AboutPage({
                     Mais popular
                   </Badge>
                 )}
-                
+
                 <h3 className="text-xl font-bold">{plan.name}</h3>
                 <p className="text-3xl font-bold mt-2">{plan.price}</p>
-                <p className="text-sm text-muted-foreground mt-1">{plan.description}</p>
-                
+                <p className="text-sm text-muted-foreground mt-1">
+                  {plan.description}
+                </p>
+
                 <div className="mt-6 space-y-3">
                   {plan.features.map((feature, i) => (
                     <div key={i} className="flex items-center gap-2 text-sm">
@@ -795,11 +1130,11 @@ export default function AboutPage({
                     </div>
                   ))}
                 </div>
-                
-                <Button 
+
+                <Button
                   className={`w-full mt-6 ${
-                    plan.popular 
-                      ? "bg-primary text-primary-foreground hover:bg-primary/90" 
+                    plan.popular
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90"
                       : "bg-foreground text-primary-foreground hover:bg-foreground/90"
                   }`}
                 >
@@ -818,9 +1153,13 @@ export default function AboutPage({
             Pronto para transformar sua produtividade?
           </h2>
           <p className="text-lg text-muted-foreground mb-8">
-            Junte-se a milhares de pessoas que estão evoluindo todos os dias com Nucleos. Sua jornada começa agora.
+            Junte-se a milhares de pessoas que estão evoluindo todos os dias com
+            Nucleos. Sua jornada começa agora.
           </p>
-          <Button size="lg" className="bg-foreground text-primary-foreground hover:bg-foreground/90 px-8">
+          <Button
+            size="lg"
+            className="bg-foreground text-primary-foreground hover:bg-foreground/90 px-8"
+          >
             Criar conta grátis
           </Button>
           <p className="text-xs text-muted-foreground mt-4">
@@ -836,45 +1175,93 @@ export default function AboutPage({
             <div>
               <h3 className="font-bold text-lg mb-4">Nucleos</h3>
               <p className="text-sm text-muted-foreground">
-                Organize sua vida, evolua todos os dias. O sistema de organização pessoal que transforma hábitos em conquistas.
+                Organize sua vida, evolua todos os dias. O sistema de
+                organização pessoal que transforma hábitos em conquistas.
               </p>
             </div>
-            
+
             <div>
               <h4 className="font-semibold mb-4">Produto</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="#" className="hover:text-foreground">Recursos</Link></li>
-                <li><Link href="#" className="hover:text-foreground">Como funciona</Link></li>
-                <li><Link href="#" className="hover:text-foreground">Preços</Link></li>
-                <li><Link href="#" className="hover:text-foreground">FAQ</Link></li>
+                <li>
+                  <Link href="#" className="hover:text-foreground">
+                    Recursos
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-foreground">
+                    Como funciona
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-foreground">
+                    Preços
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-foreground">
+                    FAQ
+                  </Link>
+                </li>
               </ul>
             </div>
-            
+
             <div>
               <h4 className="font-semibold mb-4">Empresa</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="#" className="hover:text-foreground">Sobre nós</Link></li>
-                <li><Link href="#" className="hover:text-foreground">Blog</Link></li>
-                <li><Link href="#" className="hover:text-foreground">Carreiras</Link></li>
-                <li><Link href="#" className="hover:text-foreground">Contato</Link></li>
+                <li>
+                  <Link href="#" className="hover:text-foreground">
+                    Sobre nós
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-foreground">
+                    Blog
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-foreground">
+                    Carreiras
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-foreground">
+                    Contato
+                  </Link>
+                </li>
               </ul>
             </div>
-            
+
             <div>
               <h4 className="font-semibold mb-4">Legal</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="#" className="hover:text-foreground">Termos de uso</Link></li>
-                <li><Link href="#" className="hover:text-foreground">Privacidade</Link></li>
-                <li><Link href="#" className="hover:text-foreground">Cookies</Link></li>
+                <li>
+                  <Link href="#" className="hover:text-foreground">
+                    Termos de uso
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-foreground">
+                    Privacidade
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-foreground">
+                    Cookies
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>
-          
+
           <div className="border-t border-border/40 mt-12 pt-8 text-center text-sm text-muted-foreground">
-            <p>© 2026 Nucleos. Todos os direitos reservados. Feito com dedicação no Brasil 🇧🇷</p>
+            <p>
+              © 2026 Nucleos. Todos os direitos reservados. Feito com dedicação
+              no Brasil 🇧🇷
+            </p>
           </div>
         </div>
       </footer>
     </div>
-  )
+  );
 }

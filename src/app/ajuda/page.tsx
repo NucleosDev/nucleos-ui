@@ -1,41 +1,26 @@
-// /app/ajuda/page.tsx
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
 import {
-  ArrowLeft,
-  Search,
-  HelpCircle,
   BookOpen,
-  MessageCircle,
-  Mail,
-  Phone,
-  MessageSquare,
-  Youtube,
-  Twitter,
-  Github,
-  FileText,
-  Video,
-  Users,
-  Sparkles,
   Zap,
   Trophy,
   Target,
+  Flame,
+  TrendingUp,
+  Sparkles,
+  MessageCircle,
+  Mail,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { gerarSlug, adicionarSlugs } from "@/lib/slug-utils";
+import { HeroSection } from "@/components/help/hero-section";
+import { CategoriaCard } from "@/components/help/categoria-card";
+import { ArtigoCard } from "@/components/help/artigo-card";
 
-const categorias = [
+// Dados das categorias
+const categoriasData = [
   {
     icon: BookOpen,
     titulo: "Primeiros Passos",
@@ -45,7 +30,7 @@ const categorias = [
   },
   {
     icon: Zap,
-    titulo: "Núcleos e Blocos",
+    titulo: "Nucleos e Blocos",
     descricao: "Aprenda a criar e organizar",
     cor: "#00C9A7",
     artigos: 12,
@@ -64,40 +49,87 @@ const categorias = [
     cor: "#FF8C42",
     artigos: 5,
   },
+  {
+    icon: Flame,
+    titulo: "Produtividade",
+    descricao: "Técnicas e métodos",
+    cor: "#FF6B6B",
+    artigos: 7,
+  },
+  {
+    icon: TrendingUp,
+    titulo: "Análises",
+    descricao: "Métricas e relatórios",
+    cor: "#8CD47E",
+    artigos: 4,
+  },
 ];
 
-const artigosPopulares = [
+// Artigos populares
+const artigosPopularesData = [
   {
     titulo: "Como criar seu primeiro Núcleo",
-    visualizacoes: "2.5k",
-    tempo: "3 min",
-    link: "/ajuda/primeiro-nucleo",
+    resumo:
+      "Guia passo a passo para criar seu primeiro núcleo e organizar suas tarefas",
+    tempoLeitura: "5 min",
+    visualizacoes: "3.2k",
+    data: "2024-01-12",
+    categoria: "Nucleos e Blocos",
+    categoriaCor: "#00C9A7",
   },
   {
     titulo: "Entendendo o sistema de XP",
-    visualizacoes: "1.8k",
-    tempo: "4 min",
-    link: "/ajuda/sistema-xp",
+    resumo: "Descubra como ganhar experiência e subir de nível no Nucleos",
+    tempoLeitura: "4 min",
+    visualizacoes: "2.8k",
+    data: "2024-01-18",
+    categoria: "Gamificação",
+    categoriaCor: "#FFD700",
   },
   {
     titulo: "Dicas para manter streaks",
-    visualizacoes: "1.2k",
-    tempo: "5 min",
-    link: "/ajuda/dicas-streaks",
+    resumo: "Estratégias para não quebrar sua sequência de produtividade",
+    tempoLeitura: "6 min",
+    visualizacoes: "2.1k",
+    data: "2024-01-20",
+    categoria: "Metas e Streaks",
+    categoriaCor: "#FF8C42",
   },
   {
-    titulo: "Personalizando seus núcleos",
-    visualizacoes: "980",
-    tempo: "3 min",
-    link: "/ajuda/personalizacao",
+    titulo: "Personalizando seus Nucleos",
+    resumo: "Aprenda a deixar seus Nucleos com a sua cara",
+    tempoLeitura: "3 min",
+    visualizacoes: "1.8k",
+    data: "2024-01-22",
+    categoria: "Nucleos e Blocos",
+    categoriaCor: "#00C9A7",
+  },
+  {
+    titulo: "Método Pomodoro no Nucleos",
+    resumo: "Use a técnica Pomodoro para aumentar sua produtividade",
+    tempoLeitura: "4 min",
+    visualizacoes: "1.5k",
+    data: "2024-01-25",
+    categoria: "Produtividade",
+    categoriaCor: "#FF6B6B",
+  },
+  {
+    titulo: "Interpretando seus gráficos",
+    resumo: "Entenda as métricas e acompanhe sua evolução",
+    tempoLeitura: "5 min",
+    visualizacoes: "1.2k",
+    data: "2024-01-28",
+    categoria: "Análises",
+    categoriaCor: "#8CD47E",
   },
 ];
 
+// ✅ FAQ adicionado!
 const faqs = [
   {
-    pergunta: "O que são Núcleos?",
+    pergunta: "O que são Nucleos?",
     resposta:
-      "Núcleos são espaços personalizados que você cria para organizar diferentes áreas da sua vida, como estudos, saúde, trabalho, finanças, etc. Cada núcleo pode conter blocos, tarefas e seu próprio sistema de progressão.",
+      "Nucleos são espaços personalizados que você cria para organizar diferentes áreas da sua vida, como estudos, saúde, trabalho, finanças, etc. Cada núcleo pode conter blocos, tarefas e seu próprio sistema de progressão.",
   },
   {
     pergunta: "Como funciona o sistema de XP?",
@@ -121,166 +153,234 @@ const faqs = [
   },
 ];
 
+// Adicionar slugs
+const categorias = adicionarSlugs(categoriasData, "titulo");
+const artigosPopulares = adicionarSlugs(artigosPopularesData, "titulo", {
+  removeStopWords: true,
+  stopWords: [
+    "de",
+    "da",
+    "do",
+    "das",
+    "dos",
+    "e",
+    "a",
+    "o",
+    "em",
+    "com",
+    "sua",
+  ],
+});
+
+// Interface para o FAQ (opcional, mas bom para TypeScript)
+interface FAQ {
+  pergunta: string;
+  resposta: string;
+}
+
 export default function AjudaPage() {
+  // Calcular totais
+  const totalArtigos = categorias.reduce((acc, cat) => acc + cat.artigos, 0);
+  const totalCategorias = categorias.length;
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b border-border/50 bg-gradient-to-r from-[#4D7CFF]/5 via-transparent to-[#00C9A7]/5">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center gap-4">
-            <Link href="/">
-              <Button variant="ghost" size="icon">
-                <ArrowLeft className="size-4" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-2xl font-bold">Central de Ajuda</h1>
-              <p className="text-sm text-muted-foreground">
-                Como podemos ajudar você hoje?
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Busca */}
-      <section className="container mx-auto px-4 py-12">
-        <div className="mx-auto max-w-2xl">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
-            <Input
-              placeholder="Buscar ajuda, tutoriais, perguntas..."
-              className="pl-12 py-6 text-lg"
-            />
-          </div>
-        </div>
-      </section>
+      {/* Hero Section com busca e estatísticas */}
+      <HeroSection
+        totalArtigos={totalArtigos}
+        totalCategorias={totalCategorias}
+      />
 
       {/* Categorias */}
-      <section className="container mx-auto px-4 py-12">
-        <h2 className="text-2xl font-bold mb-8 text-center">
-          Navegue por categoria
-        </h2>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {categorias.map((cat, index) => {
-            const Icon = cat.icon;
-            return (
-              <motion.div
-                key={cat.titulo}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Link
-                  href={`/ajuda/${cat.titulo.toLowerCase().replace(/\s+/g, "-")}`}
-                >
-                  <Card className="h-full hover:border-[#4D7CFF]/30 transition-all hover:shadow-lg group">
-                    <CardContent className="p-6 text-center">
-                      <div className="mb-4 flex justify-center">
-                        <div
-                          className="size-16 rounded-2xl flex items-center justify-center"
-                          style={{ backgroundColor: `${cat.cor}15` }}
-                        >
-                          <Icon className="size-8" style={{ color: cat.cor }} />
-                        </div>
-                      </div>
-                      <h3 className="font-semibold mb-1">{cat.titulo}</h3>
-                      <p className="text-sm text-muted-foreground mb-2">
-                        {cat.descricao}
-                      </p>
-                      <span className="text-xs text-[#4D7CFF]">
-                        {cat.artigos} artigos
-                      </span>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </motion.div>
-            );
-          })}
+      <section className="container mx-auto px-4 py-16 relative">
+        {/* Gradiente de fundo */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-background to-transparent" />
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="text-center mb-12"
+        >
+          <Badge
+            variant="outline"
+            className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 mb-4"
+          >
+            <Sparkles className="size-4 text-[#4D7CFF]" />
+            <span className="text-[#4D7CFF]">Navegue por categoria</span>
+          </Badge>
+          <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+            Encontre o que você precisa
+          </h2>
+        </motion.div>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {categorias.map((cat, index) => (
+            <CategoriaCard
+              key={cat.slug}
+              icon={cat.icon}
+              titulo={cat.titulo}
+              descricao={cat.descricao}
+              cor={cat.cor}
+              artigos={cat.artigos}
+              slug={cat.slug}
+              index={index}
+            />
+          ))}
         </div>
       </section>
 
       {/* Artigos Populares */}
-      <section className="container mx-auto px-4 py-12 bg-muted/30">
-        <div className="mx-auto max-w-4xl">
-          <h2 className="text-2xl font-bold mb-8 text-center">
+      <section className="container mx-auto px-4 py-16 relative bg-muted/30">
+        {/* Gradiente de fundo */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#4D7CFF]/5 to-transparent" />
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="text-center mb-12"
+        >
+          <Badge
+            variant="outline"
+            className="gap-2 border-[#00C9A7]/20 bg-[#00C9A7]/5 px-4 py-2 mb-4"
+          >
+            <TrendingUp className="size-4 text-[#00C9A7]" />
+            <span className="text-[#00C9A7]">Mais lidos</span>
+          </Badge>
+          <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
             Artigos populares
           </h2>
-          <div className="grid gap-4 md:grid-cols-2">
-            {artigosPopulares.map((artigo, index) => (
+        </motion.div>
+
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {artigosPopulares.map((artigo, index) => (
+            <ArtigoCard
+              key={artigo.slug}
+              titulo={artigo.titulo}
+              slug={artigo.slug}
+              resumo={artigo.resumo}
+              tempoLeitura={artigo.tempoLeitura}
+              visualizacoes={artigo.visualizacoes}
+              data={artigo.data}
+              categoria={artigo.categoria}
+              categoriaCor={artigo.categoriaCor}
+              index={index}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="container mx-auto px-4 py-16">
+        <div className="mx-auto max-w-3xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <Badge
+              variant="outline"
+              className="gap-2 border-[#FF8C42]/20 bg-[#FF8C42]/5 px-4 py-2 mb-4"
+            >
+              <Sparkles className="size-4 text-[#FF8C42]" />
+              <span className="text-[#FF8C42]">Dúvidas frequentes</span>
+            </Badge>
+            <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+              Perguntas frequentes
+            </h2>
+          </motion.div>
+
+          <div className="space-y-4">
+            {faqs.map((faq: FAQ, index: number) => (
               <motion.div
-                key={artigo.titulo}
+                key={index}
                 initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
               >
-                <Link href={artigo.link}>
-                  <Card className="hover:border-[#4D7CFF]/30 transition-all">
-                    <CardContent className="p-4">
-                      <h3 className="font-medium mb-2">{artigo.titulo}</h3>
-                      <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <span>{artigo.visualizacoes} visualizações</span>
-                        <span>{artigo.tempo} de leitura</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
+                <details className="group border border-border/50 rounded-lg bg-card/50 backdrop-blur-sm open:bg-gradient-to-br open:from-[#4D7CFF]/5 open:to-[#00C9A7]/5 transition-all duration-300">
+                  <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
+                    <span className="font-medium group-hover:text-[#4D7CFF] transition-colors">
+                      {faq.pergunta}
+                    </span>
+                    <motion.div
+                      animate={{ rotate: 0 }}
+                      whileHover={{ scale: 1.1 }}
+                      className="text-muted-foreground group-open:rotate-180 transition-transform"
+                    >
+                      ▼
+                    </motion.div>
+                  </summary>
+                  <div className="px-6 pb-6 text-muted-foreground border-t border-border/50 pt-4">
+                    {faq.resposta}
+                  </div>
+                </details>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="container mx-auto px-4 py-12">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="text-2xl font-bold mb-8 text-center">
-            Perguntas frequentes
-          </h2>
-          <Accordion type="single" collapsible className="w-full space-y-3">
-            {faqs.map((faq, index) => (
-              <AccordionItem
-                key={index}
-                value={`item-${index}`}
-                className="border border-border/50 rounded-lg bg-card/50 backdrop-blur-sm overflow-hidden"
-              >
-                <AccordionTrigger className="px-6 py-4 hover:text-[#4D7CFF]">
-                  {faq.pergunta}
-                </AccordionTrigger>
-                <AccordionContent className="px-6 pb-4 text-muted-foreground">
-                  {faq.resposta}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
-      </section>
-
       {/* Contato */}
-      <section className="container mx-auto px-4 py-12">
-        <div className="mx-auto max-w-4xl">
-          <Card className="border-0 bg-gradient-to-r from-[#4D7CFF]/10 to-[#00C9A7]/10">
-            <CardContent className="p-8 text-center">
-              <h3 className="text-2xl font-bold mb-4">
-                Ainda precisa de ajuda?
-              </h3>
-              <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-                Nossa equipe está pronta para ajudar com qualquer dúvida que
-                você tiver.
-              </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <Button className="gap-2 bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7]">
-                  <MessageCircle className="size-4" />
-                  Chat ao vivo
-                </Button>
-                <Button variant="outline" className="gap-2">
-                  <Mail className="size-4" />
-                  Enviar email
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+      <section className="container mx-auto px-4 py-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="relative rounded-3xl overflow-hidden"
+        >
+          {/* Gradiente de fundo */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] opacity-10 animate-gradient bg-[length:200%_auto]" />
+
+          {/* Grid pattern */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff10_1px,transparent_1px),linear-gradient(to_bottom,#ffffff10_1px,transparent_1px)] bg-[size:24px_24px]" />
+
+          <div className="relative p-12 text-center backdrop-blur-sm bg-gradient-to-r from-[#4D7CFF]/5 to-[#00C9A7]/5">
+            <Badge
+              variant="outline"
+              className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 mb-4"
+            >
+              <MessageCircle className="size-4 text-[#4D7CFF]" />
+              <span className="text-[#4D7CFF]">Suporte 24/7</span>
+            </Badge>
+
+            <h3 className="text-3xl font-bold mb-4">Ainda precisa de ajuda?</h3>
+
+            <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
+              Nossa equipe está pronta para ajudar com qualquer dúvida que você
+              tiver.
+            </p>
+
+            <div className="flex flex-wrap justify-center gap-4">
+              <Button
+                size="lg"
+                className="gap-2 bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90"
+              >
+                <MessageCircle className="size-4" />
+                Chat ao vivo
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="gap-2 border-[#4D7CFF] text-[#4D7CFF] hover:bg-[#4D7CFF]/10"
+              >
+                <Mail className="size-4" />
+                Enviar email
+              </Button>
+            </div>
+          </div>
+        </motion.div>
       </section>
     </div>
   );
