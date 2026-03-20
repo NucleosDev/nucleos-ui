@@ -389,7 +389,8 @@ export const gamificacaoArtigos: Artigo[] = [
     categoria: "Gamificação",
     categoriaCor: "#FFD700",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `A gamificação nas tarefas consiste na aplicação de mecânicas de jogos, como pontos, níveis e recompensas, para tornar a execução de atividades mais motivadora. 
+    Essa abordagem aumenta o engajamento e incentiva a produtividade dentro da plataforma.`,
   },
   {
     titulo: "Entendendo o sistema de XP",
