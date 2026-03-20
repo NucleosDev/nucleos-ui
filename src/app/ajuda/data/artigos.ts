@@ -340,7 +340,8 @@ export const gamificacaoArtigos: Artigo[] = [
     categoria: "Gamificação",
     categoriaCor: "#FFD700",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `O sistema de níveis e recompensas é responsável por estruturar a progressão dos usuários dentro da plataforma, atribuindo benefícios e conquistas conforme o acúmulo de experiência. 
+    Esse mecanismo aumenta o engajamento e incentiva a participação contínua.`,
   },
   {
     titulo: "Conquistas e badges",
