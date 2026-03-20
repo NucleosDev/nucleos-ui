@@ -3,21 +3,21 @@ import Image from "next/image"
 
 const footerLinks = {
   produto: [
-    { label: "Recursos", href: "#recursos" },
-    { label: "Como funciona", href: "#como-funciona" },
-    { label: "Precos", href: "#precos" },
-    { label: "FAQ", href: "#faq" },
+    { label: "Recursos", href: "/recursos" },
+    { label: "Como funciona", href: "/como-funciona" },
+    { label: "Precos", href: "/planos" },
+    { label: "FAQ", href: "/duvidas" },
   ],
   empresa: [
-    { label: "Sobre nos", href: "#" },
-    { label: "Blog", href: "#" },
-    { label: "Carreiras", href: "#" },
-    { label: "Contato", href: "#" },
+    { label: "Sobre nos", href: "/sobre" },
+    { label: "Blog", href: "/blog" },
+    { label: "Carreiras", href: "/carreiras" },
+    { label: "Contato", href: "/contato" },
   ],
   legal: [
-    { label: "Termos de uso", href: "#" },
-    { label: "Privacidade", href: "#" },
-    { label: "Cookies", href: "#" },
+    { label: "Termos de uso", href: "/termos" },
+    { label: "Privacidade", href: "/privacidade" },
+    { label: "Cookies", href: "/cookies" },
   ],
 }
 

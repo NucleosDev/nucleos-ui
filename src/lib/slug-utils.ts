@@ -171,6 +171,7 @@ const DEFAULT_OPTIONS: SlugOptions = {
   stopWords: [],
 };
 
+
 /**
  * Gera um slug a partir de qualquer texto
  * @param texto - Texto original para converter em slug

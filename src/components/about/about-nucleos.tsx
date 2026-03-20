@@ -3,156 +3,272 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ChevronRight } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
 import { motion } from "framer-motion";
+import {
+  Brain,
+  Dumbbell,
+  Briefcase,
+  Trophy,
+  Target,
+  Users,
+  Rocket,
+  Heart,
+} from "lucide-react";
 
-interface AboutPageProps {
-  achievements?: Array<{ label: string; value: string }>;
-}
-
-const defaultAchievements = [
-  { label: "Companies Supported", value: "300+" },
-  { label: "Projects Finalized", value: "800+" },
-  { label: "Happy Customers", value: "99%" },
-  { label: "Recognized Awards", value: "10+" },
+const nucleosData = [
+  {
+    nome: "Estudos",
+    nivel: 12,
+    progresso: 82,
+    icon: Brain,
+  },
+  {
+    nome: "Fitness",
+    nivel: 8,
+    progresso: 60,
+    icon: Dumbbell,
+  },
+  {
+    nome: "Trabalho",
+    nivel: 15,
+    progresso: 90,
+    icon: Briefcase,
+  },
 ];
 
-export default function AboutPage({
-  achievements = defaultAchievements,
-}: AboutPageProps) {
+export default function AboutPage() {
   return (
-    <div className="flex flex-col">
-      {/* ---------------- HERO SECTION ---------------- */}
-      <section className="py-16 md:py-28 bg-background">
-        <div className="mx-auto max-w-6xl space-y-2 px-6">
-          <Image
-            className="rounded-xl object-cover w-full h-[240px] md:h-[460px]"
-            src="https://pub-940ccf6255b54fa799a9b01050e6c227.r2.dev/ruixen_hero_gradient.jpg"
-            alt="Hero section image"
-            width={1200}
-            height={600}
-            priority
-          />
-
-          <div className="grid gap-6 md:grid-cols-2 md:gap-12">
-            <h1 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white leading-snug">
-              Nucleos <span className="text-primary">lorem ipmsum</span>{" "}
-              <span className="text-gray-500 dark:text-gray-400">
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-              </span>
-            </h1>
-            <div className="space-y-6 text-muted-foreground">
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint
-                qui adipisci quas fuga vitae illo, eveniet, repellat distinctio
-                veniam voluptatum laborum perferendis expedita, libero tempore
-                obcaecati excepturi asperiores culpa hic.
-              </p>
-              <Button
-                asChild
-                variant="secondary"
-                size="sm"
-                className="gap-1 pr-1.5"
-              >
-                <Link href="#">
-                  <span>Ler Mais</span>
-                  <ChevronRight className="size-4" />
-                </Link>
-              </Button>
-            </div>
-          </div>
+    <div className="container mx-auto px-4 py-16 space-y-20">
+      {/* HERO */}
+      <section className="text-center space-y-6">
+        <Badge>Núcleos</Badge>
+        <h1 className="text-4xl md:text-5xl font-bold">
+          Evolua sua vida como um jogo
+        </h1>
+        <p className="text-muted-foreground max-w-2xl mx-auto">
+          O Núcleos é uma plataforma que transforma sua rotina em um sistema de
+          progresso contínuo. Aqui, você evolui em áreas importantes da sua vida
+          como se estivesse subindo de nível em um game.
+        </p>
+        <div className="grid gap-6 md:grid-cols-3 justify-items-center">
+          <Link href="/planos">
+            
+          </Link>
+          <Link href="/docs">
+            <Button variant="outline">Ver documentação</Button>
+          </Link>
         </div>
       </section>
 
-      {/* ---------------- ABOUT SECTION ---------------- */}
-      <section className="py-20 md:py-28">
-        <div className="mx-auto max-w-6xl space-y-16 px-6">
-          {/* Header */}
-          <div className="grid gap-6 text-center md:grid-cols-2 md:gap-12 md:text-left">
-            <h1 className="text-4xl md:text-5xl font-semibold text-gray-900 dark:text-white">
-              Lorem ipsum
-            </h1>
-            <p className="text-muted-foreground">
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolores
-              excepturi libero atque eius mollitia officia nam unde quas sit id
-              dignissimos blanditiis iste est similique ad doloribus tenetur,
-              illo quod.
+      {/* MISSÃO */}
+      <section className="grid md:grid-cols-3 gap-6">
+        <Card>
+          <CardContent className="p-6 space-y-3">
+            <Target className="w-8 h-8" />
+            <h3 className="text-xl font-semibold">Missão</h3>
+            <p className="text-sm text-muted-foreground">
+              Ajudar pessoas a evoluírem de forma consistente, criando hábitos
+              e acompanhando progresso de forma clara e motivadora.
             </p>
-          </div>
+          </CardContent>
+        </Card>
 
-          {/* ---------------- LAST THREE CARDS (NEW LAYOUT) ---------------- */}
-          <div className="flex flex-col md:flex-row gap-6 mt-16">
-            {/* LEFT BIG IMAGE */}
-            <div className="md:flex-1">
-              <Image
-                src="https://pub-940ccf6255b54fa799a9b01050e6c227.r2.dev/ruixen_chat_gradient.png"
-                alt="Left big image"
-                className="rounded-xl object-cover w-full h-[300px] sm:h-[360px] md:h-[100%]"
-                width={800}
-                height={550}
-              />
-            </div>
+        <Card>
+          <CardContent className="p-6 space-y-3">
+            <Rocket className="w-8 h-8" />
+            <h3 className="text-xl font-semibold">Visão</h3>
+            <p className="text-sm text-muted-foreground">
+              Ser a principal plataforma de evolução pessoal baseada em
+              gamificação no Brasil.
+            </p>
+          </CardContent>
+        </Card>
 
-            <div className="flex flex-col gap-6 md:flex-1">
-              <motion.div
-                whileHover={{ scale: 1.03 }}
-                transition={{ type: "spring", stiffness: 250, damping: 20 }}
-                className="relative overflow-hidden rounded-xl bg-black text-white shadow-lg"
-              >
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  transition={{ duration: 0.4 }}
-                  className="relative h-60 sm:h-64 md:h-48 w-full overflow-hidden"
-                >
-                  <Image
-                    src="https://pub-940ccf6255b54fa799a9b01050e6c227.r2.dev/ruixen_moon.png"
-                    alt="Card Image"
-                    className="h-full w-full object-cover"
-                    width={600}
-                    height={400}
-                  />
-                  <div className="absolute bottom-0 h-32 w-full bg-gradient-to-t from-black via-black/70 to-transparent" />
-                </motion.div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold">Accelerate Growth</h3>
-                  <p className="mt-2 text-sm text-gray-300">
-                    Our solutions drive innovation, efficiency, and measurable
-                    impact for businesses.
+        <Card>
+          <CardContent className="p-6 space-y-3">
+            <Heart className="w-8 h-8" />
+            <h3 className="text-xl font-semibold">Valores</h3>
+            <p className="text-sm text-muted-foreground">
+              Disciplina, consistência, evolução contínua e foco no crescimento
+              pessoal real.
+            </p>
+          </CardContent>
+        </Card>
+      </section>
+
+      {/* COMO FUNCIONA */}
+      <section className="space-y-10">
+        <h2 className="text-3xl font-bold text-center">
+          Como funciona o Núcleos
+        </h2>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          {nucleosData.map((nucleo, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.2 }}
+            >
+              <Card>
+                <CardContent className="p-6 space-y-4">
+                  <nucleo.icon className="w-8 h-8" />
+                  <h3 className="text-lg font-semibold">
+                    {nucleo.nome}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Nível {nucleo.nivel}
                   </p>
-                  <Button
-                    variant="outline"
-                    className="mt-4 border-white text-black dark:text-white hover:bg-white hover:text-black"
-                  >
-                    Ler mais
-                  </Button>
-                </div>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ scale: 1.03 }}
-                transition={{ type: "spring", stiffness: 250, damping: 20 }}
-                className="relative overflow-hidden rounded-xl bg-muted shadow-lg"
-              >
-                <Image
-                  src="https://pub-940ccf6255b54fa799a9b01050e6c227.r2.dev/ruixen_hero_gradient.jpg"
-                  alt="Secondary card"
-                  className="h-full w-full object-cover min-h-[220px] sm:min-h-[240px] md:min-h-[220px]"
-                  width={600}
-                  height={400}
-                />
-                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent text-white">
-                  <h3 className="text-xl font-bold">Nucleos</h3>
-                  <p className="mt-2 text-sm text-gray-200">
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-                    Impedit vitae fugiat blanditiis, rerum quisquam harum
-                    tempore maiores voluptas nesciunt vero iure sed ut, id
-                    perferendis illo autem provident neque eaque.
-                  </p>
-                </div>
-              </motion.div>
-            </div>
-          </div>
+                  <Progress value={nucleo.progresso} />
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
         </div>
+      </section>
+
+      {/* BENEFÍCIOS */}
+      <section className="space-y-10">
+        <h2 className="text-3xl font-bold text-center">
+          Por que usar o Núcleos?
+        </h2>
+
+        <div className="grid md:grid-cols-3 gap-6">
+          <Card>
+            <CardContent className="p-6 space-y-3">
+              <Trophy className="w-8 h-8" />
+              <h3 className="font-semibold">Gamificação real</h3>
+              <p className="text-sm text-muted-foreground">
+                Transforme tarefas do dia a dia em conquistas e níveis.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6 space-y-3">
+              <Users className="w-8 h-8" />
+              <h3 className="font-semibold">Evolução contínua</h3>
+              <p className="text-sm text-muted-foreground">
+                Acompanhe seu progresso de forma clara e motivadora.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-6 space-y-3">
+              <Target className="w-8 h-8" />
+              <h3 className="font-semibold">Foco total</h3>
+              <p className="text-sm text-muted-foreground">
+                Organize sua vida em áreas importantes e evolua cada uma delas.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* EQUIPE */}
+      <section className="space-y-10 text-center">
+        <h2 className="text-3xl font-bold">Criado por</h2>
+
+        <div className="grid gap-6 md:grid-cols-3 justify-items-center">
+          <Card className="max-w-sm w-full">
+            <CardContent className="p-6 space-y-4 flex flex-col items-center">
+              <Avatar className="w-20 h-20">
+                <AvatarImage src="/avatar.png" />
+                <AvatarFallback>KA</AvatarFallback>
+              </Avatar>
+              <h3 className="text-lg font-semibold">Andrew Pimenta</h3>
+              <p className="text-sm text-muted-foreground text-center">
+               Engenheiro de software focado em soluções escaláveis ​​e impacto significativo.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* CARD 2 */}
+    <Card className="max-w-sm w-full">
+      <CardContent className="p-6 space-y-4 flex flex-col items-center">
+        <Avatar className="w-20 h-20">
+          <AvatarFallback>JS</AvatarFallback>
+        </Avatar>
+        <h3 className="text-lg font-semibold">Alisson Alves</h3>
+        <p className="text-sm text-muted-foreground text-center">
+          Designer focado em criar interfaces modernas e intuitivas para melhorar a experiência do usuário.
+        </p>
+      </CardContent>
+    </Card>
+
+    {/* CARD 3 */}
+    <Card className="max-w-sm w-full">
+      <CardContent className="p-6 space-y-4 flex flex-col items-center">
+        <Avatar className="w-20 h-20">
+          <AvatarFallback>AC</AvatarFallback>
+        </Avatar>
+        <h3 className="text-lg font-semibold">Cauê Alves</h3>
+        <p className="text-sm text-muted-foreground text-center">
+          Especialista em UX, focada em transformar ideias em experiências digitais eficientes.
+        </p>
+      </CardContent>
+    </Card>
+
+      {/* CARD 4 */}
+    <Card className="max-w-sm w-full">
+      <CardContent className="p-6 space-y-4 flex flex-col items-center">
+        <Avatar className="w-20 h-20">
+          <AvatarFallback>RS</AvatarFallback>
+        </Avatar>
+        <h3 className="text-lg font-semibold">João Pedro</h3>
+        <p className="text-sm text-muted-foreground text-center">
+          Desenvolvedor focado em performance e escalabilidade de aplicações web.
+        </p>
+      </CardContent>
+    </Card>
+
+    {/* CARD 5 */}
+    <Card className="max-w-sm w-full">
+      <CardContent className="p-6 space-y-4 flex flex-col items-center">
+        <Avatar className="w-20 h-20">
+          <AvatarFallback>ML</AvatarFallback>
+        </Avatar>
+        <h3 className="text-lg font-semibold">Kevynn M Alves</h3>
+        <p className="text-sm text-muted-foreground text-center">
+          WEB Developer apaixonado por criar experiências digitais
+          modernas e funcionais.
+        </p>
+      </CardContent>
+    </Card>
+
+    {/* CARD 6 */}
+    <Card className="max-w-sm w-full">
+      <CardContent className="p-6 space-y-4 flex flex-col items-center">
+        <Avatar className="w-20 h-20">
+          <AvatarFallback>ML</AvatarFallback>
+        </Avatar>
+        <h3 className="text-lg font-semibold">Matheus Tavares</h3>
+        <p className="text-sm text-muted-foreground text-center">
+          Analista de produto dedicada a melhorar funcionalidades e métricas do sistema.
+        </p>
+      </CardContent>
+    </Card>    
+
+
+        </div>
+      </section>
+
+      {/* CTA FINAL */}
+      <section className="text-center space-y-6">
+        <h2 className="text-3xl font-bold">
+          Pronto para evoluir?
+        </h2>
+        <p className="text-muted-foreground">
+          Comece agora e transforme sua rotina em progresso.
+        </p>
+        <Link href="/planos">
+          <Button size="lg">Começar gratuitamente</Button>
+        </Link>
       </section>
     </div>
   );

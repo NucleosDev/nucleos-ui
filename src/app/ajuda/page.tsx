@@ -26,7 +26,7 @@ const categoriasData = [
     titulo: "Primeiros Passos",
     descricao: "Comece sua jornada no Nucleos",
     cor: "#4D7CFF",
-    artigos: 8,
+    artigos: 10,
   },
   {
     icon: Zap,
@@ -60,6 +60,13 @@ const categoriasData = [
     icon: TrendingUp,
     titulo: "Análises",
     descricao: "Métricas e relatórios",
+    cor: "#8CD47E",
+    artigos: 4,
+  },
+  {
+    icon: Zap,
+    titulo: "Planos disponíveis",
+    descricao: "Conheça os planos e recursos disponíveis",
     cor: "#8CD47E",
     artigos: 4,
   },

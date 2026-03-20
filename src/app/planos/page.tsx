@@ -165,7 +165,7 @@ export default function PlanosPage() {
           <p className="text-muted-foreground mb-4">
             Ainda tem dúvidas sobre os planos?
           </p>
-          <Link href="/faq">
+          <Link href="/duvidas">
             <Button variant="outline" className="gap-2">
               <HelpCircle className="size-4" />
               Ver perguntas frequentes

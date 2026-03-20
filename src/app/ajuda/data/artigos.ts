@@ -28,7 +28,10 @@ export const primeirosPassosArtigos: Artigo[] = [
     categoria: "Primeiros Passos",
     categoriaCor: "#4D7CFF",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `O Nucleos é uma plataforma de produtividade pensada para organizar sua vida de forma simples, flexível e inteligente.
+
+Diferente de ferramentas tradicionais, aqui você não fica preso a um único formato.
+Você monta seu próprio sistema, do seu jeito.`,
   },
   {
     titulo: "Como criar sua conta",
@@ -133,7 +136,10 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `Os núcleos são grupos organizados dentro de instituições (como universidades, projetos ou comunidades) 
+    que se dedicam a uma área específica de atuação, estudo ou serviço.
+    Eles reúnem pessoas com um objetivo em comum — por exemplo: desenvolver projetos, 
+    prestar serviços à comunidade ou aprofundar conhecimentos em determinada área.`,
   },
   {
     titulo: "Tipos de blocos disponíveis",
@@ -149,7 +155,9 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `Os blocos disponíveis são componentes estruturais utilizados para organizar e apresentar informações dentro da plataforma. 
+    Cada bloco possui uma função específica, como exibir textos, imagens, projetos ou dados, 
+    permitindo a criação de páginas dinâmicas, organizadas e de fácil navegação.`,
   },
   {
     titulo: "Criando seu primeiro bloco",
@@ -162,7 +170,8 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `A criação do primeiro bloco consiste no desenvolvimento de um componente reutilizável responsável por exibir uma unidade específica de conteúdo. 
+    Esse processo permite estruturar páginas de forma modular, facilitando a manutenção, escalabilidade e organização da aplicação.`,
   },
   {
     titulo: "Organizando blocos dentro dos Nucleos",
@@ -175,7 +184,8 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `A organização de blocos dentro dos Núcleos é essencial para manter a estrutura das páginas clara, escalável e fácil de manter. 
+    Cada núcleo pode conter diferentes blocos, organizados de forma estratégica para apresentar informações de maneira eficiente.`,
   },
   {
     titulo: "Personalizando seus Nucleos",
@@ -188,7 +198,8 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `A personalização dos Núcleos consiste na adaptação visual e estrutural de cada área da plataforma, permitindo definir temas, blocos e organização do conteúdo. 
+    Esse processo possibilita a criação de experiências únicas, alinhadas às necessidades de cada grupo e ao seu contexto de atuação.`,
   },
   {
     titulo: "Como criar seu primeiro Núcleo",
@@ -200,7 +211,8 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `A criação de um Núcleo consiste na definição de uma estrutura que organiza conteúdos, blocos e identidade visual em um único espaço. 
+    Esse processo permite centralizar informações e facilitar a apresentação de projetos, equipes e ações dentro da plataforma.`,
   },
   {
     titulo: "Arquivando e excluindo Nucleos",
