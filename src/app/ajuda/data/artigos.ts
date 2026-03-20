@@ -375,7 +375,8 @@ export const gamificacaoArtigos: Artigo[] = [
     categoria: "Gamificação",
     categoriaCor: "#FFD700",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `A evolução visual do perfil consiste na representação gráfica do progresso do usuário, utilizando elementos como avatar, temas e badges. 
+    Essa abordagem torna a progressão mais intuitiva e motivadora, reforçando o engajamento na plataforma.`,
   },
   {
     titulo: "Gamificação nas tarefas",
