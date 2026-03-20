@@ -160,7 +160,6 @@ const faqs = [
   },
 ];
 
-// Adicionar slugs
 const categorias = adicionarSlugs(categoriasData, "titulo");
 const artigosPopulares = adicionarSlugs(artigosPopularesData, "titulo", {
   removeStopWords: true,

@@ -281,7 +281,8 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `O bloco de hábitos inteligentes é um componente que permite acompanhar atividades recorrentes, registrando sua frequência e evolução ao longo do tempo. 
+    Ele auxilia na construção de consistência e no desenvolvimento de rotinas produtivas dentro dos Núcleos.`,
   },
   {
     titulo: "Bloco de timer e Pomodoro",
@@ -294,7 +295,8 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `O bloco de Timer e Pomodoro é uma ferramenta que auxilia na gestão do tempo por meio de ciclos de foco e descanso. 
+    Baseado na técnica Pomodoro, ele contribui para o aumento da produtividade e concentração dos usuários dentro dos Núcleos.`,
   },
   {
     titulo: "Bloco de notas e documentação",
@@ -307,11 +309,11 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `O bloco de notas e documentação é um componente que permite registrar e organizar informações dentro de um Núcleo. 
+    Ele facilita a centralização do conhecimento, possibilitando a criação de conteúdos estruturados como guias, anotações e documentações.`,
   },
 ];
 
-// Artigos de GAMIFICAÇÃO (6 artigos)
 export const gamificacaoArtigos: Artigo[] = [
   {
     titulo: "Sistema de XP explicado",
@@ -324,7 +326,8 @@ export const gamificacaoArtigos: Artigo[] = [
     categoria: "Gamificação",
     categoriaCor: "#FFD700",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `O sistema de XP é um mecanismo de gamificação que atribui pontos aos usuários conforme suas ações dentro da plataforma. 
+    Esse sistema estimula o engajamento, promove a produtividade e cria uma sensação contínua de progresso.`,
   },
   {
     titulo: "Níveis e recompensas",
