@@ -225,7 +225,8 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `A gestão de Núcleos inclui ações como arquivar e excluir, 
+    permitindo manter a plataforma organizada e atualizada sem perder informações importantes.`,
   },
   {
     titulo: "Duplicando Nucleos",
@@ -238,7 +239,8 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `A duplicação de Núcleos consiste na criação de uma cópia de um núcleo existente, preservando sua estrutura, blocos e configurações. 
+    Essa funcionalidade facilita a criação de novos conteúdos de forma rápida e padronizada dentro da plataforma.`,
   },
   {
     titulo: "Compartilhando Nucleos",
@@ -251,7 +253,8 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `O compartilhamento de Núcleos consiste na possibilidade de conceder acesso a outros usuários, permitindo visualização ou edição do conteúdo. 
+    Essa funcionalidade promove a colaboração e facilita a gestão conjunta das informações dentro da plataforma.`,
   },
   {
     titulo: "Bloco de tarefas avançado",
@@ -264,7 +267,8 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `O bloco de tarefas avançado é um componente que permite gerenciar atividades dentro de um Núcleo, organizando tarefas por status, prioridade e responsáveis. 
+    Essa funcionalidade facilita o acompanhamento de projetos e melhora a colaboração entre os membros.`,
   },
   {
     titulo: "Bloco de hábitos inteligentes",
