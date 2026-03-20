@@ -354,7 +354,8 @@ export const gamificacaoArtigos: Artigo[] = [
     categoria: "Gamificação",
     categoriaCor: "#FFD700",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `As conquistas e badges são mecanismos de gamificação que recompensam usuários ao atingirem objetivos específicos dentro da plataforma. 
+    Enquanto as conquistas representam metas alcançadas, os badges funcionam como representações visuais dessas realizações, incentivando o engajamento contínuo.`,
   },
   {
     titulo: "Rankings e competição",
