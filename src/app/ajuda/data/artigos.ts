@@ -44,7 +44,17 @@ Você monta seu próprio sistema, do seu jeito.`,
     categoria: "Primeiros Passos",
     categoriaCor: "#4D7CFF",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `Para começar, clique em “Criar conta” no canto superior direito da tela.
+
+Em seguida, preencha suas informações básicas:
+
+Nome
+
+Email válido
+
+Senha segura
+
+Depois disso, sua conta já estará pronta para uso.`,
   },
   {
     titulo: "Primeiros passos com Nucleos",
@@ -56,7 +66,18 @@ Você monta seu próprio sistema, do seu jeito.`,
     categoria: "Primeiros Passos",
     categoriaCor: "#4D7CFF",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `O conceito principal da plataforma é organizar a vida do usuário em núcleos de foco, que funcionam como centros de atividade e evolução.
+
+Cada núcleo pode possuir:
+
+	atividades registradas,
+	hábitos recorrentes,
+	progresso acumulado,
+	experiência (XP),
+	níveis de evolução.
+
+Esses elementos permitem transformar metas e tarefas em um sistema estruturado de progresso, incentivando consistência e acompanhamento de resultados ao longo do tempo.
+`,
   },
   {
     titulo: "Entendendo o dashboard",
@@ -69,7 +90,11 @@ Você monta seu próprio sistema, do seu jeito.`,
     categoria: "Primeiros Passos",
     categoriaCor: "#4D7CFF",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `Na seção “Meus Núcleos”, você organiza sua vida por áreas, como estudos, trabalho, finanças e bem-estar. Cada núcleo mostra seu progresso individual, nível e evolução, permitindo que você acompanhe seu desempenho em diferentes aspectos da rotina.
+
+Você também pode criar novos núcleos, personalizando o sistema de acordo com seus objetivos. Além disso, a área de “Próximas Conquistas” ajuda a visualizar suas próximas metas, enquanto a “Dica do Dia” oferece orientações rápidas para melhorar sua produtividade.
+
+Assim, o dashboard se torna um espaço completo para planejar, acompanhar e evoluir constantemente. `,
   },
   {
     titulo: "Configurando seu perfil",
@@ -81,7 +106,7 @@ Você monta seu próprio sistema, do seu jeito.`,
     categoria: "Primeiros Passos",
     categoriaCor: "#4D7CFF",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `A configuração de perfil permite adaptar a plataforma às necessidades do usuário, tornando a experiência mais eficiente e personalizada.`,
   },
   {
     titulo: "Primeiro núcleo: guia rápido",
@@ -94,7 +119,17 @@ Você monta seu próprio sistema, do seu jeito.`,
     categoria: "Primeiros Passos",
     categoriaCor: "#4D7CFF",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `O Núcleo é um espaço onde o cliente organiza e acompanha metas, tarefas e anotações de uma área específica da vida.
+
+Ele funciona como uma mistura de:
+
+ App de produtividade,
+
+ Controle de metas,
+
+ Bloco de notas inteligente,
+
+ Sistema de evolução.`,
   },
   {
     titulo: "Navegando pelo app mobile",
@@ -106,7 +141,11 @@ Você monta seu próprio sistema, do seu jeito.`,
     categoria: "Primeiros Passos",
     categoriaCor: "#4D7CFF",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `O app mobile do Nucleos foi pensado para oferecer uma experiência simples e fluida. Na tela inicial, você acessa rapidamente seus núcleos, atividades e progresso. Use o menu inferior para navegar entre as principais áreas e toque nos núcleos para visualizar ou atualizar suas tarefas.
+
+Você pode adicionar novas atividades, acompanhar seus hábitos e registrar sua evolução em poucos toques. Além disso, as notificações ajudam você a manter o foco e não esquecer o que é importante.
+
+Com o Nucleos no celular, sua organização está sempre ao seu alcance — onde e quando precisar.`,
   },
   {
     titulo: "Atalhos e produtividade",
@@ -119,7 +158,7 @@ Você monta seu próprio sistema, do seu jeito.`,
     categoria: "Primeiros Passos",
     categoriaCor: "#4D7CFF",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `Atalhos são comandos rápidos que permitem executar ações de forma eficiente, contribuindo para um fluxo de trabalho mais ágil e produtivo.`,
   },
 ];
 
@@ -402,7 +441,8 @@ export const gamificacaoArtigos: Artigo[] = [
     categoria: "Gamificação",
     categoriaCor: "#FFD700",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `O sistema de XP é um mecanismo que registra o progresso do usuário por meio de pontos acumulados a partir de suas ações na plataforma. 
+    Ele permite acompanhar a evolução, incentivar o engajamento e estruturar a progressão por níveis.`,
   },
 ];
 
@@ -418,7 +458,8 @@ export const metasStreaksArtigos: Artigo[] = [
     categoria: "Metas e Streaks",
     categoriaCor: "#FF8C42",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `Streaks são sequências de ações realizadas de forma contínua ao longo do tempo, sem interrupções. 
+    Esse mecanismo incentiva a consistência e aumenta o engajamento dos usuários, promovendo a criação de hábitos dentro da plataforma.`,
   },
   {
     titulo: "Dicas para manter streaks",
@@ -431,7 +472,8 @@ export const metasStreaksArtigos: Artigo[] = [
     categoria: "Metas e Streaks",
     categoriaCor: "#FF8C42",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `Manter uma streak exige consistência, metas claras e acompanhamento contínuo. 
+    Estratégias como metas simples, lembretes e recompensas ajudam a evitar interrupções e fortalecem a construção de hábitos dentro da plataforma.`,
   },
   {
     titulo: "Como definir metas inteligentes",
@@ -444,7 +486,8 @@ export const metasStreaksArtigos: Artigo[] = [
     categoria: "Metas e Streaks",
     categoriaCor: "#FF8C42",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `Metas inteligentes são objetivos bem definidos, mensuráveis e com prazo determinado, que facilitam o acompanhamento do progresso e aumentam a produtividade. 
+    Sua aplicação permite maior organização e consistência dentro da plataforma.`,
   },
   {
     titulo: "Metas de curto vs longo prazo",
@@ -457,7 +500,8 @@ export const metasStreaksArtigos: Artigo[] = [
     categoria: "Metas e Streaks",
     categoriaCor: "#FF8C42",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `As metas de curto prazo são objetivos rápidos e de execução imediata, enquanto as metas de longo prazo representam conquistas maiores que exigem consistência ao longo do tempo. 
+    A combinação de ambas permite um progresso equilibrado e sustentável.`,
   },
   {
     titulo: "Acompanhamento de progresso",
@@ -470,7 +514,8 @@ export const metasStreaksArtigos: Artigo[] = [
     categoria: "Metas e Streaks",
     categoriaCor: "#FF8C42",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `O acompanhamento de progresso consiste na análise contínua da evolução do usuário, permitindo visualizar resultados, metas alcançadas e desempenho ao longo do tempo. 
+    Essa prática é essencial para manter o engajamento e orientar melhorias.`,
   },
 ];
 
@@ -487,7 +532,8 @@ export const produtividadeArtigos: Artigo[] = [
     categoria: "Produtividade",
     categoriaCor: "#FF6B6B",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `O método GTD (Getting Things Done) é uma abordagem de produtividade que organiza tarefas em etapas como captura, organização e execução. 
+    Sua aplicação nos Núcleos permite estruturar atividades de forma eficiente, aumentando o foco e a produtividade dos usuários.`,
   },
   {
     titulo: "Pomodoro Technique",
@@ -500,7 +546,8 @@ export const produtividadeArtigos: Artigo[] = [
     categoria: "Produtividade",
     categoriaCor: "#FF6B6B",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `A técnica Pomodoro é um método de gerenciamento de tempo baseado em ciclos de foco e descanso, que melhora a concentração e a produtividade. 
+    Sua aplicação permite organizar tarefas de forma eficiente e manter um ritmo sustentável de trabalho.`,
   },
   {
     titulo: "Matriz Eisenhower",
@@ -512,7 +559,8 @@ export const produtividadeArtigos: Artigo[] = [
     categoria: "Produtividade",
     categoriaCor: "#FF6B6B",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `A Matriz Eisenhower é uma técnica de priorização que classifica tarefas com base em sua urgência e importância, permitindo uma melhor organização e tomada de decisão. 
+    Sua aplicação ajuda a focar no que realmente importa, aumentando a produtividade.`,
   },
   {
     titulo: "Deep Work",
@@ -524,7 +572,8 @@ export const produtividadeArtigos: Artigo[] = [
     categoria: "Produtividade",
     categoriaCor: "#FF6B6B",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `Deep Work é um estado de concentração profunda em tarefas cognitivamente exigentes, livre de distrações. 
+    Sua aplicação permite alcançar níveis elevados de produtividade e qualidade no trabalho.`,
   },
   {
     titulo: "Time Blocking",
@@ -537,7 +586,8 @@ export const produtividadeArtigos: Artigo[] = [
     categoria: "Produtividade",
     categoriaCor: "#FF6B6B",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `Time Blocking é uma técnica de gerenciamento de tempo que organiza o dia em blocos dedicados a atividades específicas. 
+    Essa abordagem melhora o foco, reduz a procrastinação e aumenta a produtividade.`,
   },
   {
     titulo: "Eating the Frog",
@@ -550,7 +600,9 @@ export const produtividadeArtigos: Artigo[] = [
     categoria: "Produtividade",
     categoriaCor: "#FF6B6B",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `Eating the Frog é uma técnica de produtividade que consiste em começar o dia pela tarefa mais difícil e importante.
+    No Nucleos, isso significa priorizar o que realmente gera resultado logo no início, sem se perder em tarefas pequenas ou distrações.
+    A ideia é simples: resolva primeiro o que tem maior impacto e deixe o restante fluir depois.`,
   },
   {
     titulo: "Hábitos atômicos",
@@ -562,7 +614,7 @@ export const produtividadeArtigos: Artigo[] = [
     categoria: "Produtividade",
     categoriaCor: "#FF6B6B",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `Hábitos Atômicos é um conceito popularizado por James Clear que mostra como pequenas melhorias diárias podem gerar grandes resultados ao longo do tempo.`,
   },
   {
     titulo: "Método Pomodoro no Nucleos",
@@ -574,7 +626,7 @@ export const produtividadeArtigos: Artigo[] = [
     categoria: "Produtividade",
     categoriaCor: "#FF6B6B",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `Método Pomodoro é uma técnica de gestão de tempo que ajuda você a manter foco total em tarefas, evitando distrações e cansaço mental.`,
   },
 ];
 
@@ -590,7 +642,8 @@ export const analisesArtigos: Artigo[] = [
     categoria: "Análises",
     categoriaCor: "#8CD47E",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `Utilizando os componentes do Nucleos UI, conseguimos visualizar que a inclinação da curva de usuários ativos (MAU) tornou-se exponencial no último trimestre. 
+    O design minimalista permite que os stakeholders foquem no que importa: o ponto de inflexão em março, onde nossas estratégias de Growth deram resultado.`,
   },
   {
     titulo: "Relatórios semanais",
@@ -602,7 +655,8 @@ export const analisesArtigos: Artigo[] = [
     categoria: "Análises",
     categoriaCor: "#8CD47E",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `O gráfico de área demonstra uma estabilidade consistente de segunda a quinta-feira. 
+    No entanto, observamos um pico de volume na sexta-feira às 15h. Ao cruzar esses dados com o log de eventos, identificamos que a campanha de e-mail marketing foi o principal catalisador desse engajamento.`,
   },
   {
     titulo: "Métricas de produtividade",
@@ -614,7 +668,7 @@ export const analisesArtigos: Artigo[] = [
     categoria: "Análises",
     categoriaCor: "#8CD47E",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `Acompanhar métricas de produtividade permite entender melhor seu desempenho e evoluir de forma mais estratégica e consistente.`,
   },
   {
     titulo: "Exportando dados",
@@ -626,7 +680,7 @@ export const analisesArtigos: Artigo[] = [
     categoria: "Análises",
     categoriaCor: "#8CD47E",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `Exportar dados é uma forma prática de ampliar o uso das suas informações, garantindo mais flexibilidade, segurança e possibilidades de análise.`,
   },
   {
     titulo: "Interpretando seus gráficos",
@@ -638,7 +692,10 @@ export const analisesArtigos: Artigo[] = [
     categoria: "Análises",
     categoriaCor: "#8CD47E",
     autor: "Equipe Nucleos",
-    conteudo: `...`,
+    conteudo: `Interpretar gráficos é essencial para entender sua evolução e tomar decisões melhores. 
+    Eles ajudam a visualizar tendências, identificar picos e quedas, e comparar resultados ao longo do tempo.
+    Os principais pontos de análise são: tendência dos dados, variações fora do padrão, consistência e comparações entre períodos.
+    Evite erros como analisar períodos curtos ou ignorar o contexto. Para melhores resultados, acompanhe seus dados com frequência e foque em métricas relevantes.`,
   },
 ];
 

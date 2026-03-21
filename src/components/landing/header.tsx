@@ -105,7 +105,7 @@ export function Header() {
                     <li>
                       <ListItem
                         title="Dashboard"
-                        href="/dashboard"
+                        href="/painel"
                         description="Visualize seu progresso"
                         icon={LayoutDashboard}
                       />

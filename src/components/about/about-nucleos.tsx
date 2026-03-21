@@ -179,7 +179,7 @@ export default function AboutPage() {
             <CardContent className="p-6 space-y-4 flex flex-col items-center">
               <Avatar className="w-20 h-20">
                 <AvatarImage src="/avatar.png" />
-                <AvatarFallback>KA</AvatarFallback>
+                <AvatarFallback>AP</AvatarFallback>
               </Avatar>
               <h3 className="text-lg font-semibold">Andrew Pimenta</h3>
               <p className="text-sm text-muted-foreground text-center">
@@ -192,7 +192,7 @@ export default function AboutPage() {
     <Card className="max-w-sm w-full">
       <CardContent className="p-6 space-y-4 flex flex-col items-center">
         <Avatar className="w-20 h-20">
-          <AvatarFallback>JS</AvatarFallback>
+          <AvatarFallback>AL</AvatarFallback>
         </Avatar>
         <h3 className="text-lg font-semibold">Alisson Alves</h3>
         <p className="text-sm text-muted-foreground text-center">
@@ -205,7 +205,7 @@ export default function AboutPage() {
     <Card className="max-w-sm w-full">
       <CardContent className="p-6 space-y-4 flex flex-col items-center">
         <Avatar className="w-20 h-20">
-          <AvatarFallback>AC</AvatarFallback>
+          <AvatarFallback>CA</AvatarFallback>
         </Avatar>
         <h3 className="text-lg font-semibold">Cauê Alves</h3>
         <p className="text-sm text-muted-foreground text-center">
@@ -218,7 +218,7 @@ export default function AboutPage() {
     <Card className="max-w-sm w-full">
       <CardContent className="p-6 space-y-4 flex flex-col items-center">
         <Avatar className="w-20 h-20">
-          <AvatarFallback>RS</AvatarFallback>
+          <AvatarFallback>JP</AvatarFallback>
         </Avatar>
         <h3 className="text-lg font-semibold">João Pedro</h3>
         <p className="text-sm text-muted-foreground text-center">
@@ -231,7 +231,7 @@ export default function AboutPage() {
     <Card className="max-w-sm w-full">
       <CardContent className="p-6 space-y-4 flex flex-col items-center">
         <Avatar className="w-20 h-20">
-          <AvatarFallback>ML</AvatarFallback>
+          <AvatarFallback>KA</AvatarFallback>
         </Avatar>
         <h3 className="text-lg font-semibold">Kevynn M Alves</h3>
         <p className="text-sm text-muted-foreground text-center">
@@ -245,7 +245,7 @@ export default function AboutPage() {
     <Card className="max-w-sm w-full">
       <CardContent className="p-6 space-y-4 flex flex-col items-center">
         <Avatar className="w-20 h-20">
-          <AvatarFallback>ML</AvatarFallback>
+          <AvatarFallback>MT</AvatarFallback>
         </Avatar>
         <h3 className="text-lg font-semibold">Matheus Tavares</h3>
         <p className="text-sm text-muted-foreground text-center">
