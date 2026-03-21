@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 
 const comparisons = [
   {
-    feature: "Organização de tarefas",
+    feature: "Tarefas",
     semNucleos: "Espalhadas em vários apps",
     comNucleos: "Tudo em um só lugar",
     icon: <Zap className="size-4 text-[#4D7CFF]" />,
@@ -16,19 +16,19 @@ const comparisons = [
     icon: <Trophy className="size-4 text-[#FFD700]" />,
   },
   {
-    feature: "Acompanhamento",
+    feature: "Rotina",
     semNucleos: "Sem visão geral",
     comNucleos: "Dashboard completo",
     icon: <Target className="size-4 text-[#00C9A7]" />,
   },
   {
-    feature: "Consistência",
+    feature: "Incentivo",
     semNucleos: "Difícil manter hábitos",
     comNucleos: "Streaks e conquistas",
     icon: <Flame className="size-4 text-[#FF8C42]" />,
   },
   {
-    feature: "Personalização",
+    feature: "Visual",
     semNucleos: "Limitada",
     comNucleos: "Nucleos personalizados",
     icon: <Sparkles className="size-4 text-[#2EBD59]" />,

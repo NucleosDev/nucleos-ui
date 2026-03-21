@@ -132,7 +132,7 @@ export function Header() {
                       <li>
                         <ListItem
                           title="Para Estudos"
-                          href="/recursos"
+                          href="/estudos"
                           description="Organize matérias e acompanhe progresso"
                           icon={BookOpen}
                         />
@@ -140,7 +140,7 @@ export function Header() {
                       <li>
                         <ListItem
                           title="Para Saúde"
-                          href="/recursos"
+                          href="/saude"
                           description="Metas de exercícios e bem-estar"
                           icon={Heart}
                         />
@@ -148,7 +148,7 @@ export function Header() {
                       <li>
                         <ListItem
                           title="Para Finanças"
-                          href="/recursos"
+                          href="/financas"
                           description="Controle orçamento e investimentos"
                           icon={Wallet}
                         />

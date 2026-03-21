@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect } from "react";
 import { Hero } from "@/components/landing/hero";
 import { Comparison } from "@/components/landing/comparison";
@@ -14,6 +15,7 @@ import { Badges } from "@/components/landing/badges";
 import HeroSection from "@/components/landing/hero-section";
 import DashboardMosty from "@/components/landing/dashboard-most";
 import Users from "@/components/landing/users";
+
 export default function LandingPage() {
   useEffect(() => {
     window.scrollTo({
@@ -30,19 +32,12 @@ export default function LandingPage() {
         <FloatingNotifications />
         <Comparison />
         <DashboardMosty />
-
         <JourneyTimeline />
         <HowItWorks />
-
         <Badges />
-
         <Impact />
-
-        {/* <section id="depoimentos"> */}
         <Users />
-
         <FAQ />
-
         <Pricing />
         <CTA />
       </main>
