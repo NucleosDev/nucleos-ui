@@ -1,17 +1,22 @@
-"use client"
+"use client";
 
-import { ProtectedRoute } from '@/components/auth/protected-route'
-import App from '@/components/ui/testimonial-v2'
-import { useAuth } from '@/hooks/useAuth'
+import { useEffect, useState } from "react";
 
+export default function ProfilePage() {
+  const [user, setUser] = useState<any>(null);
 
-export default function userProfile() {
-    return (
-        <ProtectedRoute>
-            <div className="container mx-auto p-6">
-                <h1 className="text-2xl font-bold mb-4">Perfil do Usuário</h1>
-                <p>Esta é a página de perfil do usuário. Aqui você pode ver e editar suas informações pessoais.</p>
-            </div>
-        </ProtectedRoute>
-    )
+  useEffect(() => {
+    const email = localStorage.getItem("email");
+
+    setUser({ email });
+  }, []);
+
+  if (!user) return <p>Carregando...</p>;
+
+  return (
+    <div>
+      <h1>Perfil</h1>
+      <p>Email: {user.email}</p>
+    </div>
+  );
 }

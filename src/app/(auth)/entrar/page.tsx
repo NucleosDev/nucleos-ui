@@ -37,7 +37,7 @@ export default function LoginPage() {
         <Link href="#" className="underline hover:text-foreground">
           Termos de Serviço
         </Link>{' '}
-        e{' '}
+        e{''}
         <Link href="#" className="underline hover:text-foreground">
           Política de Privacidade
         </Link>

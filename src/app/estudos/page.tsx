@@ -425,13 +425,28 @@ export default function EstudosPage() {
                   </button>
                 ))}
               </div>
-              
+              <Link href="">
               <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 shadow-lg shadow-primary/25 group">
                 Criar meu primeiro Nucleo 
                 <Sparkles className="h-4 w-4 transition-transform group-hover:rotate-12" />
               </Button>
+
+              </Link>
+
+
             </div>
 
+
+
+
+
+
+
+
+
+
+
+            
             {/* Subject Cards */}
             <div className="grid sm:grid-cols-2 gap-4">
               <SubjectCard 
