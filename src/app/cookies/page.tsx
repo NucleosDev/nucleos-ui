@@ -18,7 +18,7 @@ export default function CookiesPage() {
 
           
           <section className="p-6 rounded-2xl border bg-card">
-            <h2 className="text-xl font-semibold">🍪 O que são cookies?</h2>
+            <h2 className="text-xl font-semibold">O que são cookies?</h2>
             <p className="mt-3 text-muted-foreground">
               Cookies são pequenos arquivos armazenados no seu dispositivo
               que ajudam o site a funcionar corretamente e a lembrar suas preferências.
@@ -26,7 +26,7 @@ export default function CookiesPage() {
           </section>
 
           <section className="p-6 rounded-2xl border bg-card">
-            <h2 className="text-xl font-semibold">⚙️ Como usamos os cookies</h2>
+            <h2 className="text-xl font-semibold">Como usamos os cookies</h2>
             <ul className="mt-3 space-y-2 text-muted-foreground list-disc ml-5">
               <li>Garantir o funcionamento do site</li>
               <li>Melhorar desempenho e velocidade</li>
@@ -36,7 +36,7 @@ export default function CookiesPage() {
           </section>
 
           <section className="p-6 rounded-2xl border bg-card">
-            <h2 className="text-xl font-semibold">📊 Tipos de cookies</h2>
+            <h2 className="text-xl font-semibold">Tipos de cookies</h2>
             <div className="mt-4 space-y-3 text-muted-foreground">
               <p><strong>Essenciais:</strong> necessários para o funcionamento</p>
               <p><strong>Desempenho:</strong> ajudam a melhorar o site</p>
@@ -45,7 +45,7 @@ export default function CookiesPage() {
           </section>
 
           <section className="p-6 rounded-2xl border bg-card">
-            <h2 className="text-xl font-semibold">🌐 Cookies de terceiros</h2>
+            <h2 className="text-xl font-semibold">Cookies de terceiros</h2>
             <p className="mt-3 text-muted-foreground">
               Podemos usar ferramentas externas (como analytics) que utilizam cookies
               para coletar dados anônimos sobre uso da plataforma.
@@ -61,14 +61,14 @@ export default function CookiesPage() {
           </section>
 
           <section className="p-6 rounded-2xl border bg-card">
-            <h2 className="text-xl font-semibold">🔄 Atualizações</h2>
+            <h2 className="text-xl font-semibold">Atualizações</h2>
             <p className="mt-3 text-muted-foreground">
               Esta política pode ser atualizada periodicamente. Recomendamos revisá-la regularmente.
             </p>
           </section>
 
           <section className="p-6 rounded-2xl border bg-card">
-            <h2 className="text-xl font-semibold">📩 Contato</h2>
+            <h2 className="text-xl font-semibold">Contato</h2>
             <p className="mt-3 text-muted-foreground">
               Em caso de dúvidas, entre em contato pela página de contato.
             </p>
@@ -78,7 +78,7 @@ export default function CookiesPage() {
 
         
         <div className="mt-16 text-sm text-muted-foreground text-center">
-          © {new Date().getFullYear()} Nucleos UI. Todos os direitos reservados.
+          © {new Date().getFullYear()} Nucleos. Todos os direitos reservados.
         </div>
 
       </div>

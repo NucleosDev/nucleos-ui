@@ -1,4 +1,3 @@
-// /app/demo/nucleos/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
