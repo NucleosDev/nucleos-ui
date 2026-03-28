@@ -81,13 +81,7 @@ export function Pricing() {
       </div>
 
       <div className="mx-auto max-w-7xl relative z-20">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="mx-auto max-w-2xl text-center"
-        >
+        <motion.div className="mx-auto max-w-2xl text-center">
           <Badge
             variant="outline"
             className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 text-[#4D7CFF] mb-4"
@@ -112,14 +106,7 @@ export function Pricing() {
           {plans.map((plan, index) => {
             const Icon = plan.icon;
             return (
-              <motion.div
-                key={plan.name}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.2 }}
-                viewport={{ once: true }}
-                className="group relative"
-              >
+              <motion.div key={index} className="group relative">
                 <div
                   className={`relative flex flex-col rounded-2xl border p-8 h-full transition-all ${
                     plan.popular
@@ -221,13 +208,7 @@ export function Pricing() {
         </div>
 
         {/* CTA para página de planos */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          viewport={{ once: true }}
-          className="mt-12 text-center"
-        >
+        <motion.div className="mt-12 text-center">
           <p className="text-muted-foreground mb-4">
             Precisa de um plano para equipes ou empresa?
           </p>
@@ -235,7 +216,7 @@ export function Pricing() {
             <Button
               variant="outline"
               size="lg"
-              className="group border-2 border-[#4D7CFF]/30 hover:border-[#4D7CFF] hover:bg-[#4D7CFF]/5 transition-all"
+              className="group border-2 border-[#4D7CFF]/30 transition-all"
             >
               <span className="flex items-center gap-2">
                 Ver todos os planos

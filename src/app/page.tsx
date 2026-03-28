@@ -15,6 +15,8 @@ import { Badges } from "@/components/landing/badges";
 import HeroSection from "@/components/landing/hero-section";
 import DashboardMosty from "@/components/landing/dashboard-most";
 import Users from "@/components/landing/users";
+import { Header } from "@/components/landing/header";
+import { Footer } from "react-day-picker";
 
 export default function LandingPage() {
   useEffect(() => {
@@ -25,7 +27,8 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen min-h-dvh">
+      <Header />
       <main>
         <HeroSection />
         <Hero />
@@ -40,6 +43,7 @@ export default function LandingPage() {
         <FAQ />
         <Pricing />
         <CTA />
+        <Footer />
       </main>
     </div>
   );

@@ -1,48 +1,52 @@
-// tipos pro usuario e perfil, incluindo níveis, XP, segurança e assinatura
-import { Plan } from './plan'
+// src/types/user.ts
+import { Plan } from "./plan";
 
 export interface User {
-  id: string
-  email: string
-  email_verified: boolean
-  profile: UserProfile
-  roles: UserRole[]
-  security?: UserSecurity
-  level?: UserLevel
-  subscription?: Subscription
-  created_at: string
-  active: boolean
+  id: string;
+  fullName: string;
+  email: string;
+  emailVerified: boolean;
+  active: boolean;
+  Cpf?: string; // ← ADICIONAR Cpf OPCIONAL no nível do User
+  profile: UserProfile;
+  roles: UserRole[];
+  security?: UserSecurity;
+  level?: UserLevel;
+  subscription?: Subscription;
+  createdAt: string;
 }
 
 export interface UserProfile {
-  full_name: string
-  nickname?: string
-  avatar_url?: string
-  phone?: string
-  cpf?: string
+  id: string;
+  userId: string;
+  fullName: string;
+  nickname?: string;
+  avatarUrl?: string;
+  phone: string;
+  Cpf: string; // ← Cpf OBRIGATÓRIO no profile
+  createdAt: string;
 }
 
 export interface UserRole {
-  role: 'user' | 'admin' | 'moderator'
+  role: "user" | "admin" | "moderator";
 }
 
 export interface UserSecurity {
-  last_login?: string
-  failed_attempts: number
-  password_updated_at: string
+  lastLogin?: string;
+  failedAttempts: number;
+  passwordUpdatedAt: string;
 }
 
 export interface UserLevel {
-  level: number
-  current_xp: number
-  next_level_xp: number
-  total_xp_earned: number
-  updated_at: string
+  level: number;
+  currentXp: number;
+  nextLevelXp: number;
+  totalXpEarned: number;
+  updatedAt: string;
 }
 
 export interface Subscription {
-  plan: Plan
-  started_at: string
-  expires_at?: string
+  plan: Plan;
+  startedAt: string;
+  expiresAt?: string;
 }
-

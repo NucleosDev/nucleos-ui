@@ -1,23 +1,27 @@
+// src/types/auth.ts
 import { User } from "./user";
 
 export interface LoginCredentials {
   email: string;
-  password: string;
+  Password: string;
 }
 
 export interface RegisterData {
   email: string;
-  password: string;
-  full_name: string;
-  phone?: string;
-  cpf?: string;
+  Password: string;
+  ConfirmPassword: string; // ← ESSE CAMPO É OBRIGATÓRIO
+  fullName: string;
+  phone: string;
+  Cpf: string;
   nickname?: string;
 }
 
 export interface AuthResponse {
-  user: User;
+  userId: string;
+  email: string;
+  fullName: string;
   token: string;
-  refreshToken?: string;
+  expiresAt: string;
 }
 
 export interface PasswordResetRequest {

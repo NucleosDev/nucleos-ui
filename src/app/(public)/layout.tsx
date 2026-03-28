@@ -1,11 +1,11 @@
-// app/layout.tsx (corrigido)
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { siteConfig } from "@/config/site";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/auth/";
-import "./globals.css";
+import { Header } from "@/components/landing/header";
+import { Footer } from "@/components/landing/footer";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -88,18 +88,15 @@ export default function RootLayout({
         className={`min-h-dvh ${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
         suppressHydrationWarning
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          storageKey="nucleos-theme"
-        >
+        
           <AuthProvider>
             <div className="relative flex min-h-dvh flex-col">
-              <main className="flex-1">{children}</main>
+              <Header />
+              <main className="flex-1 min-h-dvh">{children}</main>
+              <Footer />
             </div>
           </AuthProvider>
-        </ThemeProvider>
+
         <Analytics />
       </body>
     </html>

@@ -1,54 +1,82 @@
-import axios from 'axios'
-import { env } from '@/config/env'
+// src/services/api.ts
+import axios from "axios";
+import { env } from "@/config/env";
 
+// Garantir que a URL base está correta
 const api = axios.create({
-  baseURL: env.API_URL,
-  timeout: 10000,
+  baseURL: env.apiUrl || "http://localhost:5000/api",
+  timeout: 30000,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
-})
+});
 
-// Interceptor para adicionar token
+// Request interceptor
 api.interceptors.request.use(
   (config) => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('access_token')
+    console.log(
+      `📤 ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`,
+    );
+
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
       if (token) {
-        config.headers.Authorization = `Bearer ${token}`
+        config.headers.Authorization = `Bearer ${token}`;
       }
     }
-    return config
+    return config;
   },
-  (error) => Promise.reject(error)
-)
+  (error) => Promise.reject(error),
+);
 
-// Interceptor para refresh token
+// Response interceptor
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log(`📥 ${response.status} ${response.config.url}`);
+    return response;
+  },
   async (error) => {
-    const originalRequest = error.config
+    console.error("❌ API Error:", {
+      status: error.response?.status,
+      url: error.config?.url,
+      data: error.response?.data,
+    });
+
+    const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true
+      originalRequest._retry = true;
 
-      try {
-        const authService = (await import('@/services/auth.service')).default
-        const response = await authService.refreshToken()
-        
-        if (response?.token) {
-          originalRequest.headers.Authorization = `Bearer ${response.token}`
-          return api(originalRequest)
+      const refreshToken = localStorage.getItem("refreshToken");
+      if (refreshToken) {
+        try {
+          const response = await axios.post(
+            `${api.defaults.baseURL}/v1/auth/refresh-token`,
+            { refreshToken },
+          );
+          const { token } = response.data;
+          localStorage.setItem("token", token);
+          originalRequest.headers.Authorization = `Bearer ${token}`;
+          return api(originalRequest);
+        } catch {
+          localStorage.removeItem("token");
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("user");
+          if (typeof window !== "undefined") {
+            window.location.href = "/entrar";
+          }
         }
-      } catch {
-        if (typeof window !== 'undefined') {
-          window.location.href = '/login'
+      } else {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        if (typeof window !== "undefined") {
+          window.location.href = "/entrar";
         }
       }
     }
 
-    return Promise.reject(error)
-  }
-)
+    return Promise.reject(error);
+  },
+);
 
-export default api
+export default api;

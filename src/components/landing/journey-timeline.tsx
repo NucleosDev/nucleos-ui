@@ -89,13 +89,7 @@ export function JourneyTimeline() {
       <div className="absolute inset-0 -z-20 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px]" />
 
       <div className="mx-auto max-w-4xl relative z-20">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="mb-4 text-center"
-        >
+        <motion.div>
           <Badge
             variant="outline"
             className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 text-[#4D7CFF]"
@@ -105,13 +99,7 @@ export function JourneyTimeline() {
           </Badge>
         </motion.div>
 
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          viewport={{ once: true }}
-          className="text-balance text-center text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl"
-        >
+        <motion.h2>
           Como você vai{" "}
           <span className="bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
             evoluir
@@ -119,15 +107,7 @@ export function JourneyTimeline() {
           .
         </motion.h2>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          viewport={{ once: true }}
-          className="mx-auto mt-4 max-w-2xl text-center text-muted-foreground"
-        >
-          Veja o que esperar sendo um usuário do Nucleos.
-        </motion.p>
+        <motion.p>Veja o que esperar sendo um usuário do Nucleos.</motion.p>
 
         <div className="mt-12 relative">
           {/* Linha central com gradiente */}
@@ -137,8 +117,6 @@ export function JourneyTimeline() {
             {etapas.map((etapa, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: index * 0.1 }}
                 viewport={{ once: true }}
                 className={`relative flex flex-col md:flex-row items-center gap-4 md:gap-8 ${

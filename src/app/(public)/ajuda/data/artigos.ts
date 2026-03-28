@@ -66,7 +66,7 @@ Depois disso, sua conta já estará pronta para uso.`,
     categoria: "Primeiros Passos",
     categoriaCor: "#4D7CFF",
     autor: "Equipe Nucleos",
-    conteudo: `O conceito principal da plataforma é organizar a vida do usuário em núcleos de foco, que funcionam como centros de atividade e evolução.
+    conteudo: `O conceito principal da plataforma é organizar a vida do usuário em Nucleos de foco, que funcionam como centros de atividade e evolução.
 
 Cada núcleo pode possuir:
 
@@ -90,9 +90,9 @@ Esses elementos permitem transformar metas e tarefas em um sistema estruturado d
     categoria: "Primeiros Passos",
     categoriaCor: "#4D7CFF",
     autor: "Equipe Nucleos",
-    conteudo: `Na seção “Meus Núcleos”, você organiza sua vida por áreas, como estudos, trabalho, finanças e bem-estar. Cada núcleo mostra seu progresso individual, nível e evolução, permitindo que você acompanhe seu desempenho em diferentes aspectos da rotina.
+    conteudo: `Na seção “Meus Nucleos”, você organiza sua vida por áreas, como estudos, trabalho, finanças e bem-estar. Cada núcleo mostra seu progresso individual, nível e evolução, permitindo que você acompanhe seu desempenho em diferentes aspectos da rotina.
 
-Você também pode criar novos núcleos, personalizando o sistema de acordo com seus objetivos. Além disso, a área de “Próximas Conquistas” ajuda a visualizar suas próximas metas, enquanto a “Dica do Dia” oferece orientações rápidas para melhorar sua produtividade.
+Você também pode criar novos Nucleos, personalizando o sistema de acordo com seus objetivos. Além disso, a área de “Próximas Conquistas” ajuda a visualizar suas próximas metas, enquanto a “Dica do Dia” oferece orientações rápidas para melhorar sua produtividade.
 
 Assim, o dashboard se torna um espaço completo para planejar, acompanhar e evoluir constantemente. `,
   },
@@ -141,7 +141,7 @@ Ele funciona como uma mistura de:
     categoria: "Primeiros Passos",
     categoriaCor: "#4D7CFF",
     autor: "Equipe Nucleos",
-    conteudo: `O app mobile do Nucleos foi pensado para oferecer uma experiência simples e fluida. Na tela inicial, você acessa rapidamente seus núcleos, atividades e progresso. Use o menu inferior para navegar entre as principais áreas e toque nos núcleos para visualizar ou atualizar suas tarefas.
+    conteudo: `O app mobile do Nucleos foi pensado para oferecer uma experiência simples e fluida. Na tela inicial, você acessa rapidamente seus Nucleos, atividades e progresso. Use o menu inferior para navegar entre as principais áreas e toque nos Nucleos para visualizar ou atualizar suas tarefas.
 
 Você pode adicionar novas atividades, acompanhar seus hábitos e registrar sua evolução em poucos toques. Além disso, as notificações ajudam você a manter o foco e não esquecer o que é importante.
 
@@ -175,7 +175,7 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `Os núcleos são grupos organizados dentro de instituições (como universidades, projetos ou comunidades) 
+    conteudo: `Os Nucleos são grupos organizados dentro de instituições (como universidades, projetos ou comunidades) 
     que se dedicam a uma área específica de atuação, estudo ou serviço.
     Eles reúnem pessoas com um objetivo em comum — por exemplo: desenvolver projetos, 
     prestar serviços à comunidade ou aprofundar conhecimentos em determinada área.`,
@@ -223,7 +223,7 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `A organização de blocos dentro dos Núcleos é essencial para manter a estrutura das páginas clara, escalável e fácil de manter. 
+    conteudo: `A organização de blocos dentro dos Nucleos é essencial para manter a estrutura das páginas clara, escalável e fácil de manter. 
     Cada núcleo pode conter diferentes blocos, organizados de forma estratégica para apresentar informações de maneira eficiente.`,
   },
   {
@@ -237,7 +237,7 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `A personalização dos Núcleos consiste na adaptação visual e estrutural de cada área da plataforma, permitindo definir temas, blocos e organização do conteúdo. 
+    conteudo: `A personalização dos Nucleos consiste na adaptação visual e estrutural de cada área da plataforma, permitindo definir temas, blocos e organização do conteúdo. 
     Esse processo possibilita a criação de experiências únicas, alinhadas às necessidades de cada grupo e ao seu contexto de atuação.`,
   },
   {
@@ -264,7 +264,7 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `A gestão de Núcleos inclui ações como arquivar e excluir, 
+    conteudo: `A gestão de Nucleos inclui ações como arquivar e excluir, 
     permitindo manter a plataforma organizada e atualizada sem perder informações importantes.`,
   },
   {
@@ -278,7 +278,7 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `A duplicação de Núcleos consiste na criação de uma cópia de um núcleo existente, preservando sua estrutura, blocos e configurações. 
+    conteudo: `A duplicação de Nucleos consiste na criação de uma cópia de um núcleo existente, preservando sua estrutura, blocos e configurações. 
     Essa funcionalidade facilita a criação de novos conteúdos de forma rápida e padronizada dentro da plataforma.`,
   },
   {
@@ -292,7 +292,7 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `O compartilhamento de Núcleos consiste na possibilidade de conceder acesso a outros usuários, permitindo visualização ou edição do conteúdo. 
+    conteudo: `O compartilhamento de Nucleos consiste na possibilidade de conceder acesso a outros usuários, permitindo visualização ou edição do conteúdo. 
     Essa funcionalidade promove a colaboração e facilita a gestão conjunta das informações dentro da plataforma.`,
   },
   {
@@ -533,7 +533,7 @@ export const produtividadeArtigos: Artigo[] = [
     categoriaCor: "#FF6B6B",
     autor: "Equipe Nucleos",
     conteudo: `O método GTD (Getting Things Done) é uma abordagem de produtividade que organiza tarefas em etapas como captura, organização e execução. 
-    Sua aplicação nos Núcleos permite estruturar atividades de forma eficiente, aumentando o foco e a produtividade dos usuários.`,
+    Sua aplicação nos Nucleos permite estruturar atividades de forma eficiente, aumentando o foco e a produtividade dos usuários.`,
   },
   {
     titulo: "Pomodoro Technique",

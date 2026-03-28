@@ -1,61 +1,40 @@
-'use client'
+"use client";
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { useAuth } from '@/hooks/useAuth'
-import { ROUTES } from '@/constants/routes'
-import { Loading } from '@/components/ui/loading'
+import { ReactNode, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useAuth } from "@/auth";
+import { getLoginUrlWithCallback, isPublicRoute } from "@/constants/routes";
 
 interface ProtectedRouteProps {
-  children: React.ReactNode
-  requiredRole?: string | string[]
-  fallback?: React.ReactNode
+  children: ReactNode;
+  fallback?: ReactNode;
 }
 
-export function ProtectedRoute({ 
-  children, 
-  requiredRole,
-  fallback 
-}: ProtectedRouteProps) {
-  const { isAuthenticated, hasPermission, isLoading } = useAuth()
-  const router = useRouter()
+export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
+  const { isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    // Se ainda está carregando, não faz nada
-    if (isLoading) return
+    if (isLoading) return;
 
-    // Se não está autenticado, redireciona para login
-    if (!isAuthenticated) {
-      router.push(ROUTES.LOGIN)
-      return
+    const isPublic = isPublicRoute(pathname);
+
+    if (!isAuthenticated && !isPublic) {
+      router.push(getLoginUrlWithCallback(pathname));
     }
+  }, [isAuthenticated, isLoading, pathname, router]);
 
-    // Se tem role requerida e não tem permissão, redireciona para dashboard
-    if (requiredRole && !hasPermission(requiredRole)) {
-      router.push(ROUTES.DASHBOARD)
-      return
-    }
-  }, [isAuthenticated, isLoading, requiredRole, hasPermission, router])
-
-  // Loading state
   if (isLoading) {
-    if (fallback) {
-      return <>{fallback}</>
-    }
-    
-    return <Loading fullScreen text="Verificando autenticação..." />
+    if (fallback) return <>{fallback}</>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
+      </div>
+    );
   }
 
-  // Se não está autenticado, não renderiza nada
-  if (!isAuthenticated) {
-    return null
-  }
+  if (!isAuthenticated) return null;
 
-  // Se tem role requerida e não tem permissão, não renderiza nada
-  if (requiredRole && !hasPermission(requiredRole)) {
-    return null
-  }
-
-  // Tudo ok, renderiza os children
-  return <>{children}</>
+  return <>{children}</>;
 }

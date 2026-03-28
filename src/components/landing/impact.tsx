@@ -132,13 +132,7 @@ export function Impact() {
       <div className="absolute inset-0 -z-20 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px]" />
 
       <div className="mx-auto max-w-6xl relative z-20">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="mb-4 text-center"
-        >
+        <motion.div className="mb-4 text-center">
           <Badge
             variant="outline"
             className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 text-[#4D7CFF]"
@@ -148,13 +142,7 @@ export function Impact() {
           </Badge>
         </motion.div>
 
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          viewport={{ once: true }}
-          className="text-balance text-center text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl"
-        >
+        <motion.h2 className="text-balance text-center text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
           O{" "}
           <span className="bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
             impacto
@@ -162,25 +150,13 @@ export function Impact() {
           na prática
         </motion.h2>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          viewport={{ once: true }}
-          className="mx-auto mt-4 max-w-2xl text-center text-muted-foreground"
-        >
+        <motion.p className="mx-auto mt-4 max-w-2xl text-center text-muted-foreground">
           O Nucleos já ajudou milhares de pessoas a organizarem suas vidas e
           alcançarem seus objetivos. Números reais da nossa comunidade.
         </motion.p>
 
         {/* Stats Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.6 }}
-          viewport={{ once: true }}
-          className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
-        >
+        <motion.div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat, index) => (
             <motion.div
               key={stat.label}
@@ -260,12 +236,9 @@ export function Impact() {
           ))}
         </motion.div>
 
-        {/* Benefícios com dados reais */}
+
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 1 }}
-          viewport={{ once: true }}
+          
           className="mt-16 rounded-2xl bg-gradient-to-br from-[#4D7CFF]/5 via-[#00C9A7]/5 to-transparent p-8 border border-[#4D7CFF]/20"
         >
           <h3 className="mb-8 text-center text-xl font-semibold flex items-center justify-center gap-2">

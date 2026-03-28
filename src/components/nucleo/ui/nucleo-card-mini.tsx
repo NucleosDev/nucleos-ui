@@ -66,7 +66,7 @@ export function NucleoCardCompact({
   const {
     nome,
     tipo,
-    cor_destaque = "#4D7CFF",
+    corDestaque = "#4D7CFF",
     icon,
     xpTotal = 0,
     level = 1,
@@ -91,18 +91,18 @@ export function NucleoCardCompact({
       {/* Ícone */}
       <div
         className="flex size-10 shrink-0 items-center justify-center rounded-lg overflow-hidden"
-        style={{ backgroundColor: `${cor_destaque}20` }}
+        style={{ backgroundColor: `${corDestaque}20` }}
       >
-        {icon?.icon_url ? (
+        {icon?.iconUrl ? (
           <Image
-            src={icon.icon_url}
+            src={icon.iconUrl}
             alt={nome}
             width={20}
             height={20}
             className="object-contain"
           />
         ) : (
-          <IconComponent className="size-5" style={{ color: cor_destaque }} />
+          <IconComponent className="size-5" style={{ color: corDestaque }} />
         )}
       </div>
 
@@ -130,9 +130,7 @@ export function NucleoCardCompact({
 
         {/* Stats mini */}
         <div className="mt-1 flex items-center gap-2 text-[10px] text-muted-foreground">
-          {xpTotal > 0 && (
-            <span>{formatXp(xpTotal)} XP</span>
-          )}
+          {xpTotal > 0 && <span>{formatXp(xpTotal)} XP</span>}
           {conquistasDesbloqueadas > 0 && (
             <span className="flex items-center gap-0.5">
               <Trophy className="size-3 text-[#FFD700]" />
@@ -141,8 +139,8 @@ export function NucleoCardCompact({
           )}
           {nucleo.xpHoje !== undefined && nucleo.xpHoje > 0 && (
             <span className="flex items-center gap-0.5">
-              <Flame className="size-3 text-[#FF8C42]" />
-              +{formatXp(nucleo.xpHoje)}
+              <Flame className="size-3 text-[#FF8C42]" />+
+              {formatXp(nucleo.xpHoje)}
             </span>
           )}
         </div>
@@ -152,7 +150,11 @@ export function NucleoCardCompact({
       {(onEdit || onDelete || onArchive) && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-            <Button variant="ghost" size="icon" className="size-6 opacity-0 group-hover:opacity-100">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-6 opacity-0 group-hover:opacity-100"
+            >
               <MoreHorizontal className="size-3" />
             </Button>
           </DropdownMenuTrigger>

@@ -19,7 +19,7 @@ export interface MockNucleo {
   nome: string;
   descricao?: string;
   tipo: "pessoal" | "profissional" | "projeto" | "estudo" | "hobby";
-  cor_destaque: string;
+  corDestaque: string;
   imagem_capa?: string;
   created_at: string;
   updated_at: string;
@@ -237,7 +237,7 @@ export const mockCrudService = {
       nome: data.nome || "Novo Nucleo",
       descricao: data.descricao || "",
       tipo: data.tipo || "pessoal",
-      cor_destaque: data.cor_destaque || "#4D7CFF",
+      corDestaque: data.corDestaque || "#4D7CFF",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       ...data,

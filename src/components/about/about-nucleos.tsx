@@ -45,19 +45,17 @@ export default function AboutPage() {
     <div className="container mx-auto px-4 py-16 space-y-20">
       {/* HERO */}
       <section className="text-center space-y-6">
-        <Badge>Núcleos</Badge>
+        <Badge>Nucleos</Badge>
         <h1 className="text-4xl md:text-5xl font-bold">
           Evolua sua vida como um jogo
         </h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          O Núcleos é uma plataforma que transforma sua rotina em um sistema de
+          O Nucleos é uma plataforma que transforma sua rotina em um sistema de
           progresso contínuo. Aqui, você evolui em áreas importantes da sua vida
           como se estivesse subindo de nível em um game.
         </p>
         <div className="grid gap-6 md:grid-cols-3 justify-items-center">
-          <Link href="/planos">
-            
-          </Link>
+          <Link href="/planos"></Link>
           <Link href="/docs">
             <Button variant="outline">Ver documentação</Button>
           </Link>
@@ -71,8 +69,8 @@ export default function AboutPage() {
             <Target className="w-8 h-8" />
             <h3 className="text-xl font-semibold">Missão</h3>
             <p className="text-sm text-muted-foreground">
-              Ajudar pessoas a evoluírem de forma consistente, criando hábitos
-              e acompanhando progresso de forma clara e motivadora.
+              Ajudar pessoas a evoluírem de forma consistente, criando hábitos e
+              acompanhando progresso de forma clara e motivadora.
             </p>
           </CardContent>
         </Card>
@@ -103,7 +101,7 @@ export default function AboutPage() {
       {/* COMO FUNCIONA */}
       <section className="space-y-10">
         <h2 className="text-3xl font-bold text-center">
-          Como funciona o Núcleos
+          Como funciona o Nucleos
         </h2>
 
         <div className="grid md:grid-cols-3 gap-6">
@@ -117,9 +115,7 @@ export default function AboutPage() {
               <Card>
                 <CardContent className="p-6 space-y-4">
                   <nucleo.icon className="w-8 h-8" />
-                  <h3 className="text-lg font-semibold">
-                    {nucleo.nome}
-                  </h3>
+                  <h3 className="text-lg font-semibold">{nucleo.nome}</h3>
                   <p className="text-sm text-muted-foreground">
                     Nível {nucleo.nivel}
                   </p>
@@ -134,7 +130,7 @@ export default function AboutPage() {
       {/* BENEFÍCIOS */}
       <section className="space-y-10">
         <h2 className="text-3xl font-bold text-center">
-          Por que usar o Núcleos?
+          Por que usar o Nucleos?
         </h2>
 
         <div className="grid md:grid-cols-3 gap-6">
@@ -183,86 +179,87 @@ export default function AboutPage() {
               </Avatar>
               <h3 className="text-lg font-semibold">Andrew Pimenta</h3>
               <p className="text-sm text-muted-foreground text-center">
-               Engenheiro de software focado em soluções escaláveis ​​e impacto significativo.
+                Engenheiro de software focado em soluções escaláveis ​​e impacto
+                significativo.
               </p>
             </CardContent>
           </Card>
 
           {/* CARD 2 */}
-    <Card className="max-w-sm w-full">
-      <CardContent className="p-6 space-y-4 flex flex-col items-center">
-        <Avatar className="w-20 h-20">
-          <AvatarFallback>AL</AvatarFallback>
-        </Avatar>
-        <h3 className="text-lg font-semibold">Alisson Alves</h3>
-        <p className="text-sm text-muted-foreground text-center">
-          Designer focado em criar interfaces modernas e intuitivas para melhorar a experiência do usuário.
-        </p>
-      </CardContent>
-    </Card>
+          <Card className="max-w-sm w-full">
+            <CardContent className="p-6 space-y-4 flex flex-col items-center">
+              <Avatar className="w-20 h-20">
+                <AvatarFallback>AL</AvatarFallback>
+              </Avatar>
+              <h3 className="text-lg font-semibold">Alisson Alves</h3>
+              <p className="text-sm text-muted-foreground text-center">
+                Designer focado em criar interfaces modernas e intuitivas para
+                melhorar a experiência do usuário.
+              </p>
+            </CardContent>
+          </Card>
 
-    {/* CARD 3 */}
-    <Card className="max-w-sm w-full">
-      <CardContent className="p-6 space-y-4 flex flex-col items-center">
-        <Avatar className="w-20 h-20">
-          <AvatarFallback>CA</AvatarFallback>
-        </Avatar>
-        <h3 className="text-lg font-semibold">Cauê Alves</h3>
-        <p className="text-sm text-muted-foreground text-center">
-          Especialista em UX, focada em transformar ideias em experiências digitais eficientes.
-        </p>
-      </CardContent>
-    </Card>
+          {/* CARD 3 */}
+          <Card className="max-w-sm w-full">
+            <CardContent className="p-6 space-y-4 flex flex-col items-center">
+              <Avatar className="w-20 h-20">
+                <AvatarFallback>CA</AvatarFallback>
+              </Avatar>
+              <h3 className="text-lg font-semibold">Cauê Alves</h3>
+              <p className="text-sm text-muted-foreground text-center">
+                Especialista em UX, focada em transformar ideias em experiências
+                digitais eficientes.
+              </p>
+            </CardContent>
+          </Card>
 
-      {/* CARD 4 */}
-    <Card className="max-w-sm w-full">
-      <CardContent className="p-6 space-y-4 flex flex-col items-center">
-        <Avatar className="w-20 h-20">
-          <AvatarFallback>JP</AvatarFallback>
-        </Avatar>
-        <h3 className="text-lg font-semibold">João Pedro</h3>
-        <p className="text-sm text-muted-foreground text-center">
-          Desenvolvedor focado em performance e escalabilidade de aplicações web.
-        </p>
-      </CardContent>
-    </Card>
+          {/* CARD 4 */}
+          <Card className="max-w-sm w-full">
+            <CardContent className="p-6 space-y-4 flex flex-col items-center">
+              <Avatar className="w-20 h-20">
+                <AvatarFallback>JP</AvatarFallback>
+              </Avatar>
+              <h3 className="text-lg font-semibold">João Pedro</h3>
+              <p className="text-sm text-muted-foreground text-center">
+                Desenvolvedor focado em performance e escalabilidade de
+                aplicações web.
+              </p>
+            </CardContent>
+          </Card>
 
-    {/* CARD 5 */}
-    <Card className="max-w-sm w-full">
-      <CardContent className="p-6 space-y-4 flex flex-col items-center">
-        <Avatar className="w-20 h-20">
-          <AvatarFallback>KA</AvatarFallback>
-        </Avatar>
-        <h3 className="text-lg font-semibold">Kevynn M Alves</h3>
-        <p className="text-sm text-muted-foreground text-center">
-          WEB Developer apaixonado por criar experiências digitais
-          modernas e funcionais.
-        </p>
-      </CardContent>
-    </Card>
+          {/* CARD 5 */}
+          <Card className="max-w-sm w-full">
+            <CardContent className="p-6 space-y-4 flex flex-col items-center">
+              <Avatar className="w-20 h-20">
+                <AvatarFallback>KA</AvatarFallback>
+              </Avatar>
+              <h3 className="text-lg font-semibold">Kevynn M Alves</h3>
+              <p className="text-sm text-muted-foreground text-center">
+                WEB Developer apaixonado por criar experiências digitais
+                modernas e funcionais.
+              </p>
+            </CardContent>
+          </Card>
 
-    {/* CARD 6 */}
-    <Card className="max-w-sm w-full">
-      <CardContent className="p-6 space-y-4 flex flex-col items-center">
-        <Avatar className="w-20 h-20">
-          <AvatarFallback>MT</AvatarFallback>
-        </Avatar>
-        <h3 className="text-lg font-semibold">Matheus Tavares</h3>
-        <p className="text-sm text-muted-foreground text-center">
-          Analista de produto dedicada a melhorar funcionalidades e métricas do sistema.
-        </p>
-      </CardContent>
-    </Card>    
-
-
+          {/* CARD 6 */}
+          <Card className="max-w-sm w-full">
+            <CardContent className="p-6 space-y-4 flex flex-col items-center">
+              <Avatar className="w-20 h-20">
+                <AvatarFallback>MT</AvatarFallback>
+              </Avatar>
+              <h3 className="text-lg font-semibold">Matheus Tavares</h3>
+              <p className="text-sm text-muted-foreground text-center">
+                Analista de produto dedicada a melhorar funcionalidades e
+                métricas do sistema.
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
       {/* CTA FINAL */}
       <section className="text-center space-y-6">
-        <h2 className="text-3xl font-bold">
-          Pronto para evoluir?
-        </h2>
+        <h2 className="text-3xl font-bold">Pronto para evoluir?</h2>
         <p className="text-muted-foreground">
           Comece agora e transforme sua rotina em progresso.
         </p>

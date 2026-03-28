@@ -3,7 +3,25 @@
 
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { Trophy, Flame, TrendingUp, BookOpen, Heart, Briefcase, Home, Target, Coffee, Dumbbell, Code, Users, Music,  Camera, Palette, Globe, Wallet } from "lucide-react";
+import {
+  Trophy,
+  Flame,
+  TrendingUp,
+  BookOpen,
+  Heart,
+  Briefcase,
+  Home,
+  Target,
+  Coffee,
+  Dumbbell,
+  Code,
+  Users,
+  Music,
+  Camera,
+  Palette,
+  Globe,
+  Wallet,
+} from "lucide-react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -15,7 +33,7 @@ interface NucleoCoreCardProps {
   onClick?: () => void;
   className?: string;
 }
-    
+
 const tipoIcons: Record<string, React.ElementType> = {
   estudo: BookOpen,
   hobby: Heart,
@@ -27,7 +45,7 @@ const tipoIcons: Record<string, React.ElementType> = {
   social: Users,
   programacao: Code,
   musica: Music,
-  fotografia: Camera,   
+  fotografia: Camera,
   arte: Palette,
   idiomas: Globe,
   financas: Wallet,
@@ -43,7 +61,7 @@ export function NucleoCoreCard({
     nome,
     tipo,
     descricao,
-    cor_destaque = "#4D7CFF",
+    corDestaque = "#4D7CFF",
     icon,
     xpTotal = 0,
     level = 1,
@@ -79,11 +97,11 @@ export function NucleoCoreCard({
           {/* Ícone com fundo colorido */}
           <div
             className="flex size-12 items-center justify-center rounded-xl overflow-hidden"
-            style={{ backgroundColor: `${cor_destaque}15` }}
+            style={{ backgroundColor: `${corDestaque}15` }}
           >
-            {icon?.icon_url ? (
+            {icon?.iconUrl ? (
               <Image
-                src={icon.icon_url}
+                src={icon.iconUrl}
                 alt={nome}
                 width={24}
                 height={24}
@@ -92,7 +110,7 @@ export function NucleoCoreCard({
             ) : (
               <IconComponent
                 className="size-6"
-                style={{ color: cor_destaque }}
+                style={{ color: corDestaque }}
               />
             )}
           </div>
@@ -114,9 +132,9 @@ export function NucleoCoreCard({
           variant="outline"
           className="h-7 px-2.5"
           style={{
-            backgroundColor: `${cor_destaque}10`,
-            borderColor: `${cor_destaque}30`,
-            color: cor_destaque,
+            backgroundColor: `${corDestaque}10`,
+            borderColor: `${corDestaque}30`,
+            color: corDestaque,
           }}
         >
           <TrendingUp className="size-3 mr-1" />
@@ -128,16 +146,18 @@ export function NucleoCoreCard({
       <div className="space-y-2 mb-4">
         <div className="flex items-center justify-between text-xs">
           <span className="text-muted-foreground">Progresso</span>
-          <span className="font-medium" style={{ color: cor_destaque }}>
+          <span className="font-medium" style={{ color: corDestaque }}>
             {Math.round(progress)}%
           </span>
         </div>
         <Progress
           value={progress}
           className="h-2 bg-secondary"
-          style={{
-            "--progress-background": cor_destaque,
-          } as React.CSSProperties}
+          style={
+            {
+              "--progress-background": corDestaque,
+            } as React.CSSProperties
+          }
         />
       </div>
 
@@ -157,7 +177,9 @@ export function NucleoCoreCard({
           <Flame className="size-4 text-[#FF8C42]" />
           <div>
             <p className="text-xs text-muted-foreground">Faltam</p>
-            <p className="text-sm font-semibold">{xpRestante.toLocaleString()}</p>
+            <p className="text-sm font-semibold">
+              {xpRestante.toLocaleString()}
+            </p>
           </div>
         </div>
       </div>
@@ -185,9 +207,9 @@ export function NucleoCoreCard({
           variant="outline"
           className="text-[10px] px-2 py-0 h-5"
           style={{
-            backgroundColor: `${cor_destaque}10`,
-            borderColor: `${cor_destaque}20`,
-            color: cor_destaque,
+            backgroundColor: `${corDestaque}10`,
+            borderColor: `${corDestaque}20`,
+            color: corDestaque,
           }}
         >
           {tipo}

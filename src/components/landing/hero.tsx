@@ -1,16 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { ROUTES } from "@/constants/routes";
 import {
-  ArrowRight,
-  Sparkles,
-  Zap,
-  Target,
-  Trophy,
-  Flame,
+
   Brain,
   Dumbbell,
   Briefcase,
@@ -22,10 +14,6 @@ import {
   useMotionValueEvent,
 } from "framer-motion";
 import { useRef, useState } from "react";
-import { cn } from "@/lib/utils";
-import { SocialProof } from "./social-proof";
-import { X } from "lucide-react";
-import { Check } from "lucide-react";
 import { NucleoCoreCard } from "@/components/nucleo/ui/nucleo-core-card";
 import { NucleoCardCompact } from "@/components/nucleo/ui/nucleo-card-mini";
 import { mockNucleos } from "@/components/nucleo/mocks/nucleo-card.mock";
@@ -163,13 +151,6 @@ export function Hero() {
         }}
         className="absolute left-10 top-1/3 hidden lg:block z-20"
       >
-        <Card className="border-accent/20 bg-accent/5 backdrop-blur-sm shadow-lg">
-          <CardContent className="p-4 text-center">
-            <Flame className="size-10 text-accent mx-auto mb-2" />
-            <p className="text-sm font-medium text-foreground">7 dias</p>
-            <p className="text-xs text-muted-foreground">sequência atual</p>
-          </CardContent>
-        </Card>
       </motion.div>
 
       {/* Segundo stat flutuante */}
@@ -180,12 +161,6 @@ export function Hero() {
         }}
         className="absolute right-10 bottom-1/3 hidden lg:block z-20"
       >
-        <Card className="border-primary/20 bg-primary/5 backdrop-blur-sm shadow-lg">
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-primary mb-1">2.4k</div>
-            <p className="text-xs text-muted-foreground">XP total</p>
-          </CardContent>
-        </Card>
       </motion.div>
     </section>
   );

@@ -1,5 +1,6 @@
+
 import api from "./api";
-import { API_ROUTES } from "@/constants/routes";
+import { API_ROUTES } from "@/constants/routes"; // ← CORRIGIDO
 import type {
   Nucleo,
   NucleoIcon,
@@ -9,7 +10,6 @@ import type {
 import type { XpLog, EnergyLog } from "@/types/logs";
 
 export const nucleosService = {
-  // CRUD básico
   async getNucleos(): Promise<Nucleo[]> {
     const response = await api.get<Nucleo[]>(API_ROUTES.NUCLEOS.LIST);
     return response.data;
@@ -34,46 +34,11 @@ export const nucleosService = {
     await api.delete(API_ROUTES.NUCLEOS.DELETE(id));
   },
 
-  // Ícones
   async getIcones(): Promise<NucleoIcon[]> {
-    const response = await api.get<NucleoIcon[]>(API_ROUTES.ICONES.LIST);
+    const response = await api.get<NucleoIcon[]>(API_ROUTES.NUCLEOS.ICONES);
     return response.data;
   },
 
-  async createIcone(data: Partial<NucleoIcon>): Promise<NucleoIcon> {
-    const response = await api.post<NucleoIcon>(API_ROUTES.ICONES.CREATE, data);
-    return response.data;
-  },
-
-  // Relações entre Nucleos
-  async getRelacoes(nucleoId: string): Promise<NucleoRelation[]> {
-    const response = await api.get<NucleoRelation[]>(
-      API_ROUTES.RELACOES.LIST(nucleoId),
-    );
-    return response.data;
-  },
-
-  async createRelacao(data: Partial<NucleoRelation>): Promise<NucleoRelation> {
-    const response = await api.post<NucleoRelation>(
-      API_ROUTES.RELACOES.CREATE,
-      data,
-    );
-    return response.data;
-  },
-
-  async deleteRelacao(id: string): Promise<void> {
-    await api.delete(API_ROUTES.RELACOES.DELETE(id));
-  },
-
-  // Conquistas do Nucleo
-  async getAchievements(nucleoId: string): Promise<NucleoAchievement[]> {
-    const response = await api.get<NucleoAchievement[]>(
-      API_ROUTES.NUCLEOS.ACHIEVEMENTS(nucleoId),
-    );
-    return response.data;
-  },
-
-  // XP e Energy do Nucleo
   async addXp(
     nucleoId: string,
     amount: number,
@@ -89,7 +54,9 @@ export const nucleosService = {
   async addEnergy(nucleoId: string, amount: number): Promise<EnergyLog> {
     const response = await api.post<EnergyLog>(
       API_ROUTES.NUCLEOS.ENERGY(nucleoId),
-      { amount },
+      {
+        amount,
+      },
     );
     return response.data;
   },

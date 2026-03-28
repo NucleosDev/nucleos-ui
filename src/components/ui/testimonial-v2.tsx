@@ -342,17 +342,7 @@ const TestimonialsSection = () => {
         <div className="absolute right-1/4 bottom-1/4 size-96 rounded-full bg-[#00C9A7]/5 blur-3xl animate-pulse delay-700" />
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.15 }}
-        transition={{
-          duration: 1.2,
-          ease: [0.16, 1, 0.3, 1],
-          opacity: { duration: 0.8 },
-        }}
-        className="container px-4 z-10 mx-auto"
-      >
+      <motion.div className="container px-4 z-10 mx-auto">
         <div className="flex flex-col items-center justify-center max-w-[640px] mx-auto mb-16">
           <div className="flex justify-center">
             <Badge

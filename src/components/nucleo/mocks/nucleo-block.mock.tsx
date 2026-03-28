@@ -124,7 +124,7 @@ export function NucleoDetailPage({
               <div
                 className="size-10 rounded-lg flex items-center justify-center"
                 style={{
-                  backgroundColor: `${nucleo.cor_destaque || "#4D7CFF"}20`,
+                  backgroundColor: `${nucleo.corDestaque || "#4D7CFF"}20`,
                 }}
               >
                 {nucleo.icon?.icon_url ? (
@@ -137,7 +137,7 @@ export function NucleoDetailPage({
                 ) : (
                   <Layout
                     className="size-5"
-                    style={{ color: nucleo.cor_destaque || "#4D7CFF" }}
+                    style={{ color: nucleo.corDestaque || "#4D7CFF" }}
                   />
                 )}
               </div>

@@ -75,12 +75,12 @@ export function NucleoCard({
     nome,
     descricao,
     tipo,
-    cor_destaque = "#4D7CFF", // chart-1
-    imagem_capa,
+    corDestaque = "#4D7CFF", // chart-1
+    imagemCapa,
     icon,
     blocos = [],
     relations = [],
-    created_at,
+    createdAt,
     xpTotal = 0,
     level = 1,
     nextLevelXp = 1000,
@@ -94,7 +94,7 @@ export function NucleoCard({
   const IconComponent = tipoIcons[tipo] || Layers;
 
   // Fallback de imagem de capa (se não tiver, usa gradiente com padrão)
-  const capaUrl = imagem_capa || "";
+  const capaUrl = imagemCapa || "";
   const temCapa = capaUrl && capaUrl.length > 0;
 
   const cardContent = (
@@ -123,7 +123,7 @@ export function NucleoCard({
         <div
           className="h-20 w-full bg-gradient-to-r"
           style={{
-            background: `linear-gradient(135deg, ${cor_destaque}40 0%, ${cor_destaque}20 50%, ${cor_destaque}10 100%)`,
+            background: `linear-gradient(135deg, ${corDestaque}40 0%, ${corDestaque}20 50%, ${corDestaque}10 100%)`,
           }}
         />
       )}
@@ -136,11 +136,11 @@ export function NucleoCard({
             {/* Ícone - sempre presente */}
             <div
               className="flex size-10 items-center justify-center rounded-lg overflow-hidden"
-              style={{ backgroundColor: `${cor_destaque}20` }}
+              style={{ backgroundColor: `${corDestaque}20` }}
             >
-              {icon?.icon_url ? (
+              {icon?.iconUrl ? (
                 <Image
-                  src={icon.icon_url}
+                  src={icon.iconUrl}
                   alt={nome}
                   width={24}
                   height={24}
@@ -149,7 +149,7 @@ export function NucleoCard({
               ) : (
                 <IconComponent
                   className="size-5"
-                  style={{ color: cor_destaque }}
+                  style={{ color: corDestaque }}
                 />
               )}
             </div>
@@ -296,7 +296,7 @@ export function NucleoCard({
             <Calendar className="size-3 text-[#8CD47E]" />{" "}
             {/* chart-5 verde claro */}
             <span>
-              Criado em {new Date(created_at).toLocaleDateString("pt-BR")}
+              Criado em {new Date(createdAt).toLocaleDateString("pt-BR")}
             </span>
           </div>
         )}

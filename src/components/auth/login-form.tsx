@@ -1,11 +1,11 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -13,135 +13,122 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Spinner } from '@/components/ui/spinner'
-import { Eye, EyeOff } from 'lucide-react'
-import { useAuth } from '@/hooks/useAuth'
-import { ROUTES } from '@/constants/routes'
+} from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
+import { ROUTES } from "@/constants/routes";
+// interface LoginFormProps {
+//   callbackUrl?: string;
+// }
 
 export function LoginForm() {
-  const router = useRouter()
-  const { login, isLoading } = useAuth()
-
-  const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  })
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-    setError(null)
-  }
+  const router = useRouter();
+  const { login, isLoading } = useAuth();
+  const [error, setError] = useState("");
+  const [formData, setFormData] = useState({ email: "", password: "" }); // Use lowercase password para consistência
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    try {
-      await login(formData)
-      // Redirecionamento é feito no hook
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao fazer login')
+    e.preventDefault();
+    setError("");
+
+    if (!formData.email || !formData.password) {
+      setError("Preencha todos os campos");
+      console.warn("[FORM] Campos vazios");
+      return;
     }
-  }
+
+    console.log("[FORM] Tentando login com:", { email: formData.email });
+
+    try {
+      const response = await login({
+        email: formData.email,
+        Password: formData.password, // Certifique-se que o campo está correto
+      });
+      console.log("[FORM] Login bem-sucedido:", response);
+      router.push(ROUTES.DASHBOARD);
+    } catch (err: any) {
+      console.error("[FORM] Erro no login:", err);
+      // Log detalhado da resposta de erro
+      if (err.response) {
+        console.error("[FORM] Status:", err.response.status);
+        console.error("[FORM] Data:", err.response.data);
+        console.error("[FORM] Headers:", err.response.headers);
+      } else if (err.request) {
+        console.error("[FORM] Sem resposta do servidor:", err.request);
+      } else {
+        console.error("[FORM] Erro de configuração:", err.message);
+      }
+
+      const errorMessage =
+        err.response?.data?.message ||
+        err.message ||
+        "E-mail ou senha inválidos";
+      setError(errorMessage);
+    }
+  };
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Bem-vindo de volta</CardTitle>
+    <Card className="w-full max-w-md shadow-lg border-0">
+      <CardHeader className="space-y-1 text-center">
+        <CardTitle className="text-2xl font-bold">Bem-vindo de volta</CardTitle>
         <CardDescription>
-          Entre na sua conta para continuar sua jornada
+          Entre com suas credenciais para acessar sua conta
         </CardDescription>
       </CardHeader>
-
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           {error && (
-            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+            <div className="p-3 text-sm text-red-500 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-800">
               {error}
             </div>
           )}
-
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">E-mail</Label>
             <Input
               id="email"
-              name="email"
               type="email"
               placeholder="seu@email.com"
               value={formData.email}
-              onChange={handleInputChange}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
               required
-              autoComplete="email"
               disabled={isLoading}
+              className="transition-all"
             />
           </div>
-
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">Senha</Label>
-              <Link
-                href={ROUTES.FORGOT_PASSWORD}
-                className="text-xs text-primary hover:underline"
-              >
-                Esqueceu a senha?
-              </Link>
-            </div>
-            <div className="relative">
-            
+            <Label htmlFor="password">Senha</Label>
             <Input
-                id="password"
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                placeholder="••••••••"
-                value={formData.password}
-                onChange={handleInputChange}
-                required
-                autoComplete="current-password"
-                disabled={isLoading}
-                className="pr-10"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                aria-label={showPassword ? 'Esconder senha' : 'Mostrar senha'}
-              >
-                {showPassword ? (
-                  <EyeOff className="size-4" />
-                ) : (
-                  <Eye className="size-4" />
-                )}
-              </button>
-            </div>
-
-          <p className="text-xs text-muted-foreground">
-          </p>
+              id="password"
+              type="password"
+              placeholder="********"
+              value={formData.password}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              required
+              disabled={isLoading}
+              className="transition-all"
+            />
           </div>
         </CardContent>
-
-        <CardFooter className="flex flex-col gap-4">
-          <Button type="submit" className="w-full" disabled={isLoading}>
+        <CardFooter className="flex flex-col space-y-4 pt-4 pb-2">
+          <Button
+            type="submit"
+            className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+            disabled={isLoading}
+          >
             {isLoading ? (
               <>
-                <Spinner className="mr-2" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Entrando...
               </>
             ) : (
-              'Entrar'
+              "Entrar"
             )}
           </Button>
-
-          <p className="text-center text-sm text-muted-foreground">
-            Não tem uma conta?{' '}
-            <Link href={ROUTES.REGISTER} className="text-primary hover:underline">
-              Criar conta
-            </Link>
-          </p>
         </CardFooter>
       </form>
     </Card>
-  ) 
+  );
 }

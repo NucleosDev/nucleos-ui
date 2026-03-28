@@ -9,19 +9,12 @@ import {
   Zap,
   CheckCircle2,
   TrendingUp,
-  Award,
 } from "lucide-react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useMotionValueEvent,
-} from "framer-motion";
+import { motion } from "framer-motion";
 import { Iphone15Pro } from "../ui/iphone-15-pro";
 import { NotificacaoIOS } from "@/components/nucleo/ui/notification";
 import { BadgeConquista } from "@/components/nucleo/ui/badge-conquist";
 import { NucleoProgress } from "@/components/nucleo/ui/nucleo-progress";
-import { mockNucleos } from "@/components/nucleo/mocks/nucleo-card.mock";
 
 // Mock de conquistas para os badges
 const mockConquistas = [
@@ -56,7 +49,7 @@ const mockConquistas = [
   },
 ];
 
-// Mock de notificações flutuantes - ADICIONADO PROPRIEDADE DELAY
+// Mock de notificações flutuantes (posições base)
 const notificacoesMock = [
   {
     id: "notif1",
@@ -113,25 +106,25 @@ const notificacoesMock = [
 function NotificationCard({
   notificacao,
   isVisible,
+  scale,
+  offsetX,
+  offsetY,
 }: {
   notificacao: (typeof notificacoesMock)[0];
   isVisible: boolean;
+  scale: number;
+  offsetX: number;
+  offsetY: number;
 }) {
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-
   return (
     <div
       className={`absolute transition-all duration-500 ${
         isVisible ? "opacity-100 scale-100" : "opacity-0 scale-75"
       }`}
       style={{
-        left: `calc(20% + ${
-          isMobile ? notificacao.position.x * 0.4 : notificacao.position.x
-        }px)`,
-        top: `calc(30% + ${
-          isMobile ? notificacao.position.y * 0.4 : notificacao.position.y
-        }px)`,
-        transform: `translate(-50%, -50%) scale(${isMobile ? 0.55 : 1})`,
+        left: `calc(20% + ${offsetX}px)`,
+        top: `calc(30% + ${offsetY}px)`,
+        transform: `translate(-50%, -50%) scale(${scale})`,
         zIndex: 20,
       }}
     >
@@ -149,7 +142,33 @@ export function FloatingNotifications() {
     new Array(notificacoesMock.length).fill(false),
   );
 
+  // Estado para evitar hidratação: apenas renderiza no cliente
+  const [isClient, setIsClient] = useState(false);
+  const [scale, setScale] = useState(1);
+  const [offsets, setOffsets] = useState<{ x: number; y: number }[]>(
+    notificacoesMock.map(() => ({ x: 0, y: 0 })),
+  );
+
   useEffect(() => {
+    setIsClient(true);
+
+    // Calcular fatores baseados no tamanho da tela (apenas cliente)
+    const isMobile = window.innerWidth < 768;
+    const scaleFactor = isMobile ? 0.55 : 1;
+    const positionFactor = isMobile ? 0.4 : 1;
+    setScale(scaleFactor);
+
+    setOffsets(
+      notificacoesMock.map((n) => ({
+        x: n.position.x * positionFactor,
+        y: n.position.y * positionFactor,
+      })),
+    );
+  }, []);
+
+  useEffect(() => {
+    if (!isClient) return;
+
     const startLoop = () => {
       notificacoesMock.forEach((notif, index) => {
         setTimeout(() => {
@@ -174,57 +193,43 @@ export function FloatingNotifications() {
     const interval = setInterval(startLoop, 12000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isClient]);
 
   return (
     <section className="relative pb-60 pt-40 overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8">
-      {/* GRADIENTES */}
+      {/* Gradientes */}
       <div className="absolute top-0 left-0 right-0 h-100 pointer-events-none z-10 bg-gradient-to-b from-white via-white/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 h-64 pointer-events-none z-10 bg-gradient-to-t from-white via-white/60 to-transparent dark:from-black dark:via-black/60 dark:to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 h-80 pointer-events-none z-5 bg-gradient-to-t from-white/40 via-transparent to-transparent dark:from-black/40 dark:via-transparent dark:to-transparent" />
 
       <div className="container px-10 mx-auto gap-10 flex flex-col items-center text-center">
         <div className="text-center mb-16">
-          <motion.div className="mx-auto max-w-5xl text-center relative z-20">
-            <motion.h2
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-pretty text-6xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-6xl"
-            >
+          <div className="mx-auto max-w-5xl text-center relative z-20">
+            <h2 className="text-pretty text-6xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-6xl">
               <span className="">Celebre cada </span>
               <span className="bg-gradient-to-r from-foreground via-[#0077BE] to-foreground bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
                 conquista
               </span>
               !
-            </motion.h2>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-muted-foreground text-lg max-w-xl mx-auto"
-            >
+            </h2>
+            <p className="text-muted-foreground text-lg max-w-xl mx-auto mt-4">
               Notificações motivacionais em tempo real para manter você engajado
-            </motion.p>
-          </motion.div>
+            </p>
+          </div>
         </div>
 
         <div className="relative h-[700px] max-w-5xl mx-auto">
           {/* Container do iPhone com conteúdo sobreposto */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 scale-70">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 scale-[0.70] sm:scale-[0.70] md:scale-[0.82] lg:scale-90">
             <div>
-              {/* iPhone SVG */}
               <Iphone15Pro width={433} height={882} src="/iphone-15-pro.svg" />
 
-              {/* Conteúdo da tela - SOBREPOSTO ao SVG */}
+              {/* Conteúdo da tela */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="w-[95%] h-[99%] bg-card rounded-[60px] overflow-hidden shadow-inner">
                   <div className="p-4 h-full flex flex-col">
-                    {/* Dynamic Island */}
                     <div className="w-30 h-9 rounded-full mx-auto mb-4 bg-white/5 backdrop-blur-sm border border-foreground/30" />
 
-                    {/* Perfil e nível - USANDO NucleoProgress */}
                     <div className="text-center mb-4">
                       <div className="size-14 rounded-full bg-gradient-to-br from-primary to-accent mx-auto mb-2 flex items-center justify-center">
                         <span className="text-xl font-bold text">100</span>
@@ -240,7 +245,6 @@ export function FloatingNotifications() {
                       />
                     </div>
 
-                    {/* Barra de progresso (já está no NucleoProgress, mas mantemos para consistência) */}
                     <div className="h-1.5 bg-muted rounded-full mb-4">
                       <div
                         className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
@@ -248,7 +252,6 @@ export function FloatingNotifications() {
                       />
                     </div>
 
-                    {/* Tarefas - MANTIDAS IGUAL */}
                     <div className="space-y-2 flex-1">
                       <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/30">
                         <CheckCircle2 className="size-4 text-accent shrink-0" />
@@ -285,7 +288,6 @@ export function FloatingNotifications() {
                       </div>
                     </div>
 
-                    {/* Badges de estatísticas - USANDO BadgeConquista */}
                     <div className="flex justify-center gap-2 mt-3 pt-2 border-t border-border/30">
                       {mockConquistas.slice(0, 2).map((conquista) => (
                         <BadgeConquista
@@ -305,14 +307,18 @@ export function FloatingNotifications() {
             </div>
           </div>
 
-          {/* Notificações flutuantes - USANDO NotificacaoIOS */}
-          {notificacoesMock.map((notificacao, index) => (
-            <NotificationCard
-              key={notificacao.id}
-              notificacao={notificacao}
-              isVisible={visibleStates[index]}
-            />
-          ))}
+          {/* Notificações flutuantes - renderizadas apenas no cliente */}
+          {isClient &&
+            notificacoesMock.map((notificacao, index) => (
+              <NotificationCard
+                key={notificacao.id}
+                notificacao={notificacao}
+                isVisible={visibleStates[index]}
+                scale={scale}
+                offsetX={offsets[index]?.x ?? 0}
+                offsetY={offsets[index]?.y ?? 0}
+              />
+            ))}
         </div>
       </div>
     </section>

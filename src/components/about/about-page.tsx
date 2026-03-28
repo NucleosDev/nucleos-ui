@@ -31,7 +31,6 @@ import {
   Wallet,
   BookOpen,
 } from "lucide-react";
-import { motion } from "framer-motion";
 
 interface AboutPageProps {
   achievements?: Array<{ label: string; value: string }>;
@@ -418,12 +417,7 @@ export default function AboutPage({
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
 
         <div className="mx-auto max-w-6xl space-y-8 px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex justify-center"
-          >
+          <div>
             <Badge
               variant="outline"
               className="gap-2 border-primary/20 bg-primary/5 px-4 py-2 text-primary animate-border-pulse"
@@ -431,37 +425,22 @@ export default function AboutPage({
               <Sparkles className="size-4" />
               <span>BEM VINDO.</span>
             </Badge>
-          </motion.div>
+          </div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-5xl md:text-7xl font-bold text-center max-w-4xl mx-auto leading-tight"
-          >
+          <h1>
             Tudo começa com um{" "}
             <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
               Nucleo
             </span>
             .
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl text-muted-foreground text-center max-w-2xl mx-auto"
-          >
+          <p>
             O espaço certo para cada ideia. Organize. Realize. Evolua. Simples,
             flexível e ao seu alcance.
-          </motion.p>
+          </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
-          >
+          <div>
             <Button
               size="lg"
               className="bg-foreground text-primary-foreground hover:bg-foreground/90 group"
@@ -477,20 +456,14 @@ export default function AboutPage({
               Ver demonstração
               <Zap className="size-4 ml-1 transition-all group-hover:rotate-12" />
             </Button>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* ---------------- APRESENTACAO NUCLEOS ---------------- */}
       <section className="py-20 md:py-28 bg-secondary/30">
         <div className="mx-auto max-w-6xl px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="flex justify-center mb-6"
-          >
+          <div>
             <Badge
               variant="outline"
               className="gap-2 border-primary/20 bg-primary/5 px-4 py-2 text-primary"
@@ -498,43 +471,25 @@ export default function AboutPage({
               <Sparkles className="size-4" />
               <span>Apresentamos NUCLEOS</span>
             </Badge>
-          </motion.div>
+          </div>
 
           <div className="grid gap-8 md:grid-cols-2 md:gap-12">
-            <motion.h2
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="text-4xl md:text-5xl font-bold leading-tight"
-            >
+            <h2>
               Use seu potencial para
               <br />
               <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
                 sua própria evolução!
               </span>
-            </motion.h2>
+            </h2>
 
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="space-y-6"
-            >
+            <div>
               <p className="text-lg text-muted-foreground">
                 Crie Nucleos para cada área da sua vida. Acompanhe seu
                 progresso, ganhe XP, desbloqueie conquistas e veja sua evolução
                 em tempo real. Produtividade que parece jogo.
               </p>
 
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                viewport={{ once: true }}
-                className="rounded-lg border border-primary/20 bg-primary/5 p-4 flex items-center gap-3 max-w-md"
-              >
+              <div>
                 <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center">
                   <Zap className="size-5 text-primary" />
                 </div>
@@ -545,8 +500,8 @@ export default function AboutPage({
                     <span className="text-primary font-semibold">+150 XP</span>
                   </p>
                 </div>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -556,21 +511,14 @@ export default function AboutPage({
         <div className="mx-auto max-w-6xl px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {achievements.map((achievement, index) => (
-              <motion.div
-                key={achievement.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="text-center"
-              >
+              <div>
                 <p className="text-3xl md:text-4xl font-bold text-foreground">
                   {achievement.value}
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
                   {achievement.label}
                 </p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -620,15 +568,7 @@ export default function AboutPage({
         <div className="mx-auto max-w-6xl px-6">
           <div className="grid gap-6 md:grid-cols-3">
             {nucleosData.map((nucleo, index) => (
-              <motion.div
-                key={nucleo.nome}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                whileHover={{ scale: 1.03, y: -5 }}
-                className="rounded-xl border border-border/50 bg-card p-6 shadow-lg hover:shadow-xl transition-all"
-              >
+              <div>
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div
@@ -661,7 +601,7 @@ export default function AboutPage({
                     className={`h-2 [&>div]:bg-${nucleo.cor}`}
                   />
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -688,14 +628,7 @@ export default function AboutPage({
 
           <div className="grid gap-3 max-w-2xl mx-auto">
             {notifications.map((notif, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.05 }}
-                viewport={{ once: true }}
-                className="flex items-center gap-3 p-3 rounded-lg border border-border/50 bg-card hover:shadow-md transition-all"
-              >
+              <div>
                 <div
                   className={`size-8 rounded-full bg-${notif.color}/10 flex items-center justify-center`}
                 >
@@ -703,7 +636,7 @@ export default function AboutPage({
                 </div>
                 <span className="flex-1 text-sm">{notif.text}</span>
                 <span className="text-xs text-muted-foreground">agora</span>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -829,20 +762,13 @@ export default function AboutPage({
 
           <div className="grid gap-6 md:grid-cols-4">
             {howItWorks.map((step, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="text-center"
-              >
+              <div>
                 <div className="size-16 rounded-2xl bg-primary text-primary-foreground text-2xl font-bold flex items-center justify-center mx-auto mb-4">
                   {step.number}
                 </div>
                 <h3 className="font-semibold text-lg mb-2">{step.title}</h3>
                 <p className="text-sm text-muted-foreground">{step.desc}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -865,18 +791,7 @@ export default function AboutPage({
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {badges.map((badge, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
-                viewport={{ once: true }}
-                className={`relative p-4 rounded-xl border-2 text-center transition-all ${
-                  badge.unlocked
-                    ? "bg-primary/10 border-primary/30"
-                    : "bg-muted border-border/50 opacity-60 grayscale"
-                }`}
-              >
+              <div>
                 <div
                   className={`size-12 rounded-full mx-auto mb-2 flex items-center justify-center ${
                     badge.unlocked ? "bg-primary/20" : "bg-muted"
@@ -900,7 +815,7 @@ export default function AboutPage({
                 >
                   {badge.tier}
                 </Badge>
-              </motion.div>
+              </div>
             ))}
           </div>
 
@@ -998,15 +913,7 @@ export default function AboutPage({
 
           <div className="grid gap-6 md:grid-cols-3">
             {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                whileHover={{ scale: 1.02 }}
-                className="rounded-xl border bg-card p-6 hover:shadow-lg transition-all"
-              >
+              <div>
                 <div className="flex items-center gap-4 mb-4">
                   <Avatar>
                     <AvatarFallback className="bg-primary/10 text-primary">
@@ -1040,7 +947,7 @@ export default function AboutPage({
                     {testimonial.days} dias
                   </Badge>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -1063,16 +970,9 @@ export default function AboutPage({
 
           <div className="grid gap-4 md:grid-cols-2">
             {faqs.map((faq, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-                viewport={{ once: true }}
-                className="p-4 rounded-lg border bg-card hover:shadow-md transition-all cursor-pointer"
-              >
+              <div>
                 <p className="font-medium">{faq}</p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -1098,18 +998,7 @@ export default function AboutPage({
 
           <div className="grid gap-6 md:grid-cols-3">
             {plans.map((plan, index) => (
-              <motion.div
-                key={plan.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className={`relative rounded-2xl border bg-card p-6 ${
-                  plan.popular
-                    ? "shadow-xl scale-105 border-primary/30"
-                    : "shadow-lg"
-                }`}
-              >
+              <div>
                 {plan.popular && (
                   <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground">
                     Mais popular
@@ -1140,7 +1029,7 @@ export default function AboutPage({
                 >
                   {plan.cta}
                 </Button>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

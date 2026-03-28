@@ -1,14 +1,22 @@
-import { AuthProvider } from '@/auth/auth-provider'
-import { DashboardLayout } from '@/components/layout/dashboard-layout'
+"use client";
 
-export default function DashboardRootLayout({
+import { ProtectedRoute } from "@/components/auth/protected-route";
+import { DashboardLayout } from "@/components/layout-auth/dashboard-layout";
+import { AuthenticatedHeader } from "@/components/layout-auth/authenticated-header";
+
+export default function UserAuthLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <AuthProvider>
-      <DashboardLayout>{children}</DashboardLayout>
-    </AuthProvider>
-  )
+    <ProtectedRoute>
+      <main className=" px-full py-0">
+        <AuthenticatedHeader />
+        <div>
+          <DashboardLayout>{children}</DashboardLayout>
+        </div>
+      </main>
+    </ProtectedRoute>
+  );
 }
