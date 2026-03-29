@@ -8,7 +8,7 @@ import Image from "next/image";
 
 export default function RegisterPage() {
   return (
-    <AuthProvider>
+
       <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12 bg-foreground/2">
         {/* Background effects */}
         <div className="absolute inset-0 -z-10">
@@ -65,6 +65,6 @@ export default function RegisterPage() {
           </Link>
         </p>
       </div>
-    </AuthProvider>
+
   );
 }

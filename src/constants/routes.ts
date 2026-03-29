@@ -357,25 +357,25 @@ export const isAuthRoute = (pathname: string): boolean => {
 /**
  * Gera URL de login com callback para redirecionamento após autenticação
  */
-export const getLoginUrlWithCallback = (callbackUrl: string): string => {
-  const encodedCallback = encodeURIComponent(callbackUrl);
-  return `${ROUTES.LOGIN}?callbackUrl=${encodedCallback}`;
-};
+// export const getLoginUrlWithCallback = (callbackUrl: string): string => {
+//   const encodedCallback = encodeURIComponent(callbackUrl);
+//   return `${ROUTES.LOGIN}?callbackUrl=${encodedCallback}`;
+// };
 
 /**
  * Extrai o callback URL dos parâmetros da query
  */
-export const getCallbackUrl = (searchParams: URLSearchParams): string => {
-  const callback = searchParams.get("callbackUrl");
-  if (
-    callback &&
-    (callback.startsWith("/") ||
-      callback.startsWith(process.env.NEXT_PUBLIC_APP_URL || ""))
-  ) {
-    return callback;
-  }
-  return ROUTES.DASHBOARD;
-};
+// export const getCallbackUrl = (searchParams: URLSearchParams): string => {
+//   const callback = searchParams.get("callbackUrl");
+//   if (
+//     callback &&
+//     (callback.startsWith("/") ||
+//       callback.startsWith(process.env.NEXT_PUBLIC_APP_URL || ""))
+//   ) {
+//     return callback;
+//   }
+//   return ROUTES.DASHBOARD;
+// };
 
 // ============================================
 // FUNÇÕES DE NAVEGAÇÃO

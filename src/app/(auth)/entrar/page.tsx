@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 
 export default function LoginPage() {
   return (
-    <AuthProvider>
+
       <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12 bg-foreground/2">
         {/* Background effects */}
         <div className="absolute inset-0 -z-10">
@@ -28,8 +28,8 @@ export default function LoginPage() {
             <Image
               src="/icon.svg"
               alt="Nucleos"
-              width={28}
-              height={28}
+              width={38}
+              height={38}
               className="text-primary"
             />
           </div>
@@ -79,6 +79,6 @@ export default function LoginPage() {
           </Link>
         </p>
       </div>
-    </AuthProvider>
+
   );
 }

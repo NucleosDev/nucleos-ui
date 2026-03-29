@@ -44,10 +44,10 @@ export function LoginForm() {
         Password: formData.password, // Certifique-se que o campo está correto
       });
       console.log("[FORM] Login bem-sucedido:", response);
-      router.push(ROUTES.DASHBOARD);
+      router.push("/dashboard");
     } catch (err: any) {
       console.error("[FORM] Erro no login:", err);
-      // Log detalhado da resposta de erro
+
       if (err.response) {
         console.error("[FORM] Status:", err.response.status);
         console.error("[FORM] Data:", err.response.data);

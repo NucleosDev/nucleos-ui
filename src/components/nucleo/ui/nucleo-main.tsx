@@ -133,9 +133,9 @@ export function NucleoDetailPage({
                   backgroundColor: `${nucleo.corDestaque || "#4D7CFF"}20`,
                 }}
               >
-                {nucleo.icon?.icon_url ? (
+                {nucleo.icon?.iconUrl ? (
                   <Image
-                    src={nucleo.icon.icon_url}
+                    src={nucleo.icon.iconUrl}
                     alt={nucleo.nome}
                     width={24}
                     height={24}

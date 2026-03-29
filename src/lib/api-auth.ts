@@ -13,7 +13,7 @@
 // interface LoginCredentials {
 //   email: string;
 //   password: string;
-//   rememberMe?: boolean;
+//   RememberMe?: boolean;
 // }
 
 // interface RegisterData {
@@ -88,7 +88,7 @@
 //         body: JSON.stringify({
 //           email: credentials.email,
 //           password: credentials.password,
-//           rememberMe: credentials.rememberMe || false,
+//           RememberMe: credentials.RememberMe || false,
 //         }),
 //       });
 
@@ -388,8 +388,8 @@
 // export const apiAuth = ApiAuth.getInstance();
 
 // // Exporta funções utilitárias
-// export const login = (email: string, password: string, rememberMe?: boolean) =>
-//   apiAuth.login({ email, password, rememberMe });
+// export const login = (email: string, password: string, RememberMe?: boolean) =>
+//   apiAuth.login({ email, password, RememberMe });
 // export const register = (
 //   fullName: string,
 //   email: string,

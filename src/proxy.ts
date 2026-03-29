@@ -62,13 +62,13 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  // Caso 2: Usuário não autenticado tentando acessar rota protegida
-  if (!isAuthenticated && isProtectedRoute) {
-    // Guarda a URL que tentou acessar para redirecionar depois do login
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("callbackUrl", pathname);
-    return NextResponse.redirect(loginUrl);
-  }
+  // // Caso 2: Usuário não autenticado tentando acessar rota protegida
+  // if (!isAuthenticated && isProtectedRoute) {
+  //   // Guarda a URL que tentou acessar para redirecionar depois do login
+  //   const loginUrl = new URL("/entrar", request.url);
+  //   loginUrl.searchParams.set("callbackUrl", pathname);
+  //   return NextResponse.redirect(loginUrl);
+  // }
 
   // Caso 3: Rotas públicas ou já autenticado em rota permitida
   return NextResponse.next();

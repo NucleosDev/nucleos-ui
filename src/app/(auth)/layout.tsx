@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AuthProvider } from "@/auth";
+// import { AuthProvider } from "@/auth/auth-context";
 import { Header } from "@/components/landing/header";
 import { Footer } from "@/components/landing/footer";
 
@@ -15,9 +15,11 @@ export default function LoginLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AuthProvider>
+    <div>
+      {/* <AuthProvider> */}
       <Header />
       {children}
-    </AuthProvider>
+      {/* </AuthProvider> */}
+    </div>
   );
 }
