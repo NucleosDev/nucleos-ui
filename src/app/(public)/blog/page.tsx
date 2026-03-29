@@ -34,7 +34,7 @@ const posts = [
     tempoLeitura: "5 min",
     categoria: "Produtividade",
     tags: ["hábitos", "gamificação", "XP"],
-    image: "/public/blog1.png",
+    image: "/blog/habitos.pg",
     cor: "#4D7CFF",
   },
   {

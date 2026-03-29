@@ -1,11 +1,9 @@
-// src/constants/routes.ts
+import env from "@/config/env";
 
-// ============================================
 // ROTAS DA API (BACKEND)
-// ============================================
 
 export const API_ROUTES = {
-  // ========== AUTENTICAÇÃO ==========
+  //  AUTENTICAÇÃO // nao precisa alterar, já implementado
   AUTH: {
     LOGIN: "/v1/auth/login",
     REGISTER: "/v1/auth/register",
@@ -18,7 +16,7 @@ export const API_ROUTES = {
     VERIFY_EMAIL: "/v1/auth/verify-email",
   },
 
-  // ========== Nucleos ==========
+  //  Nucleos
   NUCLEOS: {
     LIST: "/v1/nucleos",
     GET: (id: string) => `/v1/nucleos/${id}`,
@@ -36,17 +34,17 @@ export const API_ROUTES = {
     ENERGY: (id: string) => `/v1/nucleos/${id}/energy`,
   },
 
-  // ========== BLOCOS ==========
+  //  BLOCOS
   BLOCOS: {
     LIST: (nucleoId: string) => `/v1/blocos/nucleo/${nucleoId}`,
     GET: (id: string) => `/v1/blocos/${id}`,
-    CREATE: (nucleoId: string) => `/v1/blocos/nucleo/${nucleoId}`,
+    CREATE: "/v1/blocos",
     UPDATE: (id: string) => `/v1/blocos/${id}`,
     DELETE: (id: string) => `/v1/blocos/${id}`,
-    REORDER: (nucleoId: string) => `/v1/blocos/nucleo/${nucleoId}/reorder`,
+    REORDER: "/v1/blocos/reorder",
   },
 
-  // ========== COLEÇÕES ==========
+  //  COLEÇÕES
   COLECOES: {
     LIST: (blocoId: string) => `/v1/colecoes/bloco/${blocoId}`,
     GET: (id: string) => `/v1/colecoes/${id}`,
@@ -55,7 +53,7 @@ export const API_ROUTES = {
     DELETE: (id: string) => `/v1/colecoes/${id}`,
   },
 
-  // ========== CAMPOS ==========
+  //  CAMPOS
   CAMPOS: {
     LIST: (colecaoId: string) => `/v1/campos/colecao/${colecaoId}`,
     CREATE: (colecaoId: string) => `/v1/campos/colecao/${colecaoId}`,
@@ -64,7 +62,7 @@ export const API_ROUTES = {
     DELETE: (id: string) => `/v1/campos/${id}`,
   },
 
-  // ========== ITENS ==========
+  //  ITENS
   ITENS: {
     LIST: (colecaoId: string) => `/v1/itens/colecao/${colecaoId}`,
     CREATE: (colecaoId: string) => `/v1/itens/colecao/${colecaoId}`,
@@ -73,7 +71,7 @@ export const API_ROUTES = {
     DELETE: (id: string) => `/v1/itens/${id}`,
   },
 
-  // ========== ITEM VALORES ==========
+  //  ITEM VALORES
   ITEM_VALORES: {
     LIST: (itemId: string) => `/v1/item-valores/item/${itemId}`,
     CREATE: (itemId: string, campoId: string) =>
@@ -83,47 +81,48 @@ export const API_ROUTES = {
     DELETE: (id: string) => `/v1/item-valores/${id}`,
   },
 
-  // ========== TAREFAS ==========
+  //  TAREFAS
   TAREFAS: {
     BASE: "/v1/tarefas",
     BY_ID: (id: string) => `/v1/tarefas/${id}`,
-    CONCLUDE: (id: string) => `/v1/tarefas/${id}/conclude`,
+    CONCLUDE: (id: string) => `/v1/tarefas/${id}/concluir`,
     BY_BLOCO: (blocoId: string) => `/v1/tarefas/bloco/${blocoId}`,
     VENCENDO: "/v1/tarefas/vencendo",
   },
 
-  // ========== LISTAS ==========
+  //  LISTAS
   LISTAS: {
     BASE: "/v1/listas",
     BY_ID: (id: string) => `/v1/listas/${id}`,
     BY_BLOCO: (blocoId: string) => `/v1/listas/bloco/${blocoId}`,
-    ITEMS: (listaId: string) => `/v1/listas/${listaId}/items`,
   },
 
-  // ========== HÁBITOS ==========
+  //  HÁBITOS
   HABITOS: {
     BASE: "/v1/habitos",
     BY_ID: (id: string) => `/v1/habitos/${id}`,
     BY_BLOCO: (blocoId: string) => `/v1/habitos/bloco/${blocoId}`,
-    REGISTER: (id: string) => `/v1/habitos/${id}/register`,
-    PROGRESS: (id: string) => `/v1/habitos/${id}/progress`,
+    REGISTER: (id: string) => `/v1/habitos/${id}/registrar`,
+    PROGRESS: (id: string) => `/v1/habitos/${id}/progresso`,
   },
 
-  // ========== GAMIFICAÇÃO ==========
+  //  GAMIFICAÇÃO
   GAMIFICACAO: {
     LEVEL: "/v1/gamificacao/level",
     CONQUISTAS: "/v1/gamificacao/conquistas",
     STREAKS: "/v1/gamificacao/streaks",
     ADD_XP: "/v1/gamificacao/add-xp",
+    ATUALIZAR_STREAK: "/v1/gamificacao/atualizar-streak",
+    DESBLOQUEAR_CONQUISTA: "/v1/gamificacao/desbloquear-conquista",
   },
 
-  // ========== PROGRESS ==========
+  //  PROGRESS
   PROGRESS: {
     XP: "/v1/progress/xp",
     ENERGY: "/v1/progress/energy",
   },
 
-  // ========== USUÁRIOS ==========
+  //  USUÁRIOS
   USERS: {
     ME: "/v1/users/me",
     PROFILE: "/v1/users/profile",
@@ -137,7 +136,7 @@ export const API_ROUTES = {
     AI_INSIGHTS: "/v1/users/ai-insights",
   },
 
-  // ========== NOTIFICAÇÕES ==========
+  //  NOTIFICAÇÕES
   NOTIFICATIONS: {
     LIST: "/v1/notifications",
     MARK_READ: (id: string) => `/v1/notifications/${id}/read`,
@@ -145,56 +144,48 @@ export const API_ROUTES = {
     DELETE: (id: string) => `/v1/notifications/${id}`,
   },
 
-  // ========== PLANOS ==========
+  //  PLANOS
   PLANS: {
-    LIST: "/v1/plans",
-    CURRENT: "/v1/plans/current",
-    SUBSCRIBE: (planId: string) => `/v1/plans/${planId}/subscribe`,
-    CANCEL: "/v1/plans/cancel",
+    CREATE: "/v1/plans",
+    SUBSCRIPTION: "/v1/plans/subscription",
   },
 
-  // ========== TIMERS ==========
+  //  TIMERS
   TIMERS: {
     LIST: (nucleoId: string) => `/v1/timers/nucleo/${nucleoId}`,
     GET: (id: string) => `/v1/timers/${id}`,
-    CREATE: (nucleoId: string) => `/v1/timers/nucleo/${nucleoId}`,
-    UPDATE: (id: string) => `/v1/timers/${id}`,
-    DELETE: (id: string) => `/v1/timers/${id}`,
-    START: (id: string) => `/v1/timers/${id}/start`,
+    START: "/v1/timers/start",
     PAUSE: (id: string) => `/v1/timers/${id}/pause`,
     RESUME: (id: string) => `/v1/timers/${id}/resume`,
     STOP: (id: string) => `/v1/timers/${id}/stop`,
   },
 
-  // ========== CALENDÁRIO ==========
+  //  CALENDÁRIO
   CALENDARIO: {
     LIST: (nucleoId: string) => `/v1/calendario/nucleo/${nucleoId}`,
     GET: (id: string) => `/v1/calendario/${id}`,
-    CREATE: (nucleoId: string) => `/v1/calendario/nucleo/${nucleoId}`,
+    CREATE: "/v1/calendario",
     UPDATE: (id: string) => `/v1/calendario/${id}`,
     DELETE: (id: string) => `/v1/calendario/${id}`,
   },
 
-  // ========== IA/INSIGHTS ==========
+  //  IA/INSIGHTS
   INSIGHTS: {
     BASE: "/v1/insights",
-    GENERATE: "/v1/insights/generate",
-    APPLY: (id: string) => `/v1/insights/${id}/apply`,
+    GET_BY_ID: (id: string) => `/v1/insights/${id}`,
+    GENERATE: "/v1/insights/gerar",
+    APPLY: (id: string) => `/v1/insights/${id}/aplicar`,
     CHAT: "/v1/insights/chat",
   },
 
-  // ========== ADMIN ==========
+  //  ADMIN
   ADMIN: {
+    STATS: "/v1/admin/stats",
     USERS: "/v1/admin/users",
-    DASHBOARD: "/v1/admin/dashboard",
-    PLANS: "/v1/admin/plans",
-    SUBSCRIPTIONS: "/v1/admin/subscriptions",
   },
 } as const;
 
-// ============================================
 // ROTAS DE NAVEGAÇÃO (FRONTEND)
-// ============================================
 export const ROUTES = {
   HOME: "/",
   SOBRE: "/sobre",
@@ -237,9 +228,7 @@ export const ROUTES = {
   HABITOS: (blocoId: string) => `/blocos/${blocoId}/habitos`,
 } as const;
 
-// ============================================
 // LISTAS DE ROTAS PARA VALIDAÇÃO
-// ============================================
 
 // Rotas públicas (acessíveis sem autenticação)
 export const PUBLIC_ROUTES: readonly string[] = [
@@ -297,9 +286,7 @@ const PROTECTED_DYNAMIC_ROUTES: readonly string[] = [
   "/habitos/",
 ];
 
-// ============================================
 // FUNÇÕES DE VALIDAÇÃO (CORRIGIDAS)
-// ============================================
 
 /**
  * Verifica se uma rota é pública
@@ -350,9 +337,7 @@ export const isAuthRoute = (pathname: string): boolean => {
   return authRoutes.includes(pathname as any);
 };
 
-// ============================================
 // FUNÇÕES DE REDIRECIONAMENTO
-// ============================================
 
 /**
  * Gera URL de login com callback para redirecionamento após autenticação
@@ -377,9 +362,7 @@ export const isAuthRoute = (pathname: string): boolean => {
 //   return ROUTES.DASHBOARD;
 // };
 
-// ============================================
 // FUNÇÕES DE NAVEGAÇÃO
-// ============================================
 
 export const getNucleoUrl = (id: string): string => ROUTES.NUCLEO_DETAIL(id);
 export const getNucleoEditUrl = (id: string): string => ROUTES.NUCLEO_EDIT(id);
@@ -398,9 +381,7 @@ export const getAjudaCategoriaUrl = (slug: string): string =>
   `/ajuda/categoria/${slug}`;
 export const getBlogPostUrl = (slug: string): string => `/blog/${slug}`;
 
-// ============================================
 // TIPOS
-// ============================================
 
 export type PublicRoute = (typeof PUBLIC_ROUTES)[number];
 export type ProtectedRoute = (typeof PROTECTED_ROUTES)[number];

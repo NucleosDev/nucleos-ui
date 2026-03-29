@@ -537,7 +537,7 @@ export default function DashboardPage() {
                     variant="mini"
                   />
                 ))}
-                <Link href="/conquistas">
+                <Link href="/badges">
                   <Button variant="link" className="w-full text-sm">
                     Ver todas as conquistas
                   </Button>

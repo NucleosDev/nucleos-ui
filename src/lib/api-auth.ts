@@ -411,4 +411,4 @@
 // export const del = apiAuth.delete.bind(apiAuth);
 // export const upload = apiAuth.upload.bind(apiAuth);
 
-export { authService as apiAuth } from "@/services/auth.service";
+// export { authService as apiAuth } from "@/services/auth.service";

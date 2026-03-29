@@ -1,6 +1,6 @@
 
 import api from "./api";
-import { API_ROUTES } from "@/constants/routes"; // ← CORRIGIDO
+import { API_ROUTES } from "@/constants/routes"; 
 import type {
   Nucleo,
   NucleoIcon,
