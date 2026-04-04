@@ -86,11 +86,8 @@ export function FAQ() {
       </motion.div>
 
       <div className="mx-auto max-w-3xl relative z-20">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
+        <div
+          
           className="mb-12 text-center"
         >
           <Badge
@@ -108,16 +105,12 @@ export function FAQ() {
             </span>
           </h2>
           <p className="mt-4 text-pretty text-muted-foreground max-w-xl mx-auto">
-            Tire suas dúvidas sobre o Nucleos e descubra como podemos ajudar na
-            sua jornada de evolução.
+            Tire suas dúvidas sobre o Nucleos e descubra como podemos te ajudar
+            no processo.
           </p>
-        </motion.div>
+        </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          viewport={{ once: true }}
         >
           <Accordion type="single" collapsible className="w-full space-y-3">
             {faqs.map((faq, index) => {
@@ -125,10 +118,7 @@ export function FAQ() {
               return (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
+               
                 >
                   <AccordionItem
                     value={`item-${index}`}
@@ -161,10 +151,7 @@ export function FAQ() {
 
         {/* Botão para página completa de FAQ */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          viewport={{ once: true }}
+
           className="mt-12 flex justify-center"
         >
           <Link href="/duvidas">

@@ -5,6 +5,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { siteConfig } from "@/config/site";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/auth/";
+import { QueryProvider } from "@/providers/QueryProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -83,7 +84,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className={`min-h-dvh`} lang="pt-BR" suppressHydrationWarning>
+    <html className="min-h-dvh" lang="pt-BR" suppressHydrationWarning>
       <body
         className={`min-h-dvh ${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
         suppressHydrationWarning
@@ -94,11 +95,13 @@ export default function RootLayout({
           enableSystem
           storageKey="nucleos-theme"
         >
-          <AuthProvider>
-            <div className="relative flex min-h-dvh flex-col">
-              <main className="flex-1">{children}</main>
-            </div>
-          </AuthProvider>
+          <QueryProvider>
+            <AuthProvider>
+              <div className="relative flex min-h-dvh flex-col">
+                <main className="flex-1">{children}</main>
+              </div>
+            </AuthProvider>
+          </QueryProvider>
         </ThemeProvider>
         <Analytics />
       </body>

@@ -1,113 +1,94 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Trophy,
+  Flame,
+  Target,
+  CheckCircle2,
+  Clock,
+  AlertCircle,
+} from "lucide-react";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+
 import { DashboardHeader } from "@/components/layout-auth/dashboard-header";
+import { NucleoCard } from "@/components/layout-auth/nucleoCard";
+import { TaskCard } from "@/components/layout-auth/TaskCard";
+import { User} from "@/src/types/tarefas";
+
 import {
-  SummaryCards,
-  type SummaryData,
-} from "@/components/layout-auth/summary-cards";
-import { NucleoGrid } from "@/components/layout-auth/nucleo-grid";
-import {
-  AISuggestions,
-  type Suggestion,
-} from "@/components/layout-auth/ai-suggestions";
-import type { NucleoData } from "@/components/layout-auth/nucleo-card";
+  useDashboardStats,
+  useUserLevel,
+  useStreaks,
+  useNucleos,
+  useTarefasVencendo,
+  useConcluirTarefa,
+  useCurrentUser,
+} from "@/hooks/useDashboard";
 
 // ---------------------------------------------------------------------------
-// Dados de demonstração (substituir por chamadas reais de API)
+// Página
 // ---------------------------------------------------------------------------
-const DEMO_SUMMARY: SummaryData = {
-  activeNucleos: 4,
-  tasksCompletedToday: 7,
-  focusedTimeMinutes: 145,
-  overallProgress: 62,
-};
-
-const DEMO_NUCLEOS: NucleoData[] = [
-  {
-    id: "1",
-    name: "Saúde & Bem-estar",
-    type: "Saúde",
-    progress: 74,
-    lastActivity: "Atualizado há 1 dia",
-    color: "health",
-  },
-  {
-    id: "2",
-    name: "Estudos — TypeScript",
-    type: "Estudos",
-    progress: 48,
-    lastActivity: "Atualizado há 2 horas",
-    color: "study",
-  },
-  {
-    id: "3",
-    name: "Controle Financeiro",
-    type: "Finanças",
-    progress: 31,
-    lastActivity: "Atualizado há 3 dias",
-    color: "finance",
-  },
-  {
-    id: "4",
-    name: "Projeto Pessoal",
-    type: "Criatividade",
-    progress: 88,
-    lastActivity: "Atualizado hoje",
-    color: "default",
-  },
-  {
-    id: "5",
-    name: "Leitura Mensal",
-    type: "Estudos",
-    progress: 55,
-    lastActivity: "Atualizado há 4 dias",
-    color: "study",
-  },
-  {
-    id: "6",
-    name: "Rotina Matinal",
-    type: "Saúde",
-    progress: 90,
-    lastActivity: "Atualizado hoje",
-    color: "health",
-  },
-];
-
-const DEMO_SUGGESTIONS: Suggestion[] = [
-  {
-    id: "1",
-    text: "Você tem 2 núcleos sem atualização há mais de 3 dias. Que tal revisitar o Controle Financeiro?",
-    action: "3",
-  },
-  {
-    id: "2",
-    text: "Sua Rotina Matinal está em 90% — você está quase lá! Foque nela para fechar a meta.",
-    action: "6",
-  },
-  {
-    id: "3",
-    text: "Quer organizar suas prioridades para hoje? Posso sugerir quais núcleos focar.",
-    action: null,
-  },
-];
-// ---------------------------------------------------------------------------
-
 export default function DashboardPage() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredNucleos = DEMO_NUCLEOS.filter(
-    (n) =>
-      n.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      n.type.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const { data: user } = useCurrentUser();
+
+  const {
+    data: stats,
+    isLoading: statsLoading,
+    error: statsError,
+  } = useDashboardStats();
+
+  const { data: level, isLoading: levelLoading } = useUserLevel();
+  const { data: streaks } = useStreaks();
+
+  const {
+    data: nucleos,
+    isLoading: nucleosLoading,
+    error: nucleosError,
+  } = useNucleos();
+
+  const { data: tarefasVencendo, isLoading: tarefasLoading } =
+    useTarefasVencendo();
+
+  const concluirMutation = useConcluirTarefa();
+
+  
+  const nomeCompleto = user?.nome ?? "";
+  const primeiroNome = nomeCompleto ? nomeCompleto.split(" ")[0] : "você";
+
+  const userEmail = user?.email ?? "";
+  const userAvatar = user?.avatarUrl ?? "";
+
+  const hora = new Date().getHours();
+  const saudacao =
+    hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
+
+  const nucleosFiltrados = (nucleos ?? []).filter((n) => {
+    const nome = n.nome?.toLowerCase?.() ?? "";
+    const descricao = n.descricao?.toLowerCase?.() ?? "";
+    const query = searchQuery.toLowerCase();
+
+    return nome.includes(query) || descricao.includes(query);
+  });
+
+  const streakPrincipal = streaks?.find((s) => s.ativo) ?? streaks?.[0];
 
   return (
     <div className="min-h-screen bg-background">
       <DashboardHeader
-        userName="Maria Silva"
-        userEmail="maria@nucleos.app"
-        onNewNucleo={() => {}}
+        userName={nomeCompleto}
+        userEmail={userEmail}
+        userAvatarUrl={userAvatar}
+        onNewNucleo={() => router.push("/nucleos/novo")}
         onSearch={setSearchQuery}
       />
 
@@ -115,43 +96,91 @@ export default function DashboardPage() {
         {/* Saudação */}
         <div className="mb-8">
           <h1 className="text-xl font-semibold text-foreground text-balance">
-            Bom dia, Maria
+            {saudacao}, {primeiroNome}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground leading-relaxed">
-            Aqui está o resumo do seu progresso hoje.
+            Aqui está o resumo do seu progresso.
           </p>
         </div>
 
-        {/* Cards de resumo */}
-        <div className="mb-10">
-          <SummaryCards data={DEMO_SUMMARY} />
-        </div>
+        {/* Stats */}
+        {statsError ? (
+          <Alert variant="destructive" className="mb-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              Não foi possível carregar as estatísticas.
+            </AlertDescription>
+          </Alert>
+        ) : statsLoading || levelLoading ? (
+          <div className="mb-8">
+            {/* Skeleton */}
+          </div>
+        ) : (
+          <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <Card>
+              <CardContent className="p-4">
+                <p className="text-xs">Nível</p>
+                <p className="text-2xl font-bold">
+                  Nível {level?.nivel ?? "—"}
+                </p>
+                {level && (
+                  <Progress
+                    value={Math.round(
+                      (level.xpAtual / level.xpProximoNivel) * 100
+                    )}
+                  />
+                )}
+              </CardContent>
+            </Card>
 
-        {/* Layout principal: Núcleos + IA */}
-        <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
-          {/* Núcleos */}
-          <NucleoGrid
-            nucleos={filteredNucleos}
-            isLoading={false}
-            onOpenNucleo={(id) => {
-              console.log("[v0] Abrir núcleo:", id);
-            }}
-            onCreateNucleo={() => {
-              console.log("[v0] Criar novo núcleo");
-            }}
+            <Card>
+              <CardContent className="p-4">
+                <p className="text-xs">Streak</p>
+                <p className="text-2xl font-bold">
+                  {streakPrincipal?.atual ??
+                    stats?.tarefasConcluidasHoje ??
+                    0}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-4">
+                <p className="text-xs">Núcleos ativos</p>
+                <p className="text-2xl font-bold">
+                  {stats?.nucleosAtivos ?? nucleos?.length ?? 0}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-4">
+                <p className="text-xs">Concluídas hoje</p>
+                <p className="text-2xl font-bold">
+                  {stats?.tarefasConcluidasHoje ?? 0}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Núcleos */}
+        {nucleosFiltrados.map((n) => (
+          <NucleoCard
+            key={n.id}
+            nucleo={n}
+            onClick={(id) => router.push(`/nucleos/${id}`)}
           />
+        ))}
 
-          {/* Sugestões da IA */}
-          <aside className="flex flex-col gap-4">
-            <AISuggestions
-              suggestions={DEMO_SUGGESTIONS}
-              isLoading={false}
-              onSuggestionClick={(s) => {
-                console.log("[v0] Sugestão clicada:", s);
-              }}
-            />
-          </aside>
-        </div>
+        {/* Tarefas */}
+        {tarefasVencendo?.map((t) => (
+          <TaskCard
+            key={t.id}
+            tarefa={t}
+            onConcluir={(id) => concluirMutation.mutate(id)}
+          />
+        ))}
       </main>
     </div>
   );

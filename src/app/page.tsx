@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { Hero } from "@/components/landing/hero";
 import { Comparison } from "@/components/landing/comparison";
 import { HowItWorks } from "@/components/landing/how-it-works";
-import { Testimonials } from "@/components/landing/testimonials";
 import { Pricing } from "@/components/landing/pricing";
 import { FloatingNotifications } from "@/components/landing/floating-notifications";
 import { JourneyTimeline } from "@/components/landing/journey-timeline";

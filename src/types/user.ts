@@ -50,3 +50,14 @@ export interface Subscription {
   startedAt: string;
   expiresAt?: string;
 }
+
+export interface DashboardStats {
+  totalUsuarios: number;
+  totalNucleos: number;
+  totalTarefasConcluidas: number;
+  totalHabitosAtivos: number;
+  nucleosAtivos: number;
+  tarefasConcluidasHoje: number;
+  minutosConcentradosHoje: number;
+  progressoGeral: number;
+}
