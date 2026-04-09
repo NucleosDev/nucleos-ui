@@ -20,7 +20,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import type { Bloco, BlocoTipo } from "@/src/types/test";
+import type { Bloco, BlocoTipo } from "@/src/types/bloco";
 
 interface BlocoCardProps {
   bloco: Bloco;
@@ -81,7 +81,7 @@ export function BlocoCard({
 
       <div className="flex flex-1 flex-col gap-0.5 min-w-0">
         <span className="text-sm font-medium leading-none truncate text-foreground">
-          {bloco.nome}
+          {bloco.titulo}
         </span>
         <span className="text-xs text-muted-foreground">
           {tipoLabel[bloco.tipo]}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState} from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Plus, AlertCircle, LayoutGrid } from "lucide-react";
 
@@ -17,7 +17,7 @@ import { TaskCard } from "@/src/components/layout-auth/TaskCard";
 import { BlocoDialog } from "@/src/components/layout-auth/dialogs/BlocoDialog";
 import { TarefaDialog } from "@/src/components/layout-auth/dialogs/TarefaDialog";
 
-import { useNucleoById } from "@/src/hooks/useDashboard";
+import { useNucleoById } from "@/src/hooks/useNucleo";
 import {
   useBlocosByNucleo,
   useTarefasByBloco,
@@ -25,7 +25,7 @@ import {
   useUpdateBloco,
   useDeleteBloco,
   useCreateTarefa,
-  useConcluirTarefaBloco,
+  // useConcluirTarefaBloco,
   useDeleteTarefa,
 } from "@/src/hooks/useNucleo";
 import type { Bloco } from "@/src/types/bloco";
@@ -38,7 +38,7 @@ function BlocoContent({ bloco, nucleoId }: { bloco: Bloco; nucleoId: string }) {
 
   const { data: tarefas, isLoading, error } = useTarefasByBloco(bloco.id);
   const createTarefa = useCreateTarefa(bloco.id);
-  const concluirTarefa = useConcluirTarefaBloco(bloco.id);
+  // const concluirTarefa = useConcluirTarefaBloco(bloco.id);
   const deleteTarefa = useDeleteTarefa(bloco.id);
 
   if (bloco.tipo !== "tarefas") {
@@ -55,7 +55,9 @@ function BlocoContent({ bloco, nucleoId }: { bloco: Bloco; nucleoId: string }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-foreground">{bloco.titulo}</h3>
+        <h3 className="text-sm font-semibold text-foreground">
+          {bloco.titulo}
+        </h3>
         <Button
           size="sm"
           className="h-8 gap-1.5 text-xs"
@@ -98,7 +100,7 @@ function BlocoContent({ bloco, nucleoId }: { bloco: Bloco; nucleoId: string }) {
             <TaskCard
               key={t.id}
               tarefa={t}
-              onConcluir={(id) => concluirTarefa.mutate(id)}
+              // onConcluir={(id) => concluirTarefa.mutate(id)}
               onDelete={(id) => deleteTarefa.mutate(id)}
             />
           ))}
@@ -123,12 +125,15 @@ function BlocoContent({ bloco, nucleoId }: { bloco: Bloco; nucleoId: string }) {
 // ---------------------------------------------------------------------------
 // Página
 // ---------------------------------------------------------------------------
+import { use } from "react";
+
 export default function NucleoDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = params;
+  const { id } = use(params);
+  ("");
   const router = useRouter();
 
   const [selectedBlocoId, setSelectedBlocoId] = useState<string | null>(null);
@@ -147,8 +152,8 @@ export default function NucleoDetailPage({
   const deleteBloco = useDeleteBloco(id);
 
   const selectedBloco = Array.isArray(blocos)
-  ? blocos.find((b) => b.id === selectedBlocoId) ?? blocos[0] ?? null
-  : null;
+    ? (blocos.find((b) => b.id === selectedBlocoId) ?? blocos[0] ?? null)
+    : null;
 
   if (nucleoError) {
     return (
@@ -187,7 +192,7 @@ export default function NucleoDetailPage({
               </h1>
               {nucleo && (
                 <Badge variant="secondary" className="text-xs shrink-0">
-                  {nucleo.progresso}%
+                  {(nucleo as any)?.progresso ?? 0}%
                 </Badge>
               )}
             </div>
@@ -195,7 +200,10 @@ export default function NucleoDetailPage({
 
           {nucleo && (
             <div className="ml-auto shrink-0">
-              <Progress value={nucleo.progresso} className="w-24 h-1.5" />
+              <Progress
+                value={(nucleo as any)?.progresso ?? 0}
+                className="w-24 h-1.5"
+              />
             </div>
           )}
         </div>
@@ -260,9 +268,9 @@ export default function NucleoDetailPage({
                     selected={selectedBloco?.id === b.id}
                     onClick={setSelectedBlocoId}
                     onEdit={(bloco: Bloco) => {
-                    setEditingBloco(bloco);
-                    setBlocoDialogOpen(true);
-                }}
+                      setEditingBloco(bloco);
+                      setBlocoDialogOpen(true);
+                    }}
                     onDelete={(bid) => deleteBloco.mutate(bid)}
                   />
                 ))}
@@ -301,7 +309,7 @@ export default function NucleoDetailPage({
       </div>
 
       {/* Dialog de bloco */}
-      <BlocoDialog
+      {/* <BlocoDialog
         open={blocoDialogOpen}
         onOpenChange={setBlocoDialogOpen}
         bloco={editingBloco!}
@@ -310,7 +318,11 @@ export default function NucleoDetailPage({
         onSubmit={(data) => {
           if (editingBloco !== null) {
             updateBloco.mutate(
-              { id: editingBloco.id, payload: data },
+              {
+                id: editingBloco.id,
+                payload: { titulo: data.nome, tipo: data.tipo },
+              },
+
               { onSuccess: () => setBlocoDialogOpen(false) },
             );
           } else {
@@ -318,7 +330,7 @@ export default function NucleoDetailPage({
               {
                 nucleoId: id,
                 nome: data.nome,
-                tipo: data.tipo,
+                tipo: data.tipo as any,
                 descricao: data.descricao,
               },
               {
@@ -330,7 +342,7 @@ export default function NucleoDetailPage({
             );
           }
         }}
-      />
+      /> */}
     </div>
   );
 }

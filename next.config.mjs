@@ -3,20 +3,23 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+
   images: {
     unoptimized: true,
   },
+
   turbopack: {
     root: "/Users/andrewpimenta/Documents/Repository/nucleos-ui",
   },
-  // async rewrites() {
-  //   return [
-  //     {
-  //       source: '/api/:path*',
-  //       destination: 'https://localhost:5000/api/:path*',
-  //     },
-  //   ];
-  // },
+
+  //  Remove console.log automaticamente em produção
+  compiler: {
+    removeConsole:
+      process.env.NODE_ENV === "production"
+        ? { exclude: ["error"] } // mantém console.error
+        : false,
+  },
+
 }
 
-export default nextConfig
+export default nextConfig;

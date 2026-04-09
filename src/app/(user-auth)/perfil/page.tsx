@@ -1,9 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { ArrowLeft, User, Mail, Camera, Save } from "lucide-react";
 import { useState, useEffect } from "react";
-
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Mail, Camera, Save, User2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,28 +11,30 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
-
 import { useCurrentUser } from "@/hooks/useDashboard";
 import { useUpdatePerfil } from "@/hooks/usePerfil";
-import type { UpdateUserPayload } from "@/src/types/test";
+// import user from "@/services/users.service";
+import type { User, UpdateUserPayload } from "@/src/types/user";
 
 export default function PerfilPage() {
   const router = useRouter();
   const { data: user, isLoading } = useCurrentUser();
   const updatePerfil = useUpdatePerfil();
 
-  const [nome, setNome] = useState("");
+  const [fullName, setfullName] = useState("");
   const [email, setEmail] = useState("");
 
   useEffect(() => {
     if (user) {
-      setNome(user.nome ?? "");
+      setfullName(user.fullName ?? "");
       setEmail(user.email ?? "");
     }
   }, [user]);
 
-  const initials = user?.nome
-    ? user.nome
+  // USUARIO
+
+  const initials = user?.fullName
+    ? user.fullName
         .split(" ")
         .slice(0, 2)
         .map((n: string) => n[0])
@@ -43,8 +44,8 @@ export default function PerfilPage() {
 
   function handleSave() {
     const payload: UpdateUserPayload = {
-      nome,
-      email,
+      nome: fullName,
+      email: email,
     };
 
     updatePerfil.mutate(payload);
@@ -68,7 +69,6 @@ export default function PerfilPage() {
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-8 md:px-6 space-y-6">
-
         {/* Avatar */}
         <Card>
           <CardContent className="p-6">
@@ -101,7 +101,7 @@ export default function PerfilPage() {
                 ) : (
                   <>
                     <p className="font-semibold text-foreground truncate">
-                      {user?.nome ?? "—"}
+                      {user?.fullName ?? "—"}
                     </p>
                     <p className="text-sm text-muted-foreground truncate">
                       {user?.email ?? "—"}
@@ -110,10 +110,13 @@ export default function PerfilPage() {
                       <Badge variant="secondary" className="text-xs">
                         Membro desde{" "}
                         {user?.createdAt
-                          ? new Date(user.createdAt).toLocaleDateString("pt-BR", {
-                              month: "short",
-                              year: "numeric",
-                            })
+                          ? new Date(user.createdAt).toLocaleDateString(
+                              "pt-BR",
+                              {
+                                month: "short",
+                                year: "numeric",
+                              },
+                            )
                           : "—"}
                       </Badge>
                     </div>
@@ -128,7 +131,7 @@ export default function PerfilPage() {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-semibold flex items-center gap-2">
-              <User className="h-4 w-4 text-muted-foreground" />
+              <User2 className="h-4 w-4 text-muted-foreground" />
               Dados Pessoais
             </CardTitle>
           </CardHeader>
@@ -136,15 +139,15 @@ export default function PerfilPage() {
           <CardContent className="p-6 space-y-4">
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">
-                Nome completo
+                fullName completo
               </Label>
               {isLoading ? (
                 <Skeleton className="h-9 w-full" />
               ) : (
                 <Input
-                  value={nome}
-                  onChange={(e) => setNome(e.target.value)}
-                  placeholder="Seu nome"
+                  value={fullName}
+                  onChange={(e) => setfullName(e.target.value)}
+                  placeholder="Seu fullName"
                   className="h-9"
                 />
               )}
@@ -181,7 +184,6 @@ export default function PerfilPage() {
             {updatePerfil.isPending ? "Salvando..." : "Salvar alterações"}
           </Button>
         </div>
-
       </main>
     </div>
   );

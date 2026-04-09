@@ -1,137 +1,65 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { blocosService } from "@/src/services/blocos.service"
-import { tarefasService } from "@/src/services/tarefas.service"
-import { nucleosService } from "@/src/services/nucleos.service"
-import type { CreateBlocoPayload, UpdateBlocoPayload, CreateTarefaPayload, UpdateTarefaPayload } from "@/src/types/test"
+"use client";
 
-// ---------------------------------------------------------------------------
-// Blocos de um núcleo
-// ---------------------------------------------------------------------------
-export function useBlocosByNucleo(nucleoId: string) {
-  return useQuery({
-    queryKey: ["blocos", "nucleo", nucleoId],
-    queryFn: () => blocosService.getByNucleo(nucleoId),
-    enabled: !!nucleoId,
-    staleTime: 1000 * 60 * 3,
-  })
-}
+import { useState, useEffect, useCallback } from "react";
+import { nucleosService } from "@/services/nucleos.service";
+import { blocosService } from "@/services/blocos.service";
+import type {
+  Nucleo,
+  CreateNucleoPayload,
+  UpdateNucleoPayload,
+} from "@/types/nucleo";
+import type { Bloco } from "@/types/bloco";
 
-// ---------------------------------------------------------------------------
-// Tarefas de um bloco
-// ---------------------------------------------------------------------------
-export function useTarefasByBloco(blocoId: string | null) {
-  return useQuery({
-    queryKey: ["tarefas", "bloco", blocoId],
-    queryFn: () => tarefasService.getByBloco(blocoId!),
-    enabled: !!blocoId,
-    staleTime: 1000 * 60 * 2,
-  })
-}
+export function useNucleos() {
+  const [nucleos, setNucleos] = useState<Nucleo[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-// ---------------------------------------------------------------------------
-// Criar bloco
-// ---------------------------------------------------------------------------
-export function useCreateBloco(nucleoId: string) {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (payload: CreateBlocoPayload) => blocosService.create(payload),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["blocos", "nucleo", nucleoId] })
+  const load = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const data = await nucleosService.getNucleos();
+      setNucleos(data ?? []);
+    } catch (e: any) {
+      setError(e?.response?.data?.message || "Erro ao carregar núcleos");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const create = useCallback(async (payload: CreateNucleoPayload) => {
+    const novo = await nucleosService.create(payload);
+    setNucleos((prev) => [novo, ...prev]);
+    return novo;
+  }, []);
+
+  const update = useCallback(
+    async (id: string, payload: UpdateNucleoPayload) => {
+      const updated = await nucleosService.update(id, payload);
+      setNucleos((prev) => prev.map((n) => (n.id === id ? updated : n)));
+      return updated;
     },
-  })
-}
+    [],
+  );
 
-// ---------------------------------------------------------------------------
-// Atualizar bloco
-// ---------------------------------------------------------------------------
-export function useUpdateBloco(nucleoId: string) {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: UpdateBlocoPayload }) =>
-      blocosService.update(id, payload),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["blocos", "nucleo", nucleoId] })
-    },
-  })
-}
+  const remove = useCallback(async (id: string) => {
+    await nucleosService.delete(id);
+    setNucleos((prev) => prev.filter((n) => n.id !== id));
+  }, []);
 
-// ---------------------------------------------------------------------------
-// Deletar bloco
-// ---------------------------------------------------------------------------
-export function useDeleteBloco(nucleoId: string) {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (id: string) => blocosService.delete(id),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["blocos", "nucleo", nucleoId] })
-    },
-  })
-}
-
-// ---------------------------------------------------------------------------
-// Criar tarefa
-// ---------------------------------------------------------------------------
-export function useCreateTarefa(blocoId: string) {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (payload: CreateTarefaPayload) => tarefasService.create(payload),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["tarefas", "bloco", blocoId] })
-      qc.invalidateQueries({ queryKey: ["tarefas", "vencendo"] })
-    },
-  })
-}
-
-// ---------------------------------------------------------------------------
-// Atualizar tarefa
-// ---------------------------------------------------------------------------
-export function useUpdateTarefa(blocoId: string) {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: UpdateTarefaPayload }) =>
-      tarefasService.update(id, payload),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["tarefas", "bloco", blocoId] })
-    },
-  })
-}
-
-// ---------------------------------------------------------------------------
-// Concluir tarefa
-// ---------------------------------------------------------------------------
-export function useConcluirTarefaBloco(blocoId: string) {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (id: string) => tarefasService.concluir(id),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["tarefas", "bloco", blocoId] })
-      qc.invalidateQueries({ queryKey: ["dashboard", "stats"] })
-    },
-  })
-}
-
-// ---------------------------------------------------------------------------
-// Deletar tarefa
-// ---------------------------------------------------------------------------
-export function useDeleteTarefa(blocoId: string) {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (id: string) => tarefasService.delete(id),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["tarefas", "bloco", blocoId] })
-    },
-  })
-}
-
-// ---------------------------------------------------------------------------
-// Criar núcleo
-// ---------------------------------------------------------------------------
-export function useCreateNucleo() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: nucleosService.create,
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["nucleos"] })
-    },
-  })
+  return {
+    nucleos,
+    loading,
+    error,
+    reload: load,
+    create,
+    update,
+    remove,
+  };
 }

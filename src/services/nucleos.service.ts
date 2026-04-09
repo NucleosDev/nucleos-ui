@@ -1,43 +1,59 @@
-// =============================================================================
-// Núcleos – Types centralizados
-// Espelho dos DTOs retornados pela API ASP.NET
-// =============================================================================
-
-// ---------------------------------------------------------------------------
-// Auth
-// ---------------------------------------------------------------------------
+// src/services/nucleos.service.ts
 import api from "@/services/api";
 import type {
   Nucleo,
   CreateNucleoPayload,
   UpdateNucleoPayload,
-} from "@/types/tarefas";
+} from "@/types/nucleo";
 
 export const nucleosService = {
   async getNucleos(): Promise<Nucleo[]> {
-    const { data } = await api.get<Nucleo[]>("/Nucleos");
+    try {
+      const { data } = await api.get<Nucleo[]>("/nucleos");
+      return data || [];
+    } catch (error) {
+      console.warn("Erro ao buscar núcleos:", error);
+      return [];
+    }
+  },
+
+  async getNucleo(id: string): Promise<Nucleo | null> {
+    try {
+      const { data } = await api.get<Nucleo>(`/nucleos/${id}`);
+      return data;
+    } catch (error) {
+      console.warn(`Erro ao buscar núcleo ${id}:`, error);
+      return null;
+    }
+  },
+
+  async create(payload: CreateNucleoPayload): Promise<Nucleo> {
+    const { data } = await api.post<Nucleo>("/nucleos", payload);
     return data;
   },
 
-  async getNucleo(id: string): Promise<Nucleo> {
-    const { data } = await api.get<Nucleo>(`/Nucleos/${id}`);
+  async update(id: string, payload: UpdateNucleoPayload): Promise<Nucleo> {
+    const { data } = await api.put<Nucleo>(`/nucleos/${id}`, payload);
     return data;
   },
 
+  async delete(id: string): Promise<void> {
+    await api.delete(`/nucleos/${id}`);
+  },
+
+  // Método alternativo para compatibilidade com o hook existente
   async createNucleo(payload: CreateNucleoPayload): Promise<Nucleo> {
-    const { data } = await api.post<Nucleo>("/Nucleos", payload);
-    return data;
+    return this.create(payload);
   },
 
   async updateNucleo(
     id: string,
     payload: UpdateNucleoPayload,
   ): Promise<Nucleo> {
-    const { data } = await api.put<Nucleo>(`/Nucleos/${id}`, payload);
-    return data;
+    return this.update(id, payload);
   },
 
   async deleteNucleo(id: string): Promise<void> {
-    await api.delete(`/Nucleos/${id}`);
+    return this.delete(id);
   },
 };

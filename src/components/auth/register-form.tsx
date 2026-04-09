@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/auth";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,8 @@ import { Loader2 } from "lucide-react";
 
 export function RegisterForm() {
   const router = useRouter();
-  const { register, isLoading } = useAuth();
+  const { register, isLoading, isAuthenticated } = useAuth();
+
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     fullName: "",
@@ -30,11 +31,17 @@ export function RegisterForm() {
     nickname: "",
   });
 
+  // 🔥 REDIRECIONAMENTO CORRETO (sem loop)
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace("/dashboard");
+    }
+  }, [isAuthenticated, router]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    // Validações básicas
     if (
       !formData.fullName ||
       !formData.email ||
@@ -55,7 +62,6 @@ export function RegisterForm() {
       return;
     }
 
-    // Validação simples de CPF (apenas caracteres)
     const cpfClean = formData.cpf.replace(/\D/g, "");
     if (cpfClean.length !== 11) {
       setError("CPF inválido");
@@ -66,16 +72,18 @@ export function RegisterForm() {
       await register({
         fullName: formData.fullName,
         email: formData.email,
-        Password: formData.password,
-        ConfirmPassword: formData.confirmPassword,
-        phone: formData.phone, // Pode ser vazio, mas será enviado
-        Cpf: cpfClean,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
+        phone: formData.phone,
+        cpf: cpfClean,
         nickname: formData.nickname || undefined,
       });
-      router.push("/dashboard");
+
+      // ❌ NÃO REDIRECIONA AQUI
     } catch (err: any) {
       const errorMessage =
         err.response?.data?.message || err.message || "Erro ao registrar";
+
       setError(errorMessage);
     }
   };
@@ -88,6 +96,7 @@ export function RegisterForm() {
           Preencha os dados abaixo para se cadastrar
         </CardDescription>
       </CardHeader>
+
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           {error && (
@@ -95,52 +104,49 @@ export function RegisterForm() {
               {error}
             </div>
           )}
+
+          {/* campos iguais */}
           <div className="space-y-2">
             <Label htmlFor="fullName">Nome completo *</Label>
             <Input
               id="fullName"
-              placeholder="Seu nome completo"
               value={formData.fullName}
               onChange={(e) =>
                 setFormData({ ...formData, fullName: e.target.value })
               }
-              required
               disabled={isLoading}
             />
           </div>
+
           <div className="space-y-2">
             <Label htmlFor="email">E-mail *</Label>
             <Input
               id="email"
               type="email"
-              placeholder="seu@email.com"
               value={formData.email}
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
               }
-              required
               disabled={isLoading}
             />
           </div>
+
           <div className="space-y-2">
             <Label htmlFor="cpf">CPF *</Label>
             <Input
               id="cpf"
-              placeholder="000.000.000-00"
               value={formData.cpf}
               onChange={(e) =>
                 setFormData({ ...formData, cpf: e.target.value })
               }
-              required
               disabled={isLoading}
             />
           </div>
+
           <div className="space-y-2">
             <Label htmlFor="phone">Telefone</Label>
             <Input
               id="phone"
-              type="tel"
-              placeholder="(00) 00000-0000"
               value={formData.phone}
               onChange={(e) =>
                 setFormData({ ...formData, phone: e.target.value })
@@ -148,11 +154,11 @@ export function RegisterForm() {
               disabled={isLoading}
             />
           </div>
+
           <div className="space-y-2">
             <Label htmlFor="nickname">Apelido</Label>
             <Input
               id="nickname"
-              placeholder="Como quer ser chamado(a)"
               value={formData.nickname}
               onChange={(e) =>
                 setFormData({ ...formData, nickname: e.target.value })
@@ -160,41 +166,39 @@ export function RegisterForm() {
               disabled={isLoading}
             />
           </div>
+
           <div className="space-y-2">
             <Label htmlFor="password">Senha *</Label>
             <Input
               id="password"
               type="password"
-              placeholder="********"
               value={formData.password}
               onChange={(e) =>
                 setFormData({ ...formData, password: e.target.value })
               }
-              required
               disabled={isLoading}
             />
           </div>
+
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">Confirmar senha *</Label>
             <Input
               id="confirmPassword"
               type="password"
-              placeholder="********"
               value={formData.confirmPassword}
               onChange={(e) =>
-                setFormData({ ...formData, confirmPassword: e.target.value })
+                setFormData({
+                  ...formData,
+                  confirmPassword: e.target.value,
+                })
               }
-              required
               disabled={isLoading}
             />
           </div>
         </CardContent>
+
         <CardFooter className="flex flex-col space-y-4 pt-4 pb-2">
-          <Button
-            type="submit"
-            className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-            disabled={isLoading}
-          >
+          <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -204,6 +208,7 @@ export function RegisterForm() {
               "Cadastrar"
             )}
           </Button>
+
           <p className="text-sm text-center text-muted-foreground">
             Já tem uma conta?{" "}
             <a href="/entrar" className="text-primary hover:underline">

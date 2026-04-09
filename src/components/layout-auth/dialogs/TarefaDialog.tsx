@@ -1,44 +1,44 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Spinner } from "@/components/ui/spinner"
-import type { Tarefa, TarefaPrioridade } from "@/src/types/test"
+} from "@/components/ui/select";
+import { Spinner } from "@/components/ui/spinner";
+import type { Tarefa, TarefaPrioridade } from "@/src/types/tarefas";
 
 const schema = z.object({
   titulo: z.string().min(1, "Título obrigatório").max(120),
   descricao: z.string().optional(),
   prioridade: z.enum(["baixa", "media", "alta"] as const),
   dataVencimento: z.string().optional(),
-})
+});
 
-type FormData = z.infer<typeof schema>
+type FormData = z.infer<typeof schema>;
 
 interface TarefaDialogProps {
-  open: boolean
-  onOpenChange: (v: boolean) => void
-  tarefa?: Tarefa | null
-  onSubmit: (data: FormData) => void
-  isPending?: boolean
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  tarefa?: Tarefa | null;
+  onSubmit: (data: FormData) => void;
+  isPending?: boolean;
 }
 
 export function TarefaDialog({
@@ -62,7 +62,7 @@ export function TarefaDialog({
       prioridade: "media",
       dataVencimento: "",
     },
-  })
+  });
 
   useEffect(() => {
     if (tarefa) {
@@ -71,11 +71,16 @@ export function TarefaDialog({
         descricao: tarefa.descricao ?? "",
         prioridade: tarefa.prioridade,
         dataVencimento: tarefa.dataVencimento?.split("T")[0] ?? "",
-      })
+      });
     } else {
-      reset({ titulo: "", descricao: "", prioridade: "media", dataVencimento: "" })
+      reset({
+        titulo: "",
+        descricao: "",
+        prioridade: "media",
+        dataVencimento: "",
+      });
     }
-  }, [tarefa, open, reset])
+  }, [tarefa, open, reset]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -96,7 +101,9 @@ export function TarefaDialog({
               aria-invalid={!!errors.titulo}
             />
             {errors.titulo && (
-              <p className="text-xs text-destructive">{errors.titulo.message}</p>
+              <p className="text-xs text-destructive">
+                {errors.titulo.message}
+              </p>
             )}
           </div>
 
@@ -116,7 +123,9 @@ export function TarefaDialog({
               <Label>Prioridade</Label>
               <Select
                 defaultValue={tarefa?.prioridade ?? "media"}
-                onValueChange={(v) => setValue("prioridade", v as TarefaPrioridade)}
+                onValueChange={(v) =>
+                  setValue("prioridade", v as TarefaPrioridade)
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Prioridade" />
@@ -140,7 +149,11 @@ export function TarefaDialog({
           </div>
 
           <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => onOpenChange(false)}
+            >
               Cancelar
             </Button>
             <Button type="submit" disabled={isPending}>
@@ -151,5 +164,5 @@ export function TarefaDialog({
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

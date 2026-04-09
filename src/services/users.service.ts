@@ -4,7 +4,7 @@ import { API_ROUTES } from "@/constants/routes"; // ← CORRIGIDO
 import type { User, UserLevel } from "@/types/user";
 import type { XpLog, EnergyLog } from "@/types/logs";
 import type { AiContext, AiInsight } from "@/types/ai";
-import type { UpdateUserPayload } from "@/src/types/test";
+import type { UpdateUserPayload } from "@/src/types/user";
 
 export const usersService = {
   async getCurrentUser(): Promise<User> {
@@ -71,7 +71,7 @@ export const usersService = {
     return response.data;
   },
   async update(payload: UpdateUserPayload): Promise<User> {
-    const { data } = await api.put<User>("/Users/me", payload);
+    const { data } = await api.put<User>("v1/auth/me", payload);
     return data;
   },
 };

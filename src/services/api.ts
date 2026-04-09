@@ -2,33 +2,33 @@ import axios from "axios";
 import { env } from "@/config/env";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: env.apiUrl,
   timeout: 30000,
-  withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  withCredentials: false,
 });
 
 api.interceptors.request.use((config) => {
-  if (typeof window !== "undefined") {
+  if (typeof window === "undefined") return config;
+
+  const token = localStorage.getItem("token");
+
+  console.log("🔑 TOKEN ENVIADO:", token);
+  console.log("➡️ URL:", config.url);
+
+  if (token) {
+    config.headers = config.headers ?? {};
+    config.headers.Authorization = `Bearer ${token}`;
   }
 
   return config;
 });
 
 api.interceptors.response.use(
-  (response) => response,
+  (res) => res,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-
-      if (typeof window !== "undefined") {
-        window.location.href = "/entrar";
-      }
+      console.warn("⚠️ 401 - token inválido ou não enviado");
     }
-
     return Promise.reject(error);
   },
 );

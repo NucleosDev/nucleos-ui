@@ -1,14 +1,13 @@
-// src/auth/auth-context.tsx
 "use client";
 
 import {
   createContext,
   useContext,
+  useEffect,
   useState,
   useCallback,
   type ReactNode,
 } from "react";
-
 import authService from "@/services/auth.service";
 import type { User } from "@/types/user";
 import type {
@@ -19,99 +18,95 @@ import type {
 
 interface AuthContextType {
   user: User | null;
-  isAuthenticated: boolean;
   isLoading: boolean;
+  isAuthenticated: boolean;
   login: (credentials: LoginCredentials) => Promise<AuthResponse>;
   register: (data: RegisterData) => Promise<AuthResponse>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const AUTH_TOKEN_KEY = "token";
 const USER_KEY = "user";
+const TOKEN_KEY = "token";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const isAuthenticated = !!user;
 
   const clearAuth = useCallback(() => {
-    localStorage.removeItem(AUTH_TOKEN_KEY);
+    localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     setUser(null);
   }, []);
 
+  // =========================
+  // 🔄 REFRESH USER (FIXADO)
+  // =========================
+  const refreshUser = useCallback(async () => {
+    const token = localStorage.getItem(TOKEN_KEY);
+
+    if (!token) {
+      setUser(null);
+      return;
+    }
+
+    const currentUser = await authService.getCurrentUser();
+
+    if (currentUser) {
+      setUser(currentUser);
+      localStorage.setItem(USER_KEY, JSON.stringify(currentUser));
+    } else {
+      clearAuth();
+    }
+  }, [clearAuth]);
+
+  // =========================
+  // INIT
+  // =========================
+  useEffect(() => {
+    (async () => {
+      setIsLoading(true);
+      await refreshUser();
+      setIsLoading(false);
+    })();
+  }, [refreshUser]);
+
+  // =========================
+  // LOGIN (🔥 FIX REAL)
+  // =========================
   const login = async (
     credentials: LoginCredentials,
   ): Promise<AuthResponse> => {
-    setIsLoading(true);
+    const response = await authService.login(credentials);
 
-    try {
-      const response = await authService.login(credentials);
+    // 🔥 GARANTE TOKEN (ANTI BUG)
+    localStorage.setItem(TOKEN_KEY, response.token);
 
-      const userData: User = {
-        id: response.userId,
-        email: response.email,
-        fullName: response.fullName,
-        emailVerified: false,
-        active: true,
-        profile: {
-          id: "",
-          userId: response.userId,
-          fullName: response.fullName,
-          phone: "",
-          Cpf: "",
-          createdAt: new Date().toISOString(),
-        },
-        roles: [{ role: "user" }],
-        createdAt: new Date().toISOString(),
-      };
+    await refreshUser();
 
-      localStorage.setItem(USER_KEY, JSON.stringify(userData));
-      setUser(userData);
-
-      return response;
-    } finally {
-      setIsLoading(false);
-    }
+    return response;
   };
 
+  // =========================
+  // REGISTER
+  // =========================
   const register = async (data: RegisterData): Promise<AuthResponse> => {
-    setIsLoading(true);
+    const response = await authService.register(data);
 
-    try {
-      const response = await authService.register(data);
+    localStorage.setItem(TOKEN_KEY, response.token);
 
-      const userData: User = {
-        id: response.userId,
-        email: response.email,
-        fullName: response.fullName,
-        emailVerified: false,
-        active: true,
-        profile: {
-          id: "",
-          userId: response.userId,
-          fullName: response.fullName,
-          phone: data.phone,
-          Cpf: data.Cpf,
-          ...(data.nickname && { nickname: data.nickname }),
-          createdAt: new Date().toISOString(),
-        },
-        roles: [{ role: "user" }],
-        createdAt: new Date().toISOString(),
-      };
+    await refreshUser();
 
-      localStorage.setItem(USER_KEY, JSON.stringify(userData));
-      setUser(userData);
-
-      return response;
-    } finally {
-      setIsLoading(false);
-    }
+    return response;
   };
 
+  // =========================
+  // LOGOUT
+  // =========================
   const logout = async () => {
     await authService.logout();
     clearAuth();
@@ -121,11 +116,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated,
         isLoading,
+        isAuthenticated,
         login,
         register,
         logout,
+        refreshUser,
       }}
     >
       {children}
@@ -135,10 +131,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-
-  if (!context) {
-    throw new Error("useAuth must be used within AuthProvider");
-  }
-
+  if (!context) throw new Error("useAuth must be used within AuthProvider");
   return context;
 }

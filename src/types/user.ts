@@ -1,18 +1,17 @@
 // src/types/user.ts
 import { Plan } from "./plan";
 
+
 export interface User {
-  id: string;
-  fullName: string;
+  userId: string;
   email: string;
+  fullName: string;
+  cpf?: string;
+  phone?: string;
+  nickname?: string;
+  avatarUrl?: string;
   emailVerified: boolean;
   active: boolean;
-  Cpf?: string; // ← ADICIONAR Cpf OPCIONAL no nível do User
-  profile: UserProfile;
-  roles: UserRole[];
-  security?: UserSecurity;
-  level?: UserLevel;
-  subscription?: Subscription;
   createdAt: string;
 }
 
@@ -23,7 +22,7 @@ export interface UserProfile {
   nickname?: string;
   avatarUrl?: string;
   phone: string;
-  Cpf: string; // ← Cpf OBRIGATÓRIO no profile
+  cpf: string;
   createdAt: string;
 }
 
@@ -60,4 +59,37 @@ export interface DashboardStats {
   tarefasConcluidasHoje: number;
   minutosConcentradosHoje: number;
   progressoGeral: number;
+}
+
+export interface UserLevel {
+  nivel: number;
+  xpAtual: number;
+  xpProximoNivel: number;
+  titulo: string;
+}
+
+export interface Streak {
+  tipo: string;
+  atual: number;
+  maximo: number;
+  ativo: boolean;
+}
+
+export interface Conquista {
+  id: string;
+  nome: string;
+  descricao: string;
+  icone: string;
+  categoria: "habito" | "tarefa" | "nucleo" | "especial";
+  desbloqueada: boolean;
+  desbloquedaEm?: string | null;
+  raridade: "comum" | "raro" | "epico" | "lendario";
+}
+
+export interface UpdateUserPayload {
+  nome?: string;
+  email?: string;
+  senhaAtual?: string;
+  novaSenha?: string;
+  avatarUrl?: string;
 }

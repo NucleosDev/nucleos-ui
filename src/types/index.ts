@@ -8,6 +8,9 @@ export * from './calendar'
 export * from './logs'
 export * from './ai'
 export * from './common'
+export * from './tarefas'
+
+
 
 // ========== TIPOS COMPARTILHADOS ==========
 export interface ApiError {

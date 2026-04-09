@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -64,39 +65,26 @@ export function Header() {
 
   return (
     <header
-      className={cn("sticky top-0 z-50 w-full border-b border-transparent", {
-        "bg-background/95 supports-[backdrop-filter]:bg-background/50 backdrop-blur-lg":
+      className={cn("sticky top-0 z-50 w-full border-b", {
+        "bg-background/95 supports-[backdrop-filter]:bg-background/80 backdrop-blur-lg border-border/40":
           scrolled,
+        "bg-background border-transparent": !scrolled,
       })}
     >
       <nav className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-6">
-          <Link
-            href="/"
-            className="flex items-center gap-2 hover:opacity-10 transition-opacity"
-            onClick={closeMenu} // Fecha o menu se estiver aberto
-          >
-            <Image
-              src="/icon.svg"
-              alt="Nucleos"
-              width={32}
-              height={32}
-              className="size-8"
-              priority
-            />
-          </Link>
-
-          <NavigationMenu className="hidden md:flex">
+        {/* Desktop - Menu Esquerdo (Tudo exceto botões de ação) */}
+        <div className="hidden md:flex md:items-center md:flex-1">
+          <NavigationMenu>
             <NavigationMenuList>
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent">
+                <NavigationMenuTrigger className="bg-transparent text-sm font-medium">
                   Produto
                 </NavigationMenuTrigger>
                 <NavigationMenuContent className="bg-background p-1 pr-1.5">
                   <ul className="bg-popover grid w-[400px] grid-cols-1 gap-2 rounded-md border p-2 shadow-lg">
                     <li>
                       <ListItem
-                        title="Produto"
+                        title="Visão Geral"
                         href="/produto"
                         description="Conheça o Nucleos por completo"
                         icon={Gem}
@@ -106,7 +94,7 @@ export function Header() {
                       <ListItem
                         title="Dashboard"
                         href="/painel"
-                        description="Visualize seu progresso"
+                        description="Visualize seu progresso em tempo real"
                         icon={LayoutDashboard}
                       />
                     </li>
@@ -114,7 +102,7 @@ export function Header() {
                       <ListItem
                         title="Explorar"
                         href="/explorar"
-                        description="Descubra novos recursos"
+                        description="Descubra novos recursos e funcionalidades"
                         icon={Compass}
                       />
                     </li>
@@ -123,7 +111,7 @@ export function Header() {
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent">
+                <NavigationMenuTrigger className="bg-transparent text-sm font-medium">
                   Recursos
                 </NavigationMenuTrigger>
                 <NavigationMenuContent className="bg-background p-1 pr-1.5 pb-1.5">
@@ -133,7 +121,7 @@ export function Header() {
                         <ListItem
                           title="Para Estudos"
                           href="/estudos"
-                          description="Organize matérias e acompanhe progresso"
+                          description="Organize matérias e acompanhe progresso acadêmico"
                           icon={BookOpen}
                         />
                       </li>
@@ -141,7 +129,7 @@ export function Header() {
                         <ListItem
                           title="Para Saúde"
                           href="/saude"
-                          description="Metas de exercícios e bem-estar"
+                          description="Metas de exercícios e bem-estar físico"
                           icon={Heart}
                         />
                       </li>
@@ -154,23 +142,35 @@ export function Header() {
                         />
                       </li>
                     </ul>
-                    <ul className="space-y-2 p-3">
+                    <ul className="space-y-1 p-2">
                       <li>
                         <NavigationMenuLink
                           href="/explorar"
-                          className="flex p-2 hover:text-primary flex-row rounded-md items-center gap-x-2 transition-colors"
+                          className="flex p-2 hover:bg-accent flex-row rounded-md items-center gap-x-2 transition-colors"
                         >
                           <Compass className="text-foreground size-4" />
-                          <span className="font-medium">Explorar</span>
+                          <div className="flex flex-col">
+                            <span className="font-medium text-sm">
+                              Explorar
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              Descubra todas as funcionalidades
+                            </span>
+                          </div>
                         </NavigationMenuLink>
                       </li>
                       <li>
                         <NavigationMenuLink
                           href="/blog"
-                          className="flex p-2 flex-row rounded-md items-center gap-x-2 transition-colors"
+                          className="flex p-2 hover:bg-accent flex-row rounded-md items-center gap-x-2 transition-colors"
                         >
                           <Zap className="text-foreground size-4" />
-                          <span className="font-medium">Blog</span>
+                          <div className="flex flex-col">
+                            <span className="font-medium text-sm">Blog</span>
+                            <span className="text-xs text-muted-foreground">
+                              Dicas, novidades e conteúdos
+                            </span>
+                          </div>
                         </NavigationMenuLink>
                       </li>
                     </ul>
@@ -179,7 +179,7 @@ export function Header() {
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent">
+                <NavigationMenuTrigger className="bg-transparent text-sm font-medium">
                   Empresa
                 </NavigationMenuTrigger>
                 <NavigationMenuContent className="bg-background p-1 pr-1.5 pb-1.5">
@@ -187,9 +187,9 @@ export function Header() {
                     <ul className="bg-popover space-y-2 rounded-md border p-2 shadow">
                       <li>
                         <ListItem
-                          title="Sobre"
+                          title="Sobre Nós"
                           href="/sobre"
-                          description="Nossa história e missão"
+                          description="Nossa história, missão e valores"
                           icon={Users}
                         />
                       </li>
@@ -197,7 +197,7 @@ export function Header() {
                         <ListItem
                           title="Blog"
                           href="/blog"
-                          description="Novidades e conteúdos"
+                          description="Novidades, artigos e conteúdos"
                           icon={Star}
                         />
                       </li>
@@ -205,37 +205,58 @@ export function Header() {
                         <ListItem
                           title="Contato"
                           href="/contato"
-                          description="Fale com a gente"
+                          description="Fale com nossa equipe"
                           icon={Mail}
                         />
                       </li>
                     </ul>
-                    <ul className="space-y-2 p-3">
+                    <ul className="space-y-1 p-2">
                       <li>
                         <NavigationMenuLink
                           href="/termos"
-                          className="flex p-2 hover:flex-row rounded-md items-center gap-x-2 transition-colors"
+                          className="flex p-2 hover:bg-accent flex-row rounded-md items-center gap-x-2 transition-colors"
                         >
                           <FileText className="text-foreground size-4" />
-                          <span className="font-medium">Termos</span>
+                          <div className="flex flex-col">
+                            <span className="font-medium text-sm">
+                              Termos de Uso
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              Condições e políticas
+                            </span>
+                          </div>
                         </NavigationMenuLink>
                       </li>
                       <li>
                         <NavigationMenuLink
                           href="/privacidade"
-                          className="flex p-2 hover: flex-row rounded-md items-center gap-x-2 transition-colors"
+                          className="flex p-2 hover:bg-accent flex-row rounded-md items-center gap-x-2 transition-colors"
                         >
                           <Shield className="text-foreground size-4" />
-                          <span className="font-medium">Privacidade</span>
+                          <div className="flex flex-col">
+                            <span className="font-medium text-sm">
+                              Privacidade
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              Como protegemos seus dados
+                            </span>
+                          </div>
                         </NavigationMenuLink>
                       </li>
                       <li>
                         <NavigationMenuLink
                           href="/ajuda"
-                          className="flex p-2 hover: flex-row rounded-md items-center gap-x-2 transition-colors"
+                          className="flex p-2 hover:bg-accent flex-row rounded-md items-center gap-x-2 transition-colors"
                         >
                           <HelpCircle className="text-foreground size-4" />
-                          <span className="font-medium">Ajuda</span>
+                          <div className="flex flex-col">
+                            <span className="font-medium text-sm">
+                              Central de Ajuda
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              FAQ e suporte
+                            </span>
+                          </div>
                         </NavigationMenuLink>
                       </li>
                     </ul>
@@ -243,10 +264,10 @@ export function Header() {
                 </NavigationMenuContent>
               </NavigationMenuItem>
 
-              <NavigationMenuLink className="px-3" asChild>
+              <NavigationMenuLink asChild>
                 <Link
                   href="/planos"
-                  className="hover: rounded-md p-2 transition-colors"
+                  className="px-3 py-2 text-sm font-medium rounded-md hover:bg-accent transition-colors"
                 >
                   Planos
                 </Link>
@@ -255,31 +276,73 @@ export function Header() {
           </NavigationMenu>
         </div>
 
-        <div className="hidden items-center gap-2 md:flex">
+        {/* Logo Centralizada (Desktop e Mobile) */}
+        <div className="absolute left-1/2 transform -translate-x-1/2">
+          <Link
+            href="/"
+            className="flex items-center justify-center hover:opacity-80 transition-opacity group"
+            onClick={closeMenu}
+          >
+            <Image
+              src="/icon.svg"
+              alt="Nucleos"
+              width={32}
+              height={32}
+              className="size-8 transition-transform group-hover:scale-105"
+              priority
+            />
+          </Link>
+        </div>
+
+        {/* Desktop - Botões de Ação à Direita */}
+        <div className="hidden md:flex md:items-center md:gap-2">
           <ModeToggle />
           <Button
             variant="ghost"
-            className="w-full sm:w-auto group border-2 border-primary/30 bg-background/50 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-background/60 hover:border-primary/30"
+            size="sm"
+            className="border-2 border-primary/20 hover:border-primary/40 bg-background/50 backdrop-blur-sm transition-all duration-300"
             asChild
           >
             <Link href="/entrar">Entrar</Link>
           </Button>
           <Button
+            size="sm"
             asChild
-            className="w-full sm:w-auto group relative overflow-hidden bg-foreground text-primary-foreground shadow-lg shadow-foreground/25 hover:shadow-xl transition-all duration-300 hover:bg-foreground hover:text-primary"
+            className="bg-gradient-to-r from-foreground to-foreground/80 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300"
           >
             <Link href="/cadastro">Criar Conta</Link>
           </Button>
         </div>
 
-        <div className="flex items-center gap-2 md:hidden">
+        {/* Mobile - Layout com Theme Toggle à esquerda, Logo centro, Hamburguer direita */}
+        <div className="flex md:hidden items-center justify-between w-full">
+          <div className="flex items-center">
+            <ModeToggle />
+          </div>
+
+          <Link
+            href="/"
+            className="flex items-center justify-center hover:opacity-80 transition-opacity"
+            onClick={closeMenu}
+          >
+            <Image
+              src="/icon.svg"
+              alt="Nucleos"
+              width={28}
+              height={28}
+              className="size-7"
+              priority
+            />
+          </Link>
+
           <Button
             size="icon"
-            variant="outline"
+            variant="ghost"
             onClick={() => setOpen(!open)}
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label="Toggle menu"
+            className="w-10 h-10"
           >
             <MenuToggleIcon open={open} className="size-5" duration={300} />
           </Button>
@@ -292,25 +355,14 @@ export function Header() {
         className="flex flex-col justify-between gap-4 overflow-y-auto"
       >
         <NavigationMenu className="max-w-full">
-          <div className="flex w-full flex-col gap-y-3">
-            <div className="space-y-1">
-              <span className="text-sm font-medium text-muted-foreground px-2">
-                Menu
-              </span>
-              <ListItem
-                title="Home"
-                href="/"
-                icon={Home}
-                mobile
-                onClick={closeMenu}
-              />
-              <ListItemTheme mobile onClose={closeMenu} />
-
-              <span className="text-sm font-medium text-muted-foreground px-2 pt-2">
+          <div className="flex w-full flex-col gap-y-4">
+            {/* Seção Produto */}
+            <div className="space-y-2">
+              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2">
                 Produto
               </span>
               <ListItem
-                title="Produto"
+                title="Visão Geral"
                 href="/produto"
                 icon={Gem}
                 mobile
@@ -318,7 +370,7 @@ export function Header() {
               />
               <ListItem
                 title="Dashboard"
-                href="/dashboard"
+                href="/painel"
                 icon={LayoutDashboard}
                 mobile
                 onClick={closeMenu}
@@ -332,8 +384,9 @@ export function Header() {
               />
             </div>
 
-            <div className="space-y-1">
-              <span className="text-sm font-medium text-muted-foreground px-2">
+            {/* Seção Recursos */}
+            <div className="space-y-2">
+              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2">
                 Recursos
               </span>
               <ListItem
@@ -358,13 +411,6 @@ export function Header() {
                 onClick={closeMenu}
               />
               <ListItem
-                title="Explorar"
-                href="/explorar"
-                icon={Compass}
-                mobile
-                onClick={closeMenu}
-              />
-              <ListItem
                 title="Blog"
                 href="/blog"
                 icon={Zap}
@@ -373,21 +419,15 @@ export function Header() {
               />
             </div>
 
-            <div className="space-y-1">
-              <span className="text-sm font-medium text-muted-foreground px-2">
+            {/* Seção Empresa */}
+            <div className="space-y-2">
+              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2">
                 Empresa
               </span>
               <ListItem
-                title="Sobre"
+                title="Sobre Nós"
                 href="/sobre"
                 icon={Users}
-                mobile
-                onClick={closeMenu}
-              />
-              <ListItem
-                title="Blog"
-                href="/blog"
-                icon={Star}
                 mobile
                 onClick={closeMenu}
               />
@@ -399,7 +439,21 @@ export function Header() {
                 onClick={closeMenu}
               />
               <ListItem
-                title="Termos"
+                title="Blog"
+                href="/blog"
+                icon={Star}
+                mobile
+                onClick={closeMenu}
+              />
+            </div>
+
+            {/* Seção Legal */}
+            <div className="space-y-2">
+              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2">
+                Legal
+              </span>
+              <ListItem
+                title="Termos de Uso"
                 href="/termos"
                 icon={FileText}
                 mobile
@@ -413,7 +467,7 @@ export function Header() {
                 onClick={closeMenu}
               />
               <ListItem
-                title="Ajuda"
+                title="Central de Ajuda"
                 href="/ajuda"
                 icon={HelpCircle}
                 mobile
@@ -421,18 +475,26 @@ export function Header() {
               />
             </div>
 
-            <Link
-              href="/planos"
-              className="flex p-2 hover:bg-accent rounded-md items-center gap-x-2 transition-colors"
-              onClick={closeMenu}
-            >
-              <CreditCard className="size-4" />
-              <span className="font-medium">Planos</span>
-            </Link>
+            {/* Planos */}
+            <div className="space-y-2 pt-2 border-t">
+              <Link
+                href="/planos"
+                className="flex p-2 hover:bg-accent rounded-md items-center gap-x-2 transition-colors"
+                onClick={closeMenu}
+              >
+                <CreditCard className="size-4" />
+                <div className="flex flex-col">
+                  <span className="font-medium">Planos e Preços</span>
+                  <span className="text-xs text-muted-foreground">
+                    Escolha o plano ideal para você
+                  </span>
+                </div>
+              </Link>
+            </div>
           </div>
         </NavigationMenu>
 
-        <div className="flex flex-col gap-2 pt-4 border-t">
+        <div className="flex flex-col gap-3 pt-4 border-t">
           <Button
             variant="outline"
             className="w-full"
@@ -441,8 +503,12 @@ export function Header() {
           >
             <Link href="/entrar">Entrar</Link>
           </Button>
-          <Button className="w-full" asChild onClick={closeMenu}>
-            <Link href="/cadastro">Começar grátis</Link>
+          <Button
+            className="w-full bg-gradient-to-r from-foreground to-foreground/80"
+            asChild
+            onClick={closeMenu}
+          >
+            <Link href="/cadastro">Começar Grátis</Link>
           </Button>
         </div>
       </MobileMenu>
@@ -487,8 +553,8 @@ function MobileMenu({
       <div
         id="mobile-menu"
         className={cn(
-          "bg-background/95 supports-[backdrop-filter]:bg-background/50 backdrop-blur-lg",
-          "fixed top-16 right-0 bottom-0 left-0 z-40 flex flex-col overflow-hidden border-y md:hidden",
+          "bg-background/95 supports-[backdrop-filter]:bg-background/95 backdrop-blur-lg",
+          "fixed top-16 right-0 bottom-0 left-0 z-40 flex flex-col overflow-hidden border-t md:hidden",
           "transition-all duration-300 ease-in-out transform",
           open
             ? "translate-y-0 opacity-100"
@@ -507,91 +573,6 @@ function MobileMenu({
   );
 }
 
-function ListItemTheme({
-  mobile,
-  onClose,
-}: {
-  mobile?: boolean;
-  onClose?: () => void;
-}) {
-  const [theme, setTheme] = React.useState<"light" | "dark">("light");
-
-  React.useEffect(() => {
-    const isDark = document.documentElement.classList.contains("dark");
-    setTheme(isDark ? "dark" : "light");
-  }, []);
-
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-
-    if (newTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-
-    localStorage.setItem("theme", newTheme);
-    // Não fechamos o menu ao trocar o tema
-  };
-
-  return (
-    <NavigationMenuLink
-      className="w-full flex flex-row gap-x-2 rounded-sm p-2 transition-colors cursor-pointer hover:bg-accent"
-      asChild
-    >
-      <div onClick={toggleTheme}>
-        <div
-          className={cn(
-            "flex aspect-square items-center justify-center rounded-md border shadow-sm",
-            mobile ? "size-10" : "size-12 bg-background/40",
-          )}
-        >
-          {theme === "light" ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-4"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
-              />
-            </svg>
-          ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-4"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"
-              />
-            </svg>
-          )}
-        </div>
-        <div className="flex flex-col items-start justify-center">
-          <span className="font-medium">
-            Tema {theme === "light" ? "Claro" : "Escuro"}
-          </span>
-          <span className="text-muted-foreground text-xs line-clamp-1">
-            Clique para alternar
-          </span>
-        </div>
-      </div>
-    </NavigationMenuLink>
-  );
-}
-
 function ListItem({
   title,
   description,
@@ -606,7 +587,7 @@ function ListItem({
   return (
     <NavigationMenuLink
       className={cn(
-        "w-full flex flex-row gap-x-2 rounded-sm p-2 transition-colors hover:bg-accent",
+        "w-full flex flex-row gap-x-2 rounded-md p-2 transition-colors hover:bg-accent",
         className,
       )}
       {...props}
@@ -624,7 +605,7 @@ function ListItem({
           />
         </div>
         <div className="flex flex-col items-start justify-center">
-          <span className="font-medium">{title}</span>
+          <span className="font-medium text-sm">{title}</span>
           {description && (
             <span className="text-muted-foreground text-xs line-clamp-1">
               {description}

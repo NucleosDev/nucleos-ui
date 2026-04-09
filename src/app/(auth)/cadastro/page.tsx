@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { RegisterForm } from "@/components/auth/register-form";
 import { ROUTES } from "@/constants/routes";
-import { AuthProvider } from "@/auth/auth-provider";
 import Image from "next/image";
 
 export default function RegisterPage() {

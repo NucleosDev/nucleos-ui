@@ -1,4 +1,5 @@
 // src/types/nucleo.ts
+import { string } from "zod";
 import { Bloco } from "./bloco";
 import { User } from "./user";
 
@@ -13,12 +14,24 @@ export interface Nucleo {
   imagemCapa?: string;
   createdAt: string;
   updatedAt: string;
+  deletedAt?: string | null;
   icon?: NucleoIcon;
   blocos?: Bloco[];
   achievements?: NucleoAchievement[];
   relations?: NucleoRelation[];
   user?: User;
 }
+
+export type NucleoTipo =
+  | "pessoal"
+  | "profissional"
+  | "estudo"
+  | "projeto"
+  | "hobby"
+  | "fitness"
+  | "financas"
+  | "idiomas"
+  | string;
 
 export interface NucleoIcon {
   id: string;
@@ -46,3 +59,15 @@ export interface NucleoAchievement {
   unlockedAt?: string;
   createdAt: string;
 }
+
+// Para criação/atualização
+export interface CreateNucleoPayload {
+  nome: string;
+  descricao?: string;
+  tipo?: NucleoTipo;
+  corDestaque?: string;
+  imagemCapa?: string;
+  iconId?: string;
+}
+
+export interface UpdateNucleoPayload extends Partial<CreateNucleoPayload> {}

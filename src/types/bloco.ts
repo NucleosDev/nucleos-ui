@@ -1,50 +1,60 @@
-// tipos para os blocos, coleções, campos e itens, incluindo suas relações e configurações
+// src/types/bloco.ts
+import { Tarefa } from "./tarefas";
+import { Lista } from "./lista";
+import { Habito } from "./habitos";
+import { Colecao } from "./colecao";
+
+export type BlocoTipo =
+  | "tarefas"
+  | "habitos"
+  | "notas"
+  | "lista"
+  | "calendario"
+  | "calculo";
+
 export interface Bloco {
-  id: string
-  nucleo_id: string
-  tipo: string
-  titulo?: string
-  posicao: number
-  configuracoes: Record<string, any>
-  created_at: string
-  updated_at: string
-  colecoes?: Colecao[]
+  id: string;
+  nucleoId: string;
+  tipo: BlocoTipo;
+  titulo?: string;
+  posicao: number;
+  configuracoes: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+  // Relacionamentos
+  tarefas?: Tarefa[];
+  listas?: Lista[];
+  habitos?: Habito[];
+  colecoes?: Colecao[];
+  calculo?: BlocoCalculo;
 }
 
-export interface Colecao {
-  id: string
-  bloco_id: string
-  nome?: string
-  created_at: string
-  updated_at: string
-  campos?: Campo[]
-  itens?: Item[]
+export interface BlocoCalculo {
+  id: string;
+  blocoId: string;
+  tipoOperacao: string;
+  campo?: string;
+  agruparPor?: string;
+  config?: Record<string, any>;
+  createdAt: string;
 }
 
-export interface Campo {
-  id: string
-  colecao_id: string
-  nome?: string
-  tipo_campo: 'texto' | 'numero' | 'data' | 'booleano' | 'arquivo' | 'select' | 'relacao'
-  created_at: string
-  updated_at: string
+export interface CreateBlocoPayload {
+  nucleoId: string;
+  tipo: BlocoTipo;
+  titulo?: string;
+  posicao?: number;
+  configuracoes?: Record<string, any>;
 }
 
-export interface Item {
-  id: string
-  colecao_id: string
-  created_at: string
-  updated_at: string
-  valores?: ItemValor[]
+export interface UpdateBlocoPayload extends Partial<
+  Omit<CreateBlocoPayload, "nucleoId">
+> {
+  id: string;
 }
 
-export interface ItemValor {
-  id: string
-  item_id: string
-  campo_id: string
-  valor_texto?: string
-  valor_numerico?: number
-  valor_data?: string
-  valor_booleano?: boolean
-  campo?: Campo
+export interface ReorderBlocosPayload {
+  nucleoId: string;
+  orders: { id: string; posicao: number }[];
 }

@@ -89,18 +89,9 @@ export default function RootLayout({
         className={`min-h-dvh ${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
         suppressHydrationWarning
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          storageKey="nucleos-theme"
-        >
+        <ThemeProvider>
           <QueryProvider>
-            <AuthProvider>
-              <div className="relative flex min-h-dvh flex-col">
-                <main className="flex-1">{children}</main>
-              </div>
-            </AuthProvider>
+            <AuthProvider>{children}</AuthProvider>
           </QueryProvider>
         </ThemeProvider>
         <Analytics />

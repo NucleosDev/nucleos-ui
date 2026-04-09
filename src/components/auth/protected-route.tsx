@@ -1,36 +1,56 @@
-// "use client";
+"use client";
 
-// import { ReactNode, useEffect } from "react";
-// import { useRouter, usePathname } from "next/navigation";
-// import { useAuth } from "@/auth";
-// import { getLoginUrlWithCallback, isPublicRoute } from "@/constants/routes";
+import { ReactNode, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useAuth } from "@/auth";
+import { isPublicRoute, getLoginUrlWithCallback } from "@/constants/routes";
 
-// export function ProtectedRoute({ children, fallback }: any) {
-//   const { isAuthenticated, isLoading } = useAuth();
-//   const router = useRouter();
-//   const pathname = usePathname();
+interface ProtectedRouteProps {
+  children: ReactNode;
+  fallback?: ReactNode;
+}
 
-//   useEffect(() => {
-//     if (isLoading) return;
+export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
+  const { isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
 
-//     const isPublic = isPublicRoute(pathname);
+  useEffect(() => {
+    // Aguarda carregar para não tomar decisão precipitada
+    if (isLoading) return;
 
-//     if (!isAuthenticated && !isPublic) {
-//       router.replace(getLoginUrlWithCallback(pathname)); // 🔥 replace evita loop
-//     }
-//   }, [isAuthenticated, isLoading, pathname, router]);
+    const isPublic = isPublicRoute(pathname);
 
-//   if (isLoading) {
-//     return (
-//       fallback ?? (
-//         <div className="min-h-screen flex items-center justify-center">
-//           <div className="animate-spin h-10 w-10 border-b-2 border-blue-600 rounded-full" />
-//         </div>
-//       )
-//     );
-//   }
+    // Caso 1: Não autenticado tentando acessar rota protegida → redireciona para login
+    if (!isAuthenticated && !isPublic) {
+      router.push(getLoginUrlWithCallback(pathname));
+    }
 
-//   if (!isAuthenticated) return null;
+    // Caso 2: Autenticado tentando acessar página de login/registro → redireciona para dashboard
+    if (
+      isAuthenticated &&
+      (pathname === "/entrar" || pathname === "/cadastro")
+    ) {
+      router.push("/dashboard");
+    }
+  }, [isAuthenticated, isLoading, pathname, router]);
 
-//   return <>{children}</>;
-// }
+  // Mostra fallback enquanto carrega
+  if (isLoading) {
+    return (
+      fallback ?? (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-spin h-10 w-10 border-b-2 border-blue-600 rounded-full" />
+        </div>
+      )
+    );
+  }
+
+  // Não autenticado: não renderiza o conteúdo (o redirecionamento já foi disparado)
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  // Autenticado: renderiza os filhos
+  return <>{children}</>;
+}

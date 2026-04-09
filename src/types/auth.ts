@@ -3,25 +3,41 @@ import { User } from "./user";
 
 export interface LoginCredentials {
   email: string;
-  Password: string;
+  password: string;
+  rememberMe?: boolean;
 }
 
 export interface RegisterData {
   email: string;
-  Password: string;
-  ConfirmPassword: string; // ← ESSE CAMPO É OBRIGATÓRIO
   fullName: string;
+  password: string;
+  confirmPassword: string;
   phone: string;
-  Cpf: string;
+  cpf: string;
   nickname?: string;
 }
 
+export interface AuthResponseDto {
+  success: boolean;
+  message?: string;
+  token?: string;
+  refreshToken?: string;
+  expiresAt?: string;
+  userId?: string;
+  email?: string;
+  fullName?: string;
+  errors?: string[];
+}
+
 export interface AuthResponse {
+  success: boolean;
+  message?: string;
+  token: string;
+  refreshToken?: string;
+  expiresAt: string;
   userId: string;
   email: string;
   fullName: string;
-  token: string;
-  expiresAt: string;
 }
 
 export interface PasswordResetRequest {
@@ -31,4 +47,8 @@ export interface PasswordResetRequest {
 export interface PasswordReset {
   token: string;
   newPassword: string;
+}
+
+export interface RefreshTokenRequest {
+  refreshToken: string;
 }

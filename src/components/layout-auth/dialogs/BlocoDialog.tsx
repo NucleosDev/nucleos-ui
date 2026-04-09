@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
 "use client";
 
 import { useEffect, useState } from "react";
-import type { BlocoTipo, Bloco } from "@/src/types/test"
+import type { BlocoTipo, Bloco } from "@/src/types/bloco";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -22,11 +22,7 @@ interface BlocoDialogProps {
   bloco?: Bloco | null;
   nucleoId: string;
   isPending: boolean;
-  onSubmit: (data: {
-    nome: string;
-    tipo: string;
-    descricao?: string;
-  }) => void;
+  onSubmit: (data: { nome: string; tipo: string; descricao?: string }) => void;
 }
 
 export function BlocoDialog({
@@ -38,15 +34,15 @@ export function BlocoDialog({
   isPending,
 }: BlocoDialogProps) {
   const [nome, setNome] = useState("");
-  const [tipo, setTipo] = useState("tarefas");
+  const [tipo, setTipo] = useState<BlocoTipo>("tarefas");
   const [descricao, setDescricao] = useState("");
 
   // 🔥 Preenche quando está editando
   useEffect(() => {
     if (bloco) {
-      setNome(bloco.nome ?? "");
+      setNome(bloco.titulo ?? "");
       setTipo(bloco.tipo ?? "tarefas");
-      setDescricao(bloco.descricao ?? "");
+      setDescricao(bloco.configuracoes?.descricao ?? "");
     } else {
       setNome("");
       setTipo("tarefas");
@@ -68,9 +64,7 @@ export function BlocoDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {bloco ? "Editar bloco" : "Novo bloco"}
-          </DialogTitle>
+          <DialogTitle>{bloco ? "Editar bloco" : "Novo bloco"}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
@@ -89,7 +83,7 @@ export function BlocoDialog({
             <Label>Tipo</Label>
             <select
               value={tipo}
-              onChange={(e) => setTipo(e.target.value)}
+             onChange={(e) => setTipo(e.target.value as BlocoTipo)}
               className="w-full border rounded-md h-9 px-2 text-sm bg-background"
             >
               <option value="tarefas">Tarefas</option>
@@ -110,17 +104,11 @@ export function BlocoDialog({
         </div>
 
         <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-          >
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
 
-          <Button
-            onClick={handleSubmit}
-            disabled={isPending || !nome.trim()}
-          >
+          <Button onClick={handleSubmit} disabled={isPending || !nome.trim()}>
             {isPending ? "Salvando..." : bloco ? "Salvar" : "Criar"}
           </Button>
         </DialogFooter>
