@@ -31,7 +31,7 @@ export default function LandingPage() {
       <main>
         <HeroSection />
         <Hero />
-        <FloatingNotifications />
+        {/* <FloatingNotifications /> */}
         <Comparison />
         <DashboardMosty />
         <JourneyTimeline />

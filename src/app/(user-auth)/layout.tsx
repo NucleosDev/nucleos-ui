@@ -8,7 +8,7 @@ export default function UserAuthLayout({
   children,
 }: {
   children: React.ReactNode;
-}) {
+}) {6
   return (
     <ProtectedRoute>
       <main className="px-full py-0">
