@@ -11,7 +11,7 @@ export type TipoCampo =
 export interface Colecao {
   id: string;
   blocoId: string;
-  nome?: string;
+  nome: string;
   createdAt: string;
   updatedAt: string;
   campos?: Campo[];
@@ -30,9 +30,9 @@ export interface Campo {
 export interface Item {
   id: string;
   colecaoId: string;
+  valores: Record<string, any>;
   createdAt: string;
   updatedAt: string;
-  valores?: ItemValor[];
 }
 
 export interface ItemValor {

@@ -19,6 +19,7 @@ const nextConfig = {
         ? { exclude: ["error"] } // mantém console.error
         : false,
   },
+  
 
 }
 

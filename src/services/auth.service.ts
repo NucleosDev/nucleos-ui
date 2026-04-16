@@ -26,7 +26,7 @@ export const authService = {
       rememberMe: credentials.rememberMe ?? true,
     });
 
-    const data = response.data; // ✅ ESSA LINHA É O FIX
+    const data = response.data;
 
     console.log("📦 RESPONSE:", data);
 
@@ -37,8 +37,16 @@ export const authService = {
     console.log("💾 SALVANDO TOKEN...");
 
     if (typeof window !== "undefined") {
-      localStorage.setItem("token", data.token);
-      console.log("🔑 TOKEN SALVO:", localStorage.getItem("token"));
+      localStorage.setItem(TOKEN_KEY, data.token);
+      console.log("🔑 TOKEN SALVO:", localStorage.getItem(TOKEN_KEY));
+
+      // Opcional: salvar também os dados básicos do usuário no localStorage
+      const user: Partial<User> = {
+        userId: data.userId,
+        email: data.email,
+        fullName: data.fullName,
+      };
+      localStorage.setItem(USER_KEY, JSON.stringify(user));
     }
 
     return {
@@ -70,6 +78,14 @@ export const authService = {
 
     if (typeof window !== "undefined") {
       localStorage.setItem(TOKEN_KEY, res.token);
+
+      // Salvar dados básicos do usuário
+      const user: Partial<User> = {
+        userId: res.userId,
+        email: res.email,
+        fullName: res.fullName,
+      };
+      localStorage.setItem(USER_KEY, JSON.stringify(user));
     }
 
     return {
@@ -90,7 +106,9 @@ export const authService = {
   async logout(): Promise<void> {
     try {
       await api.post(API_ROUTES.AUTH.LOGOUT);
-    } catch {}
+    } catch {
+      // Ignora erros no logout (ex: token já inválido)
+    }
 
     if (typeof window !== "undefined") {
       localStorage.removeItem(TOKEN_KEY);
@@ -103,25 +121,38 @@ export const authService = {
   // =========================
   async getCurrentUser(): Promise<User | null> {
     try {
-      const token =
-        typeof window !== "undefined" ? localStorage.getItem(TOKEN_KEY) : null;
+      if (typeof window === "undefined") return null;
 
-      if (!token) {
-        console.warn("❌ SEM TOKEN NO getCurrentUser");
+      const token = localStorage.getItem(TOKEN_KEY);
+      if (!token) return null;
+
+      const response = await api.get(API_ROUTES.AUTH.ME, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // O backend retorna { success, data: {...} }
+      const responseData = response.data;
+      const userData = responseData?.data || responseData; // fallback por segurança
+
+      if (!userData || !userData.id) {
+        console.warn("❌ Dados do usuário não encontrados na resposta");
         return null;
       }
 
-      const response = await api.get<User>(API_ROUTES.AUTH.ME, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      // Mapeia os campos (o backend pode usar `fullName` ou `full_name`)
+      const user: User = {
+        userId: userData.id,
+        email: userData.email,
+        fullName: userData.fullName || userData.full_name,
+        avatarUrl: userData.avatarUrl,
+        emailVerified: userData.emailVerified,
+        active: userData.active,
+        createdAt: userData.createdAt,
+        // outros campos se necessário
+      };
 
-      const user = response.data;
-
-      if (typeof window !== "undefined" && user) {
-        localStorage.setItem(USER_KEY, JSON.stringify(user));
-      }
+      // Atualiza o localStorage com os dados mais recentes
+      localStorage.setItem(USER_KEY, JSON.stringify(user));
 
       return user;
     } catch (err) {
@@ -136,11 +167,13 @@ export const authService = {
   getStoredUser(): User | null {
     if (typeof window === "undefined") return null;
 
-    const user = localStorage.getItem("user");
+    const userJson = localStorage.getItem(USER_KEY);
+    if (!userJson) return null;
 
     try {
-      return user ? JSON.parse(user) : null;
+      return JSON.parse(userJson) as User;
     } catch {
+      console.error("Erro ao fazer parse do usuário armazenado");
       return null;
     }
   },

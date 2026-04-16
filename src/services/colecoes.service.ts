@@ -1,26 +1,51 @@
-// src/services/colecoes.service.ts
 import api from "@/services/api";
 import { API_ROUTES } from "@/constants/routes";
-import type { Colecao, Campo, Item, ItemValor } from "@/types/colecao";
+import type { Colecao, Campo, Item } from "@/types/colecao";
 
 export const colecoesService = {
   // ===========================================================================
   // COLEÇÕES
   // ===========================================================================
 
+  /**
+   * Lista todas as coleções de um bloco específico.
+   */
+  async listByBloco(blocoId: string): Promise<Colecao[]> {
+    const response = await api.get<Colecao[]>(
+      API_ROUTES.COLECOES.LIST_BY_BLOCO(blocoId),
+    );
+    return response.data;
+  },
+
   async getColecao(id: string): Promise<Colecao> {
     const response = await api.get<Colecao>(API_ROUTES.COLECOES.GET(id));
     return response.data;
   },
 
-  async updateColecao(id: string, data: Partial<Colecao>): Promise<Colecao> {
-    const response = await api.put<Colecao>(
-      API_ROUTES.COLECOES.UPDATE(id),
-      data,
-    );
+  /**
+   * Cria uma nova coleção dentro de um bloco.
+   */
+  async createColecao(blocoId: string, nome: string): Promise<Colecao> {
+    const response = await api.post<Colecao>(API_ROUTES.COLECOES.CREATE, {
+      blocoId,
+      nome,
+    });
     return response.data;
   },
 
+  /**
+   * Atualiza o nome de uma coleção.
+   */
+  async updateColecao(id: string, nome: string): Promise<Colecao> {
+    const response = await api.put<Colecao>(API_ROUTES.COLECOES.UPDATE(id), {
+      nome,
+    });
+    return response.data;
+  },
+
+  /**
+   * Remove uma coleção.
+   */
   async deleteColecao(id: string): Promise<void> {
     await api.delete(API_ROUTES.COLECOES.DELETE(id));
   },
@@ -29,88 +54,97 @@ export const colecoesService = {
   // CAMPOS
   // ===========================================================================
 
+  /**
+   * Lista os campos de uma coleção.
+   */
   async getCampos(colecaoId: string): Promise<Campo[]> {
-    const response = await api.get<Campo[]>(API_ROUTES.CAMPOS.LIST(colecaoId));
+    const response = await api.get<Campo[]>(
+      API_ROUTES.COLECOES.CAMPOS.LIST(colecaoId),
+    );
     return response.data;
   },
 
-  async createCampo(colecaoId: string, data: Partial<Campo>): Promise<Campo> {
-    const response = await api.post<Campo>(
-      API_ROUTES.CAMPOS.CREATE(colecaoId),
+  /**
+   * Cria um novo campo em uma coleção.
+   */
+  async createCampo(
+    colecaoId: string,
+    nome: string,
+    tipoCampo: string,
+  ): Promise<Campo> {
+    const response = await api.post<Campo>(API_ROUTES.COLECOES.CAMPOS.CREATE, {
+      colecaoId,
+      nome,
+      tipoCampo,
+    });
+    return response.data;
+  },
+
+  /**
+   * Atualiza um campo existente.
+   */
+  async updateCampo(
+    id: string,
+    data: { nome?: string; tipoCampo?: string },
+  ): Promise<Campo> {
+    const response = await api.put<Campo>(
+      API_ROUTES.COLECOES.CAMPOS.UPDATE(id),
       data,
     );
     return response.data;
   },
 
-  async updateCampo(id: string, data: Partial<Campo>): Promise<Campo> {
-    const response = await api.put<Campo>(API_ROUTES.CAMPOS.UPDATE(id), data);
-    return response.data;
-  },
-
+  /**
+   * Remove um campo.
+   */
   async deleteCampo(id: string): Promise<void> {
-    await api.delete(API_ROUTES.CAMPOS.DELETE(id));
+    await api.delete(API_ROUTES.COLECOES.CAMPOS.DELETE(id));
   },
 
   // ===========================================================================
   // ITENS
   // ===========================================================================
 
+  /**
+   * Lista os itens de uma coleção.
+   */
   async getItens(colecaoId: string): Promise<Item[]> {
-    const response = await api.get<Item[]>(API_ROUTES.ITENS.LIST(colecaoId));
-    return response.data;
-  },
-
-  async createItem(colecaoId: string, data: Partial<Item>): Promise<Item> {
-    const response = await api.post<Item>(
-      API_ROUTES.ITENS.CREATE(colecaoId),
-      data,
+    const response = await api.get<Item[]>(
+      API_ROUTES.COLECOES.ITENS.LIST(colecaoId),
     );
     return response.data;
   },
 
-  async updateItem(id: string, data: Partial<Item>): Promise<Item> {
-    const response = await api.put<Item>(API_ROUTES.ITENS.UPDATE(id), data);
+  /**
+   * Cria um novo item com os valores fornecidos.
+   * @param colecaoId ID da coleção
+   * @param valores Objeto mapeando campoId -> valor
+   */
+  async createItem(
+    colecaoId: string,
+    valores: Record<string, any>,
+  ): Promise<Item> {
+    const response = await api.post<Item>(API_ROUTES.COLECOES.ITENS.CREATE, {
+      colecaoId,
+      valores,
+    });
     return response.data;
   },
 
+  /**
+   * Atualiza os valores de um item existente.
+   */
+  async updateItem(id: string, valores: Record<string, any>): Promise<Item> {
+    const response = await api.put<Item>(API_ROUTES.COLECOES.ITENS.UPDATE(id), {
+      valores,
+    });
+    return response.data;
+  },
+
+  /**
+   * Remove um item.
+   */
   async deleteItem(id: string): Promise<void> {
-    await api.delete(API_ROUTES.ITENS.DELETE(id));
-  },
-
-  // ===========================================================================
-  // VALORES DOS ITENS
-  // ===========================================================================
-
-  async getValores(itemId: string): Promise<ItemValor[]> {
-    const response = await api.get<ItemValor[]>(
-      API_ROUTES.ITEM_VALORES.LIST(itemId),
-    );
-    return response.data;
-  },
-
-  async createValor(
-    itemId: string,
-    campoId: string,
-    data: Partial<ItemValor>,
-  ): Promise<ItemValor> {
-    const response = await api.post<ItemValor>(
-      API_ROUTES.ITEM_VALORES.CREATE(itemId, campoId),
-      data,
-    );
-    return response.data;
-  },
-
-  async updateValor(id: string, data: Partial<ItemValor>): Promise<ItemValor> {
-    const response = await api.put<ItemValor>(
-      API_ROUTES.ITEM_VALORES.UPDATE(id),
-      data,
-    );
-    return response.data;
-  },
-
-  async deleteValor(id: string): Promise<void> {
-    await api.delete(API_ROUTES.ITEM_VALORES.DELETE(id));
+    await api.delete(API_ROUTES.COLECOES.ITENS.DELETE(id));
   },
 };
-
-export default colecoesService;

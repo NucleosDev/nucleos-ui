@@ -1,293 +1,332 @@
 "use client";
 
 import { ReactNode, useState, useEffect } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useAuth } from "@/auth";
-import { ROUTES } from "@/constants/routes";
 import {
-  ChartNoAxesCombined,
-  RefreshCw,
-  UserRound,
-  ClipboardList,
   Menu,
-  Eclipse,
-  X,
   Zap,
   Flame,
-  ListTodo,
-  Heart,
-  Calendar,
-  Target,
+  PlusCircle,
+  ChevronRight,
+  Layers,
+  Activity,
+  Lightbulb,
   Sparkles,
-  Trophy,
+  LayoutGrid,
+  Calendar,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 
-// ========== TIPOS ==========
-type CategoryId =
-  | "nucleos"
-  | "tasks"
-  | "habits"
-  | "events"
-  | "goals"
-  | "insights"
-  | "achievements";
-
-interface Category {
-  id: CategoryId;
-  name: string;
-  icon: React.ReactNode;
-  count: number;
-  badge?: string;
-  href?: string;
-}
-
-const mockCategories: Category[] = [
-  {
-    id: "nucleos",
-    name: "Nucleos",
-    icon: <Eclipse className="w-4 h-4" />,
-    count: 3,
-    href: "/nucleos",
-  },
-  {
-    id: "tasks",
-    name: "Tarefas",
-    icon: <ListTodo className="w-4 h-4" />,
-    count: 4,
-    href: "/tarefas",
-  },
-  {
-    id: "habits",
-    name: "Hábitos",
-    icon: <Heart className="w-4 h-4" />,
-    count: 2,
-    href: "/habitos",
-  },
-  {
-    id: "events",
-    name: "Eventos",
-    icon: <Calendar className="w-4 h-4" />,
-    count: 3,
-    href: "/calendario",
-  },
-  {
-    id: "goals",
-    name: "Metas",
-    icon: <Target className="w-4 h-4" />,
-    count: 2,
-    href: "/metas",
-  },
-  {
-    id: "insights",
-    name: "Insights IA",
-    icon: <Sparkles className="w-4 h-4" />,
-    count: 3,
-    href: "#",
-  },
-  {
-    id: "achievements",
-    name: "Conquistas",
-    icon: <Trophy className="w-4 h-4" />,
-    count: 3,
-    href: "/conquistas",
-  },
-];
-
+// ========== DADOS MOCK ==========
 const mockUserLevel = { level: 5, current_xp: 340, next_level_xp: 500 };
 const mockStreak = 12;
 
-// ========== COMPONENTE DA SIDEBAR (extraído do DashboardInbox) ==========
+// Links principais
+const mainLinks = [
+  {
+    id: "nucleos",
+    label: "Núcleos",
+    icon: LayoutGrid,
+    href: "/dashboard/nucleos",
+    count: 3,
+  },
+  {
+    id: "blocos",
+    label: "Blocos",
+    icon: Layers,
+    href: "/dashboard/blocos",
+    count: 6,
+  },
+  {
+    id: "atividades",
+    label: "Atividades Recentes",
+    icon: Activity,
+    href: "/dashboard/atividades",
+    count: 8,
+  },
+];
+
+// Insights mock (exibidos como cards na sidebar)
+const mockInsights = [
+  {
+    id: "1",
+    title: "Tarefas pendentes",
+    description: "Você tem 4 tarefas para hoje.",
+    icon: Calendar,
+  },
+  {
+    id: "2",
+    title: "Streak",
+    description: "Continue assim! 12 dias de streak.",
+    icon: Flame,
+  },
+  {
+    id: "3",
+    title: "Sugestão IA",
+    description: "Que tal revisar suas metas da semana?",
+    icon: Sparkles,
+  },
+];
+
+// ========== COMPONENTE DA SIDEBAR ==========
 interface DashboardSidebarProps {
-  categories: Category[];
-  selectedCategoryId: CategoryId;
-  onSelectCategory: (id: CategoryId) => void;
-  userLevel: { level: number; current_xp: number; next_level_xp: number };
-  streak: number;
-  onClose?: () => void;
+  collapsed: boolean;
+  onToggleCollapse: () => void;
+  onCreateNucleo: () => void;
   onLogout?: () => void;
+  className?: string;
 }
 
 function DashboardSidebar({
-  categories,
-  selectedCategoryId,
-  onSelectCategory,
-  userLevel,
-  streak,
-  onClose,
+  collapsed,
+  onToggleCollapse,
+  onCreateNucleo,
   onLogout,
+  className,
 }: DashboardSidebarProps) {
+  const xpPercent = Math.min(
+    (mockUserLevel.current_xp / mockUserLevel.next_level_xp) * 100,
+    100,
+  );
+
+  // Estado colapsado: barra fina com botão de expandir
+  if (collapsed) {
+    return (
+      <aside
+        className={cn(
+          "w-3 bg-muted/30 border-r border-border flex flex-col items-center py-4",
+          className,
+        )}
+      >
+        <button
+          onClick={onToggleCollapse}
+          className="w-6 h-6 rounded-full bg-primary/10 hover:bg-primary/20 flex items-center justify-center transition-colors"
+          aria-label="Expandir menu"
+        >
+          <ChevronRight className="h-4 w-4 text-primary" />
+        </button>
+      </aside>
+    );
+  }
+
+  // Estado expandido
   return (
-    <aside className="w-60 shrink-0 border-r border-border bg-muted/30 flex flex-col h-full">
-      {/* Cabeçalho com informações do usuário e botão fechar */}
-      <div className="p-4 border-b border-border flex items-center justify-between">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
-            <span className="text-sm font-bold text-primary">U</span>
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm font-semibold truncate text-foreground">
-              Meu Workspace
-            </p>
-            <div className="flex items-center gap-2 mt-0.5">
-              <div className="flex items-center gap-1">
-                <Zap className="w-3 h-3 text-yellow-500" />
-                <span className="text-xs text-muted-foreground">
-                  Nv.{userLevel.level}
-                </span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Flame className="w-3 h-3 text-orange-500" />
-                <span className="text-xs text-muted-foreground">{streak}d</span>
-              </div>
+    <aside
+      className={cn(
+        "w-64 flex flex-col h-full bg-muted/30 border-r border-border",
+        className,
+      )}
+    >
+      {/* Cabeçalho do usuário */}
+      <div className="p-4 border-b border-border flex items-center gap-3">
+        <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+          <span className="text-sm font-bold text-primary">U</span>
+        </div>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold truncate">Meu Workspace</p>
+          <div className="flex items-center gap-2 mt-0.5">
+            <div className="flex items-center gap-1">
+              <Zap className="w-3 h-3 text-yellow-500" />
+              <span className="text-xs text-muted-foreground">
+                Nv.{mockUserLevel.level}
+              </span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Flame className="w-3 h-3 text-orange-500" />
+              <span className="text-xs text-muted-foreground">
+                {mockStreak}d
+              </span>
             </div>
           </div>
         </div>
-        {onClose && (
-          <button
-            onClick={onClose}
-            className="text-muted-foreground hover:text-foreground"
-            aria-label="Fechar menu"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        )}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7 ml-auto shrink-0"
+          onClick={onToggleCollapse}
+          aria-label="Recolher menu"
+        >
+          <ChevronRight className="h-4 w-4 rotate-180" />
+        </Button>
       </div>
 
-      {/* Lista de categorias */}
-      <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-        {categories.map((cat) => (
-          <button
-            key={cat.id}
-            onClick={() => onSelectCategory(cat.id)}
-            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all text-left group ${
-              selectedCategoryId === cat.id
-                ? "bg-primary/10 text-primary"
-                : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <span
-                className={
-                  selectedCategoryId === cat.id
-                    ? "text-primary"
-                    : "text-muted-foreground group-hover:text-foreground"
-                }
-              >
-                {cat.icon}
-              </span>
-              <span className="text-sm font-medium">{cat.name}</span>
-            </div>
-            <span
-              className={`text-xs px-1.5 py-0.5 rounded-full font-medium tabular-nums ${
-                selectedCategoryId === cat.id
-                  ? "bg-primary/20 text-primary"
-                  : "bg-muted text-muted-foreground"
-              }`}
+      {/* Botão Novo Núcleo */}
+      <div className="p-3">
+        <Button
+          className="w-full bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90"
+          onClick={onCreateNucleo}
+        >
+          <PlusCircle className="h-4 w-4 mr-2" />
+          Novo Núcleo
+        </Button>
+      </div>
+
+      {/* Links principais */}
+      <nav className="px-2 py-2 space-y-0.5">
+        <p className="px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
+          Principal
+        </p>
+        {mainLinks.map((link) => {
+          const Icon = link.icon;
+          return (
+            <a
+              key={link.id}
+              href={link.href}
+              className="flex items-center justify-between px-3 py-2 rounded-lg text-muted-foreground hover:bg-accent/50 hover:text-foreground transition-all"
             >
-              {cat.count}
-            </span>
-          </button>
-        ))}
+              <div className="flex items-center gap-3">
+                <Icon className="h-4 w-4" />
+                <span className="text-sm font-medium">{link.label}</span>
+              </div>
+              <span className="text-xs px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-medium tabular-nums">
+                {link.count}
+              </span>
+            </a>
+          );
+        })}
       </nav>
 
-      {/* Barra de progresso de XP */}
-      <div className="p-3 border-t border-border">
-        <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
-          <span className="font-medium">
-            XP para nível {userLevel.level + 1}
-          </span>
-          <span>
-            {userLevel.current_xp}/{userLevel.next_level_xp}
-          </span>
+      {/* Seção de Insights (mock) */}
+      <div className="px-3 py-3 border-t border-border mt-2">
+        <div className="flex items-center gap-2 mb-3">
+          <Lightbulb className="h-4 w-4 text-yellow-500" />
+          <span className="text-sm font-semibold">Insights para você</span>
         </div>
-        <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-          <div
-            className="h-full bg-primary rounded-full transition-all"
-            style={{
-              width: `${(userLevel.current_xp / userLevel.next_level_xp) * 100}%`,
-            }}
-          />
+        <div className="space-y-3">
+          {mockInsights.map((insight) => {
+            const Icon = insight.icon;
+            return (
+              <div
+                key={insight.id}
+                className="bg-background/60 rounded-lg p-3 border border-border/50"
+              >
+                <div className="flex items-start gap-2">
+                  <Icon className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium">{insight.title}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {insight.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Botão de logout (opcional) */}
+      {/* Barra de progresso XP */}
+      <div className="p-3 border-t border-border mt-auto">
+        <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
+          <span className="font-medium">
+            XP para nível {mockUserLevel.level + 1}
+          </span>
+          <span>
+            {mockUserLevel.current_xp}/{mockUserLevel.next_level_xp}
+          </span>
+        </div>
+        <Progress value={xpPercent} className="h-1.5" />
+      </div>
+
+      {/* Logout */}
       {onLogout && (
         <div className="p-3 border-t border-border">
-          <button
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-destructive"
             onClick={onLogout}
-            className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors dark:text-red-400 dark:hover:bg-red-900/20"
           >
             Sair
-          </button>
+          </Button>
         </div>
       )}
     </aside>
   );
 }
 
-// ========== DADOS MOCK ==========
+// ========== SIDEBAR MOBILE (Sheet) ==========
+function MobileSidebar({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        <Button variant="ghost" size="icon" className="md:hidden">
+          <Menu className="h-5 w-5" />
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left" className="w-72 p-0">
+        <SheetHeader className="sr-only">
+          <SheetTitle>Menu</SheetTitle>
+        </SheetHeader>
+        <div className="h-full" onClick={() => setOpen(false)}>
+          {children}
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
 
 // ========== LAYOUT PRINCIPAL ==========
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { user, logout } = useAuth();
-  const pathname = usePathname();
+  const { logout } = useAuth();
+  const [collapsed, setCollapsed] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  // Estado da sidebar (aberta/fechada)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  // Estado da categoria selecionada (pode ser usado para destacar no menu)
-  const [selectedCategoryId, setSelectedCategoryId] =
-    useState<CategoryId>("nucleos");
-
-  // Carregar preferência do localStorage
   useEffect(() => {
-    const saved = localStorage.getItem("sidebar-open");
-    if (saved !== null) {
-      setIsSidebarOpen(saved === "true");
-    }
+    const saved = localStorage.getItem("sidebar-collapsed");
+    if (saved !== null) setCollapsed(saved === "true");
   }, []);
 
-  // Persistir preferência
   useEffect(() => {
-    localStorage.setItem("sidebar-open", String(isSidebarOpen));
-  }, [isSidebarOpen]);
+    localStorage.setItem("sidebar-collapsed", String(collapsed));
+  }, [collapsed]);
 
   const handleLogout = async () => {
     await logout();
   };
 
+  const handleCreateNucleo = () => {
+    setIsCreateModalOpen(true);
+  };
+
+  const sidebarContent = (
+    <DashboardSidebar
+      collapsed={collapsed}
+      onToggleCollapse={() => setCollapsed(!collapsed)}
+      onCreateNucleo={handleCreateNucleo}
+      onLogout={handleLogout}
+    />
+  );
+
   return (
-    <div className="flex h-full">
-      {/* Sidebar (nova, extraída do DashboardInbox) */}
-      <div
-        className={`
-          hidden md:block shrink-0 transition-all duration-300 overflow-hidden
-          ${isSidebarOpen ? "w-60" : "w-0"}
-        `}
-      >
-        <DashboardSidebar
-          categories={mockCategories}
-          selectedCategoryId={selectedCategoryId}
-          onSelectCategory={setSelectedCategoryId}
-          userLevel={mockUserLevel}
-          streak={mockStreak}
-          onClose={() => setIsSidebarOpen(false)}
-          onLogout={handleLogout}
-        />
-      </div>
+    <div className="flex h-screen overflow-hidden">
+      {/* Sidebar Desktop */}
+      <div className="hidden md:block h-full shrink-0">{sidebarContent}</div>
 
-      {/* Botão para abrir a sidebar quando fechada */}
-      {!isSidebarOpen && (
-        <button
-          onClick={() => setIsSidebarOpen(true)}
-          className="fixed left-4 top-4 z-20 md:flex hidden items-center justify-center w-8 h-8 rounded-md bg-white shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-          aria-label="Abrir menu"
-        >
-          <Menu className="w-4 h-4" />
-        </button>
-      )}
+      {/* Conteúdo principal */}
+      <main className="flex-1 overflow-auto relative">
+        {/* Header móvel */}
+        <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b border-border bg-background/95 backdrop-blur-sm md:hidden">
+          <MobileSidebar>{sidebarContent}</MobileSidebar>
+          <h1 className="text-lg font-semibold">Nucleos</h1>
+          <div className="w-8" />
+        </div>
 
-      <main className="flex-1 overflow-auto p-4 md:p-8">{children}</main>
+        {/* Área de conteúdo */}
+        <div className="p-4 md:p-8">{children}</div>
+      </main>
+
+      {/* Modal de criação de núcleo (substitua pelo seu componente) */}
+      {/* <CreateNucleoModal open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen} /> */}
     </div>
   );
 }

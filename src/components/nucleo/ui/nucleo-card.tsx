@@ -1,4 +1,3 @@
-// /components/nucleos/ui/nucleo-card.tsx
 "use client";
 
 import { motion } from "framer-motion";
@@ -10,7 +9,6 @@ import {
   Link as LinkIcon,
   Trophy,
   Flame,
-  Image as ImageIcon,
   BookOpen,
   Heart,
   Briefcase,
@@ -42,7 +40,6 @@ import { NucleoProgress } from "./nucleo-progress";
 import { getTypeStyles, formatXp } from "../utils/nucleo-helpers";
 import type { NucleoCardProps } from "../types/nucleo-components.types";
 
-// Mapa de ícones por tipo (fallback)
 const tipoIcons: Record<string, React.ElementType> = {
   estudo: BookOpen,
   hobby: Heart,
@@ -75,7 +72,7 @@ export function NucleoCard({
     nome,
     descricao,
     tipo,
-    corDestaque = "#4D7CFF", // chart-1
+    corDestaque = "#4D7CFF",
     imagemCapa,
     icon,
     blocos = [],
@@ -84,18 +81,15 @@ export function NucleoCard({
     xpTotal = 0,
     level = 1,
     nextLevelXp = 1000,
-    energyTotal = 0,
     conquistasDesbloqueadas = 0,
   } = nucleo;
 
   const typeStyles = getTypeStyles(tipo);
-
-  // Fallback de ícone baseado no tipo
   const IconComponent = tipoIcons[tipo] || Layers;
 
-  // Fallback de imagem de capa (se não tiver, usa gradiente com padrão)
-  const capaUrl = imagemCapa || "";
-  const temCapa = capaUrl && capaUrl.length > 0;
+  const randomImageUrl = `https://picsum.photos/seed/${id}/400/200`;
+  const capaUrl = imagemCapa || (nucleo as any).imagem_capa || randomImageUrl;
+  const temCapa = true;
 
   const cardContent = (
     <motion.div
@@ -108,13 +102,13 @@ export function NucleoCard({
       )}
       onClick={onClick}
     >
-      {/* Capa ou gradiente de fundo - TODOS OS CARDS TÊM CAPA (fallback gradiente) */}
       {temCapa ? (
         <div className="relative h-32 w-full overflow-hidden">
           <Image
             src={capaUrl}
             alt={nome}
             fill
+            unoptimized
             className="object-cover transition-transform group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
@@ -128,12 +122,9 @@ export function NucleoCard({
         />
       )}
 
-      {/* Conteúdo principal */}
       <div className="p-5">
-        {/* Header com ícone e título - TODOS OS CARDS TÊM ÍCONE (fallback) */}
         <div className="mb-3 flex items-start justify-between">
           <div className="flex items-center gap-3">
-            {/* Ícone - sempre presente */}
             <div
               className="flex size-10 items-center justify-center rounded-lg overflow-hidden"
               style={{ backgroundColor: `${corDestaque}20` }}
@@ -153,7 +144,6 @@ export function NucleoCard({
                 />
               )}
             </div>
-
             <div>
               <h3 className="font-semibold leading-none tracking-tight">
                 {nome}
@@ -166,7 +156,7 @@ export function NucleoCard({
             </div>
           </div>
 
-          {/* Menu de ações */}
+          {/* Menu de ações - aparece se pelo menos um callback for fornecido */}
           {(onEdit || onDelete || onArchive) && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
@@ -216,14 +206,11 @@ export function NucleoCard({
           )}
         </div>
 
-        {/* Badge de tipo */}
         <Badge variant="outline" className={cn("mb-4", typeStyles)}>
           {tipo}
         </Badge>
 
-        {/* Progresso */}
         {variant === "compact" ? (
-          // Versão ultra compacta para modo lista
           <div className="mt-2 mb-2">
             <div className="flex items-center justify-between text-xs mb-1">
               <span className="text-muted-foreground">Nv.{level}</span>
@@ -243,58 +230,43 @@ export function NucleoCard({
             xpAtual={xpTotal}
             xpMax={nextLevelXp}
             nivel={level}
-            energy={energyTotal}
-            conquistas={conquistasDesbloqueadas}
             showDetails={variant === "detailed"}
             variant={variant === "detailed" ? "default" : "minimal"}
           />
         )}
 
-        {/* Stats e metadados */}
         {variant === "detailed" && (
           <div className="mt-4 flex items-center gap-3 text-xs text-muted-foreground border-t pt-3">
-            {/* XP hoje */}
             {nucleo.xpHoje !== undefined && nucleo.xpHoje > 0 && (
               <div className="flex items-center gap-1">
-                <Flame className="size-3.5 text-[#FF8C42]" />{" "}
-                {/* laranja personalizado */}
+                <Flame className="size-3.5 text-[#FF8C42]" />
                 <span>+{formatXp(nucleo.xpHoje)} hoje</span>
               </div>
             )}
-
-            {/* Conquistas */}
             {conquistasDesbloqueadas > 0 && (
               <div className="flex items-center gap-1">
-                <Trophy className="size-3.5 text-[#FFD700]" /> {/* ouro */}
+                <Trophy className="size-3.5 text-[#FFD700]" />
                 <span>{conquistasDesbloqueadas}</span>
               </div>
             )}
-
-            {/* Conexões */}
             {relations.length > 0 && (
               <div className="flex items-center gap-1">
-                <LinkIcon className="size-3.5 text-[#2EBD59]" />{" "}
-                {/* chart-3 verde */}
+                <LinkIcon className="size-3.5 text-[#2EBD59]" />
                 <span>{relations.length}</span>
               </div>
             )}
-
-            {/* Blocos */}
             {blocos.length > 0 && (
               <div className="flex items-center gap-1">
-                <Layers className="size-3.5 text-[#0077BE]" />{" "}
-                {/* chart-4 azul médio */}
+                <Layers className="size-3.5 text-[#0077BE]" />
                 <span>{blocos.length}</span>
               </div>
             )}
           </div>
         )}
 
-        {/* Data de criação */}
         {variant !== "compact" && (
           <div className="mt-2 flex items-center gap-1 text-xs text-muted-foreground/60">
-            <Calendar className="size-3 text-[#8CD47E]" />{" "}
-            {/* chart-5 verde claro */}
+            <Calendar className="size-3 text-[#8CD47E]" />
             <span>
               Criado em {new Date(createdAt).toLocaleDateString("pt-BR")}
             </span>
@@ -303,13 +275,6 @@ export function NucleoCard({
       </div>
     </motion.div>
   );
-
-  // descomentar em prod.
-  //   if (href) {
-  //     return <Link href={href}>{cardContent}</Link>;
-  //   }
-
-  //por enquanto apenas dados mock, sem navegação real.
 
   return cardContent;
 }

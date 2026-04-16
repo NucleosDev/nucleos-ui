@@ -40,6 +40,8 @@ import { useState } from "react";
 import type { CreateBlocoPayload } from "@/types/bloco";
 import { BlocoCardContainer } from "@/components/blocos/bloco-card-container";
 import { BLOCO_INITIALIZERS } from "@/lib/bloco-initializers";
+import { ColecoesBlocoCard } from "@/components/blocos/cruds/ColecoesBlocoCard";
+import { ListasBlocoCard } from "@/components/blocos/cruds/ListasBlocoCard";
 
 // Mapeamento de ícones (mantido igual)
 const iconMap: Record<string, LucideIcon> = {
@@ -73,11 +75,9 @@ export default function NucleoPage() {
   const params = useParams();
   const router = useRouter();
 
-  // ✅ Extração segura do ID
   const rawId = params.id;
   const id = typeof rawId === "string" ? rawId : (rawId as any)?.id;
 
-  // Se o ID for inválido, exibe mensagem amigável
   if (!id || typeof id !== "string") {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -92,7 +92,6 @@ export default function NucleoPage() {
   }
 
   const { data: nucleo, isLoading: nucleoLoading, error } = useNucleo(id);
-
   const {
     blocos,
     isLoading: blocosLoading,
@@ -107,12 +106,10 @@ export default function NucleoPage() {
   const handleCriarBloco = async (payload: CreateBlocoPayload) => {
     try {
       const blocoCriado = await create(payload);
-
       const initializer = BLOCO_INITIALIZERS[payload.tipo];
       if (initializer) {
         await initializer(blocoCriado.id, payload.titulo);
       }
-
       toast({
         title: "Bloco criado com sucesso!",
         description: `Bloco do tipo "${payload.tipo}" adicionado.`,
@@ -263,22 +260,45 @@ export default function NucleoPage() {
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {blocos.map((bloco) => (
-                <BlocoCard
-                  key={bloco.id}
-                  bloco={bloco}
-                  nucleoId={id}
-                  onDelete={() => handleExcluirBloco(bloco.id)}
-                  onEdit={() => handleEditarBloco(bloco.id)}
-                  isDeleting={isDeleting}
-                />
-              ))}
+              {blocos.map((bloco) => {
+                if (bloco.tipo === "colecoes") {
+                  return (
+                    <ColecoesBlocoCard
+                      key={bloco.id}
+                      bloco={bloco}
+                      nucleoId={id}
+                      onDelete={() => handleExcluirBloco(bloco.id)}
+                      onEdit={() => handleEditarBloco(bloco.id)}
+                      isDeleting={isDeleting}
+                    />
+                  );
+                }
+                if (bloco.tipo === "lista") {
+                  return (
+                    <ListasBlocoCard
+                      key={bloco.id}
+                      bloco={bloco}
+                      nucleoId={id}
+                      onDelete={() => handleExcluirBloco(bloco.id)}
+                      onEdit={() => handleEditarBloco(bloco.id)}
+                      isDeleting={isDeleting}
+                    />
+                  );
+                }
+                return (
+                  <BlocoCard
+                    key={bloco.id}
+                    bloco={bloco}
+                    nucleoId={id}
+                    onDelete={() => handleExcluirBloco(bloco.id)}
+                    onEdit={() => handleEditarBloco(bloco.id)}
+                    isDeleting={isDeleting}
+                  />
+                );
+              })}
             </div>
           )}
- 
         </div>
-
-        
       </div>
 
       <CriarBlocoModal

@@ -1,4 +1,3 @@
-// src/types/nucleo.ts
 import { string } from "zod";
 import { Bloco } from "./bloco";
 import { User } from "./user";
@@ -68,6 +67,15 @@ export interface CreateNucleoPayload {
   corDestaque?: string;
   imagemCapa?: string;
   iconId?: string;
+}
+
+export interface NucleoComStats extends Nucleo {
+  xpTotal: number;
+  level: number;
+  nextLevelXp: number;
+  currentXp: number;
+  conquistas: number;
+  xpHoje: number;
 }
 
 export interface UpdateNucleoPayload extends Partial<CreateNucleoPayload> {}

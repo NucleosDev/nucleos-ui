@@ -1,10 +1,12 @@
-import env from "@/config/env";
-// NEXT_PUBLIC_API_URL precisa ser inserido antes do caminho?
 // ============================================================================
 // ROTAS DA API (BACKEND)
+// Baseadas nas definições reais dos routers Express + futuras implementações
 // ============================================================================
 
 export const API_ROUTES = {
+  // --------------------------------------------------------------------------
+  // AUTENTICAÇÃO
+  // --------------------------------------------------------------------------
   AUTH: {
     LOGIN: "/Auth/login",
     REGISTER: "/Auth/register",
@@ -13,26 +15,50 @@ export const API_ROUTES = {
     REFRESH_TOKEN: "/Auth/refresh-token",
   },
 
-  // Núcleos
+  // --------------------------------------------------------------------------
+  // USUÁRIOS
+  // --------------------------------------------------------------------------
+  USERS: {
+    ME: "/users/me",
+    PROFILE: "/users/profile",
+    PREFERENCES: "/users/preferences",
+    STATS: "/users/stats",
+    ACHIEVEMENTS: "/users/achievements",
+    XP_LOGS: "/users/xp-logs",
+    ENERGY_LOGS: "/users/energy-logs",
+    ACTIVITY_LOGS: "/users/activity-logs",
+    PLAN: "/users/plan",
+    DELETE_ACCOUNT: "/users/account",
+    REACTIVATE: "/users/reactivate",
+  },
+
+  // --------------------------------------------------------------------------
+  // NÚCLEOS
+  // --------------------------------------------------------------------------
   NUCLEOS: {
     LIST: "/nucleos",
     GET: (id: string) => `/nucleos/${id}`,
     CREATE: "/nucleos",
     UPDATE: (id: string) => `/nucleos/${id}`,
     DELETE: (id: string) => `/nucleos/${id}`,
-    SHARE: (id: string) => `/nucleos/${id}/share`,
+
+    // Rotas adicionais planejadas (implementar no futuro)
     STATS: (id: string) => `/nucleos/${id}/stats`,
     ICONES: "/nucleos/icons",
+    XP: (id: string) => `/nucleos/${id}/xp`,
+    ACHIEVEMENTS: (id: string) => `/nucleos/${id}/achievements`,
+    ENERGY: (id: string) => `/nucleos/${id}/energy`,
+    SHARE: (id: string) => `/nucleos/${id}/share`,
     RELACOES: (id: string) => `/nucleos/${id}/relacoes`,
     RELACOES_CREATE: "/nucleos/relacoes",
     RELACOES_DELETE: (id: string) => `/nucleos/relacoes/${id}`,
-    ACHIEVEMENTS: (id: string) => `/nucleos/${id}/achievements`,
-    XP: (id: string) => `/nucleos/${id}/xp`,
-    ENERGY: (id: string) => `/nucleos/${id}/energy`,
   },
 
-  // Blocos
+  // --------------------------------------------------------------------------
+  // BLOCOS
+  // --------------------------------------------------------------------------
   BLOCOS: {
+    PING: "/blocos/ping",
     LIST: (nucleoId: string) => `/blocos/nucleo/${nucleoId}`,
     GET: (id: string) => `/blocos/${id}`,
     CREATE: "/blocos",
@@ -41,44 +67,69 @@ export const API_ROUTES = {
     REORDER: "/blocos/reorder",
   },
 
-  // Coleções
+  // --------------------------------------------------------------------------
+  // COLEÇÕES (com campos e itens aninhados)
+  // --------------------------------------------------------------------------
   COLECOES: {
+    // Coleção
+    LIST_BY_BLOCO: (blocoId: string) => `/colecoes/bloco/${blocoId}`,
     LIST: (blocoId: string) => `/colecoes/bloco/${blocoId}`,
     GET: (id: string) => `/colecoes/${id}`,
-    CREATE: (blocoId: string) => `/colecoes/bloco/${blocoId}`,
+    CREATE: "/colecoes",
     UPDATE: (id: string) => `/colecoes/${id}`,
     DELETE: (id: string) => `/colecoes/${id}`,
+
+    // Campos (aninhados sob /colecoes)
+    CAMPOS: {
+      LIST: (colecaoId: string) => `/colecoes/${colecaoId}/campos`,
+      CREATE: "/colecoes/campos",
+      UPDATE: (id: string) => `/colecoes/campos/${id}`,
+      DELETE: (id: string) => `/colecoes/campos/${id}`,
+    },
+
+    // Itens (aninhados sob /colecoes)
+    ITENS: {
+      LIST: (colecaoId: string) => `/colecoes/${colecaoId}/items`,
+      CREATE: "/colecoes/items",
+      UPDATE: (id: string) => `/colecoes/items/${id}`,
+      DELETE: (id: string) => `/colecoes/items/${id}`,
+    },
   },
 
-  // Campos
+  // --------------------------------------------------------------------------
+  // CAMPOS (standalone, para compatibilidade com código antigo)
+  // --------------------------------------------------------------------------
   CAMPOS: {
-    LIST: (colecaoId: string) => `/campos/colecao/${colecaoId}`,
-    CREATE: (colecaoId: string) => `/campos/colecao/${colecaoId}`,
-    GET: (id: string) => `/campos/${id}`,
-    UPDATE: (id: string) => `/campos/${id}`,
-    DELETE: (id: string) => `/campos/${id}`,
+    BY_COLECAO: (colecaoId: string) => `/colecoes/${colecaoId}/campos`,
+    CREATE: "/colecoes/campos",
+    UPDATE: (id: string) => `/colecoes/campos/${id}`,
+    DELETE: (id: string) => `/colecoes/campos/${id}`,
   },
 
-  // Itens
+  // --------------------------------------------------------------------------
+  // ITENS (standalone, para compatibilidade)
+  // --------------------------------------------------------------------------
   ITENS: {
-    LIST: (colecaoId: string) => `/itens/colecao/${colecaoId}`,
-    CREATE: (colecaoId: string) => `/itens/colecao/${colecaoId}`,
-    GET: (id: string) => `/itens/${id}`,
-    UPDATE: (id: string) => `/itens/${id}`,
-    DELETE: (id: string) => `/itens/${id}`,
+    BY_COLECAO: (colecaoId: string) => `/colecoes/${colecaoId}/items`,
+    CREATE: "/colecoes/items",
+    UPDATE: (id: string) => `/colecoes/items/${id}`,
+    DELETE: (id: string) => `/colecoes/items/${id}`,
   },
 
-  // Item Valores
+  // --------------------------------------------------------------------------
+  // ITEM_VALORES (planejado)
+  // --------------------------------------------------------------------------
   ITEM_VALORES: {
-    LIST: (itemId: string) => `/item-valores/item/${itemId}`,
+    BY_ITEM: (itemId: string) => `/item-valores/item/${itemId}`,
     CREATE: (itemId: string, campoId: string) =>
       `/item-valores/item/${itemId}/campo/${campoId}`,
-    GET: (id: string) => `/item-valores/${id}`,
     UPDATE: (id: string) => `/item-valores/${id}`,
     DELETE: (id: string) => `/item-valores/${id}`,
   },
 
-  // Tarefas
+  // --------------------------------------------------------------------------
+  // TAREFAS
+  // --------------------------------------------------------------------------
   TAREFAS: {
     BASE: "/tarefas",
     BY_ID: (id: string) => `/tarefas/${id}`,
@@ -87,16 +138,37 @@ export const API_ROUTES = {
     VENCENDO: "/tarefas/vencendo",
   },
 
-  // Listas
+  // --------------------------------------------------------------------------
+  // LISTAS
+  // --------------------------------------------------------------------------
   LISTAS: {
-    BASE: "/listas",
+    // Lista
+    LIST: (blocoId: string) => `/listas/bloco/${blocoId}`,
     BY_ID: (id: string) => `/listas/${id}`,
-    BY_BLOCO: (blocoId: string) => `/listas/bloco/${blocoId}`,
-    ITEMS: (listaId: string) => `/listas/${listaId}/items`,
-    CATEGORIAS: (listaId: string) => `/listas/${listaId}/categorias`,
+    CREATE: "/listas",
+    UPDATE: (id: string) => `/listas/${id}`,
+    DELETE: (id: string) => `/listas/${id}`,
+
+    // Itens
+    ITENS: {
+      LIST: (listaId: string) => `/listas/${listaId}/items`,
+      CREATE: "/listas/items",
+      UPDATE: (id: string) => `/listas/items/${id}`,
+      TOGGLE: (id: string) => `/listas/items/${id}/toggle`,
+      DELETE: (id: string) => `/listas/items/${id}`,
+    },
+
+    // Categorias
+    CATEGORIAS: {
+      LIST: (listaId: string) => `/listas/${listaId}/categorias`,
+      CREATE: "/listas/categorias",
+      DELETE: (id: string) => `/listas/categorias/${id}`,
+    },
   },
 
-  // Hábitos
+  // --------------------------------------------------------------------------
+  // HÁBITOS
+  // --------------------------------------------------------------------------
   HABITOS: {
     BASE: "/habitos",
     BY_ID: (id: string) => `/habitos/${id}`,
@@ -105,7 +177,9 @@ export const API_ROUTES = {
     PROGRESS: (id: string) => `/habitos/${id}/progresso`,
   },
 
-  // Gamificação
+  // --------------------------------------------------------------------------
+  // GAMIFICAÇÃO
+  // --------------------------------------------------------------------------
   GAMIFICACAO: {
     LEVEL: "/gamificacao/level",
     CONQUISTAS: "/gamificacao/conquistas",
@@ -115,51 +189,36 @@ export const API_ROUTES = {
     DESBLOQUEAR_CONQUISTA: "/gamificacao/desbloquear-conquista",
   },
 
-  // Progress
+  // --------------------------------------------------------------------------
+  // PROGRESS (XP e Energia)
+  // --------------------------------------------------------------------------
   PROGRESS: {
     XP: "/progress/xp",
     ENERGY: "/progress/energy",
   },
 
-  // Usuários
-  USERS: {
-    ME: "/users/me",
-    PROFILE: "/users/profile",
-    AVATAR: "/users/avatar",
-    LEVEL: "/users/level",
-    LEVEL_BY_ID: (id: string) => `/users/${id}/level`,
-    XP_LOGS: "/users/xp-logs",
-    ENERGY_LOGS: "/users/energy-logs",
-    NOTIFICATIONS: "/users/notifications",
-    AI_CONTEXT: "/users/ai-context",
-    AI_INSIGHTS: "/users/ai-insights",
-  },
-
-  // Notificações
-  NOTIFICATIONS: {
-    LIST: "/notifications",
-    MARK_READ: (id: string) => `/notifications/${id}/read`,
-    MARK_ALL_READ: "/notifications/read-all",
-    DELETE: (id: string) => `/notifications/${id}`,
-  },
-
-  // Planos
+  // --------------------------------------------------------------------------
+  // PLANOS
+  // --------------------------------------------------------------------------
   PLANS: {
-    CREATE: "/plans",
+    LIST: "/plans",
     SUBSCRIPTION: "/plans/subscription",
   },
 
-  // Timers
+  // --------------------------------------------------------------------------
+  // TIMERS
+  // --------------------------------------------------------------------------
   TIMERS: {
     LIST: (nucleoId: string) => `/timers/nucleo/${nucleoId}`,
-    GET: (id: string) => `/timers/${id}`,
     START: "/timers/start",
+    STOP: (id: string) => `/timers/${id}/stop`,
     PAUSE: (id: string) => `/timers/${id}/pause`,
     RESUME: (id: string) => `/timers/${id}/resume`,
-    STOP: (id: string) => `/timers/${id}/stop`,
   },
 
-  // Calendário
+  // --------------------------------------------------------------------------
+  // CALENDÁRIO
+  // --------------------------------------------------------------------------
   CALENDARIO: {
     LIST: (nucleoId: string) => `/calendario/nucleo/${nucleoId}`,
     GET: (id: string) => `/calendario/${id}`,
@@ -168,7 +227,19 @@ export const API_ROUTES = {
     DELETE: (id: string) => `/calendario/${id}`,
   },
 
-  // IA/Insights
+  // --------------------------------------------------------------------------
+  // NOTIFICAÇÕES
+  // --------------------------------------------------------------------------
+  NOTIFICATIONS: {
+    LIST: "/notifications",
+    MARK_READ: (id: string) => `/notifications/${id}/read`,
+    MARK_ALL_READ: "/notifications/read-all",
+    DELETE: (id: string) => `/notifications/${id}`,
+  },
+
+  // --------------------------------------------------------------------------
+  // INSIGHTS / IA
+  // --------------------------------------------------------------------------
   INSIGHTS: {
     BASE: "/insights",
     GET_BY_ID: (id: string) => `/insights/${id}`,
@@ -177,7 +248,9 @@ export const API_ROUTES = {
     CHAT: "/insights/chat",
   },
 
-  // Admin
+  // --------------------------------------------------------------------------
+  // ADMIN
+  // --------------------------------------------------------------------------
   ADMIN: {
     STATS: "/admin/stats",
     USERS: "/admin/users",
@@ -226,7 +299,7 @@ export const ROUTES = {
 
   // Núcleos
   NUCLEOS: "/nucleos",
-  NUCLEO_DETAIL: (id: string) => `/nucleos/${id}`,
+  NUCLEO_DETAIL: (id: string) => `/dashboard/nucleos/${id}`,
   NUCLEO_EDIT: (id: string) => `/nucleos/${id}/editar`,
   NUCLEO_CREATE: "/nucleos/novo",
 
@@ -245,7 +318,6 @@ export const ROUTES = {
 // LISTAS DE ROTAS PARA VALIDAÇÃO
 // ============================================================================
 
-// Rotas públicas (acessíveis sem autenticação)
 export const PUBLIC_ROUTES: readonly string[] = [
   ROUTES.HOME,
   ROUTES.SOBRE,
@@ -274,7 +346,6 @@ export const PUBLIC_ROUTES: readonly string[] = [
   ROUTES.RESET_PASSWORD,
 ];
 
-// Rotas protegidas (requerem autenticação)
 export const PROTECTED_ROUTES: readonly string[] = [
   ROUTES.DASHBOARD,
   ROUTES.DASHBOARD_PROFILE,
@@ -283,7 +354,6 @@ export const PROTECTED_ROUTES: readonly string[] = [
   ROUTES.NUCLEOS,
 ];
 
-// Rotas dinâmicas públicas
 export const PUBLIC_DYNAMIC_ROUTES: readonly string[] = [
   "/ajuda/artigo/",
   "/ajuda/categoria/",
@@ -292,7 +362,6 @@ export const PUBLIC_DYNAMIC_ROUTES: readonly string[] = [
   "/saude/demo",
 ];
 
-// Rotas dinâmicas protegidas
 export const PROTECTED_DYNAMIC_ROUTES: readonly string[] = [
   "/nucleos/",
   "/dashboard/",
@@ -302,32 +371,19 @@ export const PROTECTED_DYNAMIC_ROUTES: readonly string[] = [
 ];
 
 // ============================================================================
-// FUNÇÕES DE VALIDAÇÃO
+// FUNÇÕES AUXILIARES
 // ============================================================================
 
-/**
- * Verifica se uma rota é pública
- */
 export const isPublicRoute = (pathname: string): boolean => {
-  // Verificar rotas públicas exatas
   if (PUBLIC_ROUTES.includes(pathname as any)) return true;
-  // Verificar rotas dinâmicas públicas
   return PUBLIC_DYNAMIC_ROUTES.some((route) => pathname.startsWith(route));
 };
 
-/**
- * Verifica se uma rota é protegida
- */
 export const isProtectedRoute = (pathname: string): boolean => {
-  // Verificar rotas protegidas exatas
   if (PROTECTED_ROUTES.includes(pathname as any)) return true;
-  // Verificar rotas dinâmicas protegidas
   return PROTECTED_DYNAMIC_ROUTES.some((route) => pathname.startsWith(route));
 };
 
-/**
- * Verifica se uma rota é de administrador
- */
 export const isAdminRoute = (pathname: string): boolean => {
   const adminRoutes = [
     "/admin",
@@ -339,9 +395,6 @@ export const isAdminRoute = (pathname: string): boolean => {
   return adminRoutes.some((route) => pathname.startsWith(route));
 };
 
-/**
- * Verifica se uma rota é de autenticação (login, registro, etc)
- */
 export const isAuthRoute = (pathname: string): boolean => {
   const authRoutes = [
     ROUTES.LOGIN,
@@ -352,13 +405,6 @@ export const isAuthRoute = (pathname: string): boolean => {
   return authRoutes.includes(pathname as any);
 };
 
-// ============================================================================
-// FUNÇÃO DE REDIRECIONAMENTO (apenas uma, para uso no ProtectedRoute)
-// ============================================================================
-
-/**
- * Gera URL de login com callback para redirecionamento após autenticação
- */
 export const getLoginUrlWithCallback = (callbackUrl: string): string => {
   const encodedCallback = encodeURIComponent(callbackUrl);
   return `${ROUTES.LOGIN}?callbackUrl=${encodedCallback}`;

@@ -1,4 +1,3 @@
-// src/types/habito.ts
 export type FrequenciaHabito = "diaria" | "semanal" | "personalizada";
 
 export interface Habito {

@@ -1,4 +1,3 @@
-// src/services/nucleos.service.ts
 import api from "@/services/api";
 import type {
   Nucleo,

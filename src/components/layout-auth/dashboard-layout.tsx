@@ -1,292 +1,301 @@
+// app/dashboard/layout.tsx
 "use client";
 
 import { ReactNode, useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
 import { useAuth } from "@/auth";
-import { ROUTES } from "@/constants/routes";
 import {
-  Menu,
-  X,
   Zap,
   Flame,
-  ListTodo,
-  Heart,
-  Calendar,
-  Target,
+  ChevronRight,
+  Layers,
+  Activity,
+  Lightbulb,
   Sparkles,
-  Trophy,
-  Eclipse,
+  LayoutGrid,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
+import { useCurrentUser } from "@/hooks/useDashboard";
+import { useNucleos } from "@/hooks/useNucleo";
 
-// ========== TIPOS ==========
-type CategoryId =
-  | "nucleos"
-  | "tasks"
-  | "habits"
-  | "events"
-  | "goals"
-  | "insights"
-  | "achievements";
-
-interface Category {
-  id: CategoryId;
-  name: string;
-  icon: React.ReactNode;
-  count: number;
-  badge?: string;
-  href?: string;
-}
-
-// ========== COMPONENTE DA NOVA SIDEBAR ==========
+// ========== COMPONENTE DA SIDEBAR ==========
 interface DashboardSidebarProps {
-  categories: Category[];
-  selectedCategoryId: CategoryId;
-  onSelectCategory: (id: CategoryId) => void;
-  userLevel: { level: number; current_xp: number; next_level_xp: number };
-  streak: number;
-  user: { fullName?: string; email?: string } | null;
-  onClose?: () => void;
+  collapsed: boolean;
+  onToggleCollapse: () => void;
   onLogout?: () => void;
+  className?: string;
+  userData: {
+    fullName?: string;
+    level?: number;
+    currentXp?: number;
+    nextLevelXp?: number;
+    streak?: number;
+  };
+  nucleosCount: number;
+  recentNucleos: { id: string; nome: string }[];
 }
 
 function DashboardSidebar({
-  categories,
-  selectedCategoryId,
-  onSelectCategory,
-  userLevel,
-  streak,
-  user,
-  onClose,
+  collapsed,
+  onToggleCollapse,
   onLogout,
+  className,
+  userData,
+  nucleosCount,
+  recentNucleos,
 }: DashboardSidebarProps) {
+  const xpPercent = Math.min(
+    ((userData.currentXp || 0) / (userData.nextLevelXp || 100)) * 100,
+    100,
+  );
+
+  const mainLinks = [
+    {
+      id: "nucleos",
+      label: "Núcleos",
+      icon: LayoutGrid,
+      href: "/dashboard/nucleos",
+      count: nucleosCount,
+    },
+    {
+      id: "blocos",
+      label: "Blocos",
+      icon: Layers,
+      href: "/dashboard/blocos",
+      count: 0,
+    },
+    {
+      id: "atividades",
+      label: "Atividades Recentes",
+      icon: Activity,
+      href: "/dashboard/atividades",
+      count: 0,
+    },
+  ];
+
+  const insights = [
+    {
+      id: "streak",
+      title: "Streak",
+      description: `${userData.streak || 0} dias consecutivos! Continue assim.`,
+      icon: Flame,
+    },
+    {
+      id: "nucleos-recentes",
+      title: "Núcleos ativos",
+      description:
+        recentNucleos.length > 0
+          ? recentNucleos.map((n) => n.nome).join(", ")
+          : "Nenhum núcleo criado ainda.",
+      icon: Sparkles,
+    },
+  ];
+
+  if (collapsed) {
+    return (
+      <aside
+        className={cn(
+          "w-3 bg-muted/30 border-r border-border flex flex-col items-center py-4",
+          className,
+        )}
+      >
+        <button
+          onClick={onToggleCollapse}
+          className="w-6 h-6 rounded-full bg-primary/10 hover:bg-primary/20 flex items-center justify-center transition-colors"
+          aria-label="Expandir menu"
+        >
+          <ChevronRight className="h-4 w-4 text-primary" />
+        </button>
+      </aside>
+    );
+  }
+
   return (
-    <aside className="w-60 shrink-0 border-r border-border bg-muted/30 flex flex-col h-full">
-      {/* Cabeçalho com informações do usuário e botão fechar */}
-      <div className="p-4 border-b border-border flex items-center justify-between">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
-            <span className="text-sm font-bold text-primary">
-              {user?.fullName?.charAt(0).toUpperCase() || "U"}
-            </span>
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm font-semibold truncate text-foreground">
-              {user?.fullName || "Meu Workspace"}
-            </p>
-            <div className="flex items-center gap-2 mt-0.5">
-              <div className="flex items-center gap-1">
-                <Zap className="w-3 h-3 text-yellow-500" />
-                <span className="text-xs text-muted-foreground">
-                  Nv.{userLevel.level}
-                </span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Flame className="w-3 h-3 text-orange-500" />
-                <span className="text-xs text-muted-foreground">{streak}d</span>
-              </div>
+    <aside
+      className={cn(
+        "w-64 flex flex-col h-full bg-muted/30 border-r border-border",
+        className,
+      )}
+    >
+      {/* Cabeçalho do usuário */}
+      <div className="p-4 border-b border-border flex items-center gap-3">
+        <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+          <span className="text-sm font-bold text-primary">
+            {userData.fullName?.charAt(0) || "U"}
+          </span>
+        </div>
+        <div className="min-w-0">
+          <p className="text-sm font-semibold truncate">
+            {userData.fullName || "Meu Workspace"}
+          </p>
+          <div className="flex items-center gap-2 mt-0.5">
+            <div className="flex items-center gap-1">
+              <Zap className="w-3 h-3 text-yellow-500" />
+              <span className="text-xs text-muted-foreground">
+                Nv.{userData.level || 1}
+              </span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Flame className="w-3 h-3 text-orange-500" />
+              <span className="text-xs text-muted-foreground">
+                {userData.streak || 0}d
+              </span>
             </div>
           </div>
         </div>
-        {onClose && (
-          <button
-            onClick={onClose}
-            className="text-muted-foreground hover:text-foreground"
-            aria-label="Fechar menu"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        )}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7 ml-auto shrink-0"
+          onClick={onToggleCollapse}
+          aria-label="Recolher menu"
+        >
+          <ChevronRight className="h-4 w-4 rotate-180" />
+        </Button>
       </div>
 
-      {/* Lista de categorias */}
-      <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-        {categories.map((cat) => (
-          <button
-            key={cat.id}
-            onClick={() => onSelectCategory(cat.id)}
-            className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all text-left group ${
-              selectedCategoryId === cat.id
-                ? "bg-primary/10 text-primary"
-                : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
-            }`}
-          >
-            <div className="flex items-center gap-3">
-              <span
-                className={
-                  selectedCategoryId === cat.id
-                    ? "text-primary"
-                    : "text-muted-foreground group-hover:text-foreground"
-                }
-              >
-                {cat.icon}
-              </span>
-              <span className="text-sm font-medium">{cat.name}</span>
-            </div>
-            <span
-              className={`text-xs px-1.5 py-0.5 rounded-full font-medium tabular-nums ${
-                selectedCategoryId === cat.id
-                  ? "bg-primary/20 text-primary"
-                  : "bg-muted text-muted-foreground"
-              }`}
+      {/* Links principais */}
+      <nav className="px-2 py-2 space-y-0.5">
+        <p className="px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
+          Principal
+        </p>
+        {mainLinks.map((link) => {
+          const Icon = link.icon;
+          return (
+            <a
+              key={link.id}
+              href={link.href}
+              className="flex items-center justify-between px-3 py-2 rounded-lg text-muted-foreground hover:bg-accent/50 hover:text-foreground transition-all"
             >
-              {cat.count}
-            </span>
-          </button>
-        ))}
+              <div className="flex items-center gap-3">
+                <Icon className="h-4 w-4" />
+                <span className="text-sm font-medium">{link.label}</span>
+              </div>
+              <span className="text-xs px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-medium tabular-nums">
+                {link.count}
+              </span>
+            </a>
+          );
+        })}
       </nav>
 
-      {/* Barra de progresso de XP */}
-      <div className="p-3 border-t border-border">
-        <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
-          <span className="font-medium">
-            XP para nível {userLevel.level + 1}
-          </span>
-          <span>
-            {userLevel.current_xp}/{userLevel.next_level_xp}
-          </span>
+      {/* Insights */}
+      <div className="px-3 py-3 border-t border-border mt-2">
+        <div className="flex items-center gap-2 mb-3">
+          <Lightbulb className="h-4 w-4 text-yellow-500" />
+          <span className="text-sm font-semibold">Insights para você</span>
         </div>
-        <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-          <div
-            className="h-full bg-primary rounded-full transition-all"
-            style={{
-              width: `${(userLevel.current_xp / userLevel.next_level_xp) * 100}%`,
-            }}
-          />
+        <div className="space-y-3">
+          {insights.map((insight) => {
+            const Icon = insight.icon;
+            return (
+              <div
+                key={insight.id}
+                className="bg-background/60 rounded-lg p-3 border border-border/50"
+              >
+                <div className="flex items-start gap-2">
+                  <Icon className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium">{insight.title}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {insight.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Botão de logout */}
+      {/* Barra de progresso XP */}
+      <div className="p-3 border-t border-border mt-auto">
+        <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
+          <span className="font-medium">
+            XP para nível {(userData.level || 1) + 1}
+          </span>
+          <span>
+            {userData.currentXp || 0}/{userData.nextLevelXp || 100}
+          </span>
+        </div>
+        <Progress value={xpPercent} className="h-1.5" />
+      </div>
+
+      {/* Logout */}
       {onLogout && (
         <div className="p-3 border-t border-border">
-          <button
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-destructive"
             onClick={onLogout}
-            className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors dark:text-red-400 dark:hover:bg-red-900/20"
           >
             Sair
-          </button>
+          </Button>
         </div>
       )}
     </aside>
   );
 }
 
-// ========== DADOS MOCK (para categorias, nível e streak) ==========
-const mockCategories: Category[] = [
-  {
-    id: "nucleos",
-    name: "Nucleos",
-    icon: <Eclipse className="w-4 h-4" />,
-    count: 3,
-    href: "/nucleos",
-  },
-  {
-    id: "tasks",
-    name: "Tarefas",
-    icon: <ListTodo className="w-4 h-4" />,
-    count: 4,
-    href: "/tarefas",
-  },
-  {
-    id: "habits",
-    name: "Hábitos",
-    icon: <Heart className="w-4 h-4" />,
-    count: 2,
-    href: "/habitos",
-  },
-  {
-    id: "events",
-    name: "Eventos",
-    icon: <Calendar className="w-4 h-4" />,
-    count: 3,
-    href: "/calendario",
-  },
-  {
-    id: "goals",
-    name: "Metas",
-    icon: <Target className="w-4 h-4" />,
-    count: 2,
-    href: "/metas",
-  },
-  {
-    id: "insights",
-    name: "Insights IA",
-    icon: <Sparkles className="w-4 h-4" />,
-    count: 3,
-    href: "#",
-  },
-  {
-    id: "achievements",
-    name: "Conquistas",
-    icon: <Trophy className="w-4 h-4" />,
-    count: 3,
-    href: "/conquistas",
-  },
-];
-
-const mockUserLevel = { level: 5, current_xp: 340, next_level_xp: 500 };
-const mockStreak = 12;
-
-// ========== LAYOUT PRINCIPAL ==========
+// ========== LAYOUT PRINCIPAL (SEM SIDEBAR MOBILE) ==========
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { user, logout } = useAuth();
-  const pathname = usePathname();
+  const { logout } = useAuth();
+  const [collapsed, setCollapsed] = useState(false);
 
-  // Estado da sidebar (aberta/fechada)
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  // Estado da categoria selecionada (pode ser usado para navegação interna)
-  const [selectedCategoryId, setSelectedCategoryId] =
-    useState<CategoryId>("nucleos");
+  const { data: user, isLoading: userLoading } = useCurrentUser();
+  const { data: nucleos, isLoading: nucleosLoading } = useNucleos();
 
-  // Carregar preferência do localStorage
   useEffect(() => {
-    const saved = localStorage.getItem("sidebar-open");
-    if (saved !== null) {
-      setIsSidebarOpen(saved === "true");
-    }
+    const saved = localStorage.getItem("sidebar-collapsed");
+    if (saved !== null) setCollapsed(saved === "true");
   }, []);
 
-  // Persistir preferência
   useEffect(() => {
-    localStorage.setItem("sidebar-open", String(isSidebarOpen));
-  }, [isSidebarOpen]);
+    localStorage.setItem("sidebar-collapsed", String(collapsed));
+  }, [collapsed]);
 
   const handleLogout = async () => {
     await logout();
   };
 
-  return (
-    <div className="flex h-full">
-      {/* Nova sidebar */}
-      <div
-        className={`
-          hidden md:block shrink-0 transition-all duration-300 overflow-hidden
-          ${isSidebarOpen ? "w-60" : "w-0"}
-        `}
-      >
-        <DashboardSidebar
-          categories={mockCategories}
-          selectedCategoryId={selectedCategoryId}
-          onSelectCategory={setSelectedCategoryId}
-          userLevel={mockUserLevel}
-          streak={mockStreak}
-          user={user}
-          onClose={() => setIsSidebarOpen(false)}
-          onLogout={handleLogout}
-        />
+  const userData = {
+    fullName: user?.fullName || user?.email?.split("@")[0] || "Usuário",
+    level: 5,
+    currentXp: 340,
+    nextLevelXp: 500,
+    streak: 12,
+  };
+
+  const nucleosCount = nucleos?.length || 0;
+  const recentNucleos = (nucleos || []).slice(0, 3);
+
+  if (userLoading || nucleosLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        Carregando...
       </div>
+    );
+  }
 
-      {/* Botão para abrir a sidebar quando fechada */}
-      {!isSidebarOpen && (
-        <button
-          onClick={() => setIsSidebarOpen(true)}
-          className="fixed left-4 top-4 z-20 md:flex hidden items-center justify-center w-8 h-8 rounded-md bg-white shadow-md border border-gray-200 dark:bg-gray-800 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-          aria-label="Abrir menu"
-        >
-          <Menu className="w-4 h-4" />
-        </button>
-      )}
+  const sidebarContent = (
+    <DashboardSidebar
+      collapsed={collapsed}
+      onToggleCollapse={() => setCollapsed(!collapsed)}
+      onLogout={handleLogout}
+      userData={userData}
+      nucleosCount={nucleosCount}
+      recentNucleos={recentNucleos}
+    />
+  );
 
-      <main className="flex-1 overflow-auto p-4 md:p-8">{children}</main>
+  return (
+    <div className="flex h-screen overflow-hidden">
+      {/* Sidebar Desktop (visível apenas em md para cima) */}
+      <div className="hidden md:block h-full shrink-0">{sidebarContent}</div>
+
+      {/* Conteúdo principal (ocupa toda a largura em mobile) */}
+      <main className="flex-1 overflow-auto">{children}</main>
     </div>
   );
 }

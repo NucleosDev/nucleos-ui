@@ -1,111 +1,117 @@
-// /components/nucleo/ui/notificacoes-tempo-real.tsx
-"use client";
+// "use client";
 
-import { useEffect, useState } from "react";
-import { AnimatePresence } from "framer-motion";
-import { NotificacaoIOS, NotificacoesContainer } from "./notification";
-import Image from "next/image";
-import {
-  Trophy,
-  Flame,
-  Star,
-  Zap,
-  Target,
-  Award,
-  BookOpen,
-  Heart,
-  Wallet,
-} from "lucide-react";
+// import { useState, useEffect, useCallback } from "react";
+// import { NotificacaoIOS, NotificacoesContainer } from "./notification";
+// import { notificationsService } from "@/services/notifications.service";
+// import { handleApiError } from "@/lib/api";
+// import { useToast } from "@/hooks/use-toast";
+// import type { Notificacao, NotificacaoUI } from "@/types";
 
-// Mock de notificações em tempo real
-const notificacoesMock = [
-  {
-    id: "1",
-    titulo: "Conquista desbloqueada!",
-    mensagem: "Você completou 7 dias seguidos",
-    icone: <Flame className="size-5 text-orange-500" />,
-    tempo: "agora",
-    tipo: "conquista" as const,
-  },
-  {
-    id: "2",
-    titulo: "Level Up!",
-    mensagem: "Núcleo 'Estudos' atingiu nível 12",
-    icone: <Zap className="size-5 text-primary" />,
-    tempo: "2 min",
-    tipo: "sucesso" as const,
-  },
-  {
-    id: "3",
-    titulo: "Meta atingida",
-    mensagem: "Você completou 100% das tarefas de hoje",
-    icone: <Target className="size-5 text-accent" />,
-    tempo: "15 min",
-    tipo: "info" as const,
-  },
-  {
-    id: "4",
-    titulo: "Novo badge!",
-    mensagem: "Mestre dos Estudos - Tier Ouro",
-    icone: <Award className="size-5 text-yellow-500" />,
-    tempo: "1 hora",
-    tipo: "conquista" as const,
-  },
-];
+// interface NotificacoesTempoRealProps {
+//   intervalo?: number; // em ms, padrão 30 segundos
+//   maxVisiveis?: number;
+// }
 
-export function NotificacoesTempoReal() {
-  const [notificacoes, setNotificacoes] = useState<typeof notificacoesMock>([]);
+// export function NotificacoesTempoReal({
+//   intervalo = 30000,
+//   maxVisiveis = 3,
+// }: NotificacoesTempoRealProps) {
+//   const [notificacoes, setNotificacoes] = useState<NotificacaoUI[]>([]);
+//   const { toast } = useToast();
 
-  useEffect(() => {
-    // Adiciona notificações gradualmente
-    let index = 0;
-    const interval = setInterval(() => {
-      if (index < notificacoesMock.length) {
-        setNotificacoes((prev) => {
-          // Garantir que prev é um array
-          const currentPrev = Array.isArray(prev) ? prev : [];
-          return [...currentPrev, notificacoesMock[index]];
-        });
-        index++;
-      }
-    }, 5000);
+//   const carregarNotificacoes = useCallback(async () => {
+//     try {
+//       const dados = await notificationsService.listar();
+//       const naoLidas = dados
+//         .filter((n) => !n.read)
+//         .slice(0, maxVisiveis)
+//         .map((n) => formatarNotificacao(n));
+//       setNotificacoes(naoLidas);
+//     } catch (error) {
+//       // Silenciar erro em polling
+//       console.error("Erro ao carregar notificações:", handleApiError(error));
+//     }
+//   }, [maxVisiveis]);
 
-    return () => clearInterval(interval);
-  }, []);
+//   useEffect(() => {
+//     carregarNotificacoes();
+//     const timer = setInterval(carregarNotificacoes, intervalo);
+//     return () => clearInterval(timer);
+//   }, [carregarNotificacoes, intervalo]);
 
-  const removerNotificacao = (id: string) => {
-    setNotificacoes((prev) => {
-      // Garantir que prev é um array
-      const currentPrev = Array.isArray(prev) ? prev : [];
-      return currentPrev.filter((n) => n && n.id !== id);
-    });
-  };
+//   async function marcarComoLida(id: string) {
+//     try {
+//       await notificationsService.marcarComoLida(id);
+//       setNotificacoes((prev) => prev.filter((n) => n.id !== id));
+//     } catch (error) {
+//       toast({
+//         variant: "destructive",
+//         title: "Erro",
+//         description: handleApiError(error),
+//       });
+//     }
+//   }
 
-  // Garantir que notificacoes é sempre um array
-  const notificacoesArray = Array.isArray(notificacoes) ? notificacoes : [];
+//   function fecharNotificacao(id: string) {
+//     setNotificacoes((prev) => prev.filter((n) => n.id !== id));
+//     marcarComoLida(id);
+//   }
 
-  return (
-    <NotificacoesContainer>
-      <AnimatePresence>
-        {notificacoesArray.length > 0
-          ? notificacoesArray.map((notif, i) => {
-              // Verificar se notif existe e tem id
-              if (!notif || !notif.id) return null;
+//   if (notificacoes.length === 0) {
+//     return null;
+//   }
 
-              return (
-                <NotificacaoIOS
-                  key={notif.id}
-                  notificacao={{
-                    ...notif,
-                    imagem: i === 0 ? "/icon.svg" : undefined,
-                  }}
-                  onClose={() => removerNotificacao(notif.id)}
-                  variant="flutuante"
-                />
-              );
-            })
-          : null}
-      </AnimatePresence>
-    </NotificacoesContainer>
-  );
-}
+//   return (
+//     <NotificacoesContainer position="top-right">
+//       {notificacoes.map((notificacao) => (
+//         <NotificacaoIOS
+//           key={notificacao.id}
+//           notificacao={notificacao}
+//           variant="flutuante"
+//           onClose={() => fecharNotificacao(notificacao.id)}
+//         />
+//       ))}
+//     </NotificacoesContainer>
+//   );
+// }
+
+// // Helper para formatar notificação da API para UI
+// function formatarNotificacao(n: Notificacao): NotificacaoUI {
+//   const agora = new Date();
+//   const criado = new Date(n.createdAt);
+//   const diffMs = agora.getTime() - criado.getTime();
+//   const diffMin = Math.floor(diffMs / 60000);
+//   const diffHora = Math.floor(diffMin / 60);
+//   const diffDia = Math.floor(diffHora / 24);
+
+//   let tempo = "agora";
+//   if (diffDia > 0) {
+//     tempo = `${diffDia}d`;
+//   } else if (diffHora > 0) {
+//     tempo = `${diffHora}h`;
+//   } else if (diffMin > 0) {
+//     tempo = `${diffMin}min`;
+//   }
+
+//   // Inferir tipo baseado no título/mensagem
+//   let tipo: NotificacaoUI["tipo"] = "info";
+//   const texto = (n.titulo + " " + (n.mensagem || "")).toLowerCase();
+//   if (texto.includes("conquista") || texto.includes("badge")) {
+//     tipo = "conquista";
+//   } else if (texto.includes("sucesso") || texto.includes("completou")) {
+//     tipo = "sucesso";
+//   } else if (texto.includes("alerta") || texto.includes("atenção")) {
+//     tipo = "alerta";
+//   } else if (texto.includes("lembrete") || texto.includes("hora de")) {
+//     tipo = "lembrete";
+//   }
+
+//   return {
+//     id: n.id,
+//     titulo: n.titulo,
+//     mensagem: n.mensagem,
+//     tipo,
+//     tempo,
+//     lida: n.read,
+//   };
+// }

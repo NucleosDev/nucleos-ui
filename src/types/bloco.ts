@@ -1,28 +1,28 @@
-// src/types/bloco.ts
 import { Tarefa } from "./tarefas";
 import { Lista } from "./lista";
 import { Habito } from "./habitos";
 import { Colecao } from "./colecao";
-
+// import { Timer } from ""
 export type BlocoTipo =
   | "tarefas"
   | "habitos"
   | "notas"
   | "lista"
   | "calendario"
-  | "calculo";
+  | "calculo"
+  | "colecoes";
 
 export interface Bloco {
   id: string;
   nucleoId: string;
   tipo: BlocoTipo;
-  titulo?: string;
+  titulo: string | null;
   posicao: number;
-  configuracoes: Record<string, any>;
+  configuracoes: Record<string, any> | null;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;
-  // Relacionamentos
+  // Relacionamentos opcionais (quando a API retorna expandido)
   tarefas?: Tarefa[];
   listas?: Lista[];
   habitos?: Habito[];
@@ -48,10 +48,10 @@ export interface CreateBlocoPayload {
   configuracoes?: Record<string, any>;
 }
 
-export interface UpdateBlocoPayload extends Partial<
-  Omit<CreateBlocoPayload, "nucleoId">
-> {
-  id: string;
+export interface UpdateBlocoPayload {
+  titulo?: string;
+  posicao?: number;
+  configuracoes?: Record<string, any>;
 }
 
 export interface ReorderBlocosPayload {

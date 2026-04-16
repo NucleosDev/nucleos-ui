@@ -1,54 +1,56 @@
-// /components/nucleo/ui/nucleo-core-card.tsx
 "use client";
 
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { NucleoProgress } from "./nucleo-progress";
+import type { NucleoComStats } from "@/types";
 import {
-  Trophy,
-  Flame,
-  TrendingUp,
   BookOpen,
   Heart,
   Briefcase,
   Home,
-  Target,
-  Coffee,
   Dumbbell,
-  Code,
-  Users,
-  Music,
-  Camera,
   Palette,
-  Globe,
-  Wallet,
+  Music,
+  Code,
+  Trophy,
+  Zap,
+  Star,
 } from "lucide-react";
-import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import type { NucleoWithStats } from "../types/nucleo-components.types";
-import { Layers } from "lucide-react";
+
 interface NucleoCoreCardProps {
-  nucleo: NucleoWithStats;
+  nucleo: NucleoComStats;
   index?: number;
   onClick?: () => void;
   className?: string;
 }
 
-const tipoIcons: Record<string, React.ElementType> = {
-  estudo: BookOpen,
-  hobby: Heart,
-  profissional: Briefcase,
-  pessoal: Home,
-  projeto: Target,
-  fitness: Dumbbell,
-  bemestar: Coffee,
-  social: Users,
-  programacao: Code,
-  musica: Music,
-  fotografia: Camera,
-  arte: Palette,
-  idiomas: Globe,
-  financas: Wallet,
+// Mapeamento de ícones por tipo
+const iconesNucleo: Record<string, React.ReactNode> = {
+  estudos: <BookOpen className="size-5" />,
+  saude: <Heart className="size-5" />,
+  trabalho: <Briefcase className="size-5" />,
+  casa: <Home className="size-5" />,
+  fitness: <Dumbbell className="size-5" />,
+  arte: <Palette className="size-5" />,
+  musica: <Music className="size-5" />,
+  dev: <Code className="size-5" />,
+  pessoal: <Star className="size-5" />,
+};
+
+// Cores por tipo
+const coresNucleo: Record<string, string> = {
+  estudos: "from-blue-500 to-indigo-600",
+  saude: "from-green-500 to-emerald-600",
+  trabalho: "from-amber-500 to-orange-600",
+  casa: "from-rose-500 to-pink-600",
+  fitness: "from-purple-500 to-violet-600",
+  arte: "from-cyan-500 to-teal-600",
+  musica: "from-red-500 to-rose-600",
+  dev: "from-slate-500 to-zinc-600",
+  pessoal: "from-indigo-500 to-purple-600",
 };
 
 export function NucleoCoreCard({
@@ -57,164 +59,121 @@ export function NucleoCoreCard({
   onClick,
   className,
 }: NucleoCoreCardProps) {
-  const {
-    nome,
-    tipo,
-    descricao,
-    corDestaque = "#4D7CFF",
-    icon,
-    xpTotal = 0,
-    level = 1,
-    nextLevelXp = 1000,
-    conquistasDesbloqueadas = 0,
-    xpHoje = 0,
-  } = nucleo;
+  const tipo = nucleo.tipo?.toLowerCase() || "pessoal";
+  const icone = iconesNucleo[tipo] || <Star className="size-5" />;
+  const corGradiente = coresNucleo[tipo] || coresNucleo.pessoal;
+  const corDestaque = nucleo.corDestaque || "#6366f1";
 
-  const IconComponent = tipoIcons[tipo] || Layers;
-  const progress = (xpTotal / nextLevelXp) * 100;
-  const xpRestante = nextLevelXp - xpTotal;
+  const xpTotal = nucleo.xpTotal || 0;
+  const level = nucleo.level || 1;
+  const nextLevelXp = nucleo.nextLevelXp || 100;
+  const currentXp = nucleo.currentXp || 0;
+  const conquistas = nucleo.conquistas || 0;
+  const xpHoje = nucleo.xpHoje || 0;
+
+  const progressoXp = Math.min((currentXp / nextLevelXp) * 100, 100);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      whileHover={{ y: -4, scale: 1.02 }}
+    <Card
       className={cn(
-        "group relative overflow-hidden rounded-xl border bg-card p-5 transition-all",
-        "hover:shadow-lg hover:shadow-[#4D7CFF]/10 hover:border-[#4D7CFF]/30",
-        "cursor-pointer",
+        "group relative overflow-hidden cursor-pointer transition-all duration-300",
+        "hover:shadow-lg hover:-translate-y-1",
+        "border border-border/50",
         className,
       )}
       onClick={onClick}
+      style={{
+        animationDelay: `${index * 100}ms`,
+      }}
     >
-      {/* Efeito de brilho no hover */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+      {/* Faixa superior colorida */}
+      <div
+        className={cn("h-2 w-full bg-gradient-to-r", corGradiente)}
+        style={{
+          background: nucleo.corDestaque
+            ? `linear-gradient(to right, ${nucleo.corDestaque}, ${nucleo.corDestaque}dd)`
+            : undefined,
+        }}
+      />
 
-      {/* Header com ícone e título */}
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3">
-          {/* Ícone com fundo colorido */}
-          <div
-            className="flex size-12 items-center justify-center rounded-xl overflow-hidden"
-            style={{ backgroundColor: `${corDestaque}15` }}
-          >
-            {icon?.iconUrl ? (
-              <Image
-                src={icon.iconUrl}
-                alt={nome}
-                width={24}
-                height={24}
-                className="object-contain"
-              />
-            ) : (
-              <IconComponent
-                className="size-6"
-                style={{ color: corDestaque }}
-              />
-            )}
+      <CardHeader className="pb-2">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            {/* Ícone do núcleo */}
+            <div
+              className={cn(
+                "flex items-center justify-center w-12 h-12 rounded-xl text-white bg-gradient-to-br shadow-md",
+                corGradiente,
+              )}
+              style={{
+                background: nucleo.corDestaque
+                  ? `linear-gradient(135deg, ${nucleo.corDestaque}, ${nucleo.corDestaque}dd)`
+                  : undefined,
+              }}
+            >
+              {icone}
+            </div>
+            <div>
+              <h3 className="font-semibold text-lg leading-tight line-clamp-1">
+                {nucleo.nome}
+              </h3>
+              <p className="text-xs text-muted-foreground capitalize">{tipo}</p>
+            </div>
           </div>
 
-          <div>
-            <h3 className="font-semibold text-lg leading-none tracking-tight">
-              {nome}
-            </h3>
-            {descricao && (
-              <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
-                {descricao}
-              </p>
-            )}
+          {/* Badge de nível */}
+          <Badge variant="secondary" className="font-bold">
+            <Trophy className="size-3 mr-1" />
+            Nv. {level}
+          </Badge>
+        </div>
+      </CardHeader>
+
+      <CardContent className="space-y-4">
+        {/* Descrição */}
+        {nucleo.descricao && (
+          <p className="text-sm text-muted-foreground line-clamp-2">
+            {nucleo.descricao}
+          </p>
+        )}
+
+        {/* Barra de XP */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-muted-foreground">Progresso do Nível</span>
+            <span className="font-medium">
+              {currentXp.toLocaleString()} / {nextLevelXp.toLocaleString()} XP
+            </span>
           </div>
+          <Progress value={progressoXp} className="h-2" />
         </div>
 
-        {/* Badge de nível */}
-        <Badge
-          variant="outline"
-          className="h-7 px-2.5"
-          style={{
-            backgroundColor: `${corDestaque}10`,
-            borderColor: `${corDestaque}30`,
-            color: corDestaque,
-          }}
-        >
-          <TrendingUp className="size-3 mr-1" />
-          Nv. {level}
-        </Badge>
-      </div>
-
-      {/* Barra de progresso principal */}
-      <div className="space-y-2 mb-4">
-        <div className="flex items-center justify-between text-xs">
-          <span className="text-muted-foreground">Progresso</span>
-          <span className="font-medium" style={{ color: corDestaque }}>
-            {Math.round(progress)}%
-          </span>
-        </div>
-        <Progress
-          value={progress}
-          className="h-2 bg-secondary"
-          style={
-            {
-              "--progress-background": corDestaque,
-            } as React.CSSProperties
-          }
-        />
-      </div>
-
-      {/* Stats em grid */}
-      <div className="grid grid-cols-2 gap-3 mb-3">
-        {/* XP Total */}
-        <div className="flex items-center gap-2 p-2 rounded-lg bg-secondary/30">
-          <Trophy className="size-4 text-[#FFD700]" />
-          <div>
-            <p className="text-xs text-muted-foreground">XP Total</p>
-            <p className="text-sm font-semibold">{xpTotal.toLocaleString()}</p>
-          </div>
-        </div>
-
-        {/* XP Restante */}
-        <div className="flex items-center gap-2 p-2 rounded-lg bg-secondary/30">
-          <Flame className="size-4 text-[#FF8C42]" />
-          <div>
-            <p className="text-xs text-muted-foreground">Faltam</p>
-            <p className="text-sm font-semibold">
-              {xpRestante.toLocaleString()}
+        {/* Estatísticas */}
+        <div className="grid grid-cols-3 gap-2 pt-2">
+          <div className="text-center p-2 rounded-lg bg-muted/50">
+            <p className="text-lg font-bold text-primary">
+              {xpTotal.toLocaleString()}
             </p>
+            <p className="text-xs text-muted-foreground">XP Total</p>
+          </div>
+          <div className="text-center p-2 rounded-lg bg-muted/50">
+            <p className="text-lg font-bold text-amber-500">{conquistas}</p>
+            <p className="text-xs text-muted-foreground">Conquistas</p>
+          </div>
+          <div className="text-center p-2 rounded-lg bg-muted/50">
+            <p className="text-lg font-bold text-green-500">+{xpHoje}</p>
+            <p className="text-xs text-muted-foreground">XP Hoje</p>
           </div>
         </div>
-      </div>
+      </CardContent>
 
-      {/* Footer com badges */}
-      <div className="flex items-center justify-between pt-2 border-t border-border/50">
-        {/* Conquistas */}
-        {conquistasDesbloqueadas > 0 && (
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Trophy className="size-3.5 text-[#FFD700]" />
-            <span>{conquistasDesbloqueadas} conquistas</span>
-          </div>
-        )}
-
-        {/* XP hoje */}
-        {xpHoje > 0 && (
-          <div className="flex items-center gap-1 text-xs text-muted-foreground">
-            <Flame className="size-3.5 text-[#FF8C42]" />
-            <span>+{xpHoje} hoje</span>
-          </div>
-        )}
-
-        {/* Tipo do núcleo */}
-        <Badge
-          variant="outline"
-          className="text-[10px] px-2 py-0 h-5"
-          style={{
-            backgroundColor: `${corDestaque}10`,
-            borderColor: `${corDestaque}20`,
-            color: corDestaque,
-          }}
-        >
-          {tipo}
-        </Badge>
-      </div>
-    </motion.div>
+      {/* Efeito de hover */}
+      <div
+        className="absolute inset-0 opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none"
+        style={{
+          background: `radial-gradient(circle at 50% 50%, ${corDestaque}, transparent 70%)`,
+        }}
+      />
+    </Card>
   );
 }

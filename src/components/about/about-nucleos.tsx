@@ -1,5 +1,5 @@
 "use client";
-
+import { Github, Linkedin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -170,7 +170,7 @@ export default function AboutPage() {
       <section className="space-y-10 text-center">
         <h2 className="text-3xl font-bold">Criado por</h2>
 
-        <div className="grid gap-6 md:grid-cols-3 justify-items-center">
+        <div className="grid gap-6 md:grid-cols-3 justify-items-center ">
           <Card className="max-w-sm w-full">
             <CardContent className="p-6 space-y-4 flex flex-col items-center">
               <Avatar className="w-20 h-20">
@@ -182,6 +182,23 @@ export default function AboutPage() {
                 Engenheiro de software focado em soluções escaláveis ​​e impacto
                 significativo.
               </p>
+
+              <div className="flex gap-3 mt-2">
+                <Link
+                  href="https://github.com/andrewLpimenta"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Github className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                </Link>
+                <Link
+                  href="https://linkedin.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Linkedin className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                </Link>
+              </div>
             </CardContent>
           </Card>
 
@@ -196,6 +213,23 @@ export default function AboutPage() {
                 Designer focado em criar interfaces modernas e intuitivas para
                 melhorar a experiência do usuário.
               </p>
+
+              <div className="flex gap-3 mt-2">
+                <Link
+                  href="https://github.com/alissinrlk"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Github className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                </Link>
+                <Link
+                  href="https://linkedin.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Linkedin className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                </Link>
+              </div>
             </CardContent>
           </Card>
 
@@ -210,6 +244,23 @@ export default function AboutPage() {
                 Especialista em UX, focada em transformar ideias em experiências
                 digitais eficientes.
               </p>
+
+              <div className="flex gap-3 mt-2">
+                <Link
+                  href="https://github.com/caueffc"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Github className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                </Link>
+                <Link
+                  href="https://www.linkedin.com/in/cau%C3%AA-alves-ab17a02a7/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Linkedin className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                </Link>
+              </div>
             </CardContent>
           </Card>
 
@@ -224,6 +275,23 @@ export default function AboutPage() {
                 Desenvolvedor focado em performance e escalabilidade de
                 aplicações web.
               </p>
+
+              <div className="flex gap-3 mt-2">
+                <Link
+                  href="https://github.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Github className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                </Link>
+                <Link
+                  href="https://linkedin.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Linkedin className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                </Link>
+              </div>
             </CardContent>
           </Card>
 
@@ -238,6 +306,22 @@ export default function AboutPage() {
                 WEB Developer apaixonado por criar experiências digitais
                 modernas e funcionais.
               </p>
+              <div className="flex gap-3 mt-2">
+                <Link
+                  href="https://github.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Github className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                </Link>
+                <Link
+                  href="https://linkedin.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Linkedin className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                </Link>
+              </div>
             </CardContent>
           </Card>
 
@@ -252,6 +336,23 @@ export default function AboutPage() {
                 Analista de produto dedicada a melhorar funcionalidades e
                 métricas do sistema.
               </p>
+
+              <div className="flex gap-3 mt-2">
+                <Link
+                  href="https://github.com/MatheusFTavares]"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Github className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                </Link>
+                <Link
+                  href="https://www.linkedin.com/in/matheus-tavares-8aa9502b5?utm_source=share_via&utm_content=profile&utm_medium=member_ios"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Linkedin className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                </Link>
+              </div>
             </CardContent>
           </Card>
         </div>

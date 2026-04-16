@@ -1,65 +1,69 @@
-"use client";
-
-import { useState, useEffect, useCallback } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { nucleosService } from "@/services/nucleos.service";
-import { blocosService } from "@/services/blocos.service";
 import type {
   Nucleo,
   CreateNucleoPayload,
   UpdateNucleoPayload,
 } from "@/types/nucleo";
-import type { Bloco } from "@/types/bloco";
 
+// Buscar um único núcleo (já está correto)
+export function useNucleo(id: string) {
+  return useQuery({
+    queryKey: ["nucleo", id],
+    queryFn: () => nucleosService.getNucleo(id),
+    enabled: !!id,
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
+// Listar núcleos com mutations para CRUD
 export function useNucleos() {
-  const [nucleos, setNucleos] = useState<Nucleo[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
-  const load = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  const query = useQuery<Nucleo[]>({
+    queryKey: ["nucleos"],
+    queryFn: () => nucleosService.getNucleos(),
+    staleTime: 1000 * 60 * 5,
+  });
 
-      const data = await nucleosService.getNucleos();
-      setNucleos(data ?? []);
-    } catch (e: any) {
-      setError(e?.response?.data?.message || "Erro ao carregar núcleos");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  const create = useCallback(async (payload: CreateNucleoPayload) => {
-    const novo = await nucleosService.create(payload);
-    setNucleos((prev) => [novo, ...prev]);
-    return novo;
-  }, []);
-
-  const update = useCallback(
-    async (id: string, payload: UpdateNucleoPayload) => {
-      const updated = await nucleosService.update(id, payload);
-      setNucleos((prev) => prev.map((n) => (n.id === id ? updated : n)));
-      return updated;
+  const createMutation = useMutation({
+    mutationFn: (payload: CreateNucleoPayload) =>
+      nucleosService.create(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["nucleos"] });
     },
-    [],
-  );
+  });
 
-  const remove = useCallback(async (id: string) => {
-    await nucleosService.delete(id);
-    setNucleos((prev) => prev.filter((n) => n.id !== id));
-  }, []);
+  const updateMutation = useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: UpdateNucleoPayload;
+    }) => nucleosService.update(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["nucleos"] });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => nucleosService.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["nucleos"] });
+    },
+  });
 
   return {
-    nucleos,
-    loading,
-    error,
-    reload: load,
-    create,
-    update,
-    remove,
+    data: query.data ?? [],
+    isLoading: query.isLoading,
+    error: query.error,
+    reload: query.refetch,
+    create: createMutation.mutateAsync,
+    update: updateMutation.mutateAsync,
+    remove: deleteMutation.mutateAsync,
+    isCreating: createMutation.isPending,
+    isUpdating: updateMutation.isPending,
+    isDeleting: deleteMutation.isPending,
   };
 }

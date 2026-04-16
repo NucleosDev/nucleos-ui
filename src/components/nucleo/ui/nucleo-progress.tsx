@@ -1,99 +1,133 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { TrendingUp, Zap, Trophy, Flame } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import type { NucleoProgressProps } from "../types/nucleo-components.types";
+import { Trophy, Zap, Star } from "lucide-react";
+
+interface NucleoProgressProps {
+  xpAtual: number;
+  xpMax: number;
+  nivel: number;
+  variant?: "default" | "minimal" | "circular";
+  showDetails?: boolean;
+  className?: string;
+}
 
 export function NucleoProgress({
   xpAtual,
   xpMax,
   nivel,
-  energy,
-  conquistas,
+  variant = "default",
   showDetails = true,
   className,
-  variant = "default",
 }: NucleoProgressProps) {
-  const progress = (xpAtual / xpMax) * 100;
-  const xpRestante = xpMax - xpAtual;
+  const porcentagem = Math.min((xpAtual / xpMax) * 100, 100);
+  const xpFaltando = Math.max(xpMax - xpAtual, 0);
+
+  if (variant === "circular") {
+    const circumference = 2 * Math.PI * 40;
+    const strokeDashoffset =
+      circumference - (porcentagem / 100) * circumference;
+
+    return (
+      <div
+        className={cn(
+          "relative inline-flex items-center justify-center",
+          className,
+        )}
+      >
+        <svg className="w-24 h-24 transform -rotate-90">
+          {/* Background circle */}
+          <circle
+            cx="48"
+            cy="48"
+            r="40"
+            stroke="currentColor"
+            strokeWidth="8"
+            fill="none"
+            className="text-muted"
+          />
+          {/* Progress circle */}
+          <circle
+            cx="48"
+            cy="48"
+            r="40"
+            stroke="currentColor"
+            strokeWidth="8"
+            fill="none"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            className="text-primary transition-all duration-500"
+          />
+        </svg>
+        <div className="absolute flex flex-col items-center justify-center">
+          <span className="text-2xl font-bold">{nivel}</span>
+          <span className="text-xs text-muted-foreground">Nível</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (variant === "minimal") {
+    return (
+      <div className={cn("space-y-1", className)}>
+        <div className="flex items-center justify-between text-xs">
+          <span className="font-medium">Nível {nivel}</span>
+          <span className="text-muted-foreground">
+            {Math.round(porcentagem)}%
+          </span>
+        </div>
+        <Progress value={porcentagem} className="h-1.5" />
+      </div>
+    );
+  }
 
   return (
-    <div className={cn("space-y-2", className)}>
-      {/* Level e XP */}
+    <div className={cn("space-y-3", className)}>
+      {/* Header com nível */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
-          <TrendingUp className="size-4 text-primary" />
-          <span className="text-sm font-medium">Nível {nivel}</span>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary">
+            <Trophy className="size-5" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold">Nível {nivel}</p>
+            {showDetails && (
+              <p className="text-xs text-muted-foreground">
+                {xpFaltando.toLocaleString()} XP para o próximo nível
+              </p>
+            )}
+          </div>
         </div>
         {showDetails && (
-          <span className="text-xs text-muted-foreground">
-            {xpAtual.toLocaleString("pt-BR")}
-          </span>
+          <div className="text-right">
+            <p className="text-sm font-bold text-primary">
+              {xpAtual.toLocaleString()}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              / {xpMax.toLocaleString()} XP
+            </p>
+          </div>
         )}
       </div>
 
       {/* Barra de progresso */}
-      <div className="relative">
-        <Progress
-          value={progress}
-          className="h-2 [&>div]:bg-gradient-to-r [&>div]:from-primary [&>div]:to-accent"
-        />
-
-        {/* Tooltip com XP restante */}
-        {variant === "default" && (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <motion.div
-                  className="absolute -top-1 size-4 rounded-full bg-primary ring-2 ring-background cursor-help"
-                  style={{
-                    left: `${progress}%`,
-                    transform: "translateX(-50%)",
-                  }}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.5 }}
-                />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p className="text-xs">{xpRestante} XP para o próximo nível</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        )}
-      </div>
-
-      {/* Stats adicionais */}
-      {showDetails && (
-        <div className="flex items-center justify-between pt-1 text-xs text-muted-foreground">
-          {energy !== undefined && (
-            <div className="flex items-center gap-1">
-              <Zap className="size-3.5 text-accent" />
-              <span>{energy} energia</span>
-            </div>
-          )}
-
-          {conquistas !== undefined && conquistas > 0 && (
-            <div className="flex items-center gap-1">
-              <Trophy className="size-3.5 text-yellow-500" />
-              <span>{conquistas} conquistas</span>
-            </div>
-          )}
-
+      <div className="space-y-1">
+        <Progress value={porcentagem} className="h-2.5" />
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
-            <Flame className="size-3.5 text-orange-500"></Flame>
-            <span>+{Math.min(50, xpRestante)}/dia</span>
+            <Zap className="size-3" />
+            <span>{Math.round(porcentagem)}% completo</span>
           </div>
+          {showDetails && (
+            <div className="flex items-center gap-1">
+              <Star className="size-3" />
+              <span>Próximo: Nível {nivel + 1}</span>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }

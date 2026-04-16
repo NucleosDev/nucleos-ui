@@ -1,195 +1,78 @@
-// src/services/listas.service.ts
-import api from "@/services/api";
+// src/services/lista.service.ts
+import { api } from "@/lib/api";
 import { API_ROUTES } from "@/constants/routes";
 import type {
   Lista,
   ItemLista,
   Categoria,
   CreateListaPayload,
+  UpdateListaPayload,
   CreateItemListaPayload,
+  UpdateItemListaPayload,
 } from "@/types/lista";
 
 export const listasService = {
-  // ===========================================================================
-  // LISTAS
-  // ===========================================================================
-
-  /**
-   * Busca todas as listas de um bloco
-   */
-  async getListasByBloco(blocoId: string): Promise<Lista[]> {
-    const response = await api.get<Lista[]>(
-      API_ROUTES.LISTAS.BY_BLOCO(blocoId),
-    );
-    return response.data;
+  // ===== LISTAS =====
+  async listarPorBloco(blocoId: string): Promise<Lista[]> {
+    return api.get(API_ROUTES.LISTAS.LIST(blocoId));
   },
 
-  /**
-   * Busca uma lista específica por ID
-   */
-  async getLista(id: string): Promise<Lista> {
-    const response = await api.get<Lista>(API_ROUTES.LISTAS.BY_ID(id));
-    return response.data;
+  async buscarPorId(id: string): Promise<Lista> {
+    return api.get(API_ROUTES.LISTAS.BY_ID(id));
   },
 
-  /**
-   * Cria uma nova lista em um bloco
-   */
-  async createLista(payload: CreateListaPayload): Promise<Lista> {
-    const response = await api.post<Lista>(API_ROUTES.LISTAS.BASE, payload);
-    return response.data;
+  async criar(payload: CreateListaPayload): Promise<Lista> {
+    return api.post(API_ROUTES.LISTAS.CREATE, payload);
   },
 
-  /**
-   * Atualiza uma lista existente
-   */
-  async updateLista(
+  async atualizar(id: string, payload: UpdateListaPayload): Promise<Lista> {
+    return api.put(API_ROUTES.LISTAS.UPDATE(id), payload);
+  },
+
+  async deletar(id: string): Promise<void> {
+    return api.delete(API_ROUTES.LISTAS.DELETE(id));
+  },
+
+  // ===== ITENS =====
+  async listarItens(listaId: string): Promise<ItemLista[]> {
+    return api.get(API_ROUTES.LISTAS.ITENS.LIST(listaId));
+  },
+
+  async criarItem(payload: CreateItemListaPayload): Promise<ItemLista> {
+    return api.post(API_ROUTES.LISTAS.ITENS.CREATE, payload);
+  },
+
+  async atualizarItem(
     id: string,
-    payload: Partial<CreateListaPayload>,
-  ): Promise<Lista> {
-    const response = await api.put<Lista>(API_ROUTES.LISTAS.BY_ID(id), payload);
-    return response.data;
-  },
-
-  /**
-   * Remove uma lista (soft delete)
-   */
-  async deleteLista(id: string): Promise<void> {
-    await api.delete(API_ROUTES.LISTAS.BY_ID(id));
-  },
-
-  // ===========================================================================
-  // ITENS DA LISTA
-  // ===========================================================================
-
-  /**
-   * Busca todos os itens de uma lista
-   */
-  async getItensByLista(listaId: string): Promise<ItemLista[]> {
-    const response = await api.get<ItemLista[]>(
-      API_ROUTES.LISTAS.ITEMS(listaId),
-    );
-    return response.data;
-  },
-
-  /**
-   * Busca um item específico por ID
-   */
-  async getItem(id: string): Promise<ItemLista> {
-    const response = await api.get<ItemLista>(`/v1/itens-lista/${id}`);
-    return response.data;
-  },
-
-  /**
-   * Cria um novo item em uma lista
-   */
-  async createItem(payload: CreateItemListaPayload): Promise<ItemLista> {
-    const response = await api.post<ItemLista>("/v1/itens-lista", payload);
-    return response.data;
-  },
-
-  /**
-   * Atualiza um item da lista
-   */
-  async updateItem(
-    id: string,
-    payload: Partial<CreateItemListaPayload>,
+    payload: UpdateItemListaPayload,
   ): Promise<ItemLista> {
-    const response = await api.put<ItemLista>(`/v1/itens-lista/${id}`, payload);
-    return response.data;
+    return api.put(API_ROUTES.LISTAS.ITENS.UPDATE(id), payload);
   },
 
-  /**
-   * Marca/desmarca um item como concluído
-   */
-  async toggleItemChecked(id: string, checked: boolean): Promise<ItemLista> {
-    const response = await api.patch<ItemLista>(
-      `/v1/itens-lista/${id}/toggle`,
-      { checked },
-    );
-    return response.data;
+  async toggleItem(id: string): Promise<ItemLista> {
+    return api.patch(API_ROUTES.LISTAS.ITENS.TOGGLE(id));
   },
 
-  /**
-   * Remove um item da lista (soft delete)
-   */
-  async deleteItem(id: string): Promise<void> {
-    await api.delete(`/v1/itens-lista/${id}`);
+  async deletarItem(id: string): Promise<void> {
+    return api.delete(API_ROUTES.LISTAS.ITENS.DELETE(id));
   },
 
-  /**
-   * Reordena os itens de uma lista
-   */
-  async reorderItems(
-    listaId: string,
-    orders: { id: string; ordem: number }[],
-  ): Promise<ItemLista[]> {
-    const response = await api.post<ItemLista[]>(
-      `/v1/listas/${listaId}/reorder`,
-      { orders },
-    );
-    return response.data;
+  // ===== CATEGORIAS =====
+  async listarCategorias(listaId: string): Promise<Categoria[]> {
+    return api.get(API_ROUTES.LISTAS.CATEGORIAS.LIST(listaId));
   },
 
-  /**
-   * Atualiza múltiplos itens em lote (ex: marcar vários como concluídos)
-   */
-  async bulkUpdateItems(
-    items: { id: string; checked?: boolean; quantidade?: number }[],
-  ): Promise<void> {
-    await api.post("/v1/itens-lista/bulk", { items });
+  async criarCategoria(payload: {
+    listaId: string;
+    nome: string;
+    cor?: string;
+  }): Promise<Categoria> {
+    return api.post(API_ROUTES.LISTAS.CATEGORIAS.CREATE, payload);
   },
 
-  // ===========================================================================
-  // CATEGORIAS
-  // ===========================================================================
-
-  /**
-   * Busca todas as categorias de uma lista
-   */
-  async getCategorias(listaId: string): Promise<Categoria[]> {
-    const response = await api.get<Categoria[]>(
-      `/v1/listas/${listaId}/categorias`,
-    );
-    return response.data;
-  },
-
-  /**
-   * Cria uma nova categoria para a lista
-   */
-  async createCategoria(
-    listaId: string,
-    nome: string,
-    cor?: string,
-  ): Promise<Categoria> {
-    const response = await api.post<Categoria>(
-      `/v1/listas/${listaId}/categorias`,
-      { nome, cor },
-    );
-    return response.data;
-  },
-
-  /**
-   * Atualiza uma categoria
-   */
-  async updateCategoria(
-    id: string,
-    nome?: string,
-    cor?: string,
-  ): Promise<Categoria> {
-    const response = await api.put<Categoria>(`/v1/categorias/${id}`, {
-      nome,
-      cor,
-    });
-    return response.data;
-  },
-
-  /**
-   * Remove uma categoria
-   */
-  async deleteCategoria(id: string): Promise<void> {
-    await api.delete(`/v1/categorias/${id}`);
+  async deletarCategoria(id: string): Promise<void> {
+    return api.delete(API_ROUTES.LISTAS.CATEGORIAS.DELETE(id));
   },
 };
 
-export default listasService;
+

@@ -1,20 +1,25 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useBloco } from "@/hooks/useBlocos"; // ✅ import correto
+import { useBloco } from "@/hooks/useBlocos";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ListaPage } from "@/components/lista/lista-page";
-// import { TarefasPage } from "@/components/tarefas/tarefas-page";
-// import { CalendarioPage } from "@/components/calendario/calendario-page";
 
 export default function BlocoDetalhesPage() {
   const params = useParams();
   const router = useRouter();
-  const nucleoId = params.nucleoId as string;
-  const blocoId = params.blocoId as string;
 
-  const { data: bloco, isLoading, error } = useBloco(blocoId); // ✅
+  const nucleoId = params?.nucleoId as string;
+  const blocoId = params?.blocoId as string;
+
+  const { data: bloco, isLoading, error } = useBloco(
+    blocoId,
+    nucleoId
+  );
+
+  // 🔒 Segurança extra
+  if (!blocoId) return null;
 
   if (isLoading) {
     return (
@@ -35,31 +40,42 @@ export default function BlocoDetalhesPage() {
     );
   }
 
-  switch (bloco.tipo) {
-    case "lista":
-      return <ListaPage bloco={bloco} nucleoId={nucleoId} />;
-    case "tarefas":
-      return <PlaceholderPage tipo="Tarefas" />;
-    case "calendario":
-      return <PlaceholderPage tipo="Calendário" />;
-    default:
-      return <PlaceholderPage tipo={bloco.tipo} />;
-  }
-}
+  // 🧠 Mapa de componentes (escala melhor que switch)
+  const blocoComponents = {
+    lista: ListaPage,
+  } as const;
 
-function PlaceholderPage({ tipo }: { tipo: string }) {
-  const router = useRouter();
+  const Component =
+    blocoComponents[bloco.tipo as keyof typeof blocoComponents];
+
   return (
     <div className="container py-8">
-      <Button variant="ghost" onClick={() => router.back()} className="mb-4">
+      {/* ✅ Voltar sempre visível */}
+      <Button
+        variant="ghost"
+        onClick={() => router.back()}
+        className="mb-4"
+      >
         <ArrowLeft className="mr-2 h-4 w-4" />
         Voltar
       </Button>
-      <div className="rounded-lg border border-dashed p-12 text-center">
-        <p className="text-muted-foreground">
-          Página para <strong>{tipo}</strong> em desenvolvimento.
-        </p>
-      </div>
+
+      {/* ✅ Render dinâmico */}
+      {Component ? (
+        <Component bloco={bloco} nucleoId={nucleoId} />
+      ) : (
+        <PlaceholderPage tipo={bloco.tipo} />
+      )}
+    </div>
+  );
+}
+
+function PlaceholderPage({ tipo }: { tipo: string }) {
+  return (
+    <div className="rounded-lg border border-dashed p-12 text-center">
+      <p className="text-muted-foreground">
+        Página para <strong>{tipo}</strong> em desenvolvimento.
+      </p>
     </div>
   );
 }

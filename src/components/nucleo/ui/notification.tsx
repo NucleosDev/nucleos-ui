@@ -1,145 +1,181 @@
-"use client"
+"use client";
 
-import { motion, AnimatePresence } from "framer-motion"
-import { cn } from "@/lib/utils"
-import Image from "next/image"
-import { X } from "lucide-react"
-import { useEffect, useState } from "react"
-
-export interface Notificacao {
-  id: string
-  titulo: string
-  mensagem: string
-  icone?: React.ReactNode
-  imagem?: string
-  tempo?: string
-  acao?: {
-    label: string
-    onClick: () => void
-  }
-  tipo?: 'sucesso' | 'aviso' | 'info' | 'conquista'
-  lida?: boolean
-}
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import type { NotificacaoUI } from "@/types";
+import {
+  X,
+  Bell,
+  Trophy,
+  Zap,
+  CheckCircle,
+  AlertCircle,
+  Info,
+  Clock,
+} from "lucide-react";
 
 interface NotificacaoIOSProps {
-  notificacao: Notificacao
-  onClose?: () => void
-  onClick?: () => void
-  className?: string
-  variant?: 'flutuante' | 'lista'
+  notificacao: NotificacaoUI;
+  variant?: "flutuante" | "lista";
+  onClose?: () => void;
+  onMarkAsRead?: () => void;
+  className?: string;
 }
+
+// Ícones por tipo
+const ICONES_TIPO: Record<string, React.ReactNode> = {
+  info: <Info className="size-5 text-blue-500" />,
+  sucesso: <CheckCircle className="size-5 text-green-500" />,
+  alerta: <AlertCircle className="size-5 text-yellow-500" />,
+  conquista: <Trophy className="size-5 text-amber-500" />,
+  lembrete: <Clock className="size-5 text-purple-500" />,
+};
 
 export function NotificacaoIOS({
   notificacao,
+  variant = "lista",
   onClose,
-  onClick,
+  onMarkAsRead,
   className,
-  variant = 'flutuante'
 }: NotificacaoIOSProps) {
-  const { titulo, mensagem, icone, imagem, tempo, acao, tipo = 'info', lida } = notificacao
+  const icone = notificacao.icone || ICONES_TIPO[notificacao.tipo || "info"];
 
-  const getTipoStyles = () => {
-    const styles = {
-      sucesso: 'from-green-500/20 to-green-500/5 border-green-500/30',
-      aviso: 'from-yellow-500/20 to-yellow-500/5 border-yellow-500/30',
-      info: 'from-primary/20 to-primary/5 border-primary/30',
-      conquista: 'from-accent/20 to-accent/5 border-accent/30'
-    }
-    return styles[tipo]
-  }
-
-  const getIconePadrao = () => {
-    if (icone) return icone
+  if (variant === "flutuante") {
     return (
-      <div className="size-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-        <Image src="/icon.svg" alt="Nucleos" width={20} height={20} className="invert" />
-      </div>
-    )
-  }
+      <div
+        className={cn(
+          "relative flex items-start gap-3 p-4 rounded-2xl bg-card/95 backdrop-blur-md shadow-lg border",
+          "animate-in slide-in-from-right-5 fade-in duration-300",
+          className,
+        )}
+      >
+        {/* Ícone */}
+        <div className="flex-shrink-0 mt-0.5">{icone}</div>
 
-  return (
-    <motion.div
-      initial={variant === 'flutuante' ? { opacity: 0, y: 20, scale: 0.95 } : { opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, x: 100 }}
-      whileHover={{ scale: variant === 'flutuante' ? 1.02 : 1 }}
-      transition={{ type: "spring", damping: 20, stiffness: 300 }}
-      className={cn(
-        "relative rounded-2xl bg-card/80 backdrop-blur-xl border shadow-xl",
-        "bg-gradient-to-br",
-        getTipoStyles(),
-        !lida && "ring-2 ring-primary/20",
-        variant === 'flutuante' ? "w-[320px]" : "w-full",
-        className
-      )}
-      onClick={onClick}
-    >
-      <div className="p-4">
-        {/* Header */}
-        <div className="flex items-start gap-3">
-          {/* Ícone */}
-          <div className="shrink-0">
-            {imagem ? (
-              <Image src={imagem} alt={titulo} width={40} height={40} className="rounded-xl" />
-            ) : (
-              getIconePadrao()
-            )}
-          </div>
-
-          {/* Conteúdo */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2">
-              <p className="font-semibold text-sm truncate">{titulo}</p>
-              {tempo && (
-                <span className="text-xs text-muted-foreground whitespace-nowrap">{tempo}</span>
-              )}
-            </div>
-            <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{mensagem}</p>
-            
-            {/* Ação */}
-            {acao && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation()
-                  acao.onClick()
-                }}
-                className="mt-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
-              >
-                {acao.label}
-              </button>
-            )}
-          </div>
-
-          {/* Botão fechar (apenas flutuante) */}
-          {variant === 'flutuante' && onClose && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                onClose()
-              }}
-              className="shrink-0 size-6 rounded-full bg-muted/50 flex items-center justify-center hover:bg-muted transition-colors"
+        {/* Conteúdo */}
+        <div className="flex-1 min-w-0">
+          <p className="font-semibold text-sm">{notificacao.titulo}</p>
+          {notificacao.mensagem && (
+            <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
+              {notificacao.mensagem}
+            </p>
+          )}
+          {notificacao.acao && (
+            <Button
+              variant="link"
+              size="sm"
+              className="h-auto p-0 mt-1 text-xs"
+              onClick={notificacao.acao.onClick}
             >
-              <X className="size-3" />
-            </button>
+              {notificacao.acao.label}
+            </Button>
           )}
         </div>
 
-        {/* Indicador de não lida */}
-        {!lida && variant === 'lista' && (
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full bg-primary" />
+        {/* Tempo e fechar */}
+        <div className="flex flex-col items-end gap-1">
+          <span className="text-xs text-muted-foreground">
+            {notificacao.tempo}
+          </span>
+          {onClose && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6"
+              onClick={onClose}
+            >
+              <X className="size-4" />
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Variant lista
+  return (
+    <div
+      className={cn(
+        "flex items-start gap-3 p-3 rounded-lg transition-colors",
+        notificacao.lida
+          ? "bg-card opacity-70"
+          : "bg-accent/30 hover:bg-accent/50",
+        className,
+      )}
+      onClick={onMarkAsRead}
+    >
+      {/* Ícone */}
+      <div className="flex-shrink-0 mt-0.5">{icone}</div>
+
+      {/* Conteúdo */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <p className={cn("text-sm", !notificacao.lida && "font-semibold")}>
+            {notificacao.titulo}
+          </p>
+          {!notificacao.lida && (
+            <div className="w-2 h-2 rounded-full bg-primary" />
+          )}
+        </div>
+        {notificacao.mensagem && (
+          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
+            {notificacao.mensagem}
+          </p>
+        )}
+        {notificacao.acao && (
+          <Button
+            variant="link"
+            size="sm"
+            className="h-auto p-0 mt-1 text-xs"
+            onClick={(e) => {
+              e.stopPropagation();
+              notificacao.acao?.onClick();
+            }}
+          >
+            {notificacao.acao.label}
+          </Button>
         )}
       </div>
-    </motion.div>
-  )
+
+      {/* Tempo */}
+      <span className="text-xs text-muted-foreground shrink-0">
+        {notificacao.tempo}
+      </span>
+    </div>
+  );
 }
 
-// Container para notificações flutuantes
-export function NotificacoesContainer({ children }: { children: React.ReactNode }) {
+// ============================================================================
+// CONTAINER DE NOTIFICAÇÕES
+// ============================================================================
+
+interface NotificacoesContainerProps {
+  children: React.ReactNode;
+  position?: "top-right" | "top-left" | "bottom-right" | "bottom-left";
+  className?: string;
+}
+
+export function NotificacoesContainer({
+  children,
+  position = "top-right",
+  className,
+}: NotificacoesContainerProps) {
+  const positionClasses = {
+    "top-right": "top-4 right-4",
+    "top-left": "top-4 left-4",
+    "bottom-right": "bottom-4 right-4",
+    "bottom-left": "bottom-4 left-4",
+  };
+
   return (
-    <div className="fixed top-20 right-4 z-50 flex flex-col gap-2 w-[320px] pointer-events-none">
-      <div className="pointer-events-auto space-y-2">
-        {children}
-      </div>
+    <div
+      className={cn(
+        "fixed z-50 flex flex-col gap-2 w-80 max-w-[calc(100vw-2rem)]",
+        positionClasses[position],
+        className,
+      )}
+    >
+      {children}
     </div>
-  )
+  );
 }
