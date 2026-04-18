@@ -1,6 +1,6 @@
 // src/hooks/useListaStats.ts
 import { useMemo } from "react";
-import type { Lista } from "@/types/lista";
+import type { Lista, ItemLista } from "@/types/lista";
 
 export function useListaStats(lista?: Lista) {
   const itens = lista?.itens ?? [];
@@ -8,7 +8,7 @@ export function useListaStats(lista?: Lista) {
   const totalItens = itens.length;
 
   const itensConcluidos = useMemo(() => {
-    return itens.filter((i) => i.concluido).length;
+    return itens.filter((i) => i).length;
   }, [itens]);
 
   const progresso = useMemo(() => {

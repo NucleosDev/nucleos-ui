@@ -16,10 +16,11 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { ColecaoCard } from "@/components/colecoes/ColecaoCard";
 import { CriarColecaoModal } from "@/components/colecoes/CriarColecaoModal";
+import { GerenciarCamposModal } from "@/components/colecoes/GerenciarCamposModal"; // 👈 novo
 import { useColecoes } from "@/hooks/useColecoes";
 import { toast } from "@/hooks/use-toast";
-import type { Bloco } from "@/types/bloco"; // ou "@/types/bloco" – deve ser o mesmo usado na página
-import type { Colecao } from "@/types/colecao"; // importe explícito do tipo correto
+import type { Bloco } from "@/types/bloco";
+import type { Colecao } from "@/types/colecao";
 
 interface ColecoesBlocoCardProps {
   bloco: Bloco;
@@ -48,6 +49,8 @@ export function ColecoesBlocoCard({
   const [colecoes, setColecoes] = useState<Colecao[]>([]);
   const [modalCriarAberta, setModalCriarAberta] = useState(false);
   const [colecaoEditando, setColecaoEditando] = useState<Colecao | null>(null);
+  const [gerenciandoCamposColecao, setGerenciandoCamposColecao] =
+    useState<Colecao | null>(null); // 👈 novo estado
 
   const carregarColecoes = useCallback(async () => {
     const resultado = await listColecoesByBloco(bloco.id);
@@ -70,7 +73,7 @@ export function ColecoesBlocoCard({
   };
 
   const handleEditarColecao = async (colecao: Colecao, novoNome: string) => {
-    const atualizada = await updateColecao(colecao.id, novoNome); // ← agora string
+    const atualizada = await updateColecao(colecao.id, novoNome);
     if (atualizada) {
       toast({ title: "Coleção atualizada" });
       await carregarColecoes();
@@ -83,7 +86,7 @@ export function ColecoesBlocoCard({
   const handleExcluirColecao = async (colecaoId: string) => {
     if (!confirm("Tem certeza?")) return;
     const result = await deleteColecao(colecaoId);
-    if (result !== undefined) {
+    if (result) {
       toast({ title: "Coleção excluída" });
       await carregarColecoes();
     } else {
@@ -95,6 +98,10 @@ export function ColecoesBlocoCard({
     router.push(
       `/dashboard/nucleos/${nucleoId}/blocos/${bloco.id}/colecoes/${colecao.id}`,
     );
+  };
+
+  const handleGerenciarCampos = (colecao: Colecao) => {
+    setGerenciandoCamposColecao(colecao);
   };
 
   return (
@@ -158,6 +165,7 @@ export function ColecoesBlocoCard({
                   onEdit={(c) => setColecaoEditando(c)}
                   onDelete={handleExcluirColecao}
                   onSelect={handleSelectColecao}
+                  onGerenciarCampos={handleGerenciarCampos} // 👈 nova prop
                 />
               ))}
             </div>
@@ -165,11 +173,14 @@ export function ColecoesBlocoCard({
         </CardContent>
       </Card>
 
+      {/* Modal de criação de coleção */}
       <CriarColecaoModal
         open={modalCriarAberta}
         onClose={() => setModalCriarAberta(false)}
         onConfirm={handleCriarColecao}
       />
+
+      {/* Modal de edição de nome da coleção */}
       {colecaoEditando && (
         <CriarColecaoModal
           open={!!colecaoEditando}
@@ -179,6 +190,16 @@ export function ColecoesBlocoCard({
           }
           initialNome={colecaoEditando.nome}
           titulo="Editar coleção"
+        />
+      )}
+
+      {/* Modal de gerenciamento de campos */}
+      {gerenciandoCamposColecao && (
+        <GerenciarCamposModal
+          open={!!gerenciandoCamposColecao}
+          onClose={() => setGerenciandoCamposColecao(null)}
+          colecaoId={gerenciandoCamposColecao.id}
+          colecaoNome={gerenciandoCamposColecao.nome || "Coleção"}
         />
       )}
     </>

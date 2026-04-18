@@ -1,6 +1,6 @@
 // src/hooks/useBlocos.ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { blocosService } from "@/services/blocos.service"; // Certifique-se do caminho correto
+import { blocosService } from "@/services/blocos.service";
 import type {
   Bloco,
   CreateBlocoPayload,
@@ -68,11 +68,24 @@ export function useBlocos(nucleoId?: string) {
   };
 }
 
-// Corrigido: aceita nucleoId opcional e passa para o serviço
 export function useBloco(id: string, nucleoId?: string) {
   return useQuery<Bloco>({
     queryKey: ["blocos", id],
     queryFn: () => blocosService.buscarPorId(id, nucleoId),
     enabled: !!id,
+  });
+}
+
+export function useTotalBlocosCount(nucleos: { id: string }[]) {
+  return useQuery({
+    queryKey: ["blocos", "total", nucleos.map((n) => n.id).join(",")],
+    queryFn: async () => {
+      const counts = await Promise.all(
+        nucleos.map((n) => blocosService.listarPorNucleo(n.id)),
+      );
+      return counts.reduce((sum, blocos) => sum + blocos.length, 0);
+    },
+    enabled: nucleos.length > 0,
+    staleTime: 1000 * 60 * 5,
   });
 }

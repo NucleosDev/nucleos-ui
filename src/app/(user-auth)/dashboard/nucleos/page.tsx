@@ -1,149 +1,319 @@
-// "use client";
-// import { useState } from "react";
-// import { useRouter } from "next/navigation";
-// import { ArrowLeft, Plus, Search, Grid3X3, List, BookOpen, Briefcase, Heart, Target, Star, Dumbbell, Wallet, Globe, Layers, Edit3, Trash2, MoreHorizontal } from "lucide-react";
-// import { useNucleos } from "@/hooks/use-nucleos";
-// import { nucleosService } from "@/services/nucleos.service";
-// import { Button } from "@/components/ui/button";
-// import { Input } from "@/components/ui/input";
-// import { Badge } from "@/components/ui/badge";
-// import { Skeleton } from "@/components/ui/skeleton";
-// import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-// import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-// import { Textarea } from "@/components/ui/textarea";
-// import { toast } from "@/hooks/use-toast";
-// import type { Nucleo } from "@/types/nucleo";
+"use client";
 
-// const TIPO_ICONS: Record<string, React.ElementType> = { estudo: BookOpen, pessoal: Heart, profissional: Briefcase, projeto: Target, hobby: Star, fitness: Dumbbell, financas: Wallet, idiomas: Globe };
-// const TIPO_COLORS: Record<string, string> = { estudo: "#4D7CFF", pessoal: "#FF6B6B", profissional: "#0077BE", projeto: "#00C9A7", hobby: "#FFD700", fitness: "#FF8C42", financas: "#2EBD59", idiomas: "#9B59B6" };
-// const TIPOS = ["pessoal","profissional","estudo","projeto","hobby","fitness","financas","idiomas"];
+import { useParams, useRouter } from "next/navigation";
+import { notFound } from "next/navigation";
+import { useNucleo } from "@/hooks/useNucleo";
+import { useBlocos } from "@/hooks/useBlocos";
+import Image from "next/image";
+import {
+  BookOpen,
+  Heart,
+  Briefcase,
+  Home,
+  Dumbbell,
+  Palette,
+  Music,
+  Code,
+  Star,
+  Globe,
+  Coffee,
+  Camera,
+  Plane,
+  ShoppingBag,
+  Users,
+  Mic,
+  Gamepad2,
+  Leaf,
+  GraduationCap,
+  Loader2,
+  Plus,
+  ArrowLeft,
+  Layers,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { CriarBlocoModal } from "@/components/blocos/criar-blocos-modal";
+import { BlocoCard } from "@/components/blocos/bloco-card";
+import { toast } from "@/hooks/use-toast";
+import { useState } from "react";
+import type { CreateBlocoPayload } from "@/types/bloco";
+import { BLOCO_INITIALIZERS } from "@/lib/bloco-initializers";
+import { ColecoesBlocoCard } from "@/components/blocos/cruds/ColecoesBlocoCard";
+import { ListasBlocoCard } from "@/components/blocos/cruds/ListasBlocoCard";
 
-// function NucleoFormModal({ open, onClose, onSaved, nucleo }: { open: boolean; onClose: () => void; onSaved: () => void; nucleo?: Nucleo | null }) {
-//   const isEdit = !!nucleo;
-//   const [loading, setLoading] = useState(false);
-//   const [form, setForm] = useState({ nome: nucleo?.nome || "", descricao: nucleo?.descricao || "", tipo: nucleo?.tipo || "pessoal", corDestaque: nucleo?.corDestaque || "#4D7CFF" });
-//   const handleSubmit = async () => {
-//     if (!form.nome.trim()) { toast({ title: "Nome obrigatório", variant: "destructive" }); return; }
-//     setLoading(true);
-//     try {
-//       if (isEdit && nucleo) await nucleosService.updateNucleo(nucleo.id, form);
-//       else await nucleosService.createNucleo(form);
-//       toast({ title: isEdit ? "Núcleo atualizado!" : "Núcleo criado!" });
-//       onSaved(); onClose();
-//     } catch { toast({ title: "Erro", variant: "destructive" }); }
-//     finally { setLoading(false); }
-//   };
-//   return (
-//     <Dialog open={open} onOpenChange={onClose}>
-//       <DialogContent className="max-w-md">
-//         <DialogHeader><DialogTitle>{isEdit ? "Editar" : "Novo"} Núcleo</DialogTitle></DialogHeader>
-//         <div className="space-y-4 py-2">
-//           <div><label className="text-sm font-medium block mb-1.5">Nome *</label><Input placeholder="Ex: Desenvolvimento Pessoal" value={form.nome} onChange={e => setForm(f => ({ ...f, nome: e.target.value }))} /></div>
-//           <div><label className="text-sm font-medium block mb-1.5">Descrição</label><Textarea value={form.descricao} onChange={e => setForm(f => ({ ...f, descricao: e.target.value }))} rows={2} /></div>
-//           <div><label className="text-sm font-medium block mb-1.5">Tipo</label><Select value={form.tipo} onValueChange={v => setForm(f => ({ ...f, tipo: v }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{TIPOS.map(t => <SelectItem key={t} value={t} className="capitalize">{t}</SelectItem>)}</SelectContent></Select></div>
-//           <div><label className="text-sm font-medium block mb-1.5">Cor</label><div className="flex items-center gap-3"><input type="color" value={form.corDestaque} onChange={e => setForm(f => ({ ...f, corDestaque: e.target.value }))} className="w-10 h-10 rounded-lg cursor-pointer border border-border" /><span className="text-sm text-muted-foreground">{form.corDestaque}</span></div></div>
-//         </div>
-//         <DialogFooter><Button variant="outline" onClick={onClose}>Cancelar</Button><Button onClick={handleSubmit} disabled={loading}>{loading ? "Salvando..." : "Salvar"}</Button></DialogFooter>
-//       </DialogContent>
-//     </Dialog>
-//   );
-// }
+// Mapeamento de ícones (mesmo do CreateNucleoModal e NucleoCard)
+const iconMap: Record<string, LucideIcon> = {
+  "book-open": BookOpen,
+  heart: Heart,
+  briefcase: Briefcase,
+  home: Home,
+  dumbbell: Dumbbell,
+  palette: Palette,
+  music: Music,
+  code: Code,
+  star: Star,
+  globe: Globe,
+  coffee: Coffee,
+  camera: Camera,
+  plane: Plane,
+  "shopping-bag": ShoppingBag,
+  users: Users,
+  mic: Mic,
+  "gamepad-2": Gamepad2,
+  leaf: Leaf,
+  "graduation-cap": GraduationCap,
+};
 
-// export default function NucleosPage() {
-//   const router = useRouter();
-//   const { nucleos, loading, reload, remove } = useNucleos();
-//   const [search, setSearch] = useState("");
-//   const [view, setView] = useState<"grid" | "list">("grid");
-//   const [showForm, setShowForm] = useState(false);
-//   const [editNucleo, setEditNucleo] = useState<Nucleo | null>(null);
+function getIconComponent(iconId?: string | null) {
+  if (!iconId) return Star;
+  return iconMap[iconId] || Star;
+}
 
-//   const filtered = nucleos.filter(n => n.nome.toLowerCase().includes(search.toLowerCase()) || n.descricao?.toLowerCase().includes(search.toLowerCase()));
+export default function NucleoPage() {
+  const params = useParams();
+  const router = useRouter();
 
-//   const handleDelete = async (id: string, nome: string) => {
-//     if (!confirm(`Excluir "${nome}"?`)) return;
-//     try { await remove(id); toast({ title: "Excluído" }); }
-//     catch { toast({ title: "Erro", variant: "destructive" }); }
-//   };
+  const rawId = params.id;
+  const id = typeof rawId === "string" ? rawId : (rawId as any)?.id;
 
-//   return (
-//     <div className="min-h-screen bg-background">
-//       <header className="border-b border-border sticky top-0 z-10 bg-background/95">
-//         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
-//           <div className="flex items-center gap-3">
-//             <Button variant="ghost" size="icon" onClick={() => router.back()}><ArrowLeft className="w-4 h-4" /></Button>
-//             <span className="font-semibold">Meus Núcleos</span>
-//             <Badge variant="outline" className="text-xs">{nucleos.length}</Badge>
-//           </div>
-//           <div className="flex items-center gap-2">
-//             <div className="relative hidden sm:block"><Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" /><Input placeholder="Buscar núcleos..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 w-56 h-8 text-sm" /></div>
-//             <Button variant="ghost" size="icon" onClick={() => setView(v => v === "grid" ? "list" : "grid")} className="w-8 h-8">{view === "grid" ? <List className="w-4 h-4" /> : <Grid3X3 className="w-4 h-4" />}</Button>
-//             <Button size="sm" onClick={() => setShowForm(true)}><Plus className="w-4 h-4 mr-1" />Novo</Button>
-//           </div>
-//         </div>
-//       </header>
-//       <main className="max-w-5xl mx-auto px-4 py-6">
-//         {loading ? (
-//           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">{[...Array(6)].map((_, i) => <Skeleton key={i} className="h-36 rounded-xl" />)}</div>
-//         ) : filtered.length === 0 ? (
-//           <div onClick={() => setShowForm(true)} className="border-2 border-dashed border-border rounded-xl py-20 flex flex-col items-center gap-4 cursor-pointer hover:border-primary/40 transition-all">
-//             <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center"><Plus className="w-7 h-7 text-primary" /></div>
-//             <p className="font-medium text-muted-foreground">{search ? "Nenhum resultado" : "Crie seu primeiro núcleo"}</p>
-//           </div>
-//         ) : view === "grid" ? (
-//           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-//             {filtered.map(n => {
-//               const Icon = TIPO_ICONS[n.tipo] || Layers;
-//               const color = n.corDestaque || TIPO_COLORS[n.tipo] || "#4D7CFF";
-//               return (
-//                 <div key={n.id} className="group bg-card border border-border rounded-xl overflow-hidden cursor-pointer hover:border-primary/40 hover:shadow-md transition-all" onClick={() => router.push(`/dashboard/nucleos/${n.id}`)}>
-//                   <div className="h-14" style={{ background: `linear-gradient(135deg, ${color}30, ${color}10)` }} />
-//                   <div className="p-3 -mt-3">
-//                     <div className="flex items-start justify-between mb-2">
-//                       <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-background border border-border shadow-sm"><Icon className="w-4 h-4" style={{ color }} /></div>
-//                       <DropdownMenu>
-//                         <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}><Button variant="ghost" size="icon" className="w-6 h-6 opacity-0 group-hover:opacity-100"><MoreHorizontal className="w-3 h-3" /></Button></DropdownMenuTrigger>
-//                         <DropdownMenuContent align="end">
-//                           <DropdownMenuItem onClick={e => { e.stopPropagation(); setEditNucleo(n); }}><Edit3 className="w-3.5 h-3.5 mr-2" />Editar</DropdownMenuItem>
-//                           <DropdownMenuSeparator />
-//                           <DropdownMenuItem className="text-destructive" onClick={e => { e.stopPropagation(); handleDelete(n.id, n.nome); }}><Trash2 className="w-3.5 h-3.5 mr-2" />Excluir</DropdownMenuItem>
-//                         </DropdownMenuContent>
-//                       </DropdownMenu>
-//                     </div>
-//                     <p className="font-semibold text-sm truncate">{n.nome}</p>
-//                     <Badge variant="outline" className="mt-1 text-xs" style={{ borderColor: `${color}40`, color }}>{n.tipo}</Badge>
-//                   </div>
-//                 </div>
-//               );
-//             })}
-//             <button onClick={() => setShowForm(true)} className="border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-2 py-10 hover:border-primary/40 hover:bg-muted/20 transition-all cursor-pointer"><Plus className="w-5 h-5 text-muted-foreground" /><span className="text-xs text-muted-foreground">Novo</span></button>
-//           </div>
-//         ) : (
-//           <div className="space-y-2">
-//             {filtered.map(n => {
-//               const Icon = TIPO_ICONS[n.tipo] || Layers;
-//               const color = n.corDestaque || TIPO_COLORS[n.tipo] || "#4D7CFF";
-//               return (
-//                 <div key={n.id} className="group flex items-center gap-4 p-4 bg-card border border-border rounded-xl hover:border-primary/40 cursor-pointer transition-all" onClick={() => router.push(`/dashboard/nucleos/${n.id}`)}>
-//                   <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${color}20` }}><Icon className="w-5 h-5" style={{ color }} /></div>
-//                   <div className="flex-1 min-w-0"><p className="font-semibold text-sm">{n.nome}</p>{n.descricao && <p className="text-xs text-muted-foreground truncate">{n.descricao}</p>}</div>
-//                   <Badge variant="outline" className="text-xs hidden sm:flex" style={{ borderColor: `${color}40`, color }}>{n.tipo}</Badge>
-//                   <DropdownMenu>
-//                     <DropdownMenuTrigger asChild onClick={e => e.stopPropagation()}><Button variant="ghost" size="icon" className="w-7 h-7 opacity-0 group-hover:opacity-100"><MoreHorizontal className="w-3.5 h-3.5" /></Button></DropdownMenuTrigger>
-//                     <DropdownMenuContent align="end">
-//                       <DropdownMenuItem onClick={e => { e.stopPropagation(); setEditNucleo(n); }}><Edit3 className="w-3.5 h-3.5 mr-2" />Editar</DropdownMenuItem>
-//                       <DropdownMenuSeparator />
-//                       <DropdownMenuItem className="text-destructive" onClick={e => { e.stopPropagation(); handleDelete(n.id, n.nome); }}><Trash2 className="w-3.5 h-3.5 mr-2" />Excluir</DropdownMenuItem>
-//                     </DropdownMenuContent>
-//                   </DropdownMenu>
-//                 </div>
-//               );
-//             })}
-//           </div>
-//         )}
-//       </main>
-//       <NucleoFormModal open={showForm && !editNucleo} onClose={() => setShowForm(false)} onSaved={reload} />
-//       <NucleoFormModal open={!!editNucleo} onClose={() => setEditNucleo(null)} onSaved={reload} nucleo={editNucleo} />
-//     </div>
-//   );
-// }
+  if (!id || typeof id !== "string") {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <p className="text-muted-foreground">ID do núcleo inválido.</p>
+          <Button variant="link" onClick={() => router.push("/dashboard")}>
+            Voltar ao Dashboard
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const { data: nucleo, isLoading: nucleoLoading, error } = useNucleo(id);
+  const {
+    blocos,
+    isLoading: blocosLoading,
+    create,
+    remove,
+    isCreating,
+    isDeleting,
+  } = useBlocos(id);
+
+  const [modalCriarAberto, setModalCriarAberto] = useState(false);
+
+  const handleCriarBloco = async (payload: CreateBlocoPayload) => {
+    try {
+      const blocoCriado = await create(payload);
+      const initializer = BLOCO_INITIALIZERS[payload.tipo];
+      if (initializer) {
+        await initializer(blocoCriado.id, payload.titulo);
+      }
+      toast({
+        title: "Bloco criado com sucesso!",
+        description: `Bloco do tipo "${payload.tipo}" adicionado.`,
+      });
+      setModalCriarAberto(false);
+    } catch (error) {
+      console.error("Erro ao criar bloco:", error);
+      toast({
+        title: "Erro ao criar bloco",
+        description: "Tente novamente mais tarde.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleExcluirBloco = async (blocoId: string) => {
+    if (!confirm("Tem certeza que deseja excluir este bloco?")) return;
+    try {
+      await remove(blocoId);
+      toast({ title: "Bloco excluído com sucesso!" });
+    } catch (error) {
+      console.error("Erro ao excluir bloco:", error);
+      toast({
+        title: "Erro ao excluir bloco",
+        description: "Tente novamente mais tarde.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleEditarBloco = (blocoId: string) => {
+    console.log("Editar bloco:", blocoId);
+    toast({ title: "Edição em desenvolvimento", description: "Em breve!" });
+  };
+
+  if (nucleoLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (error || !nucleo) {
+    notFound();
+  }
+
+  const capaUrl = nucleo.imagemCapa;
+  const corDestaque = nucleo.corDestaque || "#6366f1";
+  const IconComponent = getIconComponent(nucleo.iconId);
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Banner de capa */}
+      <div className="relative w-full h-[20vh] min-h-[200px] max-h-[350px]">
+        {capaUrl ? (
+          <>
+            <Image
+              src={capaUrl}
+              alt={`Capa de ${nucleo.nome}`}
+              fill
+              className="object-cover"
+              priority
+            />
+            {/* Gradiente sutil apenas na parte inferior para legibilidade do botão (opcional) */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+          </>
+        ) : (
+          <div
+            className="w-full h-full"
+            style={{ backgroundColor: corDestaque }}
+          />
+        )}
+
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute top-4 left-4 bg-background/20 backdrop-blur-sm hover:bg-background/40 text-white"
+          onClick={() => router.push("/dashboard")}
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+      </div>
+
+      {/* Conteúdo principal */}
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 pb-12">
+        {/* Ícone e informações do núcleo */}
+        <div className="relative -mt-12 mb-8">
+          <div
+            className="w-16 h-16 md:w-20 md:h-20 rounded-xl flex items-center justify-center text-white shadow-lg border-4 border-background"
+            style={{ backgroundColor: corDestaque }}
+          >
+            <IconComponent className="w-8 h-8 md:w-10 md:h-10" />
+          </div>
+        </div>
+
+        <div className="space-y-2 max-w-3xl mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+            {nucleo.nome}
+          </h1>
+          {nucleo.descricao && (
+            <p className="text-muted-foreground text-base md:text-lg">
+              {nucleo.descricao}
+            </p>
+          )}
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span className="capitalize">{nucleo.tipo}</span>
+            <span>•</span>
+            <span>
+              Criado em{" "}
+              {new Date(nucleo.createdAt).toLocaleDateString("pt-BR", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })}
+            </span>
+          </div>
+        </div>
+
+        {/* Lista de blocos */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold flex items-center gap-2">
+              <Layers className="h-5 w-5 text-primary" />
+              Blocos
+            </h2>
+            <Button onClick={() => setModalCriarAberto(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Adicionar bloco
+            </Button>
+          </div>
+
+          {blocosLoading ? (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {[...Array(3)].map((_, i) => (
+                <Skeleton key={i} className="h-36 rounded-xl" />
+              ))}
+            </div>
+          ) : blocos.length === 0 ? (
+            <div
+              onClick={() => setModalCriarAberto(true)}
+              className="rounded-xl border-2 border-dashed border-border p-12 text-center cursor-pointer hover:border-primary/40 hover:bg-muted/20 transition-all"
+            >
+              <div className="flex flex-col items-center gap-3">
+                <div className="rounded-full bg-primary/10 p-3">
+                  <Plus className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium">Nenhum bloco ainda</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Adicione tarefas, listas, hábitos e muito mais
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {/* {blocos.map((bloco) => {
+                if (bloco.tipo === "colecoes") {
+                  return (
+                    <ColecoesBlocoCard
+                      key={bloco.id}
+                      bloco={bloco}
+                      nucleoId={id}
+                      onDelete={() => handleExcluirBloco(bloco.id)}
+                      onEdit={() => handleEditarBloco(bloco.id)}
+                      isDeleting={isDeleting}
+                    />
+                  );
+                }
+                if (bloco.tipo === "lista") {
+                  return (
+                    <ListasBlocoCard
+                      key={bloco.id}
+                      bloco={bloco}
+                      nucleoId={id}
+                      onDelete={() => handleExcluirBloco(bloco.id)}
+                      onEdit={() => handleEditarBloco(bloco.id)}
+                      isDeleting={isDeleting}
+                    />
+                  );
+                }
+                return (
+                  <BlocoCard
+                    key={bloco.id}
+                    bloco={bloco}
+                    nucleoId={id}
+                    onDelete={() => handleExcluirBloco(bloco.id)}
+                    onEdit={() => handleEditarBloco(bloco.id)}
+                    isDeleting={isDeleting}
+                  />
+                );
+              })} */}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <CriarBlocoModal
+        open={modalCriarAberto}
+        onClose={() => setModalCriarAberto(false)}
+        onConfirm={handleCriarBloco}
+        nucleoId={id}
+        isCreating={isCreating}
+      />
+    </div>
+  );
+}

@@ -78,7 +78,7 @@ export const API_ROUTES = {
     CREATE: "/colecoes",
     UPDATE: (id: string) => `/colecoes/${id}`,
     DELETE: (id: string) => `/colecoes/${id}`,
-
+    
     // Campos (aninhados sob /colecoes)
     CAMPOS: {
       LIST: (colecaoId: string) => `/colecoes/${colecaoId}/campos`,

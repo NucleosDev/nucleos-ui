@@ -53,7 +53,6 @@ export interface CreateItemListaPayload {
 export interface UpdateItemListaPayload extends Partial<
   Omit<CreateItemListaPayload, "listaId">
 > {
-  id: string;
   checked?: boolean;
 }
 

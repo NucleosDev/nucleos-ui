@@ -1,4 +1,3 @@
-// components/colecoes/ColecaoCard.tsx
 import Link from "next/link";
 import { MoreVertical, Pencil, Trash2, Calendar, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -25,6 +24,7 @@ interface ColecaoCardProps {
   onEdit: (colecao: Colecao) => void;
   onDelete: (id: string) => void;
   onSelect?: (colecao: Colecao) => void;
+  onGerenciarCampos?: (colecao: Colecao) => void;
 }
 
 export function ColecaoCard({
@@ -34,6 +34,7 @@ export function ColecaoCard({
   onEdit,
   onDelete,
   onSelect,
+  onGerenciarCampos,
 }: ColecaoCardProps) {
   const detalhesUrl = `/dashboard/nucleos/${nucleoId}/blocos/${blocoId}/colecoes/${colecao.id}`;
 
@@ -72,8 +73,19 @@ export function ColecaoCard({
                 }}
               >
                 <Pencil className="mr-2 h-4 w-4" />
-                Editar
+                Editar nome
               </DropdownMenuItem>
+              {onGerenciarCampos && (
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onGerenciarCampos(colecao);
+                  }}
+                >
+                  <Layers className="mr-2 h-4 w-4" />
+                  Gerenciar campos
+                </DropdownMenuItem>
+              )}
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={(e) => {
@@ -83,7 +95,7 @@ export function ColecaoCard({
                 className="text-destructive"
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Excluir
+                Excluir coleção
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

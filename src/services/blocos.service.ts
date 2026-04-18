@@ -8,6 +8,7 @@ import type {
   ReorderBlocosPayload,
 } from "@/types/bloco";
 
+
 export const blocosService = {
   /**
    * Lista todos os blocos de um núcleo

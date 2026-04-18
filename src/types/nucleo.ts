@@ -8,7 +8,7 @@ export interface Nucleo {
   iconId?: string;
   nome: string;
   descricao?: string;
-  tipo: "pessoal" | "profissional" | "projeto" | "estudo" | "hobby";
+  tipo: NucleoTipo;
   corDestaque?: string;
   imagemCapa?: string;
   createdAt: string;

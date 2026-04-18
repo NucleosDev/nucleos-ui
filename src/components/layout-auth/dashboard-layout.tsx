@@ -1,4 +1,3 @@
-// app/dashboard/layout.tsx
 "use client";
 
 import { ReactNode, useState, useEffect } from "react";
@@ -18,6 +17,7 @@ import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { useCurrentUser } from "@/hooks/useDashboard";
 import { useNucleos } from "@/hooks/useNucleo";
+import { useTotalBlocosCount } from "@/hooks/useBlocos";
 
 // ========== COMPONENTE DA SIDEBAR ==========
 interface DashboardSidebarProps {
@@ -33,6 +33,7 @@ interface DashboardSidebarProps {
     streak?: number;
   };
   nucleosCount: number;
+  blocosCount: number; // 👈 novo
   recentNucleos: { id: string; nome: string }[];
 }
 
@@ -43,6 +44,7 @@ function DashboardSidebar({
   className,
   userData,
   nucleosCount,
+  blocosCount,
   recentNucleos,
 }: DashboardSidebarProps) {
   const xpPercent = Math.min(
@@ -63,7 +65,7 @@ function DashboardSidebar({
       label: "Blocos",
       icon: Layers,
       href: "/dashboard/blocos",
-      count: 0,
+      count: blocosCount, // 👈 agora dinâmico
     },
     {
       id: "atividades",
@@ -238,13 +240,15 @@ function DashboardSidebar({
   );
 }
 
-// ========== LAYOUT PRINCIPAL (SEM SIDEBAR MOBILE) ==========
+// ========== LAYOUT PRINCIPAL ==========
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { logout } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
 
   const { data: user, isLoading: userLoading } = useCurrentUser();
   const { data: nucleos, isLoading: nucleosLoading } = useNucleos();
+  const { data: totalBlocos = 0, isLoading: blocosCountLoading } =
+    useTotalBlocosCount(nucleos || []);
 
   useEffect(() => {
     const saved = localStorage.getItem("sidebar-collapsed");
@@ -270,7 +274,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const nucleosCount = nucleos?.length || 0;
   const recentNucleos = (nucleos || []).slice(0, 3);
 
-  if (userLoading || nucleosLoading) {
+  if (userLoading || nucleosLoading || blocosCountLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
         Carregando...
@@ -285,16 +289,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       onLogout={handleLogout}
       userData={userData}
       nucleosCount={nucleosCount}
+      blocosCount={totalBlocos}
       recentNucleos={recentNucleos}
     />
   );
 
   return (
     <div className="flex h-screen overflow-hidden">
-      {/* Sidebar Desktop (visível apenas em md para cima) */}
       <div className="hidden md:block h-full shrink-0">{sidebarContent}</div>
-
-      {/* Conteúdo principal (ocupa toda a largura em mobile) */}
       <main className="flex-1 overflow-auto">{children}</main>
     </div>
   );

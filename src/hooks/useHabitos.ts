@@ -32,7 +32,7 @@ export function useHabitos(blocoId?: string) {
     }: {
       id: string;
       payload: RegistrarHabitoPayload;
-    }) => habitosService.registrar(id, payload),
+    }) => habitosService.registrar(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["habitos"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });

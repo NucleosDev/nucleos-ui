@@ -38,12 +38,11 @@ import { BlocoCard } from "@/components/blocos/bloco-card";
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
 import type { CreateBlocoPayload } from "@/types/bloco";
-import { BlocoCardContainer } from "@/components/blocos/bloco-card-container";
 import { BLOCO_INITIALIZERS } from "@/lib/bloco-initializers";
 import { ColecoesBlocoCard } from "@/components/blocos/cruds/ColecoesBlocoCard";
 import { ListasBlocoCard } from "@/components/blocos/cruds/ListasBlocoCard";
 
-// Mapeamento de ícones (mantido igual)
+// Mapeamento de ícones (mesmo do CreateNucleoModal e NucleoCard)
 const iconMap: Record<string, LucideIcon> = {
   "book-open": BookOpen,
   heart: Heart,
@@ -163,22 +162,26 @@ export default function NucleoPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Banner de capa */}
       <div className="relative w-full h-[20vh] min-h-[200px] max-h-[350px]">
         {capaUrl ? (
-          <Image
-            src={capaUrl}
-            alt={`Capa de ${nucleo.nome}`}
-            fill
-            className="object-cover"
-            priority
-          />
+          <>
+            <Image
+              src={capaUrl}
+              alt={`Capa de ${nucleo.nome}`}
+              fill
+              className="object-cover"
+              priority
+            />
+            {/* Gradiente sutil apenas na parte inferior para legibilidade do botão (opcional) */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+          </>
         ) : (
           <div
             className="w-full h-full"
             style={{ backgroundColor: corDestaque }}
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-background/80" />
 
         <Button
           variant="ghost"
@@ -190,7 +193,9 @@ export default function NucleoPage() {
         </Button>
       </div>
 
+      {/* Conteúdo principal */}
       <div className="container mx-auto px-4 md:px-6 lg:px-8 pb-12">
+        {/* Ícone e informações do núcleo */}
         <div className="relative -mt-12 mb-8">
           <div
             className="w-16 h-16 md:w-20 md:h-20 rounded-xl flex items-center justify-center text-white shadow-lg border-4 border-background"
@@ -223,6 +228,7 @@ export default function NucleoPage() {
           </div>
         </div>
 
+        {/* Lista de blocos */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold flex items-center gap-2">
