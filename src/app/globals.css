@@ -193,5 +193,52 @@
 
 html, body {
   overflow-x: hidden;
+}/* Fade suave */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Container do shimmer alinhado com a logo */
+.shimmer-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+
+  /* brilho */
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.8),
+    transparent 70%
+  );
+
+  animation: shimmerMove 1.8s ease-in-out infinite;
+
+  /* CLIP NA LOGO (fix principal) */
+  mask: url("/icon.svg") center / contain no-repeat;
+  -webkit-mask: url("/icon.svg") center / contain no-repeat;
+
+  filter: blur(4px);
+}
+
+/* movimento */
+@keyframes shimmerMove {
+  0% {
+    transform: translateX(-150%);
+  }
+  100% {
+    transform: translateX(150%);
+  }
+}

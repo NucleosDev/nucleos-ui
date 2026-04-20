@@ -13,6 +13,7 @@ export interface Nucleo {
   imagemCapa?: string;
   createdAt: string;
   updatedAt: string;
+  lastUsedAt?: string;
   deletedAt?: string | null;
   icon?: NucleoIcon;
   blocos?: Bloco[];

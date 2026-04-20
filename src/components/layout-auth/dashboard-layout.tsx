@@ -1,5 +1,5 @@
 "use client";
-
+import { NucleoCardMini } from "@/components/nucleo/ui/nucleo-card-nano";
 import { ReactNode, useState, useEffect } from "react";
 import { useAuth } from "@/auth";
 import {
@@ -35,7 +35,15 @@ interface DashboardSidebarProps {
   };
   nucleosCount: number;
   blocosCount: number;
-  recentNucleos: { id: string; nome: string }[];
+  recentNucleos: Array<{
+    id: string;
+    nome: string;
+    tipo?: string;
+    level?: number;
+    iconId?: string | null;
+    icon?: { iconUrl?: string };
+    corDestaque?: string;
+  }>;
 }
 
 function DashboardSidebar({
@@ -100,16 +108,16 @@ function DashboardSidebar({
     return (
       <aside
         className={cn(
-          "w-8 border-r border-border  h-full flex flex-col items-center py-4 transition-all duration-300 ease-in-out p-8",
+          "w-12 border-r border-border h-full flex flex-col items-center py-4 transition-all duration-300 ease-in-out",
           className,
         )}
       >
         <button
           onClick={onToggleCollapse}
-          className="py-5 w-8 h-8 rounded-full bg-primary/10 hover:bg-primary/20 flex items-center justify-center transition-colors"
+          className="w-8 h-8 rounded-full bg-primary/10 hover:bg-primary/20 flex items-center justify-center transition-colors"
           aria-label="Expandir menu"
         >
-          <PanelsTopLeft className="h-4 w-4 text-primary transition-transform duration-300" />{" "}
+          <PanelsTopLeft className="h-4 w-4 text-primary transition-transform duration-300" />
         </button>
       </aside>
     );
@@ -119,7 +127,7 @@ function DashboardSidebar({
   return (
     <aside
       className={cn(
-        "w-64 flex flex-col h-full  border-r border-border transition-all duration-300 ease-in-out",
+        "w-64 flex flex-col h-full border-r border-border transition-all duration-300 ease-in-out",
         className,
       )}
     >
@@ -156,12 +164,12 @@ function DashboardSidebar({
           onClick={onToggleCollapse}
           aria-label="Recolher menu"
         >
-          <ChevronRight className="h-4 w-4 rotate-180 transition-transform duration-300" />
+          <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
 
       {/* Links principais */}
-      <nav className="px-2 py-2 space-y-0.5">
+      <nav className="px-2 py-2 space-y-0.5 flex-">
         <p className="px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
           Principal
         </p>
@@ -185,8 +193,37 @@ function DashboardSidebar({
         })}
       </nav>
 
+      {/* Atividades recentes */}
+      <div className="px-3 py-3 border-t border-border">
+        <div>
+          <p className="text-xs font-medium text-left uppercase mb-2">
+            Atividades recentes
+          </p>
+          <div className="space-y-1">
+            {recentNucleos.length > 0 ? (
+              recentNucleos.map((nucleo) => (
+                <NucleoCardMini
+                  key={nucleo.id}
+                  id={nucleo.id}
+                  nome={nucleo.nome}
+                  tipo={nucleo.tipo}
+                  nivel={nucleo.level || 1}
+                  iconId={nucleo.iconId}
+                  iconUrl={nucleo.icon?.iconUrl}
+                  corDestaque={nucleo.corDestaque}
+                />
+              ))
+            ) : (
+              <p className="text-xs text-muted-foreground">
+                Nenhuma atividade ainda
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
       {/* Insights */}
-      <div className="px-3 py-3 border-t border-border mt-2">
+      <div className="px-3 py-3 border-t border-border">
         <div className="flex items-center gap-2 mb-3">
           <Lightbulb className="h-4 w-4 text-yellow-500" />
           <span className="text-sm font-semibold">Insights para você</span>
@@ -215,7 +252,11 @@ function DashboardSidebar({
       </div>
 
       {/* Barra de progresso XP */}
-      <div className="p-3 border-t border-border mt-auto">
+      {/* Espaço flexível para empurrar o conteúdo para baixo */}
+      <div className="flex-1" />
+
+      {/* Barra de progresso XP */}
+      <div className="p-3 border-t border-border ">
         <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
           <span className="font-medium">
             XP para nível {(userData.level || 1) + 1}
@@ -228,8 +269,8 @@ function DashboardSidebar({
       </div>
 
       {/* Logout */}
-      {onLogout && (
-        <div className="p-3 border-t border-border">
+      {/* {onLogout && (
+        <div className="p-3 border-t border-border shrink-0">
           <Button
             variant="ghost"
             className="w-full justify-start text-destructive"
@@ -238,7 +279,7 @@ function DashboardSidebar({
             Sair
           </Button>
         </div>
-      )}
+      )} */}
     </aside>
   );
 }
@@ -248,10 +289,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { logout } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
 
-  const { data: user, isLoading: userLoading } = useCurrentUser();
-  const { data: nucleos, isLoading: nucleosLoading } = useNucleos();
-  const { data: totalBlocos = 0, isLoading: blocosCountLoading } =
-    useTotalBlocosCount(nucleos || []);
+  const { data: user } = useCurrentUser();
+  const { data: nucleos } = useNucleos();
+  const { data: totalBlocos = 0 } = useTotalBlocosCount(nucleos || []);
 
   useEffect(() => {
     const saved = localStorage.getItem("sidebar-collapsed");
@@ -275,15 +315,17 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   };
 
   const nucleosCount = nucleos?.length || 0;
-  const recentNucleos = (nucleos || []).slice(0, 3);
 
-  if (userLoading || nucleosLoading || blocosCountLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        Carregando...
-      </div>
-    );
-  }
+  // Mapeia os núcleos com todas as propriedades necessárias
+  const recentNucleos = (nucleos || []).slice(0, 3).map((nucleo) => ({
+    id: nucleo.id,
+    nome: nucleo.nome,
+    tipo: nucleo.tipo,
+    level: (nucleo as any)?.level || 1,
+    iconId: nucleo.iconId,
+    icon: (nucleo as any)?.icon,
+    corDestaque: nucleo.corDestaque,
+  }));
 
   const sidebarContent = (
     <DashboardSidebar

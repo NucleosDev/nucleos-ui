@@ -1,3 +1,4 @@
+// src/app/layout.tsx
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
@@ -5,6 +6,7 @@ import { siteConfig } from "@/config/site";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/auth/";
 import { QueryProvider } from "@/providers/QueryProvider";
+import { GlobalLoader } from "@/components/logo-loader-provider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -90,7 +92,9 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <QueryProvider>
-            <AuthProvider>{children}</AuthProvider>
+            <AuthProvider>
+              <GlobalLoader>{children}</GlobalLoader>
+            </AuthProvider>
           </QueryProvider>
         </ThemeProvider>
         <Analytics />

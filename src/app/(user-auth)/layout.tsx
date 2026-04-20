@@ -1,22 +1,26 @@
+// src/app/(user-auth)/layout.tsx
 "use client";
-import { NucleosOverview } from "@/components/nucleo/ui/nucleos-overview";
 import { ProtectedRoute } from "@/components/auth/protected-route";
-import { DashboardLayout } from "@/components/layout-auth/dashboard-layout";
 import { AuthenticatedHeader } from "@/components/layout-auth/authenticated-header";
+import { AuthenticatedFooter } from "@/components/layout-auth/authenticated-footer";
+import { DashboardLayout } from "@/components/layout-auth/dashboard-layout";
+
 export default function UserAuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  6;
   return (
     <ProtectedRoute>
-      <main className="px-full py-0">
+      <div className="h-screen flex flex-col overflow-hidden">
         <AuthenticatedHeader />
-        <div>
-          <DashboardLayout>{children}</DashboardLayout>
+        <div className="">
+          <DashboardLayout>
+            {children}
+            <AuthenticatedFooter />
+          </DashboardLayout>
         </div>
-      </main>
+      </div>
     </ProtectedRoute>
   );
 }

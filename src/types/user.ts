@@ -1,6 +1,4 @@
-// src/types/user.ts
 import { Plan } from "./plan";
-
 
 export interface User {
   userId: string;

@@ -1,6 +1,6 @@
 export interface Plan {
   id: string
-  name: 'free' | 'pro' | 'enterprise'
+  name: string
   max_nucleos?: number
   price: number
   created_at: string

@@ -1,18 +1,17 @@
-"use client";
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { tarefasService } from "@/services/tarefas.service";
-import type {
-  CreateTarefaPayload,
-  UpdateTarefaPayload,
-} from "@/types/tarefa";
+import type { CreateTarefaPayload, UpdateTarefaPayload } from "@/types/tarefas";
 
 export function useTarefas(blocoId?: string) {
   const queryClient = useQueryClient();
 
   const query = useQuery({
     queryKey: ["tarefas", blocoId],
-    queryFn: () => tarefasService.getTarefas(blocoId!),
+    queryFn: async () => {
+      const result = await tarefasService.getTarefas(blocoId!);
+      console.log("📦 getTarefas result:", result);
+      return result;
+    },
     enabled: !!blocoId,
   });
 
@@ -41,6 +40,12 @@ export function useTarefas(blocoId?: string) {
       queryClient.invalidateQueries({ queryKey: ["tarefas", blocoId] }),
   });
 
+  const concluirMutation = useMutation({
+    mutationFn: (id: string) => tarefasService.concluirTarefa(id),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["tarefas", blocoId] }),
+  });
+
   return {
     tarefas: query.data ?? [],
     isLoading: query.isLoading,
@@ -49,8 +54,10 @@ export function useTarefas(blocoId?: string) {
     criar: createMutation.mutateAsync,
     atualizar: updateMutation.mutateAsync,
     excluir: deleteMutation.mutateAsync,
+    concluir: concluirMutation.mutateAsync,
     isCreating: createMutation.isPending,
     isUpdating: updateMutation.isPending,
     isDeleting: deleteMutation.isPending,
+    isConcluindo: concluirMutation.isPending,
   };
 }

@@ -34,7 +34,6 @@ import {
   LogOut,
   User,
   Settings,
-  Home,
   Compass,
   Calendar,
 } from "lucide-react";
@@ -49,7 +48,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/auth";
+import { useUserPlan } from "@/hooks/useDashboard";
 import { ROUTES } from "@/constants/routes";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type LinkItem = {
   title: string;
@@ -68,6 +69,7 @@ export function AuthenticatedHeader({
   isMobile,
 }: AuthenticatedHeaderProps) {
   const { user, logout } = useAuth();
+  const { data: userPlan, isLoading: planLoading } = useUserPlan();
   const [open, setOpen] = React.useState(false);
   const scrolled = useScroll(10);
 
@@ -88,6 +90,40 @@ export function AuthenticatedHeader({
 
   const handleLogout = async () => {
     await logout();
+  };
+
+  // Determinar o nome do plano para exibição
+  const getPlanDisplay = () => {
+    if (planLoading) {
+      return <Skeleton className="h-4 w-16" />;
+    }
+
+    const planName = userPlan?.plan?.name;
+    if (!planName || planName.toLowerCase() === "free") {
+      return "Plano Grátis";
+    }
+
+    const formattedName = planName.charAt(0).toUpperCase() + planName.slice(1);
+    return `Plano: ${formattedName}`;
+  };
+
+  // Determinar a classe CSS baseada no plano
+  const getPlanClassName = () => {
+    if (planLoading) {
+      return "";
+    }
+
+    const planName = userPlan?.plan?.name?.toLowerCase();
+
+    if (planName === "pro" || planName === "premium") {
+      return "bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-500 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient font-semibold";
+    }
+
+    if (planName === "enterprise" || planName === "business") {
+      return "bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient font-semibold";
+    }
+
+    return "bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient";
   };
 
   return (
@@ -135,10 +171,10 @@ export function AuthenticatedHeader({
                       </li>
                       <li>
                         <ListItem
-                          title="Nova Equipe"
-                          href="/calendario"
-                          description="Planeje seus eventos"
-                          icon={Calendar}
+                          title="Novo Hábito"
+                          href="/habitos/novo"
+                          description="Crie novos hábitos"
+                          icon={Zap}
                         />
                       </li>
                     </ul>
@@ -182,7 +218,7 @@ export function AuthenticatedHeader({
                     </li>
                     <li>
                       <ListItem
-                        title="Nucleos"
+                        title="Meus Nucleos"
                         href={ROUTES.NUCLEOS}
                         description="Gerencie seus Nucleos"
                         icon={Eclipse}
@@ -202,7 +238,7 @@ export function AuthenticatedHeader({
 
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="bg-transparent">
-                  Hábitos
+                  Recursos
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="grid w-[400px] grid-cols-2 gap-2 p-2">
@@ -292,33 +328,33 @@ export function AuthenticatedHeader({
               <NavigationMenuList>
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="bg-transparent">
-                    Tarefas
+                    Perfil
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <div className="grid w-[500px] grid-cols-2 gap-2 p-2">
+                    <div className="grid w-[400px] grid-cols-2 gap-2 p-2">
                       <ul className="space-y-2">
                         <li>
                           <ListItem
-                            title="Hábitos"
-                            href={ROUTES.HABITOS("")}
-                            description="Acompanhe sua rotina"
-                            icon={Heart}
+                            title="Meu Perfil"
+                            href={ROUTES.DASHBOARD_PROFILE}
+                            description="Suas informações pessoais"
+                            icon={User}
                           />
                         </li>
                         <li>
                           <ListItem
-                            title="Tarefas"
-                            href={ROUTES.TAREFAS("")}
-                            description="Organize suas tarefas"
-                            icon={Clipboard}
+                            title="Configurações"
+                            href={ROUTES.DASHBOARD_SETTINGS}
+                            description="Preferências do sistema"
+                            icon={Settings}
                           />
                         </li>
                         <li>
                           <ListItem
-                            title="Calendário"
-                            href="/calendario"
-                            description="Planeje seus eventos"
-                            icon={Calendar}
+                            title="Planos"
+                            href={ROUTES.PLANOS}
+                            description="Gerencie sua assinatura"
+                            icon={CreditCard}
                           />
                         </li>
                       </ul>
@@ -326,7 +362,7 @@ export function AuthenticatedHeader({
                         <li>
                           <NavigationMenuLink
                             href={ROUTES.AJUDA}
-                            className="flex p-2 hover:text-primary flex-row rounded-md items-center gap-x-2 transition-colors"
+                            className="flex p-2 hover:flex-row rounded-md items-center gap-x-2 transition-colors"
                           >
                             <HelpCircle className="text-foreground size-4" />
                             <span className="font-medium">
@@ -340,72 +376,7 @@ export function AuthenticatedHeader({
                             className="flex p-2 flex-row rounded-md items-center gap-x-2 transition-colors"
                           >
                             <Zap className="text-foreground size-4" />
-                            <span className="font-medium">Blog</span>
-                          </NavigationMenuLink>
-                        </li>
-                      </ul>
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="bg-transparent">
-                    Perfil
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <div className="grid w-[400px] grid-cols-2 gap-2 p-2">
-                      <ul className="space-y-2">
-                        <li>
-                          <ListItem
-                            title="Sobre"
-                            href={ROUTES.SOBRE}
-                            description="Nossa história e missão"
-                            icon={Users}
-                          />
-                        </li>
-                        <li>
-                          <ListItem
-                            title="Blog"
-                            href={ROUTES.BLOG}
-                            description="Novidades e conteúdos"
-                            icon={Star}
-                          />
-                        </li>
-                        <li>
-                          <ListItem
-                            title="Contato"
-                            href={ROUTES.CONTATO}
-                            description="Fale com a gente"
-                            icon={Mail}
-                          />
-                        </li>
-                      </ul>
-                      <ul className="space-y-2 p-3">
-                        <li>
-                          <NavigationMenuLink
-                            href={ROUTES.TERMOS}
-                            className="flex p-2 hover:flex-row rounded-md items-center gap-x-2 transition-colors"
-                          >
-                            <FileText className="text-foreground size-4" />
-                            <span className="font-medium">Termos</span>
-                          </NavigationMenuLink>
-                        </li>
-                        <li>
-                          <NavigationMenuLink
-                            href={ROUTES.PRIVACIDADE}
-                            className="flex p-2 hover:flex-row rounded-md items-center gap-x-2 transition-colors"
-                          >
-                            <Shield className="text-foreground size-4" />
-                            <span className="font-medium">Privacidade</span>
-                          </NavigationMenuLink>
-                        </li>
-                        <li>
-                          <NavigationMenuLink
-                            href={ROUTES.AJUDA}
-                            className="flex p-2 hover:flex-row rounded-md items-center gap-x-2 transition-colors"
-                          >
-                            <HelpCircle className="text-foreground size-4" />
-                            <span className="font-medium">Ajuda</span>
+                            <span className="font-medium">Dicas Rápidas</span>
                           </NavigationMenuLink>
                         </li>
                       </ul>
@@ -414,17 +385,15 @@ export function AuthenticatedHeader({
                 </NavigationMenuItem>
 
                 <NavigationMenuLink className="px-3" asChild>
-                  <Link
-                    href={ROUTES.PLANOS}
-                    className="bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient"
-                  >
-                    Plano: Pro
+                  <Link href={ROUTES.PLANOS} className={getPlanClassName()}>
+                    {getPlanDisplay()}
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuList>
             </NavigationMenu>
 
             <ModeToggle />
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -433,13 +402,13 @@ export function AuthenticatedHeader({
                   aria-label="Menu do usuário"
                 >
                   <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-blue-500 text-white text-sm font-medium">
+                    <AvatarFallback className="bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white text-sm font-medium">
                       {user?.fullName?.charAt(0).toUpperCase() || "U"}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" sideOffset={8} className="w-56">
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">
@@ -461,6 +430,12 @@ export function AuthenticatedHeader({
                   <Link href={ROUTES.DASHBOARD_SETTINGS}>
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Configurações</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href={ROUTES.PLANOS}>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    <span>Planos</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -488,7 +463,7 @@ export function AuthenticatedHeader({
         </div>
       </nav>
 
-      {/* Menu Mobile (Portal) - sem ListItemTheme */}
+      {/* Menu Mobile (Portal) */}
       <MobileMenu
         open={open}
         onClose={closeMenu}
@@ -597,7 +572,11 @@ export function AuthenticatedHeader({
               onClick={closeMenu}
             >
               <CreditCard className="size-4" />
-              <span className="font-medium">Planos</span>
+              <span className="font-medium">
+                {planLoading
+                  ? "Carregando..."
+                  : userPlan?.plan?.name || "Grátis"}
+              </span>
             </Link>
           </div>
         </NavigationMenu>

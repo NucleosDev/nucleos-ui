@@ -17,9 +17,8 @@ export default function Dashboard() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const { data: nucleos, isLoading, remove, update } = useNucleos();
 
-  const nucleosComStats: NucleoComStats[] = (nucleos || []).map(
-    adaptNucleoToComStats,
-  );
+  const nucleosComStats: NucleoComStats[] =
+    nucleos?.map(adaptNucleoToComStats) ?? [];
 
   // CORRIGIDO: rota correta para a página de detalhes do núcleo
   const handleNucleoClick = (nucleo: NucleoComStats) => {
@@ -42,19 +41,8 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex-1 overflow-auto bg-gradient-to-b from-background via-background to-secondary/10 px-4 md:px-6">
+    <div className="flex-1 bg-gradient-to-b from-background via-background to-secondary/10 px-4 md:px-6 pb-10 pt-10">
       <div className="pb-10">
-        {/* Botão Desktop */}
-        <div className="hidden md:flex md:justify-end mb-4 px-4">
-          <Button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90 transition shadow-md shadow-primary/20"
-          >
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Novo Nucleo
-          </Button>
-        </div>
-
         <section className="space-y-4 px-4 md:px-6">
           <NucleoGrid
             nucleos={nucleosComStats}
@@ -66,8 +54,7 @@ export default function Dashboard() {
           />
         </section>
       </div>
-
-      {/* Botão Mobile flutuante */}
+      s{/* Botão Mobile flutuante */}
       <div className="fixed bottom-6 right-6 z-50 md:hidden">
         <Button
           onClick={() => setIsCreateModalOpen(true)}
@@ -78,7 +65,6 @@ export default function Dashboard() {
           <span>Novo</span>
         </Button>
       </div>
-
       <CreateNucleoModal
         open={isCreateModalOpen}
         onOpenChange={setIsCreateModalOpen}

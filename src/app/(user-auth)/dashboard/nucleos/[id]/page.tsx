@@ -32,6 +32,8 @@ import {
   Layers,
   LayoutGrid,
   List,
+  Target,
+  Wallet,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -43,11 +45,37 @@ import { useState, useEffect } from "react";
 import type { CreateBlocoPayload } from "@/types/bloco";
 import { BLOCO_INITIALIZERS } from "@/lib/bloco-initializers";
 import { ColecoesBlocoCard } from "@/components/blocos/cruds/ColecoesBlocoCard";
+import { TarefasBlocoCard } from "@/components/blocos/cruds/TarefasBlocoCard";
 import { ListasBlocoCard } from "@/components/blocos/cruds/ListasBlocoCard";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Mapeamento de ícones
+// Mapeamento de ícones baseado nos tipos de núcleo (mesmo do NucleoCard)
+const tipoIcons: Record<string, LucideIcon> = {
+  estudo: BookOpen,
+  hobby: Heart,
+  profissional: Briefcase,
+  pessoal: Home,
+  projeto: Target,
+  fitness: Dumbbell,
+  bemestar: Coffee,
+  social: Users,
+  programacao: Code,
+  musica: Music,
+  fotografia: Camera,
+  arte: Palette,
+  idiomas: Globe,
+  financas: Wallet,
+  // Fallbacks
+  trabalho: Briefcase,
+  saude: Heart,
+  educacao: GraduationCap,
+  game: Gamepad2,
+  viagem: Plane,
+  compras: ShoppingBag,
+};
+
+// Mapeamento de ícones por iconId (para ícones personalizados)
 const iconMap: Record<string, LucideIcon> = {
   "book-open": BookOpen,
   heart: Heart,
@@ -70,9 +98,24 @@ const iconMap: Record<string, LucideIcon> = {
   "graduation-cap": GraduationCap,
 };
 
-function getIconComponent(iconId?: string | null) {
-  if (!iconId) return Star;
-  return iconMap[iconId] || Star;
+// Função para obter o ícone correto baseado no tipo e iconId
+function getNucleoIcon(tipo: string, iconId?: string | null): LucideIcon {
+  // Prioriza iconId se existir
+  if (iconId && iconMap[iconId]) {
+    return iconMap[iconId];
+  }
+
+  // Fallback para o tipo do núcleo
+  const tipoLower = tipo?.toLowerCase() || "";
+  const icon = tipoIcons[tipoLower];
+
+  // Se encontrou ícone baseado no tipo, usa ele
+  if (icon) {
+    return icon;
+  }
+
+  // Fallback final
+  return Layers;
 }
 
 type LayoutMode = "grid" | "list";
@@ -175,11 +218,12 @@ export default function NucleoDetailPage() {
     notFound();
   }
 
-  // CORREÇÃO: Adicionar imagem aleatória quando não tem capa
   const randomImageUrl = `https://picsum.photos/seed/${nucleo.id}/1200/400`;
   const capaUrl = nucleo.imagemCapa || randomImageUrl;
   const corDestaque = nucleo.corDestaque || "#6366f1";
-  const IconComponent = getIconComponent(nucleo.iconId);
+
+  // Usa a mesma lógica de ícone do NucleoCard
+  const IconComponent = getNucleoIcon(nucleo.tipo, nucleo.iconId);
 
   return (
     <div className="min-h-screen bg-background">
@@ -239,7 +283,7 @@ export default function NucleoDetailPage() {
           </div>
         </div>
 
-        {/* Lista de blocos - mantém o mesmo código */}
+        {/* Lista de blocos */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold flex items-center gap-2">
@@ -273,22 +317,9 @@ export default function NucleoDetailPage() {
           </div>
 
           {blocosLoading ? (
-            <div
-              className={cn(
-                "gap-4",
-                layoutMode === "grid"
-                  ? "hidden sm:grid sm:grid-cols-2 lg:grid-cols-3"
-                  : "flex flex-col",
-              )}
-            >
+            <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 lg:grid-cols-3">
               {[...Array(3)].map((_, i) => (
-                <Skeleton
-                  key={i}
-                  className={cn(
-                    "rounded-xl",
-                    layoutMode === "grid" ? "h-36" : "h-28 w-full",
-                  )}
-                />
+                <Skeleton key={i} className="h-28 w-full rounded-xl" />
               ))}
             </div>
           ) : blocos.length === 0 ? (
@@ -316,15 +347,10 @@ export default function NucleoDetailPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
-                className={cn(
-                  "gap-4",
-                  layoutMode === "grid"
-                    ? "hidden sm:grid sm:grid-cols-2 lg:grid-cols-3"
-                    : "flex flex-col",
-                )}
+                className="flex flex-col gap-4 sm:block"
               >
                 {/* Mobile: sempre lista */}
-                <div className="sm:hidden flex flex-col gap-4">
+                <div className="flex flex-col gap-4 sm:hidden">
                   {blocos.map((bloco) => {
                     const commonProps = {
                       bloco,
@@ -339,6 +365,8 @@ export default function NucleoDetailPage() {
                           <ColecoesBlocoCard {...commonProps} />
                         ) : bloco.tipo === "lista" ? (
                           <ListasBlocoCard {...commonProps} />
+                        ) : bloco.tipo === "tarefas" ? (
+                          <TarefasBlocoCard {...commonProps} />
                         ) : (
                           <BlocoCard {...commonProps} />
                         )}
@@ -348,33 +376,58 @@ export default function NucleoDetailPage() {
                 </div>
 
                 {/* Desktop: grid ou lista */}
-                <div className="hidden sm:contents">
-                  {blocos.map((bloco) => {
-                    const commonProps = {
-                      bloco,
-                      nucleoId: id,
-                      onDelete: () => handleExcluirBloco(bloco.id),
-                      onEdit: () => handleEditarBloco(bloco.id),
-                      isDeleting,
-                    };
-                    const cardContent =
-                      bloco.tipo === "colecoes" ? (
-                        <ColecoesBlocoCard {...commonProps} />
-                      ) : bloco.tipo === "lista" ? (
-                        <ListasBlocoCard {...commonProps} />
-                      ) : (
-                        <BlocoCard {...commonProps} />
-                      );
-
-                    if (layoutMode === "list") {
-                      return (
-                        <div key={bloco.id} className="w-full">
-                          {cardContent}
-                        </div>
-                      );
-                    }
-                    return <div key={bloco.id}>{cardContent}</div>;
-                  })}
+                <div className="hidden sm:block">
+                  {layoutMode === "grid" ? (
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      {blocos.map((bloco) => {
+                        const commonProps = {
+                          bloco,
+                          nucleoId: id,
+                          onDelete: () => handleExcluirBloco(bloco.id),
+                          onEdit: () => handleEditarBloco(bloco.id),
+                          isDeleting,
+                        };
+                        return (
+                          <div key={bloco.id}>
+                            {bloco.tipo === "colecoes" ? (
+                              <ColecoesBlocoCard {...commonProps} />
+                            ) : bloco.tipo === "lista" ? (
+                              <ListasBlocoCard {...commonProps} />
+                            ) : bloco.tipo === "tarefas" ? (
+                              <TarefasBlocoCard {...commonProps} />
+                            ) : (
+                              <BlocoCard {...commonProps} />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-2">
+                      {blocos.map((bloco) => {
+                        const commonProps = {
+                          bloco,
+                          nucleoId: id,
+                          onDelete: () => handleExcluirBloco(bloco.id),
+                          onEdit: () => handleEditarBloco(bloco.id),
+                          isDeleting,
+                        };
+                        return (
+                          <div key={bloco.id} className="w-full">
+                            {bloco.tipo === "colecoes" ? (
+                              <ColecoesBlocoCard {...commonProps} />
+                            ) : bloco.tipo === "lista" ? (
+                              <ListasBlocoCard {...commonProps} />
+                            ) : bloco.tipo === "tarefas" ? (
+                              <TarefasBlocoCard {...commonProps} />
+                            ) : (
+                              <BlocoCard {...commonProps} />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               </motion.div>
             </AnimatePresence>

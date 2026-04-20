@@ -1,4 +1,4 @@
-import api from "./api";
+import api from "./api-auth";
 import { API_ROUTES } from "@/constants/routes";
 import type { User } from "@/types/user";
 import type { Nucleo } from "@/types/nucleo";

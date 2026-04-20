@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useAuth } from "@/auth";
-import { NucleosOverview } from "@/components/nucleo/ui/nucleos-overview"; // lista todos os nucleos (componente)
+import { NucleosOverview } from "@/components/nucleo/ui/nucleos-overview";
 import { CreateNucleoModal } from "@/components/nucleo/ui/nucleo-create-modal";
 import {
   Card,
@@ -19,16 +19,13 @@ import {
   Flame,
   Zap,
   Calendar,
-  ArrowRight,
   PlusCircle,
   Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
 
-// Hooks mock mantidos como estavam
 import { useUserStats } from "@/hooks/userStats";
 import { useRecentActivity } from "@/hooks/useRecentActivity";
 
@@ -58,36 +55,32 @@ export default function Dashboard() {
           transition={{ duration: 0.5 }}
           className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
         >
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <h1 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                {saudacao}, {firstName}!
-              </h1>
-              <Sparkles className="h-6 w-6 text-primary/70" />
+          <div className="flex items-center gap-3">
+            <div className="h-15 w-1 bg-gradient-to-b from-[#4D7CFF] to-[#00C9A7] rounded-full hidden sm:block" />
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <h1 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                  {saudacao}, {firstName}!
+                </h1>
+                <Sparkles className="h-6 w-6 text-primary/70" />
+              </div>
+              <p className="text-muted-foreground text-base capitalize">
+                {formattedDate} · Pronto para evoluir hoje?
+              </p>
             </div>
-            <p className="text-muted-foreground text-lg capitalize">
-              {formattedDate} · Pronto para evoluir hoje?
-            </p>
           </div>
           <Button
             onClick={() => setIsCreateModalOpen(true)}
-            className="bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90 transition shadow-md shadow-primary/20"
+            className="bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90 transition shadow-md shadow-primary/20 group gap-2"
           >
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Novo Nucleo
+            <PlusCircle className="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
+            <span>Novo Nucleo</span>
           </Button>
         </motion.div>
 
         {/* Cards de Estatísticas Rápidas */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {statsLoading ? (
-            <>
-              <Skeleton className="h-28 rounded-xl" />
-              <Skeleton className="h-28 rounded-xl" />
-              <Skeleton className="h-28 rounded-xl" />
-              <Skeleton className="h-28 rounded-xl" />
-            </>
-          ) : (
+          {statsLoading ? null : ( // 👇 Substituído: não exibe nada, pois o loader global já está visível
             <>
               <StatsCard
                 title="Nível Geral"
@@ -120,16 +113,7 @@ export default function Dashboard() {
 
         {/* Seção Principal: Nucleos Overview */}
         <section className="space-y-4">
-          <div className="flex items-center justify-between">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => router.push("/dashboard")}
-            >
-              Ver todos <ArrowRight className="ml-1 h-4 w-4" />
-            </Button>
-          </div>
-          <NucleosOverview />
+          <NucleosOverview variant="recent" limit={3} />
         </section>
 
         {/* Grid secundário: Atividade recente + Atalhos */}
@@ -144,13 +128,8 @@ export default function Dashboard() {
               <CardDescription>Suas últimas ações nos Nucleos</CardDescription>
             </CardHeader>
             <CardContent>
-              {activitiesLoading ? (
-                <div className="space-y-3">
-                  <Skeleton className="h-12 w-full" />
-                  <Skeleton className="h-12 w-full" />
-                  <Skeleton className="h-12 w-full" />
-                </div>
-              ) : activities && activities.length > 0 ? (
+              {activitiesLoading ? null : activities && // 👇 Substituído: não exibe skeletons
+                activities.length > 0 ? (
                 <ul className="space-y-4">
                   {activities.map((activity) => (
                     <li
@@ -239,7 +218,7 @@ export default function Dashboard() {
   );
 }
 
-// Componente auxiliar para os cards de estatística
+// Componente StatsCard (inalterado)
 interface StatsCardProps {
   title: string;
   value: number | string;

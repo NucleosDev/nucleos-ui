@@ -11,9 +11,37 @@ import { CreateNucleoModal } from "./nucleo-create-modal";
 import { ROUTES } from "@/constants/routes";
 import { useNucleos } from "@/hooks/useNucleo";
 import type { NucleoComStats } from "@/types/nucleo";
+import { ArrowRight } from "lucide-react";
 
-export function NucleosOverview() {
+type Props = {
+  limit?: number;
+  variant?: "all" | "recent";
+};
+
+export function NucleosOverview({ limit, variant = "all" }: Props) {
   const { data: nucleos = [], isLoading, remove, isDeleting } = useNucleos();
+  const today = new Date();
+  let filteredNucleos = [...nucleos];
+  // APENAS OS CARDS RECENTES, CRIADOS NO DASHBOARD
+  if (variant === "recent") {
+    filteredNucleos = filteredNucleos
+      .filter((n) => {
+        const created = new Date(n.createdAt);
+        const usedToday = false;
+
+        const createdRecently =
+          created >= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+        return usedToday || createdRecently;
+      })
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
+  }
+  if (limit) {
+    filteredNucleos = filteredNucleos.slice(0, limit);
+  }
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const router = useRouter();
 
@@ -44,14 +72,28 @@ export function NucleosOverview() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold tracking-tight">Seus Nucleos</h2>
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-1 bg-gradient-to-b from-[#4D7CFF] to-[#00C9A7] rounded-full" />
+          <h2 className="text-2xl font-bold tracking-tight">
+            Núcleos Recentes
+          </h2>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => router.push("/dashboard/nucleos")}
+          className="group gap-1.5 text-muted-foreground hover:text-background transition-all duration-300"
+        >
+          <span>Ver todos</span>
+          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+        </Button>
       </div>
 
       {nucleos.length === 0 ? (
         <EmptyState onCreateClick={() => setCreateModalOpen(true)} />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {nucleos.map((nucleo) => {
+          {filteredNucleos.map((nucleo) => {
             const nucleoComStats = {
               ...nucleo,
               xpTotal: 1,

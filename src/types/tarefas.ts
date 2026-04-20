@@ -1,4 +1,3 @@
-// src/types/tarefas.ts
 export type TarefaStatus = "pendente" | "concluida" | "atrasada";
 export type TarefaPrioridade = "baixa" | "media" | "alta";
 
@@ -28,6 +27,5 @@ export interface CreateTarefaPayload {
 export interface UpdateTarefaPayload extends Partial<
   Omit<CreateTarefaPayload, "blocoId">
 > {
-  id: string;
   status?: TarefaStatus;
 }

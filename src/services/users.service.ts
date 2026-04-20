@@ -1,77 +1,49 @@
-// // src/services/users.service.ts
-// import api from "./api";
-// import { API_ROUTES } from "@/constants/routes"; // ← CORRIGIDO
-// import type { User, UserLevel } from "@/types/user";
-// import type { XpLog, EnergyLog } from "@/types/logs";
-// import type { AiContext, AiInsight } from "@/types/ai";
-// import type { UpdateUserPayload } from "@/src/types/user";
+import { api } from "@/lib/api";
+import { API_ROUTES } from "@/constants/routes";
+import type { User } from "@/types/user";
 
-// export const usersService = {
-//   async getCurrentUser(): Promise<User> {
-//     const response = await api.get<User>(API_ROUTES.USERS.ME);
-//     return response.data;
-//   },
+export const usersService = {
+  async getMe(): Promise<User> {
+    return api.get<User>(API_ROUTES.USERS.ME);
+  },
 
-//   async updateProfile(data: Partial<User>): Promise<User> {
-//     const response = await api.put<User>(API_ROUTES.USERS.PROFILE, data);
-//     return response.data;
-//   },
+  async updateProfile(payload: Partial<User>): Promise<User> {
+    return api.patch<User>(API_ROUTES.USERS.PROFILE, payload);
+  },
 
-//   async updateAvatar(file: File): Promise<{ avatar_url: string }> {
-//     const formData = new FormData();
-//     formData.append("avatar", file);
-//     const response = await api.post<{ avatar_url: string }>(
-//       API_ROUTES.USERS.AVATAR,
-//       formData,
-//       { headers: { "Content-Type": "multipart/form-data" } },
-//     );
-//     return response.data;
-//   },
+  async updatePreferences(preferences: Record<string, any>): Promise<void> {
+    return api.patch(API_ROUTES.USERS.PREFERENCES, preferences);
+  },
 
-//   async getUserLevel(): Promise<UserLevel> {
-//     const response = await api.get<UserLevel>(API_ROUTES.USERS.LEVEL);
-//     return response.data;
-//   },
+  async getStats(): Promise<{ tarefasConcluidasHoje: number /* outros */ }> {
+    return api.get(API_ROUTES.USERS.STATS);
+  },
 
-//   async getXpLogs(params?: {
-//     page?: number;
-//     limit?: number;
-//   }): Promise<XpLog[]> {
-//     const response = await api.get<XpLog[]>(API_ROUTES.USERS.XP_LOGS, {
-//       params,
-//     });
-//     return response.data;
-//   },
+  async getAchievements(): Promise<any[]> {
+    return api.get(API_ROUTES.USERS.ACHIEVEMENTS);
+  },
 
-//   async getEnergyLogs(params?: {
-//     page?: number;
-//     limit?: number;
-//   }): Promise<EnergyLog[]> {
-//     const response = await api.get<EnergyLog[]>(API_ROUTES.USERS.ENERGY_LOGS, {
-//       params,
-//     });
-//     return response.data;
-//   },
+  async getXpLogs(): Promise<any[]> {
+    return api.get(API_ROUTES.USERS.XP_LOGS);
+  },
 
-//   async getAiContext(): Promise<AiContext> {
-//     const response = await api.get<AiContext>(API_ROUTES.USERS.AI_CONTEXT);
-//     return response.data;
-//   },
+  async getEnergyLogs(): Promise<any[]> {
+    return api.get(API_ROUTES.USERS.ENERGY_LOGS);
+  },
 
-//   async updateAiContext(data: Partial<AiContext>): Promise<AiContext> {
-//     const response = await api.put<AiContext>(
-//       API_ROUTES.USERS.AI_CONTEXT,
-//       data,
-//     );
-//     return response.data;
-//   },
+  async getActivityLogs(): Promise<any[]> {
+    return api.get(API_ROUTES.USERS.ACTIVITY_LOGS);
+  },
 
-//   async getAiInsights(): Promise<AiInsight[]> {
-//     const response = await api.get<AiInsight[]>(API_ROUTES.USERS.AI_INSIGHTS);
-//     return response.data;
-//   },
-//   async update(payload: UpdateUserPayload): Promise<User> {
-//     const { data } = await api.put<User>("v1/auth/me", payload);
-//     return data;
-//   },
-// };
+  async getCurrentPlan(): Promise<any> {
+    return api.get(API_ROUTES.USERS.PLAN);
+  },
+
+  async deleteAccount(): Promise<void> {
+    return api.delete(API_ROUTES.USERS.DELETE_ACCOUNT);
+  },
+
+  async reactivateAccount(): Promise<void> {
+    return api.post(API_ROUTES.USERS.REACTIVATE);
+  },
+};
