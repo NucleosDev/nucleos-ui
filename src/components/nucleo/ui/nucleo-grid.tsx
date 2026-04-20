@@ -1,4 +1,3 @@
-// src/components/nucleo/ui/nucleo-grid.tsx
 "use client";
 
 import { useState } from "react";

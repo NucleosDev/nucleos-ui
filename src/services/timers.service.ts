@@ -1,49 +1,47 @@
-import api from './api'
-import { API_ROUTES } from '@/constants/routes'
-import type { Timer } from '@/types/calendar'
+import { api } from "@/lib/api";
+import { API_ROUTES } from "@/constants/routes";
+import type { Timer, StartTimerPayload } from "@/types/timer";
 
 export const timersService = {
-  async getTimers(nucleoId: string): Promise<Timer[]> {
-    const response = await api.get<Timer[]>(API_ROUTES.TIMERS.LIST(nucleoId))
-    return response.data
+  async listarPorNucleo(nucleoId: string): Promise<Timer[]> {
+    const res = await api.get<{ success: boolean; data: Timer[] } | Timer[]>(
+      API_ROUTES.TIMERS.LIST(nucleoId),
+    );
+    if (Array.isArray(res)) return res;
+    if (res && typeof res === "object" && "data" in res) {
+      return Array.isArray(res.data) ? res.data : [];
+    }
+    return [];
   },
 
-  async getTimer(id: string): Promise<Timer> {
-    const response = await api.get<Timer>(API_ROUTES.TIMERS.GET(id))
-    return response.data
+  async start(payload: StartTimerPayload): Promise<Timer> {
+    const res = await api.post<{ success: boolean; data: Timer } | Timer>(
+      API_ROUTES.TIMERS.START,
+      payload, // agora envia titulo, não descricao
+    );
+    if (res && typeof res === "object" && "data" in res) return res.data;
+    return res as Timer;
   },
 
-  async createTimer(nucleoId: string, data: Partial<Timer>): Promise<Timer> {
-    const response = await api.post<Timer>(API_ROUTES.TIMERS.CREATE(nucleoId), data)
-    return response.data
+  async stop(id: string): Promise<Timer> {
+    const res = await api.post<{ success: boolean; data: Timer } | Timer>(
+      API_ROUTES.TIMERS.STOP(id),
+    );
+    if (res && typeof res === "object" && "data" in res) return res.data;
+    return res as Timer;
   },
 
-  async updateTimer(id: string, data: Partial<Timer>): Promise<Timer> {
-    const response = await api.put<Timer>(API_ROUTES.TIMERS.UPDATE(id), data)
-    return response.data
+  async deletar(id: string): Promise<void> {
+    await api.delete(`/timers/${id}`);
   },
 
-  async deleteTimer(id: string): Promise<void> {
-    await api.delete(API_ROUTES.TIMERS.DELETE(id))
+  // 👇 NOVO MÉTODO
+  async atualizar(id: string, titulo: string): Promise<Timer> {
+    const res = await api.put<{ success: boolean; data: Timer } | Timer>(
+      `/timers/${id}`,
+      { titulo },
+    );
+    if (res && typeof res === "object" && "data" in res) return res.data;
+    return res as Timer;
   },
-
-  async startTimer(id: string): Promise<Timer> {
-    const response = await api.post<Timer>(API_ROUTES.TIMERS.START(id))
-    return response.data
-  },
-
-  async pauseTimer(id: string): Promise<Timer> {
-    const response = await api.post<Timer>(API_ROUTES.TIMERS.PAUSE(id))
-    return response.data
-  },
-
-  async resumeTimer(id: string): Promise<Timer> {
-    const response = await api.post<Timer>(API_ROUTES.TIMERS.RESUME(id))
-    return response.data
-  },
-
-  async stopTimer(id: string): Promise<Timer> {
-    const response = await api.post<Timer>(API_ROUTES.TIMERS.STOP(id))
-    return response.data
-  }
-}
+};

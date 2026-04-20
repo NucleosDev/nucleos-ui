@@ -161,6 +161,7 @@ export type TipoBloco =
   | "lista"
   | "calendario"
   | "calculo"
+  | "timer"
   | "colecoes";
 
 export interface BlocoConfiguracoes {

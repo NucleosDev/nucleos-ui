@@ -14,13 +14,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
 export function RegisterForm() {
   const router = useRouter();
-  const { register, isLoading, isAuthenticated } = useAuth();
-
+  const { register, isAuthenticated } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -31,7 +33,7 @@ export function RegisterForm() {
     nickname: "",
   });
 
-  // 🔥 REDIRECIONAMENTO CORRETO (sem loop)
+  // Redirecionamento após autenticação bem-sucedida
   useEffect(() => {
     if (isAuthenticated) {
       router.replace("/dashboard");
@@ -42,6 +44,7 @@ export function RegisterForm() {
     e.preventDefault();
     setError("");
 
+    // Validações
     if (
       !formData.fullName ||
       !formData.email ||
@@ -68,6 +71,8 @@ export function RegisterForm() {
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
       await register({
         fullName: formData.fullName,
@@ -78,13 +83,13 @@ export function RegisterForm() {
         cpf: cpfClean,
         nickname: formData.nickname || undefined,
       });
-
-      // ❌ NÃO REDIRECIONA AQUI
+      // Redirecionamento acontece via useEffect quando isAuthenticated mudar
     } catch (err: any) {
       const errorMessage =
         err.response?.data?.message || err.message || "Erro ao registrar";
-
       setError(errorMessage);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -105,16 +110,16 @@ export function RegisterForm() {
             </div>
           )}
 
-          {/* campos iguais */}
           <div className="space-y-2">
             <Label htmlFor="fullName">Nome completo *</Label>
             <Input
               id="fullName"
+              placeholder="Seu nome completo"
               value={formData.fullName}
               onChange={(e) =>
                 setFormData({ ...formData, fullName: e.target.value })
               }
-              disabled={isLoading}
+              disabled={isSubmitting}
             />
           </div>
 
@@ -123,11 +128,12 @@ export function RegisterForm() {
             <Input
               id="email"
               type="email"
+              placeholder="seu@email.com"
               value={formData.email}
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
               }
-              disabled={isLoading}
+              disabled={isSubmitting}
             />
           </div>
 
@@ -135,11 +141,12 @@ export function RegisterForm() {
             <Label htmlFor="cpf">CPF *</Label>
             <Input
               id="cpf"
+              placeholder="000.000.000-00"
               value={formData.cpf}
               onChange={(e) =>
                 setFormData({ ...formData, cpf: e.target.value })
               }
-              disabled={isLoading}
+              disabled={isSubmitting}
             />
           </div>
 
@@ -147,11 +154,12 @@ export function RegisterForm() {
             <Label htmlFor="phone">Telefone</Label>
             <Input
               id="phone"
+              placeholder="(00) 00000-0000"
               value={formData.phone}
               onChange={(e) =>
                 setFormData({ ...formData, phone: e.target.value })
               }
-              disabled={isLoading}
+              disabled={isSubmitting}
             />
           </div>
 
@@ -159,54 +167,79 @@ export function RegisterForm() {
             <Label htmlFor="nickname">Apelido</Label>
             <Input
               id="nickname"
+              placeholder="Como gosta de ser chamado"
               value={formData.nickname}
               onChange={(e) =>
                 setFormData({ ...formData, nickname: e.target.value })
               }
-              disabled={isLoading}
+              disabled={isSubmitting}
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="password">Senha *</Label>
-            <Input
-              id="password"
-              type="password"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              disabled={isLoading}
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Mínimo 6 caracteres"
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                disabled={isSubmitting}
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="confirmPassword">Confirmar senha *</Label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              value={formData.confirmPassword}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  confirmPassword: e.target.value,
-                })
-              }
-              disabled={isLoading}
-            />
+            <div className="relative">
+              <Input
+                id="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirme sua senha"
+                value={formData.confirmPassword}
+                onChange={(e) =>
+                  setFormData({ ...formData, confirmPassword: e.target.value })
+                }
+                disabled={isSubmitting}
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
           </div>
         </CardContent>
 
         <CardFooter className="flex flex-col space-y-4 pt-4 pb-2">
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Cadastrando...
-              </>
-            ) : (
-              "Cadastrar"
-            )}
+          <Button
+            type="submit"
+            className="w-full bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Cadastrando..." : "Cadastrar"}
           </Button>
 
           <p className="text-sm text-center text-muted-foreground">

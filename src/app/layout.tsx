@@ -2,11 +2,13 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { Suspense } from "react";
 import { siteConfig } from "@/config/site";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/auth/";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { GlobalLoader } from "@/components/logo-loader-provider";
+import { InitialLoader } from "@/components/initial-loader";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -93,7 +95,7 @@ export default function RootLayout({
         <ThemeProvider>
           <QueryProvider>
             <AuthProvider>
-              <GlobalLoader>{children}</GlobalLoader>
+              <Suspense fallback={<InitialLoader />}>{children}</Suspense>
             </AuthProvider>
           </QueryProvider>
         </ThemeProvider>

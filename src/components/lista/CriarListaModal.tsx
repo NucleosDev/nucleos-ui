@@ -186,9 +186,9 @@ export function CriarListaModal({
                 <SelectValue placeholder="Escolha o tipo" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="" disabled>
-                  Escolha o tipo
-                </SelectItem>
+                {/* <SelectItem value="" disabled> */}
+                Escolha o tipo
+                {/* </SelectItem> */}
                 <SelectItem value="gastos">Gastos</SelectItem>
                 <SelectItem value="despesas">Despesas</SelectItem>
                 <SelectItem value="receitas">Receitas</SelectItem>

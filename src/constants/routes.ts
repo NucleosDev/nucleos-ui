@@ -197,6 +197,7 @@ export const API_ROUTES = {
     STOP: (id: string) => `/timers/${id}/stop`,
     PAUSE: (id: string) => `/timers/${id}/pause`,
     RESUME: (id: string) => `/timers/${id}/resume`,
+    UPDATE: (id: string) => `/timers/${id}`,
   },
 
   // CALENDÁRIO

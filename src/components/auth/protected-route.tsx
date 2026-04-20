@@ -35,15 +35,9 @@ export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
     }
   }, [isAuthenticated, isLoading, pathname, router]);
 
-  // Mostra fallback enquanto carrega
+  // Não mostra nada enquanto carrega - o GlobalLoader cuida disso
   if (isLoading) {
-    return (
-      fallback ?? (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin h-10 w-10 border-b-2 border-blue-600 rounded-full" />
-        </div>
-      )
-    );
+    return null;
   }
 
   // Não autenticado: não renderiza o conteúdo (o redirecionamento já foi disparado)

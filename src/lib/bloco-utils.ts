@@ -1,4 +1,3 @@
-// src/lib/bloco-utils.ts
 import {
   CheckSquare,
   ListChecks,
@@ -6,6 +5,7 @@ import {
   Calculator,
   Table2,
   StickyNote,
+  Clock,
   Repeat,
   type LucideIcon,
 } from "lucide-react";
@@ -49,6 +49,11 @@ export const TIPO_BLOCO_META: Record<
     rotulo: "Coleções",
     descricao: "Banco de dados personalizado com campos",
     icon: Table2,
+  },
+  timer: {
+    rotulo: "Timer",
+    descricao: "Timers",
+    icon: Clock,
   },
 };
 

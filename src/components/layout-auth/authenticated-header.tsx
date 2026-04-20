@@ -1,6 +1,7 @@
 // src/components/layout-auth/authenticated-header.tsx
 "use client";
-
+// import { useUser } from "@/hooks/useUser";
+// const { user } = useUser();
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
