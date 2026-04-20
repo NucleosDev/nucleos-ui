@@ -62,7 +62,7 @@ const recursosPrincipais = [
       },
       {
         titulo: "Blocos Versáteis",
-        descricao: "Combine diferentes tipos de blocos em cada núcleo",
+        descricao: "Combine diferentes tipos de blocos em cada Nucleo",
         detalhes: ["Texto rico", "Coleções/Tabelas", "Calendários", "Timers"],
       },
       {
@@ -111,7 +111,7 @@ const recursosPrincipais = [
       {
         titulo: "Estatísticas Detalhadas",
         descricao: "Visualize seu progresso em gráficos",
-        detalhes: ["Evolução temporal", "Distribuição por núcleo", "Insights"],
+        detalhes: ["Evolução temporal", "Distribuição por Nucleo", "Insights"],
       },
       {
         titulo: "Metas e Objetivos",
@@ -197,7 +197,7 @@ const tiposDeNucleo = [
 
 const comparativo = [
   { recurso: "Nucleos", gratis: "3", pro: "Ilimitados" },
-  { recurso: "Hábitos por núcleo", gratis: "10", pro: "Ilimitados" },
+  { recurso: "Hábitos por Nucleo", gratis: "10", pro: "Ilimitados" },
   { recurso: "Blocos de texto", gratis: "✓", pro: "✓" },
   { recurso: "Blocos de coleção", gratis: "✓", pro: "✓" },
   { recurso: "Blocos de calendário", gratis: "✓", pro: "✓" },
@@ -259,11 +259,11 @@ export default function RecursosPage() {
         </div>
       </section>
 
-      {/* Tipos de Núcleo */}
+      {/* Tipos de Nucleo */}
       <section className="px-4 py-16 bg-muted/30 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
           <h2 className="text-3xl font-bold text-center mb-12">
-            Tipos de Núcleo
+            Tipos de Nucleo
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
             {tiposDeNucleo.map((tipo, index) => (

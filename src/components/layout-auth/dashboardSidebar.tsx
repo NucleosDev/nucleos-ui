@@ -34,7 +34,7 @@ const mockStreak = 12;
 const mainLinks = [
   {
     id: "nucleos",
-    label: "Núcleos",
+    label: "Nucleos",
     icon: LayoutGrid,
     href: "/dashboard/nucleos",
     count: 3,
@@ -159,14 +159,14 @@ function DashboardSidebar({
         </Button>
       </div>
 
-      {/* Botão Novo Núcleo */}
+      {/* Botão Novo Nucleo */}
       <div className="p-3">
         <Button
           className="w-full bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90"
           onClick={onCreateNucleo}
         >
           <PlusCircle className="h-4 w-4 mr-2" />
-          Novo Núcleo
+          Novo Nucleo
         </Button>
       </div>
 
@@ -325,7 +325,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <div className="p-4 md:p-8">{children}</div>
       </main>
 
-      {/* Modal de criação de núcleo (substitua pelo seu componente) */}
+      {/* Modal de criação de Nucleo (substitua pelo seu componente) */}
       {/* <CreateNucleoModal open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen} /> */}
     </div>
   );

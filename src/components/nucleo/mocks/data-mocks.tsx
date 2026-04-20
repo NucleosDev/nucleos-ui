@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 
 // ========== DADOS COMPLETOS PARA TODOS OS Nucleos ==========
 
-// Blocos para o núcleo 1 (Estudos de React)
+// Blocos para o Nucleo 1 (Estudos de React)
 export const blocosNucleo1 = [
   {
     id: "bloco-texto-1",
@@ -156,7 +156,7 @@ useEffect(() => {
   },
 ];
 
-// Blocos para o núcleo 2 (Fitness Diário)
+// Blocos para o Nucleo 2 (Fitness Diário)
 export const blocosNucleo2 = [
   {
     id: "bloco-texto-2",
@@ -276,7 +276,7 @@ export const blocosNucleo2 = [
   },
 ];
 
-// Blocos para o núcleo 3 (Projeto Cliente)
+// Blocos para o Nucleo 3 (Projeto Cliente)
 export const blocosNucleo3 = [
   {
     id: "bloco-texto-3",
@@ -372,7 +372,7 @@ export const blocosNucleo3 = [
   },
 ];
 
-// Blocos para o núcleo 4 (Finanças Pessoais)
+// Blocos para o Nucleo 4 (Finanças Pessoais)
 export const blocosNucleo4 = [
   {
     id: "bloco-colecao-4",
@@ -436,7 +436,7 @@ export const blocosNucleo4 = [
   },
 ];
 
-// Blocos para o núcleo 5 (Curso de Inglês)
+// Blocos para o Nucleo 5 (Curso de Inglês)
 export const blocosNucleo5 = [
   {
     id: "bloco-texto-5",
@@ -465,7 +465,7 @@ export const blocosNucleo5 = [
   },
 ];
 
-// Blocos para o núcleo 6 (Leitura)
+// Blocos para o Nucleo 6 (Leitura)
 export const blocosNucleo6 = [
   {
     id: "bloco-colecao-6",
@@ -511,7 +511,7 @@ export const blocosNucleo6 = [
   },
 ];
 
-// Mapa de blocos por ID do núcleo
+// Mapa de blocos por ID do Nucleo
 export const blocosPorNucleo: Record<string, any[]> = {
   "nucleo-1": blocosNucleo1,
   "nucleo-2": blocosNucleo2,

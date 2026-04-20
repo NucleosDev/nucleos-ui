@@ -13,12 +13,9 @@ export default function BlocoDetalhesPage() {
   const nucleoId = params?.nucleoId as string;
   const blocoId = params?.blocoId as string;
 
-  const { data: bloco, isLoading, error } = useBloco(
-    blocoId,
-    nucleoId
-  );
+  const { data: bloco, isLoading, error } = useBloco(blocoId, nucleoId);
 
-  // 🔒 Segurança extra
+  // Segurança extra
   if (!blocoId) return null;
 
   if (isLoading) {
@@ -40,27 +37,22 @@ export default function BlocoDetalhesPage() {
     );
   }
 
-  // 🧠 Mapa de componentes (escala melhor que switch)
+  // Mapa de componentes (escala melhor que switch)
   const blocoComponents = {
     lista: ListaPage,
   } as const;
 
-  const Component =
-    blocoComponents[bloco.tipo as keyof typeof blocoComponents];
+  const Component = blocoComponents[bloco.tipo as keyof typeof blocoComponents];
 
   return (
     <div className="container py-8">
       {/* ✅ Voltar sempre visível */}
-      <Button
-        variant="ghost"
-        onClick={() => router.back()}
-        className="mb-4"
-      >
+      <Button variant="ghost" onClick={() => router.back()} className="mb-4">
         <ArrowLeft className="mr-2 h-4 w-4" />
         Voltar
       </Button>
 
-      {/* ✅ Render dinâmico */}
+      {/* Render dinâmico */}
       {Component ? (
         <Component bloco={bloco} nucleoId={nucleoId} />
       ) : (

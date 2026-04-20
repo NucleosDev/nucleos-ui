@@ -26,20 +26,17 @@ import {
   HelpCircle,
   Clipboard,
   Zap,
-  BookOpen,
   Heart,
-  Wallet,
-  Home,
-  Compass,
-  Calendar,
   CreditCard,
   Mail,
   LayoutDashboard,
   Eclipse,
   LogOut,
-  Send,
   User,
   Settings,
+  Home,
+  Compass,
+  Calendar,
 } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
 import {
@@ -74,9 +71,6 @@ export function AuthenticatedHeader({
   const [open, setOpen] = React.useState(false);
   const scrolled = useScroll(10);
 
-  const plan = user?.subscription?.plan;
-  const subscription = user?.subscription;
-
   const closeMenu = React.useCallback(() => {
     setOpen(false);
   }, []);
@@ -98,36 +92,31 @@ export function AuthenticatedHeader({
 
   return (
     <header
-      className={cn("sticky top-0 z-50 w-full  dark:bg ", {
-        " bg dark:bg backdrop-blur-lg": scrolled,
-      })}
+      className={cn(
+        "sticky top-0 z-50 w-full transition-all duration-300",
+        scrolled
+          ? "bg-background/80 backdrop-blur-lg border-b border-border/50"
+          : "bg-transparent",
+      )}
     >
-      <nav className="bg dark:bg mx-auto flex h-16 w-full w-full items-center justify-between px-4 sm:px-6 lg:px-8 bg-primary/5 dark:bg-gray-900">
-        <div className="flex items-center gap-6 bg dark:bg">
-          <Link
-            href={"/"}
-            className="flex items-center gap-2 transition-opacity hover:opacity-80"
-            onClick={closeMenu}
-          >
-            <Image
-              src="/icon.svg"
-              alt="Nucleos"
-              width={32}
-              height={32}
-              className="size-8"
-              priority
-            />
-          </Link>
+      <nav className="relative mx-auto grid h-16 w-[95%] grid-cols-[1fr_auto_1fr] items-center px-4 sm:px-6 lg:px-8">
+        {/* ========== COLUNA ESQUERDA ========== */}
+        <div className="flex justify-start items-center gap-2">
+          {/* Mobile: Botão de tema */}
+          <div className="flex md:hidden">
+            <ModeToggle />
+          </div>
 
+          {/* Desktop: Links de navegação principais */}
           <NavigationMenu className="hidden md:flex">
             <NavigationMenuList>
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="bg-transparent">
                   Criar
                 </NavigationMenuTrigger>
-                <NavigationMenuContent className="">
-                  <div className="grid w-[500px] grid-cols-2 gap-2">
-                    <ul className="bg-popover space-y-2 rounded-mdshadow">
+                <NavigationMenuContent>
+                  <div className="grid w-[500px] grid-cols-2 gap-2 p-2">
+                    <ul className="space-y-2">
                       <li>
                         <ListItem
                           title="Novo Nucleo"
@@ -176,12 +165,13 @@ export function AuthenticatedHeader({
                   </div>
                 </NavigationMenuContent>
               </NavigationMenuItem>
+
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="bg-transparent">
                   Nucleos
                 </NavigationMenuTrigger>
-                <NavigationMenuContent className="">
-                  <ul className="bg-popover grid w-[400px] grid-cols-1 gap-2 rounded-md shadow-lg">
+                <NavigationMenuContent>
+                  <ul className="grid w-[400px] grid-cols-1 gap-2 p-2">
                     <li>
                       <ListItem
                         title="Dashboard"
@@ -209,13 +199,14 @@ export function AuthenticatedHeader({
                   </ul>
                 </NavigationMenuContent>
               </NavigationMenuItem>
+
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="bg-transparent">
                   Hábitos
                 </NavigationMenuTrigger>
-                <NavigationMenuContent className="">
-                  <div className="grid w-[400px] grid-cols-2 gap-2">
-                    <ul className="bg-popover space-y-2 rounded-md shadow">
+                <NavigationMenuContent>
+                  <div className="grid w-[400px] grid-cols-2 gap-2 p-2">
+                    <ul className="space-y-2">
                       <li>
                         <ListItem
                           title="Sobre"
@@ -254,128 +245,8 @@ export function AuthenticatedHeader({
                       <li>
                         <NavigationMenuLink
                           href={ROUTES.PRIVACIDADE}
-                          className="flex p-2 hover: flex-row rounded-md items-center gap-x-2 transition-colors"
-                        >
-                          <Shield className="text-foreground size-4" />
-                          <span className="font-medium">Privacidade</span>
-                        </NavigationMenuLink>
-                      </li>
-                      <li>
-                        <NavigationMenuLink
-                          href={ROUTES.AJUDA}
-                          className="flex p-2 hover: flex-row rounded-md items-center gap-x-2 transition-colors"
-                        >
-                          <HelpCircle className="text-foreground size-4" />
-                          <span className="font-medium">Ajuda</span>
-                        </NavigationMenuLink>
-                      </li>
-                    </ul>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent">
-                  Tarefas
-                </NavigationMenuTrigger>
-                <NavigationMenuContent className="">
-                  <div className="grid w-[500px] grid-cols-2 gap-2">
-                    <ul className="bg-popover space-y-2 rounded-mdshadow">
-                      <li>
-                        <ListItem
-                          title="Hábitos"
-                          href={ROUTES.HABITOS("")}
-                          description="Acompanhe sua rotina"
-                          icon={Heart}
-                        />
-                      </li>
-                      <li>
-                        <ListItem
-                          title="Tarefas"
-                          href={ROUTES.TAREFAS("")}
-                          description="Organize suas tarefas"
-                          icon={Clipboard}
-                        />
-                      </li>
-                      <li>
-                        <ListItem
-                          title="Calendário"
-                          href="/calendario"
-                          description="Planeje seus eventos"
-                          icon={Calendar}
-                        />
-                      </li>
-                    </ul>
-                    <ul className="space-y-2 p-3">
-                      <li>
-                        <NavigationMenuLink
-                          href={ROUTES.AJUDA}
-                          className="flex p-2 hover:text-primary flex-row rounded-md items-center gap-x-2 transition-colors"
-                        >
-                          <HelpCircle className="text-foreground size-4" />
-                          <span className="font-medium">Central de Ajuda</span>
-                        </NavigationMenuLink>
-                      </li>
-                      <li>
-                        <NavigationMenuLink
-                          href={ROUTES.BLOG}
-                          className="flex p-2 flex-row rounded-md items-center gap-x-2 transition-colors"
-                        >
-                          <Zap className="text-foreground size-4" />
-                          <span className="font-medium">Blog</span>
-                        </NavigationMenuLink>
-                      </li>
-                    </ul>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent">
-                  Perfil
-                </NavigationMenuTrigger>
-                <NavigationMenuContent className="">
-                  <div className="grid w-[400px] grid-cols-2 gap-2">
-                    <ul className="bg-popover space-y-2 rounded-md shadow">
-                      <li>
-                        <ListItem
-                          title="Sobre"
-                          href={ROUTES.SOBRE}
-                          description="Nossa história e missão"
-                          icon={Users}
-                        />
-                      </li>
-                      <li>
-                        <ListItem
-                          title="Blog"
-                          href={ROUTES.BLOG}
-                          description="Novidades e conteúdos"
-                          icon={Star}
-                        />
-                      </li>
-                      <li>
-                        <ListItem
-                          title="Contato"
-                          href={ROUTES.CONTATO}
-                          description="Fale com a gente"
-                          icon={Mail}
-                        />
-                      </li>
-                    </ul>
-                    <ul className="space-y-2 p-3">
-                      <li>
-                        <NavigationMenuLink
-                          href={ROUTES.TERMOS}
                           className="flex p-2 hover:flex-row rounded-md items-center gap-x-2 transition-colors"
                         >
-                          <FileText className="text-foreground size-4" />
-                          <span className="font-medium">Termos</span>
-                        </NavigationMenuLink>
-                      </li>
-                      <li>
-                        <NavigationMenuLink
-                          href={ROUTES.PRIVACIDADE}
-                          className="flex p-2 hover: flex-row rounded-md items-center gap-x-2 transition-colors"
-                        >
                           <Shield className="text-foreground size-4" />
                           <span className="font-medium">Privacidade</span>
                         </NavigationMenuLink>
@@ -383,7 +254,7 @@ export function AuthenticatedHeader({
                       <li>
                         <NavigationMenuLink
                           href={ROUTES.AJUDA}
-                          className="flex p-2 hover: flex-row rounded-md items-center gap-x-2 transition-colors"
+                          className="flex p-2 hover:flex-row rounded-md items-center gap-x-2 transition-colors"
                         >
                           <HelpCircle className="text-foreground size-4" />
                           <span className="font-medium">Ajuda</span>
@@ -393,86 +264,231 @@ export function AuthenticatedHeader({
                   </div>
                 </NavigationMenuContent>
               </NavigationMenuItem>
-
-              <NavigationMenuLink className="px-3" asChild>
-                <Link
-                  href={ROUTES.PLANOS}
-                  className="bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient"
-                >
-                  {/* {user?.subscription?.plan?.name || "Planos"} */}
-                  Plano: Pro
-                </Link>
-              </NavigationMenuLink>
             </NavigationMenuList>
           </NavigationMenu>
         </div>
 
-        {/* Desktop: tema e perfil */}
-        <div className="hidden items-center gap-2 md:flex">
-          <ModeToggle />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="relative h-8 w-8 rounded-full"
-                aria-label="Menu do usuário"
-              >
-                <Avatar className="h-8 w-8">
-                  <AvatarFallback className="bg-blue-500 text-white text-sm font-medium">
-                    {user?.fullName?.charAt(0).toUpperCase() || "U"}
-                  </AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    {user?.fullName}
-                  </p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    {user?.email}
-                  </p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href={ROUTES.DASHBOARD_PROFILE}>
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Perfil</span>
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href={ROUTES.DASHBOARD_SETTINGS}>
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Configurações</span>
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Sair</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        {/* ========== COLUNA CENTRAL (Logo sempre ao meio) ========== */}
+        <Link
+          href={"/"}
+          className="flex items-center justify-center transition-opacity hover:opacity-80"
+          onClick={closeMenu}
+        >
+          <Image
+            src="/icon.svg"
+            alt="Nucleos"
+            width={32}
+            height={32}
+            className="size-8"
+            priority
+          />
+        </Link>
 
-        {/* Mobile: botão hambúrguer */}
-        <div className="flex items-center gap-2 md:hidden">
-          <Button
-            size="icon"
-            variant="outline"
-            onClick={() => setOpen(!open)}
-            aria-expanded={open}
-            aria-controls="mobile-menu"
-            aria-label="Toggle menu"
-          >
-            <MenuToggleIcon open={open} className="size-5" duration={300} />
-          </Button>
+        {/* ========== COLUNA DIREITA ========== */}
+        <div className="flex items-center justify-end gap-2">
+          {/* Desktop: Links secundários + Tema + Perfil */}
+          <div className="hidden md:flex items-center gap-2">
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="bg-transparent">
+                    Tarefas
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="grid w-[500px] grid-cols-2 gap-2 p-2">
+                      <ul className="space-y-2">
+                        <li>
+                          <ListItem
+                            title="Hábitos"
+                            href={ROUTES.HABITOS("")}
+                            description="Acompanhe sua rotina"
+                            icon={Heart}
+                          />
+                        </li>
+                        <li>
+                          <ListItem
+                            title="Tarefas"
+                            href={ROUTES.TAREFAS("")}
+                            description="Organize suas tarefas"
+                            icon={Clipboard}
+                          />
+                        </li>
+                        <li>
+                          <ListItem
+                            title="Calendário"
+                            href="/calendario"
+                            description="Planeje seus eventos"
+                            icon={Calendar}
+                          />
+                        </li>
+                      </ul>
+                      <ul className="space-y-2 p-3">
+                        <li>
+                          <NavigationMenuLink
+                            href={ROUTES.AJUDA}
+                            className="flex p-2 hover:text-primary flex-row rounded-md items-center gap-x-2 transition-colors"
+                          >
+                            <HelpCircle className="text-foreground size-4" />
+                            <span className="font-medium">
+                              Central de Ajuda
+                            </span>
+                          </NavigationMenuLink>
+                        </li>
+                        <li>
+                          <NavigationMenuLink
+                            href={ROUTES.BLOG}
+                            className="flex p-2 flex-row rounded-md items-center gap-x-2 transition-colors"
+                          >
+                            <Zap className="text-foreground size-4" />
+                            <span className="font-medium">Blog</span>
+                          </NavigationMenuLink>
+                        </li>
+                      </ul>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger className="bg-transparent">
+                    Perfil
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <div className="grid w-[400px] grid-cols-2 gap-2 p-2">
+                      <ul className="space-y-2">
+                        <li>
+                          <ListItem
+                            title="Sobre"
+                            href={ROUTES.SOBRE}
+                            description="Nossa história e missão"
+                            icon={Users}
+                          />
+                        </li>
+                        <li>
+                          <ListItem
+                            title="Blog"
+                            href={ROUTES.BLOG}
+                            description="Novidades e conteúdos"
+                            icon={Star}
+                          />
+                        </li>
+                        <li>
+                          <ListItem
+                            title="Contato"
+                            href={ROUTES.CONTATO}
+                            description="Fale com a gente"
+                            icon={Mail}
+                          />
+                        </li>
+                      </ul>
+                      <ul className="space-y-2 p-3">
+                        <li>
+                          <NavigationMenuLink
+                            href={ROUTES.TERMOS}
+                            className="flex p-2 hover:flex-row rounded-md items-center gap-x-2 transition-colors"
+                          >
+                            <FileText className="text-foreground size-4" />
+                            <span className="font-medium">Termos</span>
+                          </NavigationMenuLink>
+                        </li>
+                        <li>
+                          <NavigationMenuLink
+                            href={ROUTES.PRIVACIDADE}
+                            className="flex p-2 hover:flex-row rounded-md items-center gap-x-2 transition-colors"
+                          >
+                            <Shield className="text-foreground size-4" />
+                            <span className="font-medium">Privacidade</span>
+                          </NavigationMenuLink>
+                        </li>
+                        <li>
+                          <NavigationMenuLink
+                            href={ROUTES.AJUDA}
+                            className="flex p-2 hover:flex-row rounded-md items-center gap-x-2 transition-colors"
+                          >
+                            <HelpCircle className="text-foreground size-4" />
+                            <span className="font-medium">Ajuda</span>
+                          </NavigationMenuLink>
+                        </li>
+                      </ul>
+                    </div>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+
+                <NavigationMenuLink className="px-3" asChild>
+                  <Link
+                    href={ROUTES.PLANOS}
+                    className="bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient"
+                  >
+                    Plano: Pro
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuList>
+            </NavigationMenu>
+
+            <ModeToggle />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="relative h-8 w-8 rounded-full"
+                  aria-label="Menu do usuário"
+                >
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-blue-500 text-white text-sm font-medium">
+                      {user?.fullName?.charAt(0).toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      {user?.fullName}
+                    </p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {user?.email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href={ROUTES.DASHBOARD_PROFILE}>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Perfil</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href={ROUTES.DASHBOARD_SETTINGS}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Configurações</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sair</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* Mobile: Botão hambúrguer */}
+          <div className="flex md:hidden">
+            <Button
+              size="icon"
+              variant="outline"
+              onClick={() => setOpen(!open)}
+              aria-expanded={open}
+              aria-controls="mobile-menu"
+              aria-label="Toggle menu"
+            >
+              <MenuToggleIcon open={open} className="size-5" duration={300} />
+            </Button>
+          </div>
         </div>
       </nav>
 
-      {/* MobileMenu (já existente, contém todos os links) */}
+      {/* Menu Mobile (Portal) - sem ListItemTheme */}
       <MobileMenu
         open={open}
         onClose={closeMenu}
@@ -519,7 +535,6 @@ export function AuthenticatedHeader({
                 mobile
                 onClick={closeMenu}
               />
-              <ListItemTheme mobile onClose={closeMenu} />
             </div>
 
             <div className="space-y-1">
@@ -587,7 +602,7 @@ export function AuthenticatedHeader({
           </div>
         </NavigationMenu>
 
-        <div className="flex flex-col gap-2 pt-4 ">
+        <div className="flex flex-col gap-2 pt-4">
           <Button
             variant="outline"
             className="w-full"
@@ -609,7 +624,7 @@ export function AuthenticatedHeader({
   );
 }
 
-// ========== COMPONENTES AUXILIARES (extraídos do header público) ==========
+// ========== COMPONENTES AUXILIARES ==========
 
 type MobileMenuProps = React.ComponentProps<"div"> & {
   open: boolean;
@@ -636,7 +651,7 @@ function MobileMenu({
     <>
       <div
         className={cn(
-          "fixed inset-0 bg/20 backdrop-blur-sm z-40 md:hidden transition-opacity duration-300",
+          "fixed inset-0 bg-black/20 backdrop-blur-sm z-40 md:hidden transition-opacity duration-300",
           open ? "opacity-100" : "opacity-0 pointer-events-none",
         )}
         onClick={onClose}
@@ -662,88 +677,6 @@ function MobileMenu({
       </div>
     </>,
     document.body,
-  );
-}
-
-function ListItemTheme({
-  mobile,
-  onClose,
-}: {
-  mobile?: boolean;
-  onClose?: () => void;
-}) {
-  const [theme, setTheme] = React.useState<"light" | "dark">("light");
-
-  React.useEffect(() => {
-    const isDark = document.documentElement.classList.contains("dark");
-    setTheme(isDark ? "dark" : "light");
-  }, []);
-
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-    if (newTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    localStorage.setItem("theme", newTheme);
-  };
-
-  return (
-    <NavigationMenuLink
-      className="w-full flex flex-row gap-x-2 rounded-sm p-2 transition-colors cursor-pointer hover:bg-accent"
-      asChild
-    >
-      <div onClick={toggleTheme}>
-        <div
-          className={cn(
-            "flex aspect-square items-center justify-center rounded-md shadow-sm",
-            mobile ? "size-10" : "size-12 bg-background/40",
-          )}
-        >
-          {theme === "light" ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-4"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
-              />
-            </svg>
-          ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-4"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"
-              />
-            </svg>
-          )}
-        </div>
-        <div className="flex flex-col items-start justify-center">
-          <span className="font-medium">
-            Tema {theme === "light" ? "Claro" : "Escuro"}
-          </span>
-          <span className="text-muted-foreground text-xs line-clamp-1">
-            Clique para alternar
-          </span>
-        </div>
-      </div>
-    </NavigationMenuLink>
   );
 }
 
@@ -808,4 +741,25 @@ function useScroll(threshold: number) {
   }, [onScroll]);
 
   return scrolled;
+}
+
+// Ícone Send (caso não esteja disponível no pacote lucide-react)
+function Send(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <path d="M22 2 11 13" />
+      <path d="m22 2-7 20-4-9-9-4 20-7z" />
+    </svg>
+  );
 }

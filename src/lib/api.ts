@@ -1,10 +1,6 @@
 import { env } from "@/config/env";
 import type { ApiError, ApiResponse } from "@/types";
 
-// ============================================================================
-// CONFIGURAÇÃO BASE DO FETCH
-// ============================================================================
-
 const BASE_URL = env.apiUrl;
 
 function getAuthToken(): string | null {
@@ -81,10 +77,8 @@ async function request<T>(
   }
 }
 
-// ============================================================================
-// MÉTODOS HTTP
-// ============================================================================
-
+// ==========================// MÉTODOS HTTP
+// ==========================
 export const api = {
   get<T>(endpoint: string, params?: RequestOptions["params"]): Promise<T> {
     return request<T>(endpoint, { method: "GET", params });
@@ -116,10 +110,8 @@ export const api = {
   },
 };
 
-// ============================================================================
-// HELPERS
-// ============================================================================
-
+// ==========================// HELPERS
+// ==========================
 export function handleApiError(error: unknown): string {
   if ((error as ApiError).message) {
     return (error as ApiError).message;

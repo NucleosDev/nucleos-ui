@@ -95,8 +95,8 @@ const secoes = [
 
 const guiasRapidos = [
   {
-    titulo: "Criar primeiro núcleo",
-    descricao: "Aprenda a criar seu primeiro núcleo em 5 minutos",
+    titulo: "Criar primeiro Nucleo",
+    descricao: "Aprenda a criar seu primeiro Nucleo em 5 minutos",
     tempo: "5 min",
     nivel: "Iniciante",
   },
@@ -123,7 +123,7 @@ const guiasRapidos = [
 const exemplosCodigo = [
   {
     linguagem: "JavaScript",
-    codigo: `// Criar um novo núcleo
+    codigo: `// Criar um novo Nucleo
 const nucleo = await nucleosService.createNucleo({
   nome: "Meus Estudos",
   tipo: "estudo",
@@ -132,7 +132,7 @@ const nucleo = await nucleosService.createNucleo({
   },
   {
     linguagem: "Python",
-    codigo: `# Adicionar XP a um núcleo
+    codigo: `# Adicionar XP a um Nucleo
 import requests
 
 response = requests.post(

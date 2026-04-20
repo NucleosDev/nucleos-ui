@@ -44,7 +44,7 @@
 //         <div className="relative hidden max-w-xs flex-1 md:flex">
 //           <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
 //           <Input
-//             placeholder="Buscar núcleos..."
+//             placeholder="Buscar Nucleos..."
 //             className="h-8 pl-8 text-sm bg-muted border-transparent focus-visible:border-border focus-visible:bg-background"
 //             onChange={(e) => onSearch?.(e.target.value)}
 //           />
@@ -58,7 +58,7 @@
 //             onClick={onNewNucleo}
 //           >
 //             <Plus className="h-3.5 w-3.5" />
-//             Novo Núcleo
+//             Novo Nucleo
 //           </Button>
 
 //           <Button

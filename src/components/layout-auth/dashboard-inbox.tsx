@@ -270,7 +270,7 @@ export function DashboardInbox() {
   const categories: Category[] = [
     {
       id: "nucleos",
-      name: "Núcleos",
+      name: "Nucleos",
       icon: <Eclipse className="w-4 h-4" />,
       count: mockNucleos.length,
       href: "/nucleos",
@@ -806,7 +806,7 @@ function NucleoDetail({ nucleo }: { nucleo: any }) {
           href={`/nucleos/${nucleo.id}`}
           className="flex items-center gap-1 text-xs text-primary hover:underline"
         >
-          Abrir núcleo
+          Abrir Nucleo
           <ExternalLink className="w-3 h-3" />
         </Link>
       </div>
@@ -888,7 +888,7 @@ function NucleoDetail({ nucleo }: { nucleo: any }) {
               ))}
             {mockTasks.filter((t) => t.nucleo === nucleo.nome).length === 0 && (
               <p className="text-xs text-muted-foreground text-center py-3">
-                Nenhuma tarefa pendente neste núcleo 🎉
+                Nenhuma tarefa pendente neste Nucleo 🎉
               </p>
             )}
           </div>
@@ -918,7 +918,7 @@ function TaskDetail({ task }: { task: any }) {
             icon={<Clock className="w-4 h-4 text-muted-foreground" />}
           />
           <InfoBlock
-            label="Núcleo"
+            label="Nucleo"
             value={task.nucleo}
             icon={<Eclipse className="w-4 h-4 text-muted-foreground" />}
           />
@@ -1055,7 +1055,7 @@ function EventDetail({ event }: { event: any }) {
             icon={<ExternalLink className="w-4 h-4 text-muted-foreground" />}
           />
           <InfoBlock
-            label="Núcleo"
+            label="Nucleo"
             value={event.nucleo}
             icon={<Eclipse className="w-4 h-4 text-muted-foreground" />}
           />
@@ -1102,7 +1102,7 @@ function GoalDetail({ goal }: { goal: any }) {
             icon={<Clock className="w-4 h-4 text-muted-foreground" />}
           />
           <InfoBlock
-            label="Núcleo"
+            label="Nucleo"
             value={goal.nucleo}
             icon={<Eclipse className="w-4 h-4 text-muted-foreground" />}
           />

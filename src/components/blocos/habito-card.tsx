@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
 "use client";
- 
+
 import { MoreHorizontal, CheckCircle2, Circle, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,13 +16,13 @@ import { Badge } from "@/components/ui/badge";
 import { useHabitos } from "@/hooks/useHabitos";
 import type { HabitoComProgresso } from "@/types/habitos";
 import type { Bloco } from "@/types/bloco";
- 
+
 const FREQUENCIA_LABEL = {
   diaria: "Diário",
   semanal: "Semanal",
   personalizada: "Personalizado",
 } as const;
- 
+
 interface HabitoCardProps {
   bloco: Bloco;
   habitos: HabitoComProgresso[];
@@ -30,7 +30,7 @@ interface HabitoCardProps {
   onEdit?: () => void;
   onDelete?: () => void;
 }
- 
+
 export function HabitoCard({
   bloco,
   habitos,
@@ -39,7 +39,7 @@ export function HabitoCard({
   onDelete,
 }: HabitoCardProps) {
   const { registrar, isRegistrando } = useHabitos();
- 
+
   return (
     <Card className="group relative hover:shadow-md transition-shadow">
       <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
@@ -51,7 +51,7 @@ export function HabitoCard({
             {bloco.titulo || "Hábitos"}
           </CardTitle>
         </div>
- 
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -71,7 +71,7 @@ export function HabitoCard({
           </DropdownMenuContent>
         </DropdownMenu>
       </CardHeader>
- 
+
       <CardContent className="space-y-2">
         {habitos.length === 0 ? (
           <p className="text-xs text-muted-foreground">

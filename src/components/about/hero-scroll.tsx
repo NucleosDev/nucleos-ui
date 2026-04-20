@@ -11,7 +11,8 @@ export function HeroScroll() {
         titleComponent={
           <>
             <h1 className="text-4xl text-black dark:text-white">
-              Entenda o Nucleos<br />
+              Entenda o Nucleos
+              <br />
               <span className="text-4xl md:text-[6rem] font-bold mt-1 leading-none">
                 Nossa missão
               </span>

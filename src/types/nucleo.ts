@@ -78,4 +78,6 @@ export interface NucleoComStats extends Nucleo {
   xpHoje: number;
 }
 
+
+
 export interface UpdateNucleoPayload extends Partial<CreateNucleoPayload> {}

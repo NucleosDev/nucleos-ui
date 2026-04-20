@@ -34,7 +34,7 @@
 //     <article
 //       role="button"
 //       tabIndex={0}
-//       aria-label={`Abrir núcleo ${nucleo.nome}`}
+//       aria-label={`Abrir Nucleo ${nucleo.nome}`}
 //       onClick={() => onClick?.(nucleo.id)}
 //       onKeyDown={(e) => {
 //         if (e.key === "Enter" || e.key === " ") onClick?.(nucleo.id);

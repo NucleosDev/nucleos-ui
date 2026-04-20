@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from "uuid";
 import { mockNucleos as nucleosIniciais } from "./nucleo-card.mock";
 import { mockBlocos as blocosIniciais } from "./blocos.mock";
 
-// ========== TIPOS ==========
+//  TIPOS
 export interface MockUser {
   id: string;
   email: string;
@@ -74,7 +74,7 @@ export interface MockBloco {
   dados?: any;
 }
 
-// ========== ESTADO INICIAL (COPIA PROFUNDA) ==========
+//  ESTADO INICIAL (COPIA PROFUNDA)
 const initialState = {
   users: [
     {
@@ -194,18 +194,18 @@ const initialState = {
   ] as MockAchievement[],
 };
 
-// ========== ESTADO ATUAL (MUTÁVEL DURANTE A SESSÃO) ==========
+//  ESTADO ATUAL (MUTÁVEL DURANTE A SESSÃO)
 let currentState = JSON.parse(JSON.stringify(initialState));
 
-// ========== SERVIÇO MOCK COM CRUD ==========
+//  SERVIÇO MOCK COM CRUD
 export const mockCrudService = {
-  // ===== RESET =====
+  // RESET
   resetToInitial() {
     currentState = JSON.parse(JSON.stringify(initialState));
     console.log("🔄 Mock resetado ao estado inicial");
   },
 
-  // ===== USERS =====
+  // USERS
   getUsers() {
     return [...currentState.users];
   },
@@ -214,7 +214,7 @@ export const mockCrudService = {
     return currentState.users.find((u: MockUser) => u.id === id);
   },
 
-  // ===== NucleoS =====
+  // NucleoS
   getNucleos(userId?: string) {
     let nucleos = [...currentState.nucleos];
     if (userId) {
@@ -291,7 +291,7 @@ export const mockCrudService = {
     return true;
   },
 
-  // ===== BLOCOS =====
+  // BLOCOS
   getBlocos(nucleoId: string) {
     return currentState.blocos
       .filter((b: MockBloco) => b.nucleo_id === nucleoId)
@@ -356,7 +356,7 @@ export const mockCrudService = {
     return this.getBlocos(nucleoId);
   },
 
-  // ===== XP LOGS =====
+  // XP LOGS
   getXpLogs(filters?: { userId?: string; nucleoId?: string }) {
     let logs = [...currentState.xpLogs];
 
@@ -409,7 +409,7 @@ export const mockCrudService = {
     return novoLog;
   },
 
-  // ===== ENERGY LOGS =====
+  // ENERGY LOGS
   getEnergyLogs(filters?: { userId?: string; nucleoId?: string }) {
     let logs = [...currentState.energyLogs];
 
@@ -440,14 +440,14 @@ export const mockCrudService = {
     return novoLog;
   },
 
-  // ===== USER LEVEL =====
+  // USER LEVEL
   getUserLevel(userId: string) {
     return currentState.userLevels.find(
       (l: MockUserLevel) => l.user_id === userId,
     );
   },
 
-  // ===== ACHIEVEMENTS =====
+  // ACHIEVEMENTS
   getAchievements(nucleoId: string) {
     return currentState.achievements.filter(
       (a: MockAchievement) => a.nucleo_id === nucleoId,
@@ -476,7 +476,7 @@ export const mockCrudService = {
     return achievement;
   },
 
-  // ===== ESTATÍSTICAS AGREGADAS =====
+  // ESTATÍSTICAS AGREGADAS
   getNucleoStats(nucleoId: string) {
     const xpLogs = this.getXpLogs({ nucleoId });
     const energyLogs = this.getEnergyLogs({ nucleoId });

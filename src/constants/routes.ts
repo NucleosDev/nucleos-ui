@@ -1,12 +1,9 @@
-// ============================================================================
-// ROTAS DA API (BACKEND)
+// Rotas de api (BACKEND)
 // Baseadas nas definições reais dos routers Express + futuras implementações
-// ============================================================================
 
 export const API_ROUTES = {
-  // --------------------------------------------------------------------------
   // AUTENTICAÇÃO
-  // --------------------------------------------------------------------------
+
   AUTH: {
     LOGIN: "/Auth/login",
     REGISTER: "/Auth/register",
@@ -15,9 +12,8 @@ export const API_ROUTES = {
     REFRESH_TOKEN: "/Auth/refresh-token",
   },
 
-  // --------------------------------------------------------------------------
   // USUÁRIOS
-  // --------------------------------------------------------------------------
+
   USERS: {
     ME: "/users/me",
     PROFILE: "/users/profile",
@@ -32,9 +28,8 @@ export const API_ROUTES = {
     REACTIVATE: "/users/reactivate",
   },
 
-  // --------------------------------------------------------------------------
-  // NÚCLEOS
-  // --------------------------------------------------------------------------
+  // NucleoS
+
   NUCLEOS: {
     LIST: "/nucleos",
     GET: (id: string) => `/nucleos/${id}`,
@@ -54,9 +49,8 @@ export const API_ROUTES = {
     RELACOES_DELETE: (id: string) => `/nucleos/relacoes/${id}`,
   },
 
-  // --------------------------------------------------------------------------
   // BLOCOS
-  // --------------------------------------------------------------------------
+
   BLOCOS: {
     PING: "/blocos/ping",
     LIST: (nucleoId: string) => `/blocos/nucleo/${nucleoId}`,
@@ -67,9 +61,8 @@ export const API_ROUTES = {
     REORDER: "/blocos/reorder",
   },
 
-  // --------------------------------------------------------------------------
   // COLEÇÕES (com campos e itens aninhados)
-  // --------------------------------------------------------------------------
+
   COLECOES: {
     // Coleção
     LIST_BY_BLOCO: (blocoId: string) => `/colecoes/bloco/${blocoId}`,
@@ -78,7 +71,7 @@ export const API_ROUTES = {
     CREATE: "/colecoes",
     UPDATE: (id: string) => `/colecoes/${id}`,
     DELETE: (id: string) => `/colecoes/${id}`,
-    
+
     // Campos (aninhados sob /colecoes)
     CAMPOS: {
       LIST: (colecaoId: string) => `/colecoes/${colecaoId}/campos`,
@@ -96,9 +89,8 @@ export const API_ROUTES = {
     },
   },
 
-  // --------------------------------------------------------------------------
   // CAMPOS (standalone, para compatibilidade com código antigo)
-  // --------------------------------------------------------------------------
+
   CAMPOS: {
     BY_COLECAO: (colecaoId: string) => `/colecoes/${colecaoId}/campos`,
     CREATE: "/colecoes/campos",
@@ -106,9 +98,8 @@ export const API_ROUTES = {
     DELETE: (id: string) => `/colecoes/campos/${id}`,
   },
 
-  // --------------------------------------------------------------------------
   // ITENS (standalone, para compatibilidade)
-  // --------------------------------------------------------------------------
+
   ITENS: {
     BY_COLECAO: (colecaoId: string) => `/colecoes/${colecaoId}/items`,
     CREATE: "/colecoes/items",
@@ -116,9 +107,8 @@ export const API_ROUTES = {
     DELETE: (id: string) => `/colecoes/items/${id}`,
   },
 
-  // --------------------------------------------------------------------------
   // ITEM_VALORES (planejado)
-  // --------------------------------------------------------------------------
+
   ITEM_VALORES: {
     BY_ITEM: (itemId: string) => `/item-valores/item/${itemId}`,
     CREATE: (itemId: string, campoId: string) =>
@@ -127,9 +117,8 @@ export const API_ROUTES = {
     DELETE: (id: string) => `/item-valores/${id}`,
   },
 
-  // --------------------------------------------------------------------------
   // TAREFAS
-  // --------------------------------------------------------------------------
+
   TAREFAS: {
     BASE: "/tarefas",
     BY_ID: (id: string) => `/tarefas/${id}`,
@@ -138,9 +127,8 @@ export const API_ROUTES = {
     VENCENDO: "/tarefas/vencendo",
   },
 
-  // --------------------------------------------------------------------------
   // LISTAS
-  // --------------------------------------------------------------------------
+
   LISTAS: {
     // Lista
     LIST: (blocoId: string) => `/listas/bloco/${blocoId}`,
@@ -166,9 +154,8 @@ export const API_ROUTES = {
     },
   },
 
-  // --------------------------------------------------------------------------
   // HÁBITOS
-  // --------------------------------------------------------------------------
+
   HABITOS: {
     BASE: "/habitos",
     BY_ID: (id: string) => `/habitos/${id}`,
@@ -177,9 +164,8 @@ export const API_ROUTES = {
     PROGRESS: (id: string) => `/habitos/${id}/progresso`,
   },
 
-  // --------------------------------------------------------------------------
   // GAMIFICAÇÃO
-  // --------------------------------------------------------------------------
+
   GAMIFICACAO: {
     LEVEL: "/gamificacao/level",
     CONQUISTAS: "/gamificacao/conquistas",
@@ -189,25 +175,22 @@ export const API_ROUTES = {
     DESBLOQUEAR_CONQUISTA: "/gamificacao/desbloquear-conquista",
   },
 
-  // --------------------------------------------------------------------------
   // PROGRESS (XP e Energia)
-  // --------------------------------------------------------------------------
+
   PROGRESS: {
     XP: "/progress/xp",
     ENERGY: "/progress/energy",
   },
 
-  // --------------------------------------------------------------------------
   // PLANOS
-  // --------------------------------------------------------------------------
+
   PLANS: {
     LIST: "/plans",
     SUBSCRIPTION: "/plans/subscription",
   },
 
-  // --------------------------------------------------------------------------
   // TIMERS
-  // --------------------------------------------------------------------------
+
   TIMERS: {
     LIST: (nucleoId: string) => `/timers/nucleo/${nucleoId}`,
     START: "/timers/start",
@@ -216,9 +199,8 @@ export const API_ROUTES = {
     RESUME: (id: string) => `/timers/${id}/resume`,
   },
 
-  // --------------------------------------------------------------------------
   // CALENDÁRIO
-  // --------------------------------------------------------------------------
+
   CALENDARIO: {
     LIST: (nucleoId: string) => `/calendario/nucleo/${nucleoId}`,
     GET: (id: string) => `/calendario/${id}`,
@@ -227,9 +209,8 @@ export const API_ROUTES = {
     DELETE: (id: string) => `/calendario/${id}`,
   },
 
-  // --------------------------------------------------------------------------
   // NOTIFICAÇÕES
-  // --------------------------------------------------------------------------
+
   NOTIFICATIONS: {
     LIST: "/notifications",
     MARK_READ: (id: string) => `/notifications/${id}/read`,
@@ -237,9 +218,8 @@ export const API_ROUTES = {
     DELETE: (id: string) => `/notifications/${id}`,
   },
 
-  // --------------------------------------------------------------------------
   // INSIGHTS / IA
-  // --------------------------------------------------------------------------
+
   INSIGHTS: {
     BASE: "/insights",
     GET_BY_ID: (id: string) => `/insights/${id}`,
@@ -248,18 +228,15 @@ export const API_ROUTES = {
     CHAT: "/insights/chat",
   },
 
-  // --------------------------------------------------------------------------
   // ADMIN
-  // --------------------------------------------------------------------------
+
   ADMIN: {
     STATS: "/admin/stats",
     USERS: "/admin/users",
   },
 } as const;
 
-// ============================================================================
 // ROTAS DE NAVEGAÇÃO (FRONTEND)
-// ============================================================================
 
 export const ROUTES = {
   // Públicas
@@ -297,7 +274,7 @@ export const ROUTES = {
   DASHBOARD_SETTINGS: "/dashboard/configuracoes",
   DASHBOARD_NOTIFICATIONS: "/dashboard/notificacoes",
 
-  // Núcleos
+  // Nucleos
   NUCLEOS: "/nucleos",
   NUCLEO_DETAIL: (id: string) => `/dashboard/nucleos/${id}`,
   NUCLEO_EDIT: (id: string) => `/nucleos/${id}/editar`,
@@ -314,9 +291,7 @@ export const ROUTES = {
   HABITOS: (blocoId: string) => `/blocos/${blocoId}/habitos`,
 } as const;
 
-// ============================================================================
 // LISTAS DE ROTAS PARA VALIDAÇÃO
-// ============================================================================
 
 export const PUBLIC_ROUTES: readonly string[] = [
   ROUTES.HOME,
@@ -370,9 +345,7 @@ export const PROTECTED_DYNAMIC_ROUTES: readonly string[] = [
   "/habitos/",
 ];
 
-// ============================================================================
 // FUNÇÕES AUXILIARES
-// ============================================================================
 
 export const isPublicRoute = (pathname: string): boolean => {
   if (PUBLIC_ROUTES.includes(pathname as any)) return true;
@@ -410,9 +383,7 @@ export const getLoginUrlWithCallback = (callbackUrl: string): string => {
   return `${ROUTES.LOGIN}?callbackUrl=${encodedCallback}`;
 };
 
-// ============================================================================
 // FUNÇÕES DE NAVEGAÇÃO
-// ============================================================================
 
 export const getNucleoUrl = (id: string): string => ROUTES.NUCLEO_DETAIL(id);
 export const getNucleoEditUrl = (id: string): string => ROUTES.NUCLEO_EDIT(id);
@@ -431,9 +402,7 @@ export const getAjudaCategoriaUrl = (slug: string): string =>
   `/ajuda/categoria/${slug}`;
 export const getBlogPostUrl = (slug: string): string => `/blog/${slug}`;
 
-// ============================================================================
 // TIPOS
-// ============================================================================
 
 export type PublicRoute = (typeof PUBLIC_ROUTES)[number];
 export type ProtectedRoute = (typeof PROTECTED_ROUTES)[number];

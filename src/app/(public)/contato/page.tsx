@@ -400,9 +400,9 @@ export default function ContatoPage() {
                   href="/ajuda"
                   className="block p-3 rounded-lg hover:bg-muted transition-colors"
                 >
-                  <p className="font-medium text-sm">Como criar um núcleo?</p>
+                  <p className="font-medium text-sm">Como criar um Nucleo?</p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Aprenda o passo a passo para criar seu primeiro núcleo.
+                    Aprenda o passo a passo para criar seu primeiro Nucleo.
                   </p>
                 </Link>
                 <Link
@@ -473,8 +473,7 @@ export default function ContatoPage() {
           <CardContent className="p-8 text-center">
             <h3 className="text-xl font-semibold mb-2">Quer nos visitar?</h3>
             <p className="text-muted-foreground mb-4">
-              Nosso escritório fica em --. Agende uma visita com
-              antecedência.
+              Nosso escritório fica em --. Agende uma visita com antecedência.
             </p>
             <Button variant="outline" className="gap-2">
               <MapPin className="size-4" />

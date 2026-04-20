@@ -1,615 +1,292 @@
-// "use client";
+"use client";
 
-// import { useState, useEffect } from "react";
-// import { Button } from "@/components/ui/button";
-// import { NucleoGrid } from "@/components/nucleo/ui/nucleo-grid";
-// import { NucleoDetailPage } from "@/components/nucleo/ui/nucleo-main";
-// import { NucleoCoreCard } from "@/components/nucleo/ui/nucleo-core-card";
-// import { NucleoCardCompact } from "@/components/nucleo/ui/nucleo-card-compact";
-// import { NotificacoesTempoReal } from "@/components/nucleo/ui/notification-real-time";
-// import {
-//   BadgeConquista,
-//   ConquistasGrid,
-// } from "@/components/nucleo/ui/badge-conquist";
-// import { NotificacoesList } from "@/components/nucleo/ui/notifications-list";
-// import { nucleosService } from "@/services/index.service";
-// import { blocosService } from "@/services/index.service";
-// import { gamificacaoService } from "@/services/index.service";
-// import { handleApiError } from "@/lib/api";
-// import { useToast } from "@/hooks/use-toast";
-// import {
-//   ArrowLeft,
-//   Info,
-//   Database,
-//   LayoutGrid,
-//   List,
-//   Grid3X3,
-//   Bell,
-//   Award,
-//   Layers,
-// } from "lucide-react";
-// import { Badge } from "@/components/ui/badge";
-// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-// import {
-//   Card,
-//   CardContent,
-//   CardDescription,
-//   CardHeader,
-//   CardTitle,
-// } from "@/components/ui/card";
-// import { Separator } from "@/components/ui/separator";
-// import { Skeleton } from "@/components/ui/skeleton";
-// import { useRouter } from "next/navigation";
-// import { UserRoundPlus } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { useAuth } from "@/auth";
+import { NucleosOverview } from "@/components/nucleo/ui/nucleos-overview"; // manter
+import { CreateNucleoModal } from "@/components/nucleo/ui/nucleo-create-modal"; // manter
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Trophy,
+  Flame,
+  Zap,
+  Calendar,
+  ArrowRight,
+  PlusCircle,
+  Sparkles,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
+import { motion } from "framer-motion";
 
-// // Tipo para o NucleoGrid (compatível com NucleoWithStats)
-// interface NucleoForGrid {
-//   id: string;
-//   userId: string;
-//   nome: string;
-//   descricao?: string;
-//   tipo: string;
-//   corDestaque?: string;
-//   imagemCapa?: string;
-//   createdAt: string;
-//   updatedAt: string;
-//   deletedAt?: string | null;
-//   iconId?: string;
-//   blocos?: any[];
-//   totalBlocos?: number;
-//   xpTotal?: number;
-//   level?: number;
-//   nextLevelXp?: number;
-//   conquistasDesbloqueadas?: number;
-//   xpHoje?: number;
-// }
+// Hooks mock mantidos como estavam
+import { useUserStats } from "@/hooks/userStats";
+import { useRecentActivity } from "@/hooks/useRecentActivity";
 
-// // Tipo para o NucleoCoreCard e NucleoCardCompact
-// interface NucleoForCard {
-//   id: string;
-//   nome: string;
-//   descricao?: string;
-//   tipo: string;
-//   corDestaque?: string;
-//   imagemCapa?: string;
-//   xpTotal?: number;
-//   level?: number;
-//   nextLevelXp?: number;
-//   conquistasDesbloqueadas?: number;
-//   xpHoje?: number;
-// }
+export default function Dashboard() {
+  const { user } = useAuth();
+  const router = useRouter();
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-// // Tipo para Bloco
-// interface BlocoLocal {
-//   id: string;
-//   nucleoId: string;
-//   tipo: string;
-//   titulo?: string;
-//   posicao: number;
-//   configuracoes: Record<string, any>;
-//   createdAt: string;
-//   updatedAt: string;
-//   deletedAt?: string | null;
-// }
+  const today = new Date();
+  const formattedDate = format(today, "EEEE, d 'de' MMMM", { locale: ptBR });
+  const hora = today.getHours();
+  const saudacao =
+    hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
 
-// // Tipo para Conquista
-// interface ConquistaLocal {
-//   id: string;
-//   nome: string;
-//   descricao: string;
-//   iconeUrl: string | null;
-//   desbloqueadoEm: string | null;
-//   xpRecompensa: number;
-//   progresso?: number;
-//   desbloqueado?: boolean;
-// }
+  const firstName = user?.fullName?.split(" ")[0] || "Usuário";
 
-// export default function NucleosPage() {
-//   const router = useRouter();
-//   const [nucleos, setNucleos] = useState<NucleoForGrid[]>([]);
-//   const [nucleosCards, setNucleosCards] = useState<NucleoForCard[]>([]);
-//   const [blocos, setBlocos] = useState<BlocoLocal[]>([]);
-//   const [conquistas, setConquistas] = useState<ConquistaLocal[]>([]);
-//   const [loading, setLoading] = useState(true);
-//   const [loadingConquistas, setLoadingConquistas] = useState(true);
-//   const [modo, setModo] = useState<"lista" | "detalhe">("lista");
-//   const [nucleoSelecionadoId, setNucleoSelecionadoId] = useState<string | null>(
-//     null,
-//   );
-//   const [mostrarNotificacoes, setMostrarNotificacoes] = useState(false);
-//   const [mounted, setMounted] = useState(false);
-//   const { toast } = useToast();
+  const { stats, loading: statsLoading } = useUserStats();
+  const { activities, loading: activitiesLoading } = useRecentActivity(5);
 
-//   useEffect(() => {
-//     setMounted(true);
-//     carregarNucleos();
-//     carregarConquistas();
-//   }, []);
+  return (
+    <div className="flex-1 overflow-auto bg-gradient-to-b from-background via-background to-secondary/10">
+      <div className="p-4 md:p-8 max-w-[1600px] mx-auto space-y-8">
+        {/* Cabeçalho com saudação e data */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+        >
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <h1 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                {saudacao}, {firstName}!
+              </h1>
+              <Sparkles className="h-6 w-6 text-primary/70" />
+            </div>
+            <p className="text-muted-foreground text-lg capitalize">
+              {formattedDate} · Pronto para evoluir hoje?
+            </p>
+          </div>
 
-//   async function carregarNucleos() {
-//     try {
-//       setLoading(true);
-//       const dados = await nucleosService.listar();
+          {/* BOTAO NOVO NUCLEO */}
+          <Button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90 transition shadow-md shadow-primary/20"
+          >
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Novo Nucleo
+          </Button>
+        </motion.div>
 
-//       // Para o NucleoGrid (com userId e outras propriedades)
-//       const dadosGrid: NucleoForGrid[] = dados.map((n: any) => ({
-//         id: n.id,
-//         userId: n.userId || n.user_id,
-//         nome: n.nome,
-//         descricao: n.descricao || undefined,
-//         tipo: n.tipo || "pessoal",
-//         corDestaque: n.corDestaque || n.cor_destaque || "#4D7CFF",
-//         imagemCapa: n.imagemCapa || n.imagem_capa,
-//         createdAt: n.createdAt || n.created_at,
-//         updatedAt: n.updatedAt || n.updated_at,
-//         deletedAt: n.deletedAt || n.deleted_at,
-//         iconId: n.iconId || n.icon_id,
-//         blocos: n.blocos,
-//         totalBlocos: n.totalBlocos || n.blocos?.length || 0,
-//         xpTotal: n.xpTotal,
-//         level: n.level,
-//         nextLevelXp: n.nextLevelXp,
-//         conquistasDesbloqueadas: n.conquistasDesbloqueadas,
-//         xpHoje: n.xpHoje,
-//       }));
+        {/* Cards de Estatísticas Rápidas */}
+        {/*  remover  */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {statsLoading ? (
+            <>
+              <Skeleton className="h-28 rounded-xl" />
+              <Skeleton className="h-28 rounded-xl" />
+              <Skeleton className="h-28 rounded-xl" />
+              <Skeleton className="h-28 rounded-xl" />
+            </>
+          ) : (
+            <>
+              <StatsCard
+                title="Nível Geral"
+                value={stats?.level || 1}
+                icon={<Zap className="h-5 w-5 text-primary" />}
+                description={`${stats?.xpTotal || 0} XP total`}
+                progress={stats?.levelProgress || 0}
+              />
+              <StatsCard
+                title="Streak Atual"
+                value={stats?.currentStreak || 0}
+                icon={<Flame className="h-5 w-5 text-primary" />}
+                description={`Melhor: ${stats?.maxStreak || 0}`}
+              />
+              <StatsCard
+                title="Conquistas"
+                value={stats?.achievements || 0}
+                icon={<Trophy className="h-5 w-5 text-primary" />}
+                description={`${stats?.totalAchievements || 0} disponíveis`}
+              />
+              <StatsCard
+                title="Energia"
+                value={stats?.energy || 0}
+                icon={<Zap className="h-5 w-5 text-primary" />}
+                description={`Renova em ${stats?.energyRegen || "2h"}`}
+              />
+            </>
+          )}
+        </div>
 
-//       // Para os cards (apenas propriedades necessárias)
-//       const dadosCards: NucleoForCard[] = dados.map((n: any) => ({
-//         id: n.id,
-//         nome: n.nome,
-//         descricao: n.descricao || undefined,
-//         tipo: n.tipo || "pessoal",
-//         corDestaque: n.corDestaque || n.cor_destaque || "#4D7CFF",
-//         imagemCapa: n.imagemCapa || n.imagem_capa,
-//         xpTotal: n.xpTotal,
-//         level: n.level,
-//         nextLevelXp: n.nextLevelXp,
-//         conquistasDesbloqueadas: n.conquistasDesbloqueadas,
-//         xpHoje: n.xpHoje,
-//       }));
+        {/* Seção Principal: Nucleos Overview */}
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push("/dashboard/nucleos")}
+            >
+              Ver todos <ArrowRight className="ml-1 h-4 w-4" />
+            </Button>
+          </div>
+          <NucleosOverview />
+        </section>
 
-//       setNucleos(dadosGrid);
-//       setNucleosCards(dadosCards);
-//     } catch (error) {
-//       toast({
-//         variant: "destructive",
-//         title: "Erro ao carregar núcleos",
-//         description: handleApiError(error),
-//       });
-//     } finally {
-//       setLoading(false);
-//     }
-//   }
+        {/* Grid secundário: Atividade recente + Atalhos */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Atividades Recentes */}
+          <Card className="lg:col-span-2 shadow-sm border-border/50 hover:shadow-md transition">
+            <CardHeader>
+              <CardTitle className="text-xl flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-muted-foreground" />
+                Atividade Recente
+              </CardTitle>
+              <CardDescription>Suas últimas ações nos Nucleos</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {activitiesLoading ? (
+                <div className="space-y-3">
+                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-12 w-full" />
+                </div>
+              ) : activities && activities.length > 0 ? (
+                <ul className="space-y-4">
+                  {activities.map((activity) => (
+                    <li
+                      key={activity.id}
+                      className="flex items-center gap-3 text-sm border-b border-border/50 pb-3 last:border-0"
+                    >
+                      <div className="p-2 rounded-full bg-primary/10">
+                        <activity.icon className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium">{activity.title}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {activity.nucleoName} • {activity.time}
+                        </p>
+                      </div>
+                      {activity.xp && (
+                        <span className="text-xs font-semibold text-green-500">
+                          +{activity.xp} XP
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-6">
+                  Nenhuma atividade recente. Comece a usar seus Nucleos!
+                </p>
+              )}
+            </CardContent>
+          </Card>
 
-//   async function carregarConquistas() {
-//     try {
-//       setLoadingConquistas(true);
-//       const dados = await gamificacaoService.listarConquistas();
-//       const dadosNormalizados: ConquistaLocal[] = dados.map((c: any) => ({
-//         id: c.id,
-//         nome: c.nome,
-//         descricao: c.descricao,
-//         iconeUrl: c.iconeUrl || c.icone_url,
-//         desbloqueadoEm: c.desbloqueadoEm || c.desbloqueado_em,
-//         xpRecompensa: c.xpRecompensa || c.xp_recompensa,
-//         progresso: c.progresso,
-//         desbloqueado: !!c.desbloqueadoEm,
-//       }));
-//       setConquistas(dadosNormalizados);
-//     } catch (error) {
-//       toast({
-//         variant: "destructive",
-//         title: "Erro ao carregar conquistas",
-//         description: handleApiError(error),
-//       });
-//     } finally {
-//       setLoadingConquistas(false);
-//     }
-//   }
+          {/* Atalhos Rápidos */}
+          <Card className="shadow-sm border-border/50 hover:shadow-md transition">
+            <CardHeader>
+              <CardTitle className="text-xl">Ações Rápidas</CardTitle>
+              <CardDescription>Acesse rapidamente</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => router.push("/dashboard/tarefas")}
+              >
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded bg-primary/10">
+                    <Calendar className="h-4 w-4 text-primary" />
+                  </div>
+                  <span>Ver tarefas de hoje</span>
+                </div>
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => router.push("/dashboard/habitos")}
+              >
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded bg-primary/10">
+                    <Flame className="h-4 w-4 text-orange-500" />
+                  </div>
+                  <span>Registrar hábito</span>
+                </div>
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => router.push("/dashboard/conquistas")}
+              >
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded bg-primary/10">
+                    <Trophy className="h-4 w-4 text-amber-500" />
+                  </div>
+                  <span>Ver conquistas</span>
+                </div>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
 
-//   async function carregarBlocos(nucleoId: string) {
-//     try {
-//       const dados = await blocosService.listarPorNucleo(nucleoId);
-//       const dadosNormalizados: BlocoLocal[] = dados.map((b: any) => ({
-//         id: b.id,
-//         nucleoId: b.nucleoId || b.nucleo_id,
-//         tipo: b.tipo,
-//         titulo: b.titulo,
-//         posicao: b.posicao,
-//         configuracoes: b.configuracoes,
-//         createdAt: b.createdAt || b.created_at,
-//         updatedAt: b.updatedAt || b.updated_at,
-//         deletedAt: b.deletedAt || b.deleted_at,
-//       }));
-//       setBlocos(dadosNormalizados.sort((a, b) => a.posicao - b.posicao));
-//     } catch (error) {
-//       toast({
-//         variant: "destructive",
-//         title: "Erro ao carregar blocos",
-//         description: handleApiError(error),
-//       });
-//     }
-//   }
+      {/* Modal de criação de Nucleo */}
+      <CreateNucleoModal
+        open={isCreateModalOpen}
+        onOpenChange={setIsCreateModalOpen}
+      />
+    </div>
+  );
+}
 
-//   async function selecionarNucleo(nucleo: NucleoForGrid | NucleoForCard) {
-//     router.prefetch(`/dashboard/nucleos/${nucleo.id}`);
+// Componente auxiliar para os cards de estatística
+interface StatsCardProps {
+  title: string;
+  value: number | string;
+  icon: React.ReactNode;
+  description: string;
+  progress?: number;
+  color?: "yellow" | "orange" | "amber" | "blue" | "default";
+}
 
-//     setTimeout(() => {
-//       router.push(`/nucleos/${nucleo.id}`);
-//     }, 100);
-//   }
+function StatsCard({
+  title,
+  value,
+  icon,
+  description,
+  progress,
+  color = "default",
+}: StatsCardProps) {
+  const colorClasses = {
+    yellow: "from-yellow-500/10 to-yellow-500/5 border-yellow-500/20",
+    orange: "from-orange-500/10 to-orange-500/5 border-orange-500/20",
+    amber: "from-amber-500/10 to-amber-500/5 border-amber-500/20",
+    blue: "from-blue-500/10 to-blue-500/5 border-blue-500/20",
+    default: "from-primary/10 to-primary/5 border-primary/20",
+  };
 
-//   // Encontrar o núcleo selecionado para passar para o detalhe
-//   const nucleoSelecionado = nucleos.find((n) => n.id === nucleoSelecionadoId);
-
-//   // Evita renderização no servidor para prevenir erro de hidratação
-//   if (!mounted) {
-//     return (
-//       <div className="min-h-screen bg-background">
-//         <div className="border-b sticky top-0 z-40 backdrop-blur-sm w-full">
-//           <div className="container mx-auto px-4 py-6 w-full">
-//             <div className="flex items-center justify-between">
-//               <div>
-//                 <div className="flex items-center gap-3 mb-2">
-//                   <h1 className="text-2xl font-bold">Meus Nucleos</h1>
-//                   <Badge
-//                     variant="outline"
-//                     className="bg-green-500/10 text-green-600 border-green-500/20"
-//                   >
-//                     <Database className="size-3 mr-1" />
-//                   </Badge>
-//                 </div>
-//                 <p className="text-muted-foreground flex items-center gap-2">
-//                   <Info className="size-4" />
-//                   Gerencie seus nucleos, blocos e confira seu XP!
-//                 </p>
-//               </div>
-//               <div className="flex items-center gap-2">
-//                 <Button variant="outline" size="sm" disabled className="gap-2">
-//                   <Bell className="size-4" />
-//                   Mostrar Notificações
-//                 </Button>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//         <div className="container mx-auto px-4 py-8">
-//           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-//             {Array.from({ length: 6 }).map((_, i) => (
-//               <Skeleton key={i} className="h-48" />
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="min-h-screen bg-background">
-//       {/* Header */}
-//       <div className="border-b sticky top-0 z-40 backdrop-blur-sm w-full">
-//         <div className="container mx-auto px-4 py-6 w-full">
-//           <div className="flex items-center justify-between">
-//             <div>
-//               <div className="flex items-center gap-3 mb-2">
-//                 <h1 className="text-2xl font-bold">Meus Nucleos</h1>
-//                 <Badge
-//                   variant="outline"
-//                   className="bg-green-500/10 text-green-600 border-green-500/20"
-//                 >
-//                   <Database className="size-3 mr-1" />
-//                 </Badge>
-//               </div>
-//               <p className="text-muted-foreground flex items-center gap-2">
-//                 <Info className="size-4" />
-//                 Gerencie seus nucleos, blocos e confira seu XP!
-//               </p>
-//             </div>
-//             <div className="flex items-center gap-2">
-//               <Button
-//                 variant="outline"
-//                 size="sm"
-//                 onClick={() => setMostrarNotificacoes(!mostrarNotificacoes)}
-//                 className="gap-2"
-//               >
-//                 <Bell className="size-4" />
-//                 {mostrarNotificacoes ? "Ocultar" : "Mostrar"} Notificações
-//               </Button>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-
-//       {mostrarNotificacoes && <NotificacoesTempoReal />}
-
-//       {/* Conteúdo principal */}
-//       <div className="container mx-auto px-4 py-8">
-//         <Tabs defaultValue="nucleos" className="space-y-8">
-//           <TabsList className="grid w-full grid-cols-5 lg:w-auto">
-//             <TabsTrigger value="nucleos" className="gap-2">
-//               <Layers className="size-4" />
-//               <span className="hidden sm:inline">Núcleos</span>
-//             </TabsTrigger>
-//             <TabsTrigger value="cards" className="gap-2">
-//               <LayoutGrid className="size-4" />
-//               <span className="hidden sm:inline">Cards</span>
-//             </TabsTrigger>
-//             <TabsTrigger value="conquistas" className="gap-2">
-//               <Award className="size-4" />
-//               <span className="hidden sm:inline">Conquistas</span>
-//             </TabsTrigger>
-//             <TabsTrigger value="notificacoes" className="gap-2">
-//               <Bell className="size-4" />
-//               <span className="hidden sm:inline">Notificações</span>
-//             </TabsTrigger>
-//             <TabsTrigger value="social" className="gap-2">
-//               <UserRoundPlus className="size-4" />
-//               <span className="hidden sm:inline">API</span>
-//             </TabsTrigger>
-//           </TabsList>
-
-//           {/* ===== ABA 1: Nucleos ===== */}
-//           <TabsContent value="nucleos" className="space-y-6">
-//             <Card>
-//               <CardHeader>
-//                 <CardTitle>Meus Núcleos</CardTitle>
-//                 <CardDescription>
-//                   Navegação completa entre lista e detalhe de Núcleos com blocos
-//                   reais
-//                 </CardDescription>
-//               </CardHeader>
-//               <CardContent>
-//                 {loading ? (
-//                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-//                     {Array.from({ length: 6 }).map((_, i) => (
-//                       <Skeleton key={i} className="h-48" />
-//                     ))}
-//                   </div>
-//                 ) : modo === "lista" ? (
-//                   <div className="space-y-6">
-//                     <NucleoGrid
-//                       nucleos={nucleos}
-//                       onNucleoClick={selecionarNucleo}
-//                       onAddNucleo={() =>
-//                         toast({
-//                           title: "Em breve",
-//                           description: "Funcionalidade de criar núcleo",
-//                         })
-//                       }
-//                     />
-//                   </div>
-//                 ) : (
-//                   <div className="space-y-4">
-//                     <Button
-//                       variant="ghost"
-//                       onClick={() => {
-//                         setModo("lista");
-//                         setNucleoSelecionadoId(null);
-//                       }}
-//                       className="mb-2"
-//                     >
-//                       <ArrowLeft className="size-4 mr-2" />
-//                       Voltar para lista
-//                     </Button>
-
-//                     {nucleoSelecionado && (
-//                       <NucleoDetailPage nucleoId={nucleoSelecionado.id} />
-//                     )}
-//                   </div>
-//                 )}
-//               </CardContent>
-//             </Card>
-//           </TabsContent>
-
-//           {/* ===== ABA 2: VARIAÇÕES DE CARDS ===== */}
-//           <TabsContent value="cards" className="space-y-8">
-//             {/* Core Cards */}
-//             <Card>
-//               <CardHeader>
-//                 <CardTitle className="flex items-center gap-2">
-//                   <Grid3X3 className="size-5 text-primary" />
-//                   NucleoCoreCard
-//                 </CardTitle>
-//                 <CardDescription>
-//                   Versão principal com estatísticas detalhadas
-//                 </CardDescription>
-//               </CardHeader>
-//               <CardContent>
-//                 {loading ? (
-//                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-//                     {Array.from({ length: 3 }).map((_, i) => (
-//                       <Skeleton key={i} className="h-48" />
-//                     ))}
-//                   </div>
-//                 ) : nucleosCards.length > 0 ? (
-//                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-//                     {nucleosCards.slice(0, 3).map((nucleo, index) => (
-//                       <NucleoCoreCard
-//                         key={nucleo.id}
-//                         nucleo={nucleo}
-//                         index={index}
-//                         onClick={() => selecionarNucleo(nucleo)}
-//                       />
-//                     ))}
-//                   </div>
-//                 ) : (
-//                   <p className="text-muted-foreground text-center py-8">
-//                     Nenhum núcleo disponível
-//                   </p>
-//                 )}
-//               </CardContent>
-//             </Card>
-
-//             {/* Cards Compactos */}
-//             <Card>
-//               <CardHeader>
-//                 <CardTitle className="flex items-center gap-2">
-//                   <List className="size-5 text-accent" />
-//                   NucleoCardCompact
-//                 </CardTitle>
-//                 <CardDescription>
-//                   Versão ultra compacta para listas densas
-//                 </CardDescription>
-//               </CardHeader>
-//               <CardContent>
-//                 {loading ? (
-//                   <div className="space-y-2 max-w-2xl">
-//                     {Array.from({ length: 4 }).map((_, i) => (
-//                       <Skeleton key={i} className="h-16" />
-//                     ))}
-//                   </div>
-//                 ) : nucleosCards.length > 0 ? (
-//                   <div className="space-y-2 max-w-2xl">
-//                     {nucleosCards.slice(0, 4).map((nucleo) => (
-//                       <NucleoCardCompact
-//                         key={nucleo.id}
-//                         nucleo={nucleo}
-//                         onClick={() => selecionarNucleo(nucleo)}
-//                       />
-//                     ))}
-//                   </div>
-//                 ) : (
-//                   <p className="text-muted-foreground text-center py-8">
-//                     Nenhum núcleo disponível
-//                   </p>
-//                 )}
-//               </CardContent>
-//             </Card>
-//           </TabsContent>
-
-//           {/* ===== ABA 3: CONQUISTAS ===== */}
-//           <TabsContent value="conquistas" className="space-y-8">
-//             <Card>
-//               <CardHeader>
-//                 <CardTitle className="flex items-center gap-2">
-//                   <Award className="size-5 text-yellow-500" />
-//                   Conquistas!
-//                 </CardTitle>
-//                 <CardDescription>
-//                   Seja recompensado enquanto cresce!
-//                 </CardDescription>
-//               </CardHeader>
-//               <CardContent>
-//                 {loadingConquistas ? (
-//                   <div className="space-y-6">
-//                     <div className="flex gap-2 flex-wrap">
-//                       {Array.from({ length: 5 }).map((_, i) => (
-//                         <Skeleton key={i} className="w-12 h-12 rounded-full" />
-//                       ))}
-//                     </div>
-//                     <Separator />
-//                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-//                       {Array.from({ length: 3 }).map((_, i) => (
-//                         <Skeleton key={i} className="h-32" />
-//                       ))}
-//                     </div>
-//                   </div>
-//                 ) : conquistas.length > 0 ? (
-//                   <div className="space-y-6">
-//                     <div>
-//                       <h4 className="text-sm font-medium mb-3">Mini Variant</h4>
-//                       <div className="flex gap-2 flex-wrap">
-//                         {conquistas.slice(0, 5).map((c) => (
-//                           <BadgeConquista
-//                             key={c.id}
-//                             conquista={c}
-//                             variant="mini"
-//                           />
-//                         ))}
-//                       </div>
-//                     </div>
-//                     <Separator />
-//                     <div>
-//                       <h4 className="text-sm font-medium mb-3">Card Variant</h4>
-//                       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-//                         {conquistas.slice(0, 3).map((c) => (
-//                           <BadgeConquista
-//                             key={c.id}
-//                             conquista={c}
-//                             variant="card"
-//                           />
-//                         ))}
-//                       </div>
-//                     </div>
-//                   </div>
-//                 ) : (
-//                   <p className="text-muted-foreground text-center py-8">
-//                     Em breve.
-//                   </p>
-//                 )}
-//               </CardContent>
-//             </Card>
-
-//             <Card>
-//               <CardHeader>
-//                 <CardTitle>Grid de Conquistas</CardTitle>
-//                 <CardDescription>Em breve.</CardDescription>
-//               </CardHeader>
-//               <CardContent>
-//                 <ConquistasGrid />
-//               </CardContent>
-//             </Card>
-//           </TabsContent>
-
-//           {/* ===== ABA 4: NOTIFICAÇÕES ===== */}
-//           <TabsContent value="notificacoes" className="space-y-8">
-//             <Card>
-//               <CardHeader>
-//                 <CardTitle className="flex items-center gap-2">
-//                   <Bell className="size-5 text-primary" />
-//                   Notificações
-//                 </CardTitle>
-//                 <CardDescription>Veja suas interações!</CardDescription>
-//               </CardHeader>
-//               <CardContent>
-//                 <NotificacoesList />
-//               </CardContent>
-//             </Card>
-
-//             <Card>
-//               <CardHeader>
-//                 <CardTitle>Notificações em Tempo Real</CardTitle>
-//                 <CardDescription>
-//                   Clique no botão no cabeçalho para ativar as notificações!
-//                 </CardDescription>
-//               </CardHeader>
-//               <CardContent>
-//                 <div className="p-4 bg-muted/30 rounded-lg text-center">
-//                   <Bell className="size-8 text-muted-foreground mx-auto mb-2" />
-//                   <p className="text-sm text-muted-foreground">Em breve.</p>
-//                   <Button
-//                     variant="outline"
-//                     size="sm"
-//                     className="mt-4"
-//                     onClick={() => setMostrarNotificacoes(true)}
-//                   >
-//                     Ativar Notificações
-//                   </Button>
-//                 </div>
-//               </CardContent>
-//             </Card>
-//           </TabsContent>
-
-//           {/* ===== ABA 5: SOCIAL/API ===== */}
-//           <TabsContent value="social" className="space-y-6">
-//             <Card>
-//               <CardHeader>
-//                 <CardTitle>Veja suas interações!</CardTitle>
-//                 <CardDescription>
-//                   Todos os componentes estão conectados ao backend real
-//                 </CardDescription>
-//               </CardHeader>
-//               <CardContent>
-//                 <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-//                   <p className="text-sm text-yellow-700 dark:text-yellow-400">
-//                     <strong>Em breve!</strong>
-//                   </p>
-//                 </div>
-//               </CardContent>
-//             </Card>
-//           </TabsContent>
-//         </Tabs>
-//       </div>
-//     </div>
-//   );
-// }
+  return (
+    <Card
+      className={`bg-gradient-to-br ${colorClasses[color]} border shadow-sm hover:shadow transition`}
+    >
+      <CardHeader className="pb-2">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            {title}
+          </CardTitle>
+          {icon}
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="text-3xl font-bold">{value}</div>
+        <p className="text-xs text-muted-foreground mt-1">{description}</p>
+        {progress !== undefined && (
+          <Progress value={progress} className="mt-3 h-1.5" />
+        )}
+      </CardContent>
+    </Card>
+  );
+}

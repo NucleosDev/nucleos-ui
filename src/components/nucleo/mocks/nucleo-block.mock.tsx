@@ -173,7 +173,7 @@ export function NucleoDetailPage({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Núcleo</DropdownMenuLabel>
+                <DropdownMenuLabel>Nucleo</DropdownMenuLabel>
                 <DropdownMenuItem>Editar informações</DropdownMenuItem>
                 <DropdownMenuItem>Duplicar</DropdownMenuItem>
                 <DropdownMenuItem>Arquivar</DropdownMenuItem>
@@ -254,7 +254,7 @@ export function NucleoDetailPage({
             {blocos.length === 0 && (
               <div className="text-center py-12 border-2 border-dashed rounded-lg border-[#4D7CFF]/20">
                 <p className="text-muted-foreground">
-                  Este núcleo ainda não tem blocos. Adicione um para começar!
+                  Este Nucleo ainda não tem blocos. Adicione um para começar!
                 </p>
               </div>
             )}

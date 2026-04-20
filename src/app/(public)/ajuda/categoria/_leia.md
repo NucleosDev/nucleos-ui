@@ -1,7 +1,7 @@
 Guia de Slugs - Nucleos
 Abrir src/lib/slug-utils.ts >>>>>
 
-magina que você tem um artigo chamado "Como criar seu primeiro Núcleo". Se a URL fosse algo como:
+magina que você tem um artigo chamado "Como criar seu primeiro Nucleo". Se a URL fosse algo como:
 
 ⅹ - www.nucleos.com/artigo/123456 (feio, difícil de lembrar)
 ✔ - www.nucleos.com/artigo/como-criar-primeiro-nucleo (bonito, fácil de ler)
@@ -229,7 +229,7 @@ const categorias = adicionarSlugs(categoriasData, 'titulo');
 2️⃣ Para um item só, use gerarSlug diretamente
 
 tsx
-const titulo = "Como criar seu primeiro Núcleo!";
+const titulo = "Como criar seu primeiro Nucleo!";
 const slug = gerarSlug(titulo);
 // Resultado: "como-criar-seu-primeiro-nucleo"
 3️⃣ Nos links, SEMPRE use o slug, nunca o título original

@@ -451,7 +451,7 @@ export default function DemoNucleosPage() {
                     notificacao={{
                       id: "demo2",
                       titulo: "Level Up!",
-                      mensagem: "Núcleo 'Estudos' atingiu nível 12",
+                      mensagem: "Nucleo 'Estudos' atingiu nível 12",
                       tipo: "info",
                       tempo: "2 min",
                       lida: true,
@@ -518,7 +518,7 @@ export default function DemoNucleosPage() {
                       notificacao={{
                         id: "rt2",
                         titulo: "Level Up!",
-                        mensagem: "Núcleo 'Estudos' atingiu nível 12",
+                        mensagem: "Nucleo 'Estudos' atingiu nível 12",
                         icone: <Zap className="size-5 text-primary" />,
                         tempo: "2 min",
                         tipo: "sucesso",

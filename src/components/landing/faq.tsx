@@ -26,7 +26,7 @@ const faqs = [
   {
     question: "O que são os Nucleos?",
     answer:
-      "Nucleos são áreas da sua vida que você deseja organizar e evoluir, como estudos, saúde, finanças e produtividade. Cada núcleo possui suas próprias tarefas, metas e sistema de progressão.",
+      "Nucleos são áreas da sua vida que você deseja organizar e evoluir, como estudos, saúde, finanças e produtividade. Cada Nucleo possui suas próprias tarefas, metas e sistema de progressão.",
     icon: Layers,
     color: "#4D7CFF",
   },
@@ -86,10 +86,7 @@ export function FAQ() {
       </motion.div>
 
       <div className="mx-auto max-w-3xl relative z-20">
-        <div
-          
-          className="mb-12 text-center"
-        >
+        <div className="mb-12 text-center">
           <Badge
             variant="outline"
             className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 text-[#4D7CFF] mb-4"
@@ -110,16 +107,12 @@ export function FAQ() {
           </p>
         </div>
 
-        <motion.div
-        >
+        <motion.div>
           <Accordion type="single" collapsible className="w-full space-y-3">
             {faqs.map((faq, index) => {
               const Icon = faq.icon;
               return (
-                <motion.div
-                  key={index}
-               
-                >
+                <motion.div key={index}>
                   <AccordionItem
                     value={`item-${index}`}
                     className="border border-border/50 rounded-lg bg-card/50 backdrop-blur-sm overflow-hidden hover:border-[#4D7CFF]/30 transition-all group"
@@ -150,10 +143,7 @@ export function FAQ() {
         </motion.div>
 
         {/* Botão para página completa de FAQ */}
-        <motion.div
-
-          className="mt-12 flex justify-center"
-        >
+        <motion.div className="mt-12 flex justify-center">
           <Link href="/duvidas">
             <Button
               size="lg"

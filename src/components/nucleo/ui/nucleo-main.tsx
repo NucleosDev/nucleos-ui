@@ -178,7 +178,7 @@
 //     } catch (error) {
 //       toast({
 //         variant: "destructive",
-//         title: "Erro ao carregar núcleo",
+//         title: "Erro ao carregar Nucleo",
 //         description: handleApiError(error),
 //       });
 //     } finally {
@@ -305,14 +305,14 @@
 //   if (!nucleo) {
 //     return (
 //       <div className="flex flex-col items-center justify-center py-16">
-//         <p className="text-muted-foreground">Núcleo não encontrado</p>
+//         <p className="text-muted-foreground">Nucleo não encontrado</p>
 //       </div>
 //     );
 //   }
 
 //   return (
 //     <div className={cn("space-y-6", className)}>
-//       {/* Header do núcleo */}
+//       {/* Header do Nucleo */}
 //       <div className="flex items-start justify-between">
 //         <div>
 //           <h1 className="text-2xl font-bold">{nucleo.nome}</h1>
@@ -325,7 +325,7 @@
 //         </Button>
 //       </div>
 
-//       {/* Progresso do núcleo */}
+//       {/* Progresso do Nucleo */}
 //       <Card>
 //         <CardContent className="pt-6">
 //           <NucleoProgress
@@ -460,10 +460,8 @@
 //   );
 // }
 
-// // ============================================================================
-// // BLOCO WRAPPER
-// // ============================================================================
-
+// // ==========================// // BLOCO WRAPPER
+// // ==========================
 // interface BlocoWrapperProps {
 //   bloco: Bloco;
 //   nucleoId: string;

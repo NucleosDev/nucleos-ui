@@ -457,7 +457,7 @@
 //                   className="w-full mt-4 gap-2 text-muted-foreground"
 //                 >
 //                   <Plus className="size-4" />
-//                   Criar novo núcleo
+//                   Criar novo Nucleo
 //                 </Button>
 //               </CardContent>
 //             </Card>

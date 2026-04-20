@@ -27,7 +27,7 @@
 
 //   useEffect(() => {
 //     insightsService.getInsights().then(d => setInsights(Array.isArray(d) ? d : [])).catch(() => {}).finally(() => setLoading(false));
-//     setMessages([{ role: "assistant", content: "Olá! Sou seu assistente de produtividade. Pode me perguntar sobre seus núcleos, progresso ou pedir sugestões de como melhorar sua rotina!", ts: new Date() }]);
+//     setMessages([{ role: "assistant", content: "Olá! Sou seu assistente de produtividade. Pode me perguntar sobre seus Nucleos, progresso ou pedir sugestões de como melhorar sua rotina!", ts: new Date() }]);
 //   }, []);
 
 //   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);

@@ -189,7 +189,7 @@ export function CreateNucleoModal({
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Criar novo núcleo</DialogTitle>
+          <DialogTitle>Criar novo Nucleo</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -205,18 +205,16 @@ export function CreateNucleoModal({
               <p className="text-sm text-destructive">{errors.nome.message}</p>
             )}
           </div>
-
           {/* Descrição */}
           <div className="space-y-2">
             <Label htmlFor="descricao">Descrição (opcional)</Label>
             <Textarea
               id="descricao"
-              placeholder="Descreva o propósito deste núcleo..."
+              placeholder="Descreva o propósito deste Nucleo..."
               rows={3}
               {...register("descricao")}
             />
           </div>
-
           {/* Tipo */}
           <div className="space-y-2">
             <Label htmlFor="tipo">Tipo</Label>
@@ -246,9 +244,9 @@ export function CreateNucleoModal({
               />
             )}
           </div>
-
+          {/* removido temporáriamente, não remover mesmo comentado. */}
           {/* Seletor de Ícone */}
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label>Ícone (opcional)</Label>
             <div className="grid grid-cols-5 gap-2 max-h-48 overflow-y-auto p-1 border rounded-md">
               <button
@@ -296,8 +294,7 @@ export function CreateNucleoModal({
                 {iconOptions.find((o) => o.id === selectedIconId)?.label}
               </p>
             )}
-          </div>
-
+          </div> */}
           {/* Cor destaque */}
           <div className="space-y-2">
             <Label htmlFor="corDestaque">Cor de destaque</Label>
@@ -316,7 +313,6 @@ export function CreateNucleoModal({
               />
             </div>
           </div>
-
           {/* Imagem de capa */}
           <div className="space-y-2">
             <Label htmlFor="imagemCapa">Imagem de capa (URL opcional)</Label>
@@ -330,13 +326,11 @@ export function CreateNucleoModal({
               </p>
             )}
           </div>
-
           {createMutation.error && (
             <p className="text-sm text-destructive">
-              Erro ao criar núcleo. Tente novamente.
+              Erro ao criar Nucleo. Tente novamente.
             </p>
           )}
-
           <div className="flex justify-end gap-3 pt-4">
             <Button
               type="button"
@@ -349,7 +343,7 @@ export function CreateNucleoModal({
               {isSubmitting && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              Criar núcleo
+              Criar Nucleo
             </Button>
           </div>
         </form>

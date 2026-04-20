@@ -8,7 +8,7 @@ const steps = [
     number: "01",
     title: "Crie seus Nucleos",
     description:
-      "Defina as áreas da sua vida que deseja desenvolver. Cada Núcleo representa um centro de energia focado no seu crescimento.",
+      "Defina as áreas da sua vida que deseja desenvolver. Cada Nucleo representa um centro de energia focado no seu crescimento.",
     icon: <Zap className="size-6 text-[#4D7CFF]" />,
     color: "#4D7CFF",
   },
@@ -17,7 +17,7 @@ const steps = [
     number: "02",
     title: "Estabeleça Hábitos",
     description:
-      "Adicione hábitos a cada Núcleo. Configure a frequência e a quantidade de XP que cada um vale. Construa sua rotina ideal.",
+      "Adicione hábitos a cada Nucleo. Configure a frequência e a quantidade de XP que cada um vale. Construa sua rotina ideal.",
     icon: <Target className="size-6 text-[#00C9A7]" />,
     color: "#00C9A7",
   },
@@ -26,7 +26,7 @@ const steps = [
     number: "03",
     title: "Complete Atividades",
     description:
-      "Registre suas atividades diárias. Cada tarefa completada adiciona experiência ao seu Núcleo correspondente.",
+      "Registre suas atividades diárias. Cada tarefa completada adiciona experiência ao seu Nucleo correspondente.",
     icon: <Sparkles className="size-6 text-[#2EBD59]" />,
     color: "#2EBD59",
   },

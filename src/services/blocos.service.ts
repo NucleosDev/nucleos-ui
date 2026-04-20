@@ -8,10 +8,9 @@ import type {
   ReorderBlocosPayload,
 } from "@/types/bloco";
 
-
 export const blocosService = {
   /**
-   * Lista todos os blocos de um núcleo
+   * Lista todos os blocos de um Nucleo
    */
   async listarPorNucleo(nucleoId: string): Promise<Bloco[]> {
     return api.get<Bloco[]>(API_ROUTES.BLOCOS.LIST(nucleoId));
@@ -47,7 +46,7 @@ export const blocosService = {
   },
 
   /**
-   * Reordena os blocos dentro de um núcleo
+   * Reordena os blocos dentro de um Nucleo
    */
   async reordenar(payload: ReorderBlocosPayload): Promise<void> {
     // O backend espera { nucleoId, orders } no corpo da requisição

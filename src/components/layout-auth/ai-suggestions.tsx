@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
-import { Sparkles, ArrowRight } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { Sparkles, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export interface Suggestion {
-  id: string
-  text: string
-  action?: string | null
+  id: string;
+  text: string;
+  action?: string | null;
 }
 
 interface AISuggestionsProps {
-  suggestions?: Suggestion[] | null
-  isLoading?: boolean
-  onSuggestionClick?: (suggestion: Suggestion) => void
+  suggestions?: Suggestion[] | null;
+  isLoading?: boolean;
+  onSuggestionClick?: (suggestion: Suggestion) => void;
 }
 
 function SuggestionSkeleton() {
@@ -24,7 +24,7 @@ function SuggestionSkeleton() {
         <div className="h-3 w-2/3 animate-pulse rounded bg-muted" />
       </div>
     </div>
-  )
+  );
 }
 
 export function AISuggestions({
@@ -32,7 +32,8 @@ export function AISuggestions({
   isLoading,
   onSuggestionClick,
 }: AISuggestionsProps) {
-  const showSkeleton = isLoading || suggestions === null || suggestions === undefined
+  const showSkeleton =
+    isLoading || suggestions === null || suggestions === undefined;
 
   return (
     <section
@@ -44,7 +45,9 @@ export function AISuggestions({
         <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10">
           <Sparkles className="h-3.5 w-3.5 text-primary" />
         </div>
-        <h2 className="text-sm font-semibold text-foreground">Sugestões para você hoje</h2>
+        <h2 className="text-sm font-semibold text-foreground">
+          Sugestões para você hoje
+        </h2>
       </div>
 
       {/* Lista */}
@@ -57,7 +60,7 @@ export function AISuggestions({
           </>
         ) : suggestions!.length === 0 ? (
           <p className="py-4 text-center text-xs text-muted-foreground leading-relaxed">
-            Nenhuma sugestão por enquanto. Continue usando o Núcleos!
+            Nenhuma sugestão por enquanto. Continue usando o Nucleos!
           </p>
         ) : (
           suggestions!.map((s) => (
@@ -66,12 +69,14 @@ export function AISuggestions({
               onClick={() => onSuggestionClick?.(s)}
               className={cn(
                 "group flex w-full items-start gap-3 rounded-lg p-3 text-left",
-                "transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                "transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
               )}
             >
               <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/60 transition-colors group-hover:text-primary" />
               <div className="flex flex-1 items-start justify-between gap-2">
-                <span className="text-xs leading-relaxed text-foreground">{s.text}</span>
+                <span className="text-xs leading-relaxed text-foreground">
+                  {s.text}
+                </span>
                 <ArrowRight className="mt-0.5 h-3 w-3 shrink-0 text-muted-foreground/0 transition-all group-hover:text-muted-foreground" />
               </div>
             </button>
@@ -79,5 +84,5 @@ export function AISuggestions({
         )}
       </div>
     </section>
-  )
+  );
 }

@@ -1,244 +1,145 @@
-// hooks/useColecoes.ts (CORRIGIDO)
-import { useState } from "react";
-import { api } from "@/lib/api";
-import type { Campo, Colecao, TipoCampo } from "@/types/colecao";
-import { AxiosResponse } from "axios";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { colecoesService } from "@/services/colecoes.service";
+import type { Colecao, Campo, Item } from "@/types/colecao";
 
-export function useColecoes() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+export function useColecoes(blocoId?: string) {
+  const queryClient = useQueryClient();
 
-  // Listar coleções por bloco
-  const listColecoesByBloco = async (
-    blocoId: string,
-  ): Promise<Colecao[] | null> => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response: AxiosResponse<Colecao[]> = await api.get(
-        `/colecoes/bloco/${blocoId}`, // ✅ rota correta
-      );
-      return response.data;
-    } catch (err: any) {
-      setError(err.message || "Erro ao carregar coleções");
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: colecoes = [], isLoading } = useQuery({
+    queryKey: ["colecoes", blocoId],
+    queryFn: () => colecoesService.listByBloco(blocoId!),
+    enabled: !!blocoId,
+  });
 
-  // Criar coleção
-  const createColecao = async (
-    blocoId: string,
-    nome: string,
-  ): Promise<Colecao | null> => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response: AxiosResponse<Colecao> = await api.post("/colecoes", {
-        nome,
-        blocoId,
-      });
-      return response.data;
-    } catch (err: any) {
-      setError(err.message || "Erro ao criar coleção");
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
+  const createMutation = useMutation({
+    mutationFn: ({ nome }: { nome: string }) =>
+      colecoesService.createColecao(blocoId!, nome),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["colecoes", blocoId] });
+    },
+  });
 
-  // Atualizar coleção
-  const updateColecao = async (
-    id: string,
-    nome: string,
-  ): Promise<Colecao | null> => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response: AxiosResponse<Colecao> = await api.put(
-        `/colecoes/${id}`,
-        { nome },
-      );
-      return response.data;
-    } catch (err: any) {
-      setError(err.message || "Erro ao atualizar coleção");
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
+  const updateMutation = useMutation({
+    mutationFn: ({ id, nome }: { id: string; nome: string }) =>
+      colecoesService.updateColecao(id, nome),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["colecoes", blocoId] });
+    },
+  });
 
-  // Deletar coleção
-  const deleteColecao = async (id: string): Promise<boolean> => {
-    setLoading(true);
-    setError(null);
-    try {
-      await api.delete(`/colecoes/${id}`);
-      return true;
-    } catch (err: any) {
-      setError(err.message || "Erro ao deletar coleção");
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Buscar campos de uma coleção
-  const getCampos = async (colecaoId: string): Promise<Campo[] | null> => {
-    try {
-      const response: AxiosResponse<Campo[]> = await api.get(
-        `/colecoes/${colecaoId}/campos`,
-      );
-      return response.data;
-    } catch (err: any) {
-      setError(err.message || "Erro ao carregar campos");
-      return null;
-    }
-  };
-
-  // Criar campo
-  const createCampo = async (
-    colecaoId: string,
-    nome: string,
-    tipoCampo: TipoCampo,
-  ): Promise<Campo | null> => {
-    try {
-      const response: AxiosResponse<Campo> = await api.post(
-        `/colecoes/campos`,
-        {
-          colecaoId,
-          nome,
-          tipoCampo,
-        },
-      );
-      return response.data;
-    } catch (err: any) {
-      setError(err.message || "Erro ao criar campo");
-      return null;
-    }
-  };
-
-  // Atualizar campo (opcional, se necessário)
-  const updateCampo = async (
-    campoId: string,
-    nome?: string,
-    tipoCampo?: TipoCampo,
-  ): Promise<Campo | null> => {
-    try {
-      const response: AxiosResponse<Campo> = await api.put(
-        `/colecoes/campos/${campoId}`,
-        {
-          nome,
-          tipoCampo,
-        },
-      );
-      return response.data;
-    } catch (err: any) {
-      setError(err.message || "Erro ao atualizar campo");
-      return null;
-    }
-  };
-
-  // Deletar campo
-  const deleteCampo = async (campoId: string): Promise<boolean> => {
-    try {
-      await api.delete(`/colecoes/campos/${campoId}`);
-      return true;
-    } catch (err: any) {
-      setError(err.message || "Erro ao deletar campo");
-      return false;
-    }
-  };
-
-  // Buscar itens de uma coleção
-  const getItens = async (colecaoId: string): Promise<any[] | null> => {
-    try {
-      const response: AxiosResponse<any[]> = await api.get(
-        `/colecoes/${colecaoId}/items`,
-      );
-      return response.data;
-    } catch (err: any) {
-      setError(err.message || "Erro ao carregar itens");
-      return null;
-    }
-  };
-
-  // Criar item
-  const createItem = async (
-    colecaoId: string,
-    valores: Record<string, any>,
-  ): Promise<any | null> => {
-    try {
-      const response: AxiosResponse<any> = await api.post(`/colecoes/items`, {
-        colecaoId,
-        valores,
-      });
-      return response.data;
-    } catch (err: any) {
-      setError(err.message || "Erro ao criar item");
-      return null;
-    }
-  };
-
-  // Atualizar item
-  const updateItem = async (
-    itemId: string,
-    valores: Record<string, any>,
-  ): Promise<any | null> => {
-    try {
-      const response: AxiosResponse<any> = await api.put(
-        `/colecoes/items/${itemId}`,
-        {
-          valores,
-        },
-      );
-      return response.data;
-    } catch (err: any) {
-      setError(err.message || "Erro ao atualizar item");
-      return null;
-    }
-  };
-
-  // Deletar item
-  const deleteItem = async (itemId: string): Promise<boolean> => {
-    try {
-      await api.delete(`/colecoes/items/${itemId}`);
-      return true;
-    } catch (err: any) {
-      setError(err.message || "Erro ao deletar item");
-      return false;
-    }
-  };
-
-  // Buscar uma coleção específica
-  const getColecao = async (id: string): Promise<Colecao | null> => {
-    try {
-      const response: AxiosResponse<Colecao> = await api.get(`/colecoes/${id}`);
-      return response.data;
-    } catch (err: any) {
-      setError(err.message || "Erro ao carregar coleção");
-      return null;
-    }
-  };
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => colecoesService.deleteColecao(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["colecoes", blocoId] });
+    },
+  });
 
   return {
-    loading,
-    error,
+    colecoes,
     isLoading,
-    listColecoesByBloco,
-    createColecao,
-    updateColecao,
-    deleteColecao,
-    getColecao,
-    getCampos,
-    createCampo,
-    updateCampo,
-    deleteCampo,
-    getItens,
-    createItem,
-    updateItem,
-    deleteItem,
+    criarColecao: createMutation.mutateAsync,
+    atualizarColecao: updateMutation.mutateAsync,
+    excluirColecao: deleteMutation.mutateAsync,
+    isCreating: createMutation.isPending,
+    isUpdating: updateMutation.isPending,
+    isDeleting: deleteMutation.isPending,
+  };
+}
+
+// Hook para uma coleção específica
+export function useColecao(id: string) {
+  return useQuery({
+    queryKey: ["colecao", id],
+    queryFn: () => colecoesService.getColecao(id),
+    enabled: !!id,
+  });
+}
+
+// Hook para campos de uma coleção
+export function useCampos(colecaoId: string) {
+  const queryClient = useQueryClient();
+
+  const { data: campos = [], isLoading } = useQuery({
+    queryKey: ["campos", colecaoId],
+    queryFn: () => colecoesService.getCampos(colecaoId),
+    enabled: !!colecaoId,
+  });
+
+  const createMutation = useMutation({
+    mutationFn: ({ nome, tipoCampo }: { nome: string; tipoCampo: string }) =>
+      colecoesService.createCampo(colecaoId, nome, tipoCampo),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["campos", colecaoId] });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) =>
+      colecoesService.updateCampo(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["campos", colecaoId] });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => colecoesService.deleteCampo(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["campos", colecaoId] });
+    },
+  });
+
+  return {
+    campos,
+    isLoading,
+    criarCampo: createMutation.mutateAsync,
+    atualizarCampo: updateMutation.mutateAsync,
+    excluirCampo: deleteMutation.mutateAsync,
+  };
+}
+
+// Hook para itens de uma coleção
+export function useItensColecao(colecaoId: string) {
+  const queryClient = useQueryClient();
+
+  const { data: itens = [], isLoading } = useQuery({
+    queryKey: ["itens", colecaoId],
+    queryFn: () => colecoesService.getItens(colecaoId),
+    enabled: !!colecaoId,
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (valores: Record<string, any>) =>
+      colecoesService.createItem(colecaoId, valores),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["itens", colecaoId] });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({
+      id,
+      valores,
+    }: {
+      id: string;
+      valores: Record<string, any>;
+    }) => colecoesService.updateItem(id, valores),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["itens", colecaoId] });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => colecoesService.deleteItem(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["itens", colecaoId] });
+    },
+  });
+
+  return {
+    itens,
+    isLoading,
+    criarItem: createMutation.mutateAsync,
+    atualizarItem: updateMutation.mutateAsync,
+    excluirItem: deleteMutation.mutateAsync,
   };
 }

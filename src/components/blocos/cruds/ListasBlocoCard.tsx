@@ -1,4 +1,3 @@
-// components/blocos/cruds/ListasBlocoCard.tsx
 "use client";
 
 import { useState } from "react";
@@ -14,12 +13,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ListaCard } from "@/components/lista/lista-card";
+import { ListaCard } from "@/components/lista/ListaCard";
 import { CriarListaModal } from "@/components/lista/CriarListaModal";
 import { useListas } from "@/hooks/useListas";
 import { toast } from "@/hooks/use-toast";
 import type { Bloco } from "@/types/bloco";
-import type { Lista } from "@/types/lista";
+import type { Lista, TipoLista } from "@/types/lista";
 
 interface ListasBlocoCardProps {
   bloco: Bloco;
@@ -50,18 +49,35 @@ export function ListasBlocoCard({
   const [modalCriarAberta, setModalCriarAberta] = useState(false);
   const [listaEditando, setListaEditando] = useState<Lista | null>(null);
 
-  const handleCriarLista = async (nome: string, tipoLista: string) => {
+  // Agora recebe o metadata (orçamento, local de compra)
+  const handleCriarLista = async (
+    nome: string,
+    tipoLista: string,
+    metadata?: Record<string, any>,
+  ) => {
     try {
-      await criar({
+      // Se a API ainda não aceita metadata, você pode armazenar em localStorage
+      // ou simplesmente ignorar. Vamos enviar se a API suportar (você pode estender o payload).
+      const payload: any = {
         blocoId: bloco.id,
         nome,
         tipoLista: tipoLista as any,
-      });
+      };
+      if (metadata) {
+        // Exemplo: payload.metadata = metadata;
+        console.log("Metadados da lista:", metadata);
+        // Futuramente: enviar para o backend
+      }
+      await criar(payload);
       toast({ title: "Lista criada com sucesso!" });
       setModalCriarAberta(false);
-    } catch (error) {
-      console.error(error);
-      toast({ title: "Erro ao criar lista", variant: "destructive" });
+    } catch (error: any) {
+      console.error("Erro ao criar lista:", error);
+      toast({
+        title: "Erro ao criar lista",
+        description: error?.message,
+        variant: "destructive",
+      });
     }
   };
 
@@ -69,6 +85,7 @@ export function ListasBlocoCard({
     lista: Lista,
     novoNome: string,
     novoTipo?: string,
+    metadata?: Record<string, any>,
   ) => {
     try {
       await atualizar({
@@ -77,8 +94,12 @@ export function ListasBlocoCard({
       });
       toast({ title: "Lista atualizada" });
       setListaEditando(null);
-    } catch (error) {
-      toast({ title: "Erro ao atualizar", variant: "destructive" });
+    } catch (error: any) {
+      toast({
+        title: "Erro ao atualizar",
+        description: error?.message,
+        variant: "destructive",
+      });
     }
   };
 
@@ -87,15 +108,13 @@ export function ListasBlocoCard({
     try {
       await excluir(listaId);
       toast({ title: "Lista excluída" });
-    } catch (error) {
-      toast({ title: "Erro ao excluir", variant: "destructive" });
+    } catch (error: any) {
+      toast({
+        title: "Erro ao excluir",
+        description: error?.message,
+        variant: "destructive",
+      });
     }
-  };
-
-  const handleSelectLista = (lista: Lista) => {
-    router.push(
-      `/dashboard/nucleos/${nucleoId}/blocos/${bloco.id}/listas/${lista.id}`,
-    );
   };
 
   return (
@@ -162,16 +181,6 @@ export function ListasBlocoCard({
                   blocoId={bloco.id}
                   onEdit={() => setListaEditando(lista)}
                   onDelete={() => handleExcluirLista(lista.id)}
-                  onDuplicate={() => {
-                    /* implementar duplicação */
-                  }}
-                  onShare={() => {
-                    /* implementar compartilhamento */
-                  }}
-                  onArchive={() => {
-                    /* implementar arquivamento */
-                  }}
-                  compact={false}
                   showProgressDetails
                 />
               ))}
@@ -184,18 +193,20 @@ export function ListasBlocoCard({
         open={modalCriarAberta}
         onClose={() => setModalCriarAberta(false)}
         onConfirm={handleCriarLista}
+        isSubmitting={isCreating}
       />
 
       {listaEditando && (
         <CriarListaModal
           open={!!listaEditando}
           onClose={() => setListaEditando(null)}
-          onConfirm={(nome, tipo) =>
-            handleEditarLista(listaEditando, nome, tipo)
+          onConfirm={(nome, tipo, metadata) =>
+            handleEditarLista(listaEditando, nome, tipo, metadata)
           }
           initialNome={listaEditando.nome}
           initialTipo={listaEditando.tipoLista}
           titulo="Editar lista"
+          isSubmitting={false} // pode usar isUpdating se quiser
         />
       )}
     </>

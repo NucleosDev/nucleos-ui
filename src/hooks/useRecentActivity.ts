@@ -2,7 +2,6 @@
 import { Flame, CheckCircle, PlusCircle, Edit } from "lucide-react";
 
 export function useRecentActivity(limit = 5) {
-
   const mockActivities = [
     {
       id: "1",
@@ -30,7 +29,7 @@ export function useRecentActivity(limit = 5) {
     {
       id: "4",
       icon: Edit,
-      title: "Atualizou perfil do núcleo",
+      title: "Atualizou perfil do Nucleo",
       nucleoName: "Pessoal",
       time: "Ontem",
     },

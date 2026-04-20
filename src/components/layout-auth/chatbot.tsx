@@ -26,10 +26,10 @@ const mockResponse = async (userMessage: string): Promise<string> => {
   if (lowerMsg.includes("meta") || lowerMsg.includes("objetivo")) {
     return "Sua meta de concluir o curso de React está em 65%. Faltam 7 dias para o prazo. Precisa de ajuda com algum tópico?";
   }
-  if (lowerMsg.includes("núcleo") || lowerMsg.includes("nucleo")) {
-    return "Seus núcleos são Trabalho, Saúde e Estudos. O núcleo Trabalho tem 3 tarefas pendentes e está com 72% de progresso.";
+  if (lowerMsg.includes("Nucleo") || lowerMsg.includes("nucleo")) {
+    return "Seus Nucleos são Trabalho, Saúde e Estudos. O Nucleo Trabalho tem 3 tarefas pendentes e está com 72% de progresso.";
   }
-  return "Olá! Sou a NucleosIA. Posso ajudar com tarefas, hábitos, metas ou núcleos. O que você gostaria de saber?";
+  return "Olá! Sou a NucleosIA. Posso ajudar com tarefas, hábitos, metas ou Nucleos. O que você gostaria de saber?";
 };
 
 export function ChatBot() {

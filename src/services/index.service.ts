@@ -42,9 +42,9 @@ import type { Tarefa, CreateTarefaPayload, UpdateTarefaPayload } from "@/types";
 import type { UserLevel, ConquistaComProgresso, Streak } from "@/types";
 import type { User } from "@/types/user";
 
-// ============================================================================
-// NÚCLEOS
-// ============================================================================
+
+// NucleoS
+
 export const nucleosService = {
   async listar(): Promise<NucleoComStats[]> {
     return api.get<NucleoComStats[]>(API_ROUTES.NUCLEOS.LIST);
@@ -73,9 +73,8 @@ export const nucleosService = {
   // async buscarConquistas(id: string): Promise<{ conquistas: number }> { ... }
 };
 
-// ============================================================================
-// BLOCOS
-// ============================================================================
+// Blocos
+
 export const blocosService = {
   async listarPorNucleo(nucleoId: string): Promise<Bloco[]> {
     return api.get<Bloco[]>(API_ROUTES.BLOCOS.LIST(nucleoId));
@@ -102,9 +101,9 @@ export const blocosService = {
   },
 };
 
-// ============================================================================
+
 // TAREFAS
-// ============================================================================
+
 export const tarefasService = {
   async listarPorBloco(blocoId: string): Promise<Tarefa[]> {
     return api.get<Tarefa[]>(API_ROUTES.TAREFAS.BY_BLOCO(blocoId));
@@ -135,9 +134,9 @@ export const tarefasService = {
   },
 };
 
-// ============================================================================
+
 // LISTAS
-// ============================================================================
+
 export const listasService = {
   // Listas
   async listarPorBloco(blocoId: string): Promise<ListaComItens[]> {
@@ -202,9 +201,9 @@ export const listasService = {
   },
 };
 
-// ============================================================================
+
 // HÁBITOS
-// ============================================================================
+
 export const habitosService = {
   async listarPorBloco(blocoId: string): Promise<HabitoComProgresso[]> {
     return api.get<HabitoComProgresso[]>(API_ROUTES.HABITOS.BY_BLOCO(blocoId));
@@ -236,9 +235,9 @@ export const habitosService = {
   // },
 };
 
-// ============================================================================
+
 // COLEÇÕES
-// ============================================================================
+
 export const colecoesService = {
   // Coleções
   async listarPorBloco(blocoId: string): Promise<Colecao[]> {
@@ -305,9 +304,9 @@ export const colecoesService = {
   // async deletarValor(...) { ... }
 };
 
-// ============================================================================
+
 // NOTIFICAÇÕES (serviço mantido, mas rotas ainda não implementadas)
-// ============================================================================
+
 export const notificationsService = {
   async listar(): Promise<Notificacao[]> {
     return api.get<Notificacao[]>(API_ROUTES.NOTIFICATIONS.LIST);
@@ -326,9 +325,9 @@ export const notificationsService = {
   },
 };
 
-// ============================================================================
+
 // GAMIFICAÇÃO (serviço mantido, rotas ainda não implementadas)
-// ============================================================================
+
 export const gamificacaoService = {
   async getLevel(): Promise<UserLevel> {
     return api.get<UserLevel>(API_ROUTES.GAMIFICACAO.LEVEL);
@@ -344,9 +343,9 @@ export const gamificacaoService = {
   },
 };
 
-// ============================================================================
+
 // TIMERS
-// ============================================================================
+
 export const timersService = {
   async listarPorNucleo(nucleoId: string) {
     return api.get(API_ROUTES.TIMERS.LIST(nucleoId));
@@ -359,9 +358,9 @@ export const timersService = {
   },
 };
 
-// ============================================================================
+
 // CALENDÁRIO
-// ============================================================================
+
 export const calendarioService = {
   async listarPorNucleo(nucleoId: string) {
     return api.get(API_ROUTES.CALENDARIO.LIST(nucleoId));
@@ -377,9 +376,9 @@ export const calendarioService = {
   },
 };
 
-// ============================================================================
+
 // USUÁRIOS (NOVO)
-// ============================================================================
+
 export const usersService = {
   async getMe(): Promise<User> {
     return api.get<User>(API_ROUTES.USERS.ME);
@@ -426,9 +425,9 @@ export const usersService = {
   },
 };
 
-// ============================================================================
+
 // PLANOS (NOVO)
-// ============================================================================
+
 export const plansService = {
   async list(): Promise<any[]> {
     return api.get(API_ROUTES.PLANS.LIST);
@@ -438,9 +437,9 @@ export const plansService = {
   },
 };
 
-// ============================================================================
+
 // INSIGHTS / IA (NOVO)
-// ============================================================================
+
 export const insightsService = {
   async generate(payload: {
     nucleoId: string;
@@ -459,9 +458,9 @@ export const insightsService = {
   },
 };
 
-// ============================================================================
+
 // ADMIN (NOVO)
-// ============================================================================
+
 // export const adminService = {
 //   async getStats(): Promise<any> {
 //     return api.get(API_ROUTES.ADMIN.STATS);

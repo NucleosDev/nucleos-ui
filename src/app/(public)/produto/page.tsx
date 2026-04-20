@@ -277,7 +277,7 @@ export default function ProdutoPage() {
               Construa do seu jeito
             </h2>
             <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
-              Cada núcleo é composto por blocos que você pode combinar
+              Cada Nucleo é composto por blocos que você pode combinar
               livremente.
             </p>
           </div>

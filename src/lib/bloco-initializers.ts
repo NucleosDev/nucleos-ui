@@ -1,4 +1,3 @@
-// lib/bloco-initializers.ts
 import { listasService } from "@/services/index.service";
 import { tarefasService } from "@/services/tarefas.service";
 // import { habitosService } from "@/services/habitos.service";
@@ -21,26 +20,16 @@ export const BLOCO_INITIALIZERS: Partial<Record<BlocoTipo, BlocoInitializer>> =
     },
 
     tarefas: async (blocoId, titulo) => {
-      // Tarefas geralmente não precisam de inicialização automática.
-      // Opcional: criar uma tarefa de exemplo ou configuração padrão.
+      // Opcional: criar uma tarefa de exemplo
     },
 
-    // habitos: async (blocoId, titulo) => {
-    //   await habitosService.criar({
-    //     blocoId,
-    //     nome: "Novo Hábito",
-    //     frequencia: "diaria",
-    //     metaVeces: 1,
-    //   });
-    // },
-
     colecoes: async (blocoId, titulo) => {
-      // ✅ Descomentado e ajustado para corresponder ao serviço real
+      // Cria automaticamente uma coleção padrão
       const colecao = await colecoesService.createColecao(
         blocoId,
-        titulo || "Minha Coleção",
+        titulo || "Minha Tabela",
       );
-      // Opcional: criar campo padrão
+      // Cria um campo "Nome" do tipo texto para que o usuário possa começar a usar imediatamente
       await colecoesService.createCampo(colecao.id, "Nome", "texto");
     },
 

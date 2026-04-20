@@ -1,8 +1,6 @@
-// components/blocos/ColecoesBlocoCard.tsx
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Plus, MoreVertical, Pencil, Trash2, Layers } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,7 +14,6 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { ColecaoCard } from "@/components/colecoes/ColecaoCard";
 import { CriarColecaoModal } from "@/components/colecoes/CriarColecaoModal";
-import { GerenciarCamposModal } from "@/components/colecoes/GerenciarCamposModal"; // 👈 novo
 import { useColecoes } from "@/hooks/useColecoes";
 import { toast } from "@/hooks/use-toast";
 import type { Bloco } from "@/types/bloco";
@@ -37,81 +34,70 @@ export function ColecoesBlocoCard({
   onEdit,
   isDeleting,
 }: ColecoesBlocoCardProps) {
-  const router = useRouter();
   const {
-    listColecoesByBloco,
-    createColecao,
-    updateColecao,
-    deleteColecao,
-    loading,
-  } = useColecoes();
+    colecoes,
+    isLoading,
+    criarColecao,
+    atualizarColecao,
+    excluirColecao,
+    isCreating,
+  } = useColecoes(bloco.id);
 
-  const [colecoes, setColecoes] = useState<Colecao[]>([]);
   const [modalCriarAberta, setModalCriarAberta] = useState(false);
   const [colecaoEditando, setColecaoEditando] = useState<Colecao | null>(null);
-  const [gerenciandoCamposColecao, setGerenciandoCamposColecao] =
-    useState<Colecao | null>(null); // 👈 novo estado
-
-  const carregarColecoes = useCallback(async () => {
-    const resultado = await listColecoesByBloco(bloco.id);
-    if (resultado) setColecoes(resultado);
-  }, [bloco.id, listColecoesByBloco]);
-
-  useEffect(() => {
-    carregarColecoes();
-  }, [carregarColecoes]);
 
   const handleCriarColecao = async (nome: string) => {
-    const nova = await createColecao(bloco.id, nome);
-    if (nova) {
-      toast({ title: "Coleção criada!" });
-      await carregarColecoes();
+    try {
+      await criarColecao({ nome });
+      toast({ title: "Coleção criada com sucesso!" });
       setModalCriarAberta(false);
-    } else {
-      toast({ title: "Erro ao criar", variant: "destructive" });
+    } catch (error: any) {
+      toast({
+        title: "Erro ao criar coleção",
+        description: error?.message,
+        variant: "destructive",
+      });
     }
   };
 
   const handleEditarColecao = async (colecao: Colecao, novoNome: string) => {
-    const atualizada = await updateColecao(colecao.id, novoNome);
-    if (atualizada) {
+    try {
+      await atualizarColecao({ id: colecao.id, nome: novoNome });
       toast({ title: "Coleção atualizada" });
-      await carregarColecoes();
       setColecaoEditando(null);
-    } else {
-      toast({ title: "Erro ao atualizar", variant: "destructive" });
+    } catch (error: any) {
+      toast({
+        title: "Erro ao atualizar",
+        description: error?.message,
+        variant: "destructive",
+      });
     }
   };
 
   const handleExcluirColecao = async (colecaoId: string) => {
-    if (!confirm("Tem certeza?")) return;
-    const result = await deleteColecao(colecaoId);
-    if (result) {
+    if (!confirm("Tem certeza que deseja excluir esta coleção?")) return;
+    try {
+      await excluirColecao(colecaoId);
       toast({ title: "Coleção excluída" });
-      await carregarColecoes();
-    } else {
-      toast({ title: "Erro ao excluir", variant: "destructive" });
+    } catch (error: any) {
+      toast({
+        title: "Erro ao excluir",
+        description: error?.message,
+        variant: "destructive",
+      });
     }
-  };
-
-  const handleSelectColecao = (colecao: Colecao) => {
-    router.push(
-      `/dashboard/nucleos/${nucleoId}/blocos/${bloco.id}/colecoes/${colecao.id}`,
-    );
-  };
-
-  const handleGerenciarCampos = (colecao: Colecao) => {
-    setGerenciandoCamposColecao(colecao);
   };
 
   return (
     <>
-      <Card>
+      <Card className="group relative hover:shadow-md transition-shadow">
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-2">
               <Layers className="h-5 w-5 text-muted-foreground" />
-              <CardTitle className="text-lg">{bloco.tipo}</CardTitle>
+              <CardTitle className="text-lg">
+                {bloco.titulo || "Coleções"}
+              </CardTitle>
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -135,17 +121,19 @@ export function ColecoesBlocoCard({
             </DropdownMenu>
           </div>
         </CardHeader>
+
         <CardContent className="space-y-4">
           <Button
             variant="outline"
             size="sm"
             className="w-full"
             onClick={() => setModalCriarAberta(true)}
+            disabled={isCreating}
           >
             <Plus className="mr-2 h-4 w-4" /> Nova coleção
           </Button>
 
-          {loading && colecoes.length === 0 ? (
+          {isLoading ? (
             <div className="space-y-2">
               <Skeleton className="h-24 w-full" />
               <Skeleton className="h-24 w-full" />
@@ -162,10 +150,8 @@ export function ColecoesBlocoCard({
                   colecao={colecao}
                   nucleoId={nucleoId}
                   blocoId={bloco.id}
-                  onEdit={(c) => setColecaoEditando(c)}
+                  onEdit={() => setColecaoEditando(colecao)}
                   onDelete={handleExcluirColecao}
-                  onSelect={handleSelectColecao}
-                  onGerenciarCampos={handleGerenciarCampos} // 👈 nova prop
                 />
               ))}
             </div>
@@ -173,14 +159,13 @@ export function ColecoesBlocoCard({
         </CardContent>
       </Card>
 
-      {/* Modal de criação de coleção */}
       <CriarColecaoModal
         open={modalCriarAberta}
         onClose={() => setModalCriarAberta(false)}
         onConfirm={handleCriarColecao}
+        isSubmitting={isCreating}
       />
 
-      {/* Modal de edição de nome da coleção */}
       {colecaoEditando && (
         <CriarColecaoModal
           open={!!colecaoEditando}
@@ -190,16 +175,7 @@ export function ColecoesBlocoCard({
           }
           initialNome={colecaoEditando.nome}
           titulo="Editar coleção"
-        />
-      )}
-
-      {/* Modal de gerenciamento de campos */}
-      {gerenciandoCamposColecao && (
-        <GerenciarCamposModal
-          open={!!gerenciandoCamposColecao}
-          onClose={() => setGerenciandoCamposColecao(null)}
-          colecaoId={gerenciandoCamposColecao.id}
-          colecaoNome={gerenciandoCamposColecao.nome || "Coleção"}
+          isSubmitting={false}
         />
       )}
     </>

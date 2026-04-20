@@ -317,7 +317,7 @@ const plans = [
     description: "Perfeito para começar sua jornada",
     features: [
       "Até 3 Nucleos",
-      "10 hábitos por núcleo",
+      "10 hábitos por Nucleo",
       "Tracking de atividades",
       "Sistema de XP e níveis",
       "Estatísticas básicas",
@@ -364,7 +364,7 @@ export default function AboutPage({
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       {/* ---------------- HEADER ---------------- */}
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      {/* <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between px-6 mx-auto max-w-7xl">
           <div className="flex items-center gap-8">
             <Link href="/" className="text-xl font-bold">
@@ -409,7 +409,7 @@ export default function AboutPage({
             </Button>
           </div>
         </div>
-      </header>
+      </header> */}
 
       {/* ---------------- HERO SECTION ---------------- */}
       <section className="py-16 md:py-28 bg-background relative overflow-hidden">

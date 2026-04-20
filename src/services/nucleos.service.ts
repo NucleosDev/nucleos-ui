@@ -11,7 +11,7 @@ export const nucleosService = {
       const { data } = await api.get<Nucleo[]>("/nucleos");
       return data || [];
     } catch (error) {
-      console.warn("Erro ao buscar núcleos:", error);
+      console.warn("Erro ao buscar Nucleos:", error);
       return [];
     }
   },
@@ -21,7 +21,7 @@ export const nucleosService = {
       const { data } = await api.get<Nucleo>(`/nucleos/${id}`);
       return data;
     } catch (error) {
-      console.warn(`Erro ao buscar núcleo ${id}:`, error);
+      console.warn(`Erro ao buscar Nucleo ${id}:`, error);
       return null;
     }
   },

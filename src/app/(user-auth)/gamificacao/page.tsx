@@ -38,7 +38,7 @@
 // const categoriaLabel: Record<Conquista["categoria"], string> = {
 //   habito: "Hábitos",
 //   tarefa: "Tarefas",
-//   nucleo: "Núcleos",
+//   nucleo: "Nucleos",
 //   especial: "Especiais",
 // };
 

@@ -1,4 +1,3 @@
-// /components/nucleo/ui/nucleo-card-compact.tsx
 "use client";
 
 import { motion } from "framer-motion";
@@ -8,7 +7,6 @@ import {
   Layers,
   Trophy,
   Flame,
-  Image as ImageIcon,
   BookOpen,
   Heart,
   Briefcase,
@@ -75,20 +73,21 @@ export function NucleoCardCompact({
   } = nucleo;
 
   const IconComponent = tipoIcons[tipo] || Layers;
-  const progress = (xpTotal / nextLevelXp) * 100;
+  // Evita divisão por zero
+  const progress = nextLevelXp > 0 ? (xpTotal / nextLevelXp) * 100 : 0;
 
   return (
     <motion.div
-      whileHover={{ x: 4, transition: { duration: 0.2 } }}
+      whileTap={{ scale: 0.98 }} // feedback tátil em mobile
       className={cn(
         "group relative flex items-center gap-3 rounded-lg border bg-card p-2 transition-all",
         "hover:shadow-md hover:shadow-[#4D7CFF]/5 hover:border-[#4D7CFF]/30",
-        "cursor-pointer",
+        "cursor-pointer active:bg-muted/50", // feedback ao toque
         className,
       )}
       onClick={onClick}
     >
-      {/* Ícone */}
+      {/* Ícone - tamanho adequado para toque */}
       <div
         className="flex size-10 shrink-0 items-center justify-center rounded-lg overflow-hidden"
         style={{ backgroundColor: `${corDestaque}20` }}
@@ -110,7 +109,10 @@ export function NucleoCardCompact({
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <h4 className="font-medium text-sm truncate">{nome}</h4>
-          <Badge variant="outline" className="h-5 px-1.5 text-[10px]">
+          <Badge
+            variant="outline"
+            className="h-5 px-1.5 text-[10px] truncate max-w-[100px]"
+          >
             {tipo}
           </Badge>
         </div>
@@ -120,7 +122,7 @@ export function NucleoCardCompact({
           <div className="flex-1 h-1 bg-secondary rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] rounded-full"
-              style={{ width: `${progress}%` }}
+              style={{ width: `${Math.min(progress, 100)}%` }}
             />
           </div>
           <span className="text-[10px] text-muted-foreground whitespace-nowrap">
@@ -146,16 +148,19 @@ export function NucleoCardCompact({
         </div>
       </div>
 
-      {/* Menu de ações mini */}
+      {/* Menu de ações - sempre visível em mobile, hover em desktop */}
       {(onEdit || onDelete || onArchive) && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
             <Button
               variant="ghost"
               size="icon"
-              className="size-6 opacity-0 group-hover:opacity-100"
+              className={cn(
+                "size-8 sm:size-6 transition-opacity", // maior em mobile
+                "opacity-100 sm:opacity-0 sm:group-hover:opacity-100",
+              )}
             >
-              <MoreHorizontal className="size-3" />
+              <MoreHorizontal className="size-4 sm:size-3" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="text-xs">

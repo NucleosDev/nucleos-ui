@@ -75,9 +75,9 @@ const categoriasData = [
 // Artigos populares
 const artigosPopularesData = [
   {
-    titulo: "Como criar seu primeiro Núcleo",
+    titulo: "Como criar seu primeiro Nucleo",
     resumo:
-      "Guia passo a passo para criar seu primeiro núcleo e organizar suas tarefas",
+      "Guia passo a passo para criar seu primeiro Nucleo e organizar suas tarefas",
     tempoLeitura: "5 min",
     visualizacoes: "3.2k",
     data: "2024-01-12",
@@ -136,7 +136,7 @@ const faqs = [
   {
     pergunta: "O que são Nucleos?",
     resposta:
-      "Nucleos são espaços personalizados que você cria para organizar diferentes áreas da sua vida, como estudos, saúde, trabalho, finanças, etc. Cada núcleo pode conter blocos, tarefas e seu próprio sistema de progressão.",
+      "Nucleos são espaços personalizados que você cria para organizar diferentes áreas da sua vida, como estudos, saúde, trabalho, finanças, etc. Cada Nucleo pode conter blocos, tarefas e seu próprio sistema de progressão.",
   },
   {
     pergunta: "Como funciona o sistema de XP?",

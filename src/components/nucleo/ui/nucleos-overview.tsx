@@ -26,13 +26,13 @@ export function NucleosOverview() {
   };
 
   const handleDeleteNucleo = async (id: string) => {
-    if (confirm("Tem certeza que deseja excluir este núcleo?")) {
+    if (confirm("Tem certeza que deseja excluir este Nucleo?")) {
       try {
         await remove(id);
-        alert("Núcleo excluído com sucesso!");
+        alert("Nucleo excluído com sucesso!");
       } catch (error) {
         console.error("Erro ao excluir:", error);
-        alert("Erro ao excluir núcleo. Tente novamente.");
+        alert("Erro ao excluir Nucleo. Tente novamente.");
       }
     }
   };
@@ -44,7 +44,7 @@ export function NucleosOverview() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold tracking-tight">Seus Núcleos</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Seus Nucleos</h2>
       </div>
 
       {nucleos.length === 0 ? (
@@ -97,7 +97,7 @@ function AddNucleoCard({ onClick }: { onClick: () => void }) {
         <div className="rounded-full bg-primary/10 p-4 transition-transform group-hover:scale-110">
           <Plus className="h-8 w-8 text-primary" />
         </div>
-        <h3 className="mt-4 text-lg font-medium">Criar novo núcleo</h3>
+        <h3 className="mt-4 text-lg font-medium">Criar novo Nucleo</h3>
         <p className="mt-2 text-sm text-muted-foreground">
           Organize sua vida em áreas específicas
         </p>
@@ -112,13 +112,13 @@ function EmptyState({ onCreateClick }: { onCreateClick: () => void }) {
       <div className="rounded-full bg-primary/10 p-4">
         <Plus className="h-10 w-10 text-primary" />
       </div>
-      <h3 className="mt-6 text-xl font-semibold">Nenhum núcleo ainda</h3>
+      <h3 className="mt-6 text-xl font-semibold">Nenhum Nucleo ainda</h3>
       <p className="mt-2 text-muted-foreground">
-        Crie seu primeiro núcleo para começar a organizar suas atividades
+        Crie seu primeiro Nucleo para começar a organizar suas atividades
       </p>
       <Button onClick={onCreateClick} className="mt-6">
         <Plus className="mr-2 h-4 w-4" />
-        Criar primeiro núcleo
+        Criar primeiro Nucleo
       </Button>
     </div>
   );

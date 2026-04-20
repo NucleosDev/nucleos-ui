@@ -1,4 +1,3 @@
-// src/config/env.ts
 export const env = {
   apiUrl: process.env.NEXT_PUBLIC_API_URL || "https://localhost:5000/api/v1",
 
@@ -8,7 +7,7 @@ export const env = {
 };
 
 // Log para debug
-console.log("🌍 Environment:", {
+console.log("Environment:", {
   apiUrl: env.apiUrl,
   appUrl: env.appUrl,
   environment: env.environment,

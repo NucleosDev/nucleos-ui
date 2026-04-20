@@ -122,7 +122,7 @@ const duvidas = [
     categoria: "nucleos",
     pergunta: "O que são Nucleos?",
     resposta:
-      "Nucleos são espaços dedicados que você cria para organizar diferentes áreas da sua vida. Cada núcleo tem seu próprio conjunto de blocos, tarefas e progresso. Exemplos: Estudos, Fitness, Finanças, Trabalho.",
+      "Nucleos são espaços dedicados que você cria para organizar diferentes áreas da sua vida. Cada Nucleo tem seu próprio conjunto de blocos, tarefas e progresso. Exemplos: Estudos, Fitness, Finanças, Trabalho.",
     util: 63,
   },
   {

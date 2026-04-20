@@ -1,7 +1,5 @@
-// ============================================================================
-// TIPOS BASE
-// ============================================================================
-
+// ==========================// TIPOS BASE
+// ==========================
 export interface User {
   id: string;
   email: string;
@@ -33,10 +31,8 @@ export interface UserLevel {
   updatedAt: string;
 }
 
-// ============================================================================
-// NUCLEOS
-// ============================================================================
-
+// ==========================// NUCLEOS
+// ==========================
 export interface NucleoIcon {
   id: string;
   name?: string;
@@ -156,10 +152,8 @@ export interface CreateNucleoPayload {
 
 export interface UpdateNucleoPayload extends Partial<CreateNucleoPayload> {}
 
-// ============================================================================
-// BLOCOS
-// ============================================================================
-
+// ==========================// BLOCOS
+// ==========================
 export type TipoBloco =
   | "tarefas"
   | "habitos"
@@ -205,10 +199,8 @@ export interface ReorderBlocosPayload {
   orders: Array<{ id: string; posicao: number }>;
 }
 
-// ============================================================================
-// TAREFAS
-// ============================================================================
-
+// ==========================// TAREFAS
+// ==========================
 export type PrioridadeTarefa = "baixa" | "media" | "alta";
 export type StatusTarefa = "pendente" | "concluida" | "atrasada";
 
@@ -244,10 +236,8 @@ export interface UpdateTarefaPayload {
   posicao?: number;
 }
 
-// ============================================================================
-// HÁBITOS
-// ============================================================================
-
+// ==========================// HÁBITOS
+// ==========================
 export type FrequenciaHabito = "diaria" | "semanal" | "personalizada";
 
 export interface Habito {
@@ -290,10 +280,8 @@ export interface UpdateHabitoPayload {
   metaVezes?: number;
 }
 
-// ============================================================================
-// LISTAS
-// ============================================================================
-
+// ==========================// LISTAS
+// ==========================
 export type TipoLista = "generica" | "compras" | "financeiro";
 
 export interface Lista {
@@ -358,10 +346,8 @@ export interface CreateCategoriaPayload {
   cor?: string;
 }
 
-// ============================================================================
-// COLEÇÕES
-// ============================================================================
-
+// ==========================// COLEÇÕES
+// ==========================
 export type TipoCampo =
   | "texto"
   | "numero"
@@ -438,10 +424,8 @@ export interface CreateItemValorPayload {
   valorBooleano?: boolean;
 }
 
-// ============================================================================
-// CALENDÁRIO
-// ============================================================================
-
+// ==========================// CALENDÁRIO
+// ==========================
 export interface CalendarioEvento {
   id: string;
   nucleoId: string;
@@ -468,10 +452,8 @@ export interface UpdateCalendarioEventoPayload {
   duracaoMinutos?: number;
 }
 
-// ============================================================================
-// TIMERS
-// ============================================================================
-
+// ==========================// TIMERS
+// ==========================
 export interface Timer {
   id: string;
   nucleoId: string;
@@ -493,10 +475,8 @@ export interface StartTimerPayload {
   timerId: string;
 }
 
-// ============================================================================
-// GAMIFICAÇÃO
-// ============================================================================
-
+// ==========================// GAMIFICAÇÃO
+// ==========================
 export interface Conquista {
   id: string;
   nome: string;
@@ -544,10 +524,8 @@ export interface XpLog {
   createdAt: string;
 }
 
-// ============================================================================
-// NOTIFICAÇÕES
-// ============================================================================
-
+// ==========================// NOTIFICAÇÕES
+// ==========================
 export type TipoNotificacao =
   | "info"
   | "sucesso"
@@ -578,10 +556,8 @@ export interface NotificacaoUI {
   };
 }
 
-// ============================================================================
-// API RESPONSES
-// ============================================================================
-
+// ==========================// API RESPONSES
+// ==========================
 export interface ApiResponse<T> {
   data: T;
   message?: string;

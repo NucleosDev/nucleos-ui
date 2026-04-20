@@ -43,11 +43,11 @@
 //   const isEmpty = !isLoading && nucleos !== null && nucleos.length === 0;
 
 //   return (
-//     <section aria-label="Seus Núcleos">
+//     <section aria-label="Seus Nucleos">
 //       <div className="mb-5 flex items-end justify-between gap-4">
 //         <div>
 //           <h2 className="text-lg font-semibold text-foreground">
-//             Seus Núcleos
+//             Seus Nucleos
 //           </h2>
 //           <p className="mt-0.5 text-sm text-muted-foreground leading-relaxed">
 //             Acompanhe e evolua seus focos principais
@@ -71,10 +71,10 @@
 //             <Plus className="h-5 w-5 text-muted-foreground" />
 //           </div>
 //           <h3 className="text-sm font-medium text-foreground">
-//             Você ainda não tem núcleos
+//             Você ainda não tem Nucleos
 //           </h3>
 //           <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-//             Crie seu primeiro núcleo para começar a acompanhar seu progresso.
+//             Crie seu primeiro Nucleo para começar a acompanhar seu progresso.
 //           </p>
 //           <Button
 //             size="sm"
@@ -82,7 +82,7 @@
 //             onClick={onCreateNucleo}
 //           >
 //             <Plus className="h-3.5 w-3.5" />
-//             Criar primeiro núcleo
+//             Criar primeiro Nucleo
 //           </Button>
 //         </div>
 //       )}

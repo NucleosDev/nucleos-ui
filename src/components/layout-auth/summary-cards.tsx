@@ -25,13 +25,13 @@ export function SummaryCards({ data }: SummaryCardsProps) {
     <section aria-label="Resumo rápido">
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <SummaryCard
-          title="Núcleos ativos"
+          title="Nucleos ativos"
           value={data?.activeNucleos ?? null}
           subtitle={
             data?.activeNucleos !== null && data?.activeNucleos !== undefined
               ? data.activeNucleos === 1
-                ? "1 núcleo em andamento"
-                : `${data.activeNucleos} núcleos em andamento`
+                ? "1 Nucleo em andamento"
+                : `${data.activeNucleos} Nucleos em andamento`
               : null
           }
           icon={Boxes}

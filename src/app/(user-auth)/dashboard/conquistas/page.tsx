@@ -12,7 +12,7 @@
 //   {
 //     tipo: "primeiro_nucleo",
 //     nome: "Primeiro Passo",
-//     desc: "Criou seu primeiro núcleo",
+//     desc: "Criou seu primeiro Nucleo",
 //     icon: "🌱",
 //   },
 //   {
@@ -49,7 +49,7 @@
 //   {
 //     tipo: "3_nucleos",
 //     nome: "Multitarefa",
-//     desc: "Criou 3 núcleos",
+//     desc: "Criou 3 Nucleos",
 //     icon: "🧩",
 //   },
 //   {

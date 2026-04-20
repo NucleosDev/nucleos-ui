@@ -1,12 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import {
-
-  Brain,
-  Dumbbell,
-  Briefcase,
-} from "lucide-react";
+import { Brain, Dumbbell, Briefcase } from "lucide-react";
 import {
   motion,
   useScroll,
@@ -125,7 +120,7 @@ export function Hero() {
           {/* Conteúdo com MINI CARDS */}
           <CardContent className="p-4">
             <div className="space-y-3">
-              {/* Usando NucleoCardCompact para cada núcleo */}
+              {/* Usando NucleoCardCompact para cada Nucleo */}
               <NucleoCardCompact
                 nucleo={mockNucleos[0]} // Estudos
                 onClick={() => console.log("Estudos")}
@@ -150,8 +145,7 @@ export function Hero() {
           opacity: useTransform(scrollYProgress, [0, 0.3], [1, 0]),
         }}
         className="absolute left-10 top-1/3 hidden lg:block z-20"
-      >
-      </motion.div>
+      ></motion.div>
 
       {/* Segundo stat flutuante */}
       <motion.div
@@ -160,8 +154,7 @@ export function Hero() {
           opacity: useTransform(scrollYProgress, [0, 0.3], [1, 0]),
         }}
         className="absolute right-10 bottom-1/3 hidden lg:block z-20"
-      >
-      </motion.div>
+      ></motion.div>
     </section>
   );
 }

@@ -14,9 +14,8 @@ const TOKEN_KEY = "token";
 const USER_KEY = "user";
 
 export const authService = {
-  // =========================
   // 🔐 LOGIN
-  // =========================
+
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     console.log("🔥 LOGIN CHAMADO");
 
@@ -61,9 +60,8 @@ export const authService = {
     };
   },
 
-  // =========================
   // 📝 REGISTER
-  // =========================
+
   async register(data: RegisterData): Promise<AuthResponse> {
     const response = await api.post<AuthResponseDto>(
       API_ROUTES.AUTH.REGISTER,
@@ -100,9 +98,8 @@ export const authService = {
     };
   },
 
-  // =========================
   // 🚪 LOGOUT
-  // =========================
+
   async logout(): Promise<void> {
     try {
       await api.post(API_ROUTES.AUTH.LOGOUT);
@@ -116,9 +113,8 @@ export const authService = {
     }
   },
 
-  // =========================
   // 👤 GET CURRENT USER
-  // =========================
+
   async getCurrentUser(): Promise<User | null> {
     try {
       if (typeof window === "undefined") return null;
@@ -161,9 +157,8 @@ export const authService = {
     }
   },
 
-  // =========================
   // 💾 GET STORED USER (LOCAL)
-  // =========================
+
   getStoredUser(): User | null {
     if (typeof window === "undefined") return null;
 
@@ -178,9 +173,8 @@ export const authService = {
     }
   },
 
-  // =========================
   // 🔐 AUTH CHECK
-  // =========================
+
   isAuthenticated(): boolean {
     if (typeof window === "undefined") return false;
     return !!localStorage.getItem(TOKEN_KEY);

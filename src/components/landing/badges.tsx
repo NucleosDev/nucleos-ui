@@ -20,7 +20,7 @@ import type { NucleoAchievement } from "@/types/nucleo";
 
 // Mock de conquistas baseado no schema real
 const mockAchievements: NucleoAchievement[] = [
-  // Conquistas do núcleo 1 (Estudos)
+  // Conquistas do Nucleo 1 (Estudos)
   {
     id: "ach1",
     nucleoId: "nucleo-1",
@@ -56,7 +56,7 @@ const mockAchievements: NucleoAchievement[] = [
     createdAt: new Date().toISOString(),
   },
 
-  // Conquistas do núcleo 2 (Fitness)
+  // Conquistas do Nucleo 2 (Fitness)
   {
     id: "ach5",
     nucleoId: "nucleo-2",
@@ -84,7 +84,7 @@ const mockAchievements: NucleoAchievement[] = [
     createdAt: new Date().toISOString(),
   },
 
-  // Conquistas do núcleo 3 (Trabalho)
+  // Conquistas do Nucleo 3 (Trabalho)
   {
     id: "ach8",
     nucleoId: "nucleo-3",
@@ -156,7 +156,7 @@ const achievementConfig: Record<
   },
 };
 
-// Agrupar conquistas por núcleo
+// Agrupar conquistas por Nucleo
 const nucleosComConquistas = [
   {
     nucleoId: "nucleo-1",
@@ -234,7 +234,7 @@ export function Badges() {
 
         {/* Filtros */}
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          {/* Filtro por núcleo */}
+          {/* Filtro por Nucleo */}
           <select
             value={selectedNucleo || ""}
             onChange={(e) => setSelectedNucleo(e.target.value || null)}
@@ -356,12 +356,12 @@ export function Badges() {
                   </div>
                 </div>
 
-                {/* Badge do núcleo */}
+                {/* Badge do Nucleo */}
                 <div className="absolute top-2 right-2">
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-secondary/50 text-muted-foreground">
                     {nucleosComConquistas.find(
                       (n) => n.nucleoId === achievement.nucleoId,
-                    )?.nome || "Núcleo"}
+                    )?.nome || "Nucleo"}
                   </span>
                 </div>
               </div>

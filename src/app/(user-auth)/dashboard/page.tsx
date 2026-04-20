@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useAuth } from "@/auth";
-import { NucleosOverview } from "@/components/nucleo/ui/nucleos-overview";
+import { NucleosOverview } from "@/components/nucleo/ui/nucleos-overview"; // lista todos os nucleos (componente)
 import { CreateNucleoModal } from "@/components/nucleo/ui/nucleo-create-modal";
 import {
   Card,
@@ -74,7 +74,7 @@ export default function Dashboard() {
             className="bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90 transition shadow-md shadow-primary/20"
           >
             <PlusCircle className="mr-2 h-4 w-4" />
-            Novo Núcleo
+            Novo Nucleo
           </Button>
         </motion.div>
 
@@ -118,13 +118,13 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* Seção Principal: Núcleos Overview */}
+        {/* Seção Principal: Nucleos Overview */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => router.push("/dashboard/nucleos")}
+              onClick={() => router.push("/dashboard")}
             >
               Ver todos <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
@@ -141,7 +141,7 @@ export default function Dashboard() {
                 <Calendar className="h-5 w-5 text-muted-foreground" />
                 Atividade Recente
               </CardTitle>
-              <CardDescription>Suas últimas ações nos núcleos</CardDescription>
+              <CardDescription>Suas últimas ações nos Nucleos</CardDescription>
             </CardHeader>
             <CardContent>
               {activitiesLoading ? (
@@ -176,7 +176,7 @@ export default function Dashboard() {
                 </ul>
               ) : (
                 <p className="text-sm text-muted-foreground text-center py-6">
-                  Nenhuma atividade recente. Comece a usar seus núcleos!
+                  Nenhuma atividade recente. Comece a usar seus Nucleos!
                 </p>
               )}
             </CardContent>
@@ -230,7 +230,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Modal de criação de núcleo */}
+      {/* Modal de criação de Nucleo */}
       <CreateNucleoModal
         open={isCreateModalOpen}
         onOpenChange={setIsCreateModalOpen}

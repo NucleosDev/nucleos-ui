@@ -6,7 +6,7 @@ import type {
   UpdateNucleoPayload,
 } from "@/types/nucleo";
 
-// Buscar um único núcleo (já está correto)
+// Buscar um único Nucleo
 export function useNucleo(id: string) {
   return useQuery({
     queryKey: ["nucleo", id],
@@ -16,7 +16,7 @@ export function useNucleo(id: string) {
   });
 }
 
-// Listar núcleos com mutations para CRUD
+// Listar Nucleos com mutations para CRUD
 export function useNucleos() {
   const queryClient = useQueryClient();
 

@@ -43,9 +43,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
-  // =========================
+
   // 🔄 REFRESH USER (FIXADO)
-  // =========================
+
   const refreshUser = useCallback(async () => {
     const token = localStorage.getItem(TOKEN_KEY);
 
@@ -64,9 +64,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [clearAuth]);
 
-  // =========================
+
   // INIT
-  // =========================
+
   useEffect(() => {
     (async () => {
       setIsLoading(true);
@@ -75,9 +75,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })();
   }, [refreshUser]);
 
-  // =========================
+
   // LOGIN (🔥 FIX REAL)
-  // =========================
+
   const login = async (
     credentials: LoginCredentials,
   ): Promise<AuthResponse> => {
@@ -91,9 +91,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return response;
   };
 
-  // =========================
+
   // REGISTER
-  // =========================
+
   const register = async (data: RegisterData): Promise<AuthResponse> => {
     const response = await authService.register(data);
 
@@ -104,9 +104,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return response;
   };
 
-  // =========================
+
   // LOGOUT
-  // =========================
+
   const logout = async () => {
     await authService.logout();
     clearAuth();

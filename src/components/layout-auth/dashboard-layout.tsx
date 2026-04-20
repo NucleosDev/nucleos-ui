@@ -11,6 +11,7 @@ import {
   Lightbulb,
   Sparkles,
   LayoutGrid,
+  PanelsTopLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -33,7 +34,7 @@ interface DashboardSidebarProps {
     streak?: number;
   };
   nucleosCount: number;
-  blocosCount: number; // 👈 novo
+  blocosCount: number;
   recentNucleos: { id: string; nome: string }[];
 }
 
@@ -55,7 +56,7 @@ function DashboardSidebar({
   const mainLinks = [
     {
       id: "nucleos",
-      label: "Núcleos",
+      label: "Nucleos",
       icon: LayoutGrid,
       href: "/dashboard/nucleos",
       count: nucleosCount,
@@ -65,7 +66,7 @@ function DashboardSidebar({
       label: "Blocos",
       icon: Layers,
       href: "/dashboard/blocos",
-      count: blocosCount, // 👈 agora dinâmico
+      count: blocosCount,
     },
     {
       id: "atividades",
@@ -85,38 +86,40 @@ function DashboardSidebar({
     },
     {
       id: "nucleos-recentes",
-      title: "Núcleos ativos",
+      title: "Nucleos ativos",
       description:
         recentNucleos.length > 0
           ? recentNucleos.map((n) => n.nome).join(", ")
-          : "Nenhum núcleo criado ainda.",
+          : "Nenhum Nucleo criado ainda.",
       icon: Sparkles,
     },
   ];
 
+  // Estado colapsado (barra fina)
   if (collapsed) {
     return (
       <aside
         className={cn(
-          "w-3 bg-muted/30 border-r border-border flex flex-col items-center py-4",
+          "w-8 border-r border-border  h-full flex flex-col items-center py-4 transition-all duration-300 ease-in-out p-8",
           className,
         )}
       >
         <button
           onClick={onToggleCollapse}
-          className="w-6 h-6 rounded-full bg-primary/10 hover:bg-primary/20 flex items-center justify-center transition-colors"
+          className="py-5 w-8 h-8 rounded-full bg-primary/10 hover:bg-primary/20 flex items-center justify-center transition-colors"
           aria-label="Expandir menu"
         >
-          <ChevronRight className="h-4 w-4 text-primary" />
+          <PanelsTopLeft className="h-4 w-4 text-primary transition-transform duration-300" />{" "}
         </button>
       </aside>
     );
   }
 
+  // Estado expandido
   return (
     <aside
       className={cn(
-        "w-64 flex flex-col h-full bg-muted/30 border-r border-border",
+        "w-64 flex flex-col h-full  border-r border-border transition-all duration-300 ease-in-out",
         className,
       )}
     >
@@ -153,7 +156,7 @@ function DashboardSidebar({
           onClick={onToggleCollapse}
           aria-label="Recolher menu"
         >
-          <ChevronRight className="h-4 w-4 rotate-180" />
+          <ChevronRight className="h-4 w-4 rotate-180 transition-transform duration-300" />
         </Button>
       </div>
 

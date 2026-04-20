@@ -145,10 +145,8 @@ export function NotificacaoIOS({
   );
 }
 
-// ============================================================================
-// CONTAINER DE NOTIFICAÇÕES
-// ============================================================================
-
+// ==========================// CONTAINER DE NOTIFICAÇÕES
+// ==========================
 interface NotificacoesContainerProps {
   children: React.ReactNode;
   position?: "top-right" | "top-left" | "bottom-right" | "bottom-left";

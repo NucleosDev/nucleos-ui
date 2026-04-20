@@ -1,4 +1,5 @@
 "use client";
+
 import { Github, Linkedin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,6 +18,7 @@ import {
   Users,
   Rocket,
   Heart,
+  Wallet,
 } from "lucide-react";
 
 const nucleosData = [
@@ -37,6 +39,12 @@ const nucleosData = [
     nivel: 15,
     progresso: 90,
     icon: Briefcase,
+  },
+  {
+    nome: "Finanças",
+    nivel: 98,
+    progresso: 12,
+    icon: Wallet,
   },
 ];
 

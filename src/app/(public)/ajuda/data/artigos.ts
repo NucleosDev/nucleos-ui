@@ -68,7 +68,7 @@ Depois disso, sua conta já estará pronta para uso.`,
     autor: "Equipe Nucleos",
     conteudo: `O conceito principal da plataforma é organizar a vida do usuário em Nucleos de foco, que funcionam como centros de atividade e evolução.
 
-Cada núcleo pode possuir:
+Cada Nucleo pode possuir:
 
 	atividades registradas,
 	hábitos recorrentes,
@@ -90,7 +90,7 @@ Esses elementos permitem transformar metas e tarefas em um sistema estruturado d
     categoria: "Primeiros Passos",
     categoriaCor: "#4D7CFF",
     autor: "Equipe Nucleos",
-    conteudo: `Na seção “Meus Nucleos”, você organiza sua vida por áreas, como estudos, trabalho, finanças e bem-estar. Cada núcleo mostra seu progresso individual, nível e evolução, permitindo que você acompanhe seu desempenho em diferentes aspectos da rotina.
+    conteudo: `Na seção “Meus Nucleos”, você organiza sua vida por áreas, como estudos, trabalho, finanças e bem-estar. Cada Nucleo mostra seu progresso individual, nível e evolução, permitindo que você acompanhe seu desempenho em diferentes aspectos da rotina.
 
 Você também pode criar novos Nucleos, personalizando o sistema de acordo com seus objetivos. Além disso, a área de “Próximas Conquistas” ajuda a visualizar suas próximas metas, enquanto a “Dica do Dia” oferece orientações rápidas para melhorar sua produtividade.
 
@@ -109,17 +109,17 @@ Assim, o dashboard se torna um espaço completo para planejar, acompanhar e evol
     conteudo: `A configuração de perfil permite adaptar a plataforma às necessidades do usuário, tornando a experiência mais eficiente e personalizada.`,
   },
   {
-    titulo: "Primeiro núcleo: guia rápido",
-    slug: gerarSlug("Primeiro núcleo guia rápido", artigoSlugOptions), // "primeiro-nucleo-guia-rapido"
+    titulo: "Primeiro Nucleo: guia rápido",
+    slug: gerarSlug("Primeiro Nucleo guia rápido", artigoSlugOptions), // "primeiro-nucleo-guia-rapido"
     resumo:
-      "Crie seu primeiro núcleo em menos de 5 minutos com este guia prático.",
+      "Crie seu primeiro Nucleo em menos de 5 minutos com este guia prático.",
     tempoLeitura: "4 min",
     visualizacoes: "4.1k",
     data: "2024-01-14",
     categoria: "Primeiros Passos",
     categoriaCor: "#4D7CFF",
     autor: "Equipe Nucleos",
-    conteudo: `O Núcleo é um espaço onde o cliente organiza e acompanha metas, tarefas e anotações de uma área específica da vida.
+    conteudo: `O Nucleo é um espaço onde o cliente organiza e acompanha metas, tarefas e anotações de uma área específica da vida.
 
 Ele funciona como uma mistura de:
 
@@ -224,7 +224,7 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
     conteudo: `A organização de blocos dentro dos Nucleos é essencial para manter a estrutura das páginas clara, escalável e fácil de manter. 
-    Cada núcleo pode conter diferentes blocos, organizados de forma estratégica para apresentar informações de maneira eficiente.`,
+    Cada Nucleo pode conter diferentes blocos, organizados de forma estratégica para apresentar informações de maneira eficiente.`,
   },
   {
     titulo: "Personalizando seus Nucleos",
@@ -241,16 +241,16 @@ export const nucleosBlocosArtigos: Artigo[] = [
     Esse processo possibilita a criação de experiências únicas, alinhadas às necessidades de cada grupo e ao seu contexto de atuação.`,
   },
   {
-    titulo: "Como criar seu primeiro Núcleo",
-    slug: gerarSlug("Como criar seu primeiro Núcleo", artigoSlugOptions), // "criar-primeiro-nucleo"
-    resumo: "Guia passo a passo para criar seu primeiro núcleo no Nucleos",
+    titulo: "Como criar seu primeiro Nucleo",
+    slug: gerarSlug("Como criar seu primeiro Nucleo", artigoSlugOptions), // "criar-primeiro-nucleo"
+    resumo: "Guia passo a passo para criar seu primeiro Nucleo no Nucleos",
     tempoLeitura: "5 min",
     visualizacoes: "3.2k",
     data: "2024-01-12",
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `A criação de um Núcleo consiste na definição de uma estrutura que organiza conteúdos, blocos e identidade visual em um único espaço. 
+    conteudo: `A criação de um Nucleo consiste na definição de uma estrutura que organiza conteúdos, blocos e identidade visual em um único espaço. 
     Esse processo permite centralizar informações e facilitar a apresentação de projetos, equipes e ações dentro da plataforma.`,
   },
   {
@@ -278,7 +278,7 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `A duplicação de Nucleos consiste na criação de uma cópia de um núcleo existente, preservando sua estrutura, blocos e configurações. 
+    conteudo: `A duplicação de Nucleos consiste na criação de uma cópia de um Nucleo existente, preservando sua estrutura, blocos e configurações. 
     Essa funcionalidade facilita a criação de novos conteúdos de forma rápida e padronizada dentro da plataforma.`,
   },
   {
@@ -306,7 +306,7 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoria: "Nucleos e Blocos",
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
-    conteudo: `O bloco de tarefas avançado é um componente que permite gerenciar atividades dentro de um Núcleo, organizando tarefas por status, prioridade e responsáveis. 
+    conteudo: `O bloco de tarefas avançado é um componente que permite gerenciar atividades dentro de um Nucleo, organizando tarefas por status, prioridade e responsáveis. 
     Essa funcionalidade facilita o acompanhamento de projetos e melhora a colaboração entre os membros.`,
   },
   {

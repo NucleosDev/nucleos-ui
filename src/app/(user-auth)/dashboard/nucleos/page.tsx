@@ -1,318 +1,87 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
-import { notFound } from "next/navigation";
-import { useNucleo } from "@/hooks/useNucleo";
-import { useBlocos } from "@/hooks/useBlocos";
-import Image from "next/image";
-import {
-  BookOpen,
-  Heart,
-  Briefcase,
-  Home,
-  Dumbbell,
-  Palette,
-  Music,
-  Code,
-  Star,
-  Globe,
-  Coffee,
-  Camera,
-  Plane,
-  ShoppingBag,
-  Users,
-  Mic,
-  Gamepad2,
-  Leaf,
-  GraduationCap,
-  Loader2,
-  Plus,
-  ArrowLeft,
-  Layers,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { CriarBlocoModal } from "@/components/blocos/criar-blocos-modal";
-import { BlocoCard } from "@/components/blocos/bloco-card";
-import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
-import type { CreateBlocoPayload } from "@/types/bloco";
-import { BLOCO_INITIALIZERS } from "@/lib/bloco-initializers";
-import { ColecoesBlocoCard } from "@/components/blocos/cruds/ColecoesBlocoCard";
-import { ListasBlocoCard } from "@/components/blocos/cruds/ListasBlocoCard";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/auth";
+import { NucleoGrid } from "@/components/nucleo/ui/nucleo-grid";
+import { CreateNucleoModal } from "@/components/nucleo/ui/nucleo-create-modal";
+import { Button } from "@/components/ui/button";
+import { PlusCircle } from "lucide-react";
+import { useNucleos } from "@/hooks/useNucleo";
+import { adaptNucleoToComStats } from "@/utils/nucleo-adapter";
+import type { NucleoComStats } from "@/types/nucleo";
 
-// Mapeamento de ícones (mesmo do CreateNucleoModal e NucleoCard)
-const iconMap: Record<string, LucideIcon> = {
-  "book-open": BookOpen,
-  heart: Heart,
-  briefcase: Briefcase,
-  home: Home,
-  dumbbell: Dumbbell,
-  palette: Palette,
-  music: Music,
-  code: Code,
-  star: Star,
-  globe: Globe,
-  coffee: Coffee,
-  camera: Camera,
-  plane: Plane,
-  "shopping-bag": ShoppingBag,
-  users: Users,
-  mic: Mic,
-  "gamepad-2": Gamepad2,
-  leaf: Leaf,
-  "graduation-cap": GraduationCap,
-};
-
-function getIconComponent(iconId?: string | null) {
-  if (!iconId) return Star;
-  return iconMap[iconId] || Star;
-}
-
-export default function NucleoPage() {
-  const params = useParams();
+export default function Dashboard() {
+  const { user } = useAuth();
   const router = useRouter();
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const { data: nucleos, isLoading, remove, update } = useNucleos();
 
-  const rawId = params.id;
-  const id = typeof rawId === "string" ? rawId : (rawId as any)?.id;
+  const nucleosComStats: NucleoComStats[] = (nucleos || []).map(
+    adaptNucleoToComStats,
+  );
 
-  if (!id || typeof id !== "string") {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <p className="text-muted-foreground">ID do núcleo inválido.</p>
-          <Button variant="link" onClick={() => router.push("/dashboard")}>
-            Voltar ao Dashboard
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  // CORRIGIDO: rota correta para a página de detalhes do núcleo
+  const handleNucleoClick = (nucleo: NucleoComStats) => {
+    router.push(`/dashboard/nucleos/${nucleo.id}`); // ← adicionado "s" em nucleos
+  };
 
-  const { data: nucleo, isLoading: nucleoLoading, error } = useNucleo(id);
-  const {
-    blocos,
-    isLoading: blocosLoading,
-    create,
-    remove,
-    isCreating,
-    isDeleting,
-  } = useBlocos(id);
+  const handleUpdate = async (id: string, payload: any) => {
+    await update({ id, payload });
+  };
 
-  const [modalCriarAberto, setModalCriarAberto] = useState(false);
-
-  const handleCriarBloco = async (payload: CreateBlocoPayload) => {
-    try {
-      const blocoCriado = await create(payload);
-      const initializer = BLOCO_INITIALIZERS[payload.tipo];
-      if (initializer) {
-        await initializer(blocoCriado.id, payload.titulo);
+  const handleDelete = async (nucleo: NucleoComStats) => {
+    if (confirm("Tem certeza que deseja excluir este Nucleo?")) {
+      try {
+        await remove(nucleo.id);
+      } catch (error) {
+        console.error("Erro ao excluir:", error);
+        alert("Erro ao excluir Nucleo. Tente novamente.");
       }
-      toast({
-        title: "Bloco criado com sucesso!",
-        description: `Bloco do tipo "${payload.tipo}" adicionado.`,
-      });
-      setModalCriarAberto(false);
-    } catch (error) {
-      console.error("Erro ao criar bloco:", error);
-      toast({
-        title: "Erro ao criar bloco",
-        description: "Tente novamente mais tarde.",
-        variant: "destructive",
-      });
     }
   };
-
-  const handleExcluirBloco = async (blocoId: string) => {
-    if (!confirm("Tem certeza que deseja excluir este bloco?")) return;
-    try {
-      await remove(blocoId);
-      toast({ title: "Bloco excluído com sucesso!" });
-    } catch (error) {
-      console.error("Erro ao excluir bloco:", error);
-      toast({
-        title: "Erro ao excluir bloco",
-        description: "Tente novamente mais tarde.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleEditarBloco = (blocoId: string) => {
-    console.log("Editar bloco:", blocoId);
-    toast({ title: "Edição em desenvolvimento", description: "Em breve!" });
-  };
-
-  if (nucleoLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
-
-  if (error || !nucleo) {
-    notFound();
-  }
-
-  const capaUrl = nucleo.imagemCapa;
-  const corDestaque = nucleo.corDestaque || "#6366f1";
-  const IconComponent = getIconComponent(nucleo.iconId);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Banner de capa */}
-      <div className="relative w-full h-[20vh] min-h-[200px] max-h-[350px]">
-        {capaUrl ? (
-          <>
-            <Image
-              src={capaUrl}
-              alt={`Capa de ${nucleo.nome}`}
-              fill
-              className="object-cover"
-              priority
-            />
-            {/* Gradiente sutil apenas na parte inferior para legibilidade do botão (opcional) */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-          </>
-        ) : (
-          <div
-            className="w-full h-full"
-            style={{ backgroundColor: corDestaque }}
-          />
-        )}
+    <div className="flex-1 overflow-auto bg-gradient-to-b from-background via-background to-secondary/10 px-4 md:px-6">
+      <div className="pb-10">
+        {/* Botão Desktop */}
+        <div className="hidden md:flex md:justify-end mb-4 px-4">
+          <Button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90 transition shadow-md shadow-primary/20"
+          >
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Novo Nucleo
+          </Button>
+        </div>
 
+        <section className="space-y-4 px-4 md:px-6">
+          <NucleoGrid
+            nucleos={nucleosComStats}
+            loading={isLoading}
+            onNucleoClick={handleNucleoClick}
+            onNucleoUpdate={handleUpdate}
+            onNucleoDelete={handleDelete}
+            onAddNucleo={() => setIsCreateModalOpen(true)}
+          />
+        </section>
+      </div>
+
+      {/* Botão Mobile flutuante */}
+      <div className="fixed bottom-6 right-6 z-50 md:hidden">
         <Button
-          variant="ghost"
-          size="icon"
-          className="absolute top-4 left-4 bg-background/20 backdrop-blur-sm hover:bg-background/40 text-white"
-          onClick={() => router.push("/dashboard")}
+          onClick={() => setIsCreateModalOpen(true)}
+          size="lg"
+          className="rounded-full shadow-lg bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90 transition"
         >
-          <ArrowLeft className="h-5 w-5" />
+          <PlusCircle className="h-5 w-5 mr-1" />
+          <span>Novo</span>
         </Button>
       </div>
 
-      {/* Conteúdo principal */}
-      <div className="container mx-auto px-4 md:px-6 lg:px-8 pb-12">
-        {/* Ícone e informações do núcleo */}
-        <div className="relative -mt-12 mb-8">
-          <div
-            className="w-16 h-16 md:w-20 md:h-20 rounded-xl flex items-center justify-center text-white shadow-lg border-4 border-background"
-            style={{ backgroundColor: corDestaque }}
-          >
-            <IconComponent className="w-8 h-8 md:w-10 md:h-10" />
-          </div>
-        </div>
-
-        <div className="space-y-2 max-w-3xl mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-            {nucleo.nome}
-          </h1>
-          {nucleo.descricao && (
-            <p className="text-muted-foreground text-base md:text-lg">
-              {nucleo.descricao}
-            </p>
-          )}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span className="capitalize">{nucleo.tipo}</span>
-            <span>•</span>
-            <span>
-              Criado em{" "}
-              {new Date(nucleo.createdAt).toLocaleDateString("pt-BR", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-              })}
-            </span>
-          </div>
-        </div>
-
-        {/* Lista de blocos */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold flex items-center gap-2">
-              <Layers className="h-5 w-5 text-primary" />
-              Blocos
-            </h2>
-            <Button onClick={() => setModalCriarAberto(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              Adicionar bloco
-            </Button>
-          </div>
-
-          {blocosLoading ? (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {[...Array(3)].map((_, i) => (
-                <Skeleton key={i} className="h-36 rounded-xl" />
-              ))}
-            </div>
-          ) : blocos.length === 0 ? (
-            <div
-              onClick={() => setModalCriarAberto(true)}
-              className="rounded-xl border-2 border-dashed border-border p-12 text-center cursor-pointer hover:border-primary/40 hover:bg-muted/20 transition-all"
-            >
-              <div className="flex flex-col items-center gap-3">
-                <div className="rounded-full bg-primary/10 p-3">
-                  <Plus className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <p className="font-medium">Nenhum bloco ainda</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Adicione tarefas, listas, hábitos e muito mais
-                  </p>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {/* {blocos.map((bloco) => {
-                if (bloco.tipo === "colecoes") {
-                  return (
-                    <ColecoesBlocoCard
-                      key={bloco.id}
-                      bloco={bloco}
-                      nucleoId={id}
-                      onDelete={() => handleExcluirBloco(bloco.id)}
-                      onEdit={() => handleEditarBloco(bloco.id)}
-                      isDeleting={isDeleting}
-                    />
-                  );
-                }
-                if (bloco.tipo === "lista") {
-                  return (
-                    <ListasBlocoCard
-                      key={bloco.id}
-                      bloco={bloco}
-                      nucleoId={id}
-                      onDelete={() => handleExcluirBloco(bloco.id)}
-                      onEdit={() => handleEditarBloco(bloco.id)}
-                      isDeleting={isDeleting}
-                    />
-                  );
-                }
-                return (
-                  <BlocoCard
-                    key={bloco.id}
-                    bloco={bloco}
-                    nucleoId={id}
-                    onDelete={() => handleExcluirBloco(bloco.id)}
-                    onEdit={() => handleEditarBloco(bloco.id)}
-                    isDeleting={isDeleting}
-                  />
-                );
-              })} */}
-            </div>
-          )}
-        </div>
-      </div>
-
-      <CriarBlocoModal
-        open={modalCriarAberto}
-        onClose={() => setModalCriarAberto(false)}
-        onConfirm={handleCriarBloco}
-        nucleoId={id}
-        isCreating={isCreating}
+      <CreateNucleoModal
+        open={isCreateModalOpen}
+        onOpenChange={setIsCreateModalOpen}
       />
     </div>
   );

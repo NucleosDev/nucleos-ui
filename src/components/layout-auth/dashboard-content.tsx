@@ -188,7 +188,7 @@ export function DashboardContent() {
           </CardHeader>
           <CardContent className="space-y-2">
             <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-              ➕ Criar novo Núcleo
+              ➕ Criar novo Nucleo
             </button>
             <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
               ⏱️ Iniciar timer

@@ -1,3 +1,4 @@
+// src/app/(user-auth)/dashboard/nucleos/[id]/page.tsx
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
@@ -29,20 +30,24 @@ import {
   Plus,
   ArrowLeft,
   Layers,
+  LayoutGrid,
+  List,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CriarBlocoModal } from "@/components/blocos/criar-blocos-modal";
+import { CriarBlocoModal } from "@/components/blocos/CriarBlocoModal";
 import { BlocoCard } from "@/components/blocos/bloco-card";
 import { toast } from "@/hooks/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { CreateBlocoPayload } from "@/types/bloco";
 import { BLOCO_INITIALIZERS } from "@/lib/bloco-initializers";
 import { ColecoesBlocoCard } from "@/components/blocos/cruds/ColecoesBlocoCard";
 import { ListasBlocoCard } from "@/components/blocos/cruds/ListasBlocoCard";
+import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
-// Mapeamento de ícones (mesmo do CreateNucleoModal e NucleoCard)
+// Mapeamento de ícones
 const iconMap: Record<string, LucideIcon> = {
   "book-open": BookOpen,
   heart: Heart,
@@ -70,18 +75,32 @@ function getIconComponent(iconId?: string | null) {
   return iconMap[iconId] || Star;
 }
 
-export default function NucleoPage() {
+type LayoutMode = "grid" | "list";
+
+export default function NucleoDetailPage() {
   const params = useParams();
   const router = useRouter();
 
   const rawId = params.id;
   const id = typeof rawId === "string" ? rawId : (rawId as any)?.id;
 
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("nucleo-detail-layout-mode");
+      return (saved as LayoutMode) || "grid";
+    }
+    return "grid";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("nucleo-detail-layout-mode", layoutMode);
+  }, [layoutMode]);
+
   if (!id || typeof id !== "string") {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <p className="text-muted-foreground">ID do núcleo inválido.</p>
+          <p className="text-muted-foreground">ID do Nucleo inválido.</p>
           <Button variant="link" onClick={() => router.push("/dashboard")}>
             Voltar ao Dashboard
           </Button>
@@ -156,7 +175,9 @@ export default function NucleoPage() {
     notFound();
   }
 
-  const capaUrl = nucleo.imagemCapa;
+  // CORREÇÃO: Adicionar imagem aleatória quando não tem capa
+  const randomImageUrl = `https://picsum.photos/seed/${nucleo.id}/1200/400`;
+  const capaUrl = nucleo.imagemCapa || randomImageUrl;
   const corDestaque = nucleo.corDestaque || "#6366f1";
   const IconComponent = getIconComponent(nucleo.iconId);
 
@@ -164,24 +185,15 @@ export default function NucleoPage() {
     <div className="min-h-screen bg-background">
       {/* Banner de capa */}
       <div className="relative w-full h-[20vh] min-h-[200px] max-h-[350px]">
-        {capaUrl ? (
-          <>
-            <Image
-              src={capaUrl}
-              alt={`Capa de ${nucleo.nome}`}
-              fill
-              className="object-cover"
-              priority
-            />
-            {/* Gradiente sutil apenas na parte inferior para legibilidade do botão (opcional) */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-          </>
-        ) : (
-          <div
-            className="w-full h-full"
-            style={{ backgroundColor: corDestaque }}
-          />
-        )}
+        <Image
+          src={capaUrl}
+          alt={`Capa de ${nucleo.nome}`}
+          fill
+          className="object-cover"
+          priority
+          unoptimized
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
 
         <Button
           variant="ghost"
@@ -195,7 +207,6 @@ export default function NucleoPage() {
 
       {/* Conteúdo principal */}
       <div className="container mx-auto px-4 md:px-6 lg:px-8 pb-12">
-        {/* Ícone e informações do núcleo */}
         <div className="relative -mt-12 mb-8">
           <div
             className="w-16 h-16 md:w-20 md:h-20 rounded-xl flex items-center justify-center text-white shadow-lg border-4 border-background"
@@ -228,23 +239,56 @@ export default function NucleoPage() {
           </div>
         </div>
 
-        {/* Lista de blocos */}
+        {/* Lista de blocos - mantém o mesmo código */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <Layers className="h-5 w-5 text-primary" />
               Blocos
             </h2>
-            <Button onClick={() => setModalCriarAberto(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              Adicionar bloco
-            </Button>
+            <div className="flex items-center gap-2">
+              <div className="hidden sm:flex items-center border rounded-md">
+                <Button
+                  variant={layoutMode === "grid" ? "secondary" : "ghost"}
+                  size="icon"
+                  className="h-8 w-8 rounded-r-none"
+                  onClick={() => setLayoutMode("grid")}
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={layoutMode === "list" ? "secondary" : "ghost"}
+                  size="icon"
+                  className="h-8 w-8 rounded-l-none"
+                  onClick={() => setLayoutMode("list")}
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
+              <Button onClick={() => setModalCriarAberto(true)}>
+                <Plus className="mr-2 h-4 w-4" />
+                Adicionar bloco
+              </Button>
+            </div>
           </div>
 
           {blocosLoading ? (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div
+              className={cn(
+                "gap-4",
+                layoutMode === "grid"
+                  ? "hidden sm:grid sm:grid-cols-2 lg:grid-cols-3"
+                  : "flex flex-col",
+              )}
+            >
               {[...Array(3)].map((_, i) => (
-                <Skeleton key={i} className="h-36 rounded-xl" />
+                <Skeleton
+                  key={i}
+                  className={cn(
+                    "rounded-xl",
+                    layoutMode === "grid" ? "h-36" : "h-28 w-full",
+                  )}
+                />
               ))}
             </div>
           ) : blocos.length === 0 ? (
@@ -265,44 +309,75 @@ export default function NucleoPage() {
               </div>
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {blocos.map((bloco) => {
-                if (bloco.tipo === "colecoes") {
-                  return (
-                    <ColecoesBlocoCard
-                      key={bloco.id}
-                      bloco={bloco}
-                      nucleoId={id}
-                      onDelete={() => handleExcluirBloco(bloco.id)}
-                      onEdit={() => handleEditarBloco(bloco.id)}
-                      isDeleting={isDeleting}
-                    />
-                  );
-                }
-                if (bloco.tipo === "lista") {
-                  return (
-                    <ListasBlocoCard
-                      key={bloco.id}
-                      bloco={bloco}
-                      nucleoId={id}
-                      onDelete={() => handleExcluirBloco(bloco.id)}
-                      onEdit={() => handleEditarBloco(bloco.id)}
-                      isDeleting={isDeleting}
-                    />
-                  );
-                }
-                return (
-                  <BlocoCard
-                    key={bloco.id}
-                    bloco={bloco}
-                    nucleoId={id}
-                    onDelete={() => handleExcluirBloco(bloco.id)}
-                    onEdit={() => handleEditarBloco(bloco.id)}
-                    isDeleting={isDeleting}
-                  />
-                );
-              })}
-            </div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={layoutMode}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+                className={cn(
+                  "gap-4",
+                  layoutMode === "grid"
+                    ? "hidden sm:grid sm:grid-cols-2 lg:grid-cols-3"
+                    : "flex flex-col",
+                )}
+              >
+                {/* Mobile: sempre lista */}
+                <div className="sm:hidden flex flex-col gap-4">
+                  {blocos.map((bloco) => {
+                    const commonProps = {
+                      bloco,
+                      nucleoId: id,
+                      onDelete: () => handleExcluirBloco(bloco.id),
+                      onEdit: () => handleEditarBloco(bloco.id),
+                      isDeleting,
+                    };
+                    return (
+                      <div key={bloco.id} className="w-full">
+                        {bloco.tipo === "colecoes" ? (
+                          <ColecoesBlocoCard {...commonProps} />
+                        ) : bloco.tipo === "lista" ? (
+                          <ListasBlocoCard {...commonProps} />
+                        ) : (
+                          <BlocoCard {...commonProps} />
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Desktop: grid ou lista */}
+                <div className="hidden sm:contents">
+                  {blocos.map((bloco) => {
+                    const commonProps = {
+                      bloco,
+                      nucleoId: id,
+                      onDelete: () => handleExcluirBloco(bloco.id),
+                      onEdit: () => handleEditarBloco(bloco.id),
+                      isDeleting,
+                    };
+                    const cardContent =
+                      bloco.tipo === "colecoes" ? (
+                        <ColecoesBlocoCard {...commonProps} />
+                      ) : bloco.tipo === "lista" ? (
+                        <ListasBlocoCard {...commonProps} />
+                      ) : (
+                        <BlocoCard {...commonProps} />
+                      );
+
+                    if (layoutMode === "list") {
+                      return (
+                        <div key={bloco.id} className="w-full">
+                          {cardContent}
+                        </div>
+                      );
+                    }
+                    return <div key={bloco.id}>{cardContent}</div>;
+                  })}
+                </div>
+              </motion.div>
+            </AnimatePresence>
           )}
         </div>
       </div>

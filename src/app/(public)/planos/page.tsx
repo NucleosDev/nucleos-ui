@@ -27,7 +27,7 @@ export const TIERS = [
     description: "Para começar sua jornada",
     features: [
       "Até 5 Nucleos",
-      "10 hábitos por núcleo",
+      "10 hábitos por Nucleo",
       "Sistema de XP e níveis",
       "Streaks diários",
       "Conquistas básicas",

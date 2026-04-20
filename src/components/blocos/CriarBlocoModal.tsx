@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -42,15 +43,16 @@ export function CriarBlocoModal({
   const handleSubmit = async () => {
     const payload = { nucleoId, tipo, titulo: titulo.trim() || undefined };
     console.log("Payload enviado:", JSON.stringify(payload));
-    await onConfirm(payload);
-    await onConfirm({
-      nucleoId,
-      tipo,
-      titulo: titulo.trim() || undefined,
-    });
-    setTitulo("");
-    setTipo("tarefas");
-    onClose();
+    try {
+      await onConfirm(payload);
+      // Só limpa e fecha após sucesso
+      setTitulo("");
+      setTipo("tarefas");
+      onClose();
+    } catch (error) {
+      // O erro já é tratado no componente pai, mas logamos aqui
+      console.error("Erro ao criar bloco:", error);
+    }
   };
 
   const Icone = TIPO_BLOCO_META[tipo].icon;
@@ -60,6 +62,9 @@ export function CriarBlocoModal({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Adicionar novo bloco</DialogTitle>
+          <DialogDescription>
+            Escolha o tipo de bloco e dê um título (opcional).
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
@@ -70,12 +75,17 @@ export function CriarBlocoModal({
               placeholder="Ex: Tarefas da semana"
               value={titulo}
               onChange={(e) => setTitulo(e.target.value)}
+              disabled={isCreating}
             />
           </div>
 
           <div className="space-y-2">
             <Label>Tipo do bloco</Label>
-            <Select value={tipo} onValueChange={(v) => setTipo(v as BlocoTipo)}>
+            <Select
+              value={tipo}
+              onValueChange={(v) => setTipo(v as BlocoTipo)}
+              disabled={isCreating}
+            >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -113,7 +123,7 @@ export function CriarBlocoModal({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={onClose} disabled={isCreating}>
             Cancelar
           </Button>
           <Button onClick={handleSubmit} disabled={isCreating}>

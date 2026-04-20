@@ -1,14 +1,14 @@
 "use client";
-
+import { NucleosOverview } from "@/components/nucleo/ui/nucleos-overview";
 import { ProtectedRoute } from "@/components/auth/protected-route";
-// src/app/(user-auth)/layout.tsx
 import { DashboardLayout } from "@/components/layout-auth/dashboard-layout";
 import { AuthenticatedHeader } from "@/components/layout-auth/authenticated-header";
 export default function UserAuthLayout({
   children,
 }: {
   children: React.ReactNode;
-}) {6
+}) {
+  6;
   return (
     <ProtectedRoute>
       <main className="px-full py-0">

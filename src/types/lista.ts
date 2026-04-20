@@ -1,4 +1,3 @@
-// src/types/lista.ts
 export type TipoLista = "generica" | "compras" | "financeiro";
 
 export interface Lista {
@@ -58,6 +57,4 @@ export interface UpdateItemListaPayload extends Partial<
 
 export interface UpdateListaPayload extends Partial<
   Omit<CreateListaPayload, "blocoId">
-> {
-  id: string;
-}
+> {}
