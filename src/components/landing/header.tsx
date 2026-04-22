@@ -286,8 +286,8 @@ export function Header() {
             <Image
               src="/icon.svg"
               alt="Nucleos"
-              width={32}
-              height={32}
+              width={64}
+              height={64}
               className="size-8 transition-transform group-hover:scale-105"
               priority
             />
@@ -328,8 +328,8 @@ export function Header() {
             <Image
               src="/icon.svg"
               alt="Nucleos"
-              width={28}
-              height={28}
+              width={64}
+              height={64}
               className="size-7"
               priority
             />

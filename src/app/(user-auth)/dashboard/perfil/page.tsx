@@ -282,7 +282,7 @@ export default function PerfilPage() {
               <p className="text-2xl font-bold text-primary">
                 {estatisticas.totalNucleos}
               </p>
-              <p className="text-xs text-muted-foreground">Núcleos</p>
+              <p className="text-xs text-muted-foreground">Nucleos</p>
             </CardContent>
           </Card>
           <Card>

@@ -18,7 +18,7 @@ import { CriarListaModal } from "@/components/lista/CriarListaModal";
 import { useListas } from "@/hooks/useListas";
 import { toast } from "@/hooks/use-toast";
 import type { Bloco } from "@/types/bloco";
-import type { Lista, TipoLista } from "@/types/lista";
+import type { Lista } from "@/types/lista";
 
 interface ListasBlocoCardProps {
   bloco: Bloco;
@@ -49,25 +49,22 @@ export function ListasBlocoCard({
   const [modalCriarAberta, setModalCriarAberta] = useState(false);
   const [listaEditando, setListaEditando] = useState<Lista | null>(null);
 
-  // Agora recebe o metadata (orçamento, local de compra)
   const handleCriarLista = async (
     nome: string,
     tipoLista: string,
     metadata?: Record<string, any>,
   ) => {
     try {
-      // Se a API ainda não aceita metadata, você pode armazenar em localStorage
-      // ou simplesmente ignorar. Vamos enviar se a API suportar (você pode estender o payload).
       const payload: any = {
         blocoId: bloco.id,
         nome,
         tipoLista: tipoLista as any,
       };
+
       if (metadata) {
-        // Exemplo: payload.metadata = metadata;
         console.log("Metadados da lista:", metadata);
-        // Futuramente: enviar para o backend
       }
+
       await criar(payload);
       toast({ title: "Lista criada com sucesso!" });
       setModalCriarAberta(false);
@@ -152,16 +149,6 @@ export function ListasBlocoCard({
         </CardHeader>
 
         <CardContent className="space-y-4">
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full"
-            onClick={() => setModalCriarAberta(true)}
-            disabled={isCreating}
-          >
-            <Plus className="mr-2 h-4 w-4" /> Nova lista
-          </Button>
-
           {isLoading ? (
             <div className="space-y-2">
               <Skeleton className="h-28 w-full" />
@@ -186,6 +173,17 @@ export function ListasBlocoCard({
               ))}
             </div>
           )}
+
+          {/* BOTÃO AGORA EMBAIXO */}
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full"
+            onClick={() => setModalCriarAberta(true)}
+            disabled={isCreating}
+          >
+            <Plus className="mr-2 h-4 w-4" /> Nova lista
+          </Button>
         </CardContent>
       </Card>
 
@@ -206,7 +204,7 @@ export function ListasBlocoCard({
           initialNome={listaEditando.nome}
           initialTipo={listaEditando.tipoLista}
           titulo="Editar lista"
-          isSubmitting={false} // pode usar isUpdating se quiser
+          isSubmitting={false}
         />
       )}
     </>

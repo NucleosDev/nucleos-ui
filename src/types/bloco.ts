@@ -6,6 +6,9 @@ import { Colecao } from "./colecao";
 export type BlocoTipo =
   | "tarefas"
   | "habitos"
+  | "habito"
+  | "timer"
+  | "timers"
   | "notas"
   | "lista"
   | "calendario"

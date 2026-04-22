@@ -7,17 +7,11 @@ export interface Habito {
   frequencia: FrequenciaHabito;
   diasSemana?: number[];
   metaVezes?: number;
+  streakAtual?: number;
+  streakMaximo?: number;
+  completoHoje?: boolean;
   createdAt: string;
   updatedAt: string;
-  registros?: HabitoRegistro[];
-}
-
-export interface HabitoRegistro {
-  id: string;
-  habitoId: string;
-  data: string;
-  vezesCompletadas: number;
-  createdAt: string;
 }
 
 export interface CreateHabitoPayload {
@@ -28,9 +22,9 @@ export interface CreateHabitoPayload {
   metaVezes?: number;
 }
 
-export interface UpdateHabitoPayload extends Partial<CreateHabitoPayload> {
-  id: string;
-}
+export interface UpdateHabitoPayload extends Partial<
+  Omit<CreateHabitoPayload, "blocoId">
+> {}
 
 export interface RegistrarHabitoPayload {
   habitoId: string;

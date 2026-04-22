@@ -23,8 +23,8 @@ export default function LoginPage() {
           <Image
             src="/icon.svg"
             alt="Nucleos"
-            width={38}
-            height={38}
+            width={64}
+            height={64}
             className="text-primary"
           />
         </div>

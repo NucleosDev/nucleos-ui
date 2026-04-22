@@ -1,4 +1,3 @@
-// src/hooks/useDashboard.ts
 import { useQuery } from "@tanstack/react-query";
 import { authService } from "@/services/auth.service";
 import type { User } from "@/types/user";
@@ -11,9 +10,8 @@ interface UserPlanResponse {
   expiresAt?: string;
 }
 
-// ---------------------------------------------------------------------------
 // Usuário atual (autenticado)
-// ---------------------------------------------------------------------------
+
 export function useCurrentUser() {
   return useQuery<User | null>({
     queryKey: ["current-user"],
@@ -36,9 +34,8 @@ export function useCurrentUser() {
   });
 }
 
-// ---------------------------------------------------------------------------
 // Plano do usuário atual
-// ---------------------------------------------------------------------------
+
 export function useUserPlan() {
   return useQuery({
     queryKey: ["user-plan"],

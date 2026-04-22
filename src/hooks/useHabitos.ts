@@ -1,72 +1,67 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { habitosService } from "@/services/index.service";
+import { habitosService } from "@/services/habitos.service";
 import type {
-  Habito,
   CreateHabitoPayload,
+  UpdateHabitoPayload,
   RegistrarHabitoPayload,
 } from "@/types/habitos";
 
 export function useHabitos(blocoId?: string) {
   const queryClient = useQueryClient();
 
-  // Listar hábitos de um bloco específico
-  const porBlocoQuery = useQuery<Habito[]>({
-    queryKey: ["habitos", "bloco", blocoId],
-    queryFn: () => habitosService.listarPorBloco(blocoId!),
+  const query = useQuery({
+    queryKey: ["habitos", blocoId],
+    queryFn: async () => {
+      const result = await habitosService.listarPorBloco(blocoId!);
+      return Array.isArray(result) ? result : [];
+    },
     enabled: !!blocoId,
   });
 
-  // Criar hábito
   const createMutation = useMutation({
     mutationFn: (payload: CreateHabitoPayload) => habitosService.criar(payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["habitos"] });
-    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["habitos", blocoId] }),
   });
 
-  // Registrar conclusão do hábito
-  const registrarMutation = useMutation({
+  const updateMutation = useMutation({
     mutationFn: ({
       id,
       payload,
     }: {
       id: string;
-      payload: RegistrarHabitoPayload;
-    }) => habitosService.registrar(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["habitos"] });
-      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
-      queryClient.invalidateQueries({ queryKey: ["user-level"] });
-      queryClient.invalidateQueries({ queryKey: ["user-streaks"] });
-    },
+      payload: UpdateHabitoPayload;
+    }) => habitosService.atualizar(id, payload),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["habitos", blocoId] }),
   });
 
-  // Excluir hábito
   const deleteMutation = useMutation({
     mutationFn: (id: string) => habitosService.deletar(id),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["habitos", blocoId] }),
+  });
+
+  const registrarMutation = useMutation({
+    mutationFn: (payload: RegistrarHabitoPayload) =>
+      habitosService.registrar(payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["habitos"] });
+      queryClient.invalidateQueries({ queryKey: ["habitos", blocoId] });
     },
   });
 
   return {
-    // Dados
-    habitosPorBloco: porBlocoQuery.data ?? [],
-
-    // Estados de carregamento
-    isLoadingPorBloco: porBlocoQuery.isLoading,
-
-    // Recarregar
-    recarregarPorBloco: porBlocoQuery.refetch,
-
-    // Mutations
+    habitos: query.data ?? [],
+    isLoading: query.isLoading,
+    error: query.error,
+    reload: query.refetch,
     criar: createMutation.mutateAsync,
+    atualizar: updateMutation.mutateAsync,
+    deletar: deleteMutation.mutateAsync,
     registrar: registrarMutation.mutateAsync,
-    excluir: deleteMutation.mutateAsync,
-
-    // Estados das mutations
     isCreating: createMutation.isPending,
-    isRegistrando: registrarMutation.isPending,
+    isUpdating: updateMutation.isPending,
     isDeleting: deleteMutation.isPending,
+    isRegistering: registrarMutation.isPending,
   };
 }

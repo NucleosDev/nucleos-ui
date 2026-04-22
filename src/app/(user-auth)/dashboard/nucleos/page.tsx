@@ -41,7 +41,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex-1 bg-gradient-to-b from-background via-background to-secondary/10 px-4 md:px-6 pb-10 pt-10">
+    <div className="flex-1 overflow-auto bg-gradient-to-b from-background via-background to-secondary/10 px-4 md:px-6">
       <div className="pb-10">
         <section className="space-y-4 px-4 md:px-6">
           <NucleoGrid

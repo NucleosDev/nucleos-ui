@@ -1,5 +1,6 @@
 "use client";
 
+import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
@@ -25,7 +26,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { motion } from "framer-motion";
-
 import { useUserStats } from "@/hooks/userStats";
 import { useRecentActivity } from "@/hooks/useRecentActivity";
 
@@ -59,9 +59,9 @@ export default function Dashboard() {
             <div className="h-15 w-1 bg-gradient-to-b from-[#4D7CFF] to-[#00C9A7] rounded-full hidden sm:block" />
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <h1 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                <h4 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                   {saudacao}, {firstName}!
-                </h1>
+                </h4>
                 <Sparkles className="h-6 w-6 text-primary/70" />
               </div>
               <p className="text-muted-foreground text-base capitalize">

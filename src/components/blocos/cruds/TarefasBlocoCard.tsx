@@ -148,42 +148,47 @@ export function TarefasBlocoCard({
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <form onSubmit={handleAddTarefa} className="flex gap-2">
+        <form onSubmit={handleAddTarefa} className="flex flex-col gap-2">
           <Input
             placeholder="Nova tarefa..."
             value={novaTarefaTitulo}
             onChange={(e) => setNovaTarefaTitulo(e.target.value)}
-            className="h-9 flex-1"
+            className="h-9 w-full"
             disabled={isCreating}
           />
-          <Select
-            value={novaTarefaPrioridade}
-            onValueChange={(v) =>
-              setNovaTarefaPrioridade(v as TarefaPrioridade)
-            }
-            disabled={isCreating}
-          >
-            <SelectTrigger className="h-9 w-[120px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="baixa">Baixa</SelectItem>
-              <SelectItem value="media">Média</SelectItem>
-              <SelectItem value="alta">Alta</SelectItem>
-            </SelectContent>
-          </Select>
-          <Button
-            type="submit"
-            size="sm"
-            disabled={isCreating || !novaTarefaTitulo.trim()}
-          >
-            {isCreating ? (
-              <Loader2 className="h-4 w-4 animate-spin mr-1" />
-            ) : (
-              <Plus className="h-4 w-4 mr-1" />
-            )}
-            Adicionar
-          </Button>
+
+          <div className="flex gap-2">
+            <Select
+              value={novaTarefaPrioridade}
+              onValueChange={(v) =>
+                setNovaTarefaPrioridade(v as TarefaPrioridade)
+              }
+              disabled={isCreating}
+            >
+              <SelectTrigger className="h-9 w-[120px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="baixa">Baixa</SelectItem>
+                <SelectItem value="media">Média</SelectItem>
+                <SelectItem value="alta">Alta</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Button
+              type="submit"
+              size="sm"
+              className="flex-1"
+              disabled={isCreating || !novaTarefaTitulo.trim()}
+            >
+              {isCreating ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-1" />
+              ) : (
+                <Plus className="h-4 w-4 mr-1" />
+              )}
+              Adicionar
+            </Button>
+          </div>
         </form>
 
         {isLoading ? (

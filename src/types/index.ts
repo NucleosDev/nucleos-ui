@@ -157,6 +157,7 @@ export interface UpdateNucleoPayload extends Partial<CreateNucleoPayload> {}
 export type TipoBloco =
   | "tarefas"
   | "habitos"
+  | "habito"
   | "notas"
   | "lista"
   | "calendario"
