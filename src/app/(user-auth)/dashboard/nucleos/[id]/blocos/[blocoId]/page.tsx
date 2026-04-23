@@ -38,7 +38,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-// Mapeamento de ícones baseado nos tipos de núcleo
+// Mapeamento de ícones baseado nos tipos de Nucleo
 const tipoIcons: Record<string, LucideIcon> = {
   estudo: BookOpen,
   hobby: Heart,
@@ -165,7 +165,7 @@ export default function BlocoDetalhesPage() {
   if (!nucleo) {
     return (
       <div className="container py-8 text-center">
-        <p className="text-muted-foreground">Núcleo não encontrado.</p>
+        <p className="text-muted-foreground">Nucleo não encontrado.</p>
         <Button variant="link" onClick={() => router.back()}>
           Voltar
         </Button>
@@ -192,7 +192,7 @@ export default function BlocoDetalhesPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
 
-        {/* Botão de voltar com ícone e nome do núcleo */}
+        {/* Botão de voltar com ícone e nome do Nucleo */}
         <Button
           variant="ghost"
           className="absolute top-6 left-6 bg-background/20 backdrop-blur bg-background/40 text-background group"

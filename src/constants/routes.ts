@@ -167,12 +167,12 @@ export const API_ROUTES = {
   // GAMIFICAÇÃO
 
   GAMIFICACAO: {
-    LEVEL: "/gamificacao/level",
-    CONQUISTAS: "/gamificacao/conquistas",
-    STREAKS: "/gamificacao/streaks",
-    ADD_XP: "/gamificacao/add-xp",
-    ATUALIZAR_STREAK: "/gamificacao/atualizar-streak",
-    DESBLOQUEAR_CONQUISTA: "/gamificacao/desbloquear-conquista",
+    STATS: "/gamificacao/stats",
+    LEADERBOARD: "/gamificacao/leaderboard",
+    ACHIEVEMENTS: "/gamificacao/achievements",
+    HISTORY: "/gamificacao/history",
+    STREAK: "/gamificacao/streak",
+    PROCESS_ACTION: "/gamificacao/process-action",
   },
 
   // PROGRESS (XP e Energia)

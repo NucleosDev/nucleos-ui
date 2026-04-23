@@ -131,7 +131,7 @@
 //   // Ações rápidas
 //   const quickActions = [
 //     {
-//       label: "Criar novo Núcleo",
+//       label: "Criar novo Nucleo",
 //       icon: PlusCircle,
 //       onClick: () => router.push("/dashboard/nucleos/criar"),
 //       color: "text-primary",
@@ -238,7 +238,7 @@
 //             className="bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90"
 //           >
 //             <PlusCircle className="mr-2 h-4 w-4" />
-//             Novo Núcleo
+//             Novo Nucleo
 //           </Button>
 //         </div>
 //       </div>

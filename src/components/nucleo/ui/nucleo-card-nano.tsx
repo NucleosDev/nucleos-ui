@@ -40,7 +40,7 @@ interface NucleoCardMiniProps {
   corDestaque?: string;
 }
 
-// Mapeamento de ícones baseado nos tipos de núcleo (mesmo do NucleoCard)
+// Mapeamento de ícones baseado nos tipos de Nucleo (mesmo do NucleoCard)
 const tipoIcons: Record<string, LucideIcon> = {
   estudo: BookOpen,
   hobby: Heart,
@@ -93,7 +93,7 @@ function getNucleoIcon(tipo?: string, iconId?: string | null): LucideIcon {
     return iconMap[iconId];
   }
 
-  // Fallback para o tipo do núcleo
+  // Fallback para o tipo do Nucleo
   const tipoLower = tipo?.toLowerCase() || "";
   const icon = tipoIcons[tipoLower];
 
@@ -153,4 +153,3 @@ export function NucleoCardMini({
     </Link>
   );
 }
-

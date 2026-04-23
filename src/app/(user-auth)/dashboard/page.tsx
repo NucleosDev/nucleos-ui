@@ -22,17 +22,30 @@ import {
   Calendar,
   PlusCircle,
   Sparkles,
+  Award,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { motion } from "framer-motion";
-import { useUserStats } from "@/hooks/userStats";
+import { motion, AnimatePresence } from "framer-motion";
 import { useRecentActivity } from "@/hooks/useRecentActivity";
+import Link from "next/link";
+import OrbitIcon from "@/components/ui/bolt-style-chat";
+import { BadgeAII } from "@/components/ui/badge-ai";
+import { useGamification } from "@/hooks/useGamification";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Dashboard() {
   const { user } = useAuth();
   const router = useRouter();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  // Dados reais de gamificação
+  const { useStats, useAchievements, useStreak } = useGamification();
+  const { data: stats, isLoading: statsLoading } = useStats();
+  const { data: achievements, isLoading: achievementsLoading } =
+    useAchievements();
+  const { data: streak, isLoading: streakLoading } = useStreak();
+  const { activities, loading: activitiesLoading } = useRecentActivity(5);
 
   const today = new Date();
   const formattedDate = format(today, "EEEE, d 'de' MMMM", { locale: ptBR });
@@ -42,70 +55,85 @@ export default function Dashboard() {
 
   const firstName = user?.fullName?.split(" ")[0] || "Usuário";
 
-  const { stats, loading: statsLoading } = useUserStats();
-  const { activities, loading: activitiesLoading } = useRecentActivity(5);
+  // Calcular progresso do nível
+  const levelProgress = stats ? (stats.currentXp / stats.nextLevelXp) * 100 : 0;
+
+  // Contar conquistas desbloqueadas
+  const unlockedAchievements =
+    achievements?.filter((a) => a.unlocked).length || 0;
+  const totalAchievements = achievements?.length || 0;
 
   return (
     <div className="flex-1 overflow-auto bg-gradient-to-b from-background via-background to-secondary/10">
       <div className="p-4 md:p-8 max-w-[1600px] mx-auto space-y-8">
-        {/* Cabeçalho com saudação e data */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
-        >
-          <div className="flex items-center gap-3">
-            <div className="h-15 w-1 bg-gradient-to-b from-[#4D7CFF] to-[#00C9A7] rounded-full hidden sm:block" />
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <h4 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                  {saudacao}, {firstName}!
-                </h4>
-                <Sparkles className="h-6 w-6 text-primary/70" />
-              </div>
-              <p className="text-muted-foreground text-base capitalize">
-                {formattedDate} · Pronto para evoluir hoje?
-              </p>
-            </div>
-          </div>
-          <Button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90 transition shadow-md shadow-primary/20 group gap-2"
-          >
-            <PlusCircle className="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
-            <span>Novo Nucleo</span>
-          </Button>
-        </motion.div>
+        {/* Botão do ChatBot */}
 
-        {/* Cards de Estatísticas Rápidas */}
+        <div className="flex items-center gap-3">
+          {/* barra lateral */}
+          <div className="h-9 w-1 rounded-full bg-gradient-to-b from-[#4D7CFF] to-[#00C9A7]" />
+
+          <div className="flex flex-col">
+            <h2 className="text-2xl font-bold tracking-tight">
+              {saudacao},{" "}
+              <span className="bg-gradient-to-r from-[#4D7CFF] via-[#5B7FFF] to-[#00C9A7] bg-clip-text text-transparent">
+                {firstName}
+              </span>
+              .
+            </h2>
+
+            {/* <p className="text-sm text">
+              Já são{" "}
+              <span className="font-medium text-foreground">{hora}h</span> —
+              pronto pra começar?
+            </p> */}
+          </div>
+        </div>
+
+        {/* Badge AI */}
+        <div className="hidden md:block">
+          <BadgeAII />
+        </div>
+
+        {/* Cards de Estatísticas Rápidas - Dados Reais */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {statsLoading ? null : ( // 👇 Substituído: não exibe nada, pois o loader global já está visível
+          {statsLoading || streakLoading ? (
+            // Skeletons enquanto carrega
+            <>
+              <Skeleton className="h-32 rounded-xl" />
+              <Skeleton className="h-32 rounded-xl" />
+              <Skeleton className="h-32 rounded-xl" />
+              <Skeleton className="h-32 rounded-xl" />
+            </>
+          ) : (
             <>
               <StatsCard
-                title="Nível Geral"
+                title="Nível"
                 value={stats?.level || 1}
                 icon={<Zap className="h-5 w-5 text-primary" />}
-                description={`${stats?.xpTotal || 0} XP total`}
-                progress={stats?.levelProgress || 0}
+                description={`${stats?.totalXp || 0} XP total`}
+                progress={levelProgress}
+                color="blue"
               />
               <StatsCard
                 title="Streak Atual"
-                value={stats?.currentStreak || 0}
+                value={streak?.currentStreak || 0}
                 icon={<Flame className="h-5 w-5 text-primary" />}
-                description={`Melhor: ${stats?.maxStreak || 0}`}
+                description={`Melhor: ${streak?.maxStreak || 0} dias`}
+                color="orange"
               />
               <StatsCard
                 title="Conquistas"
-                value={stats?.achievements || 0}
+                value={`${unlockedAchievements}/${totalAchievements}`}
                 icon={<Trophy className="h-5 w-5 text-primary" />}
-                description={`${stats?.totalAchievements || 0} disponíveis`}
+                description={`${totalAchievements - unlockedAchievements} restantes`}
+                color="yellow"
               />
               <StatsCard
-                title="Energia"
-                value={stats?.energy || 0}
-                icon={<Zap className="h-5 w-5 text-primary" />}
-                description={`Renova em ${stats?.energyRegen || "2h"}`}
+                title="XP Hoje"
+                value={stats?.todayXp || 0}
+                icon={<Award className="h-5 w-5 text-primary" />}
+                description={`${stats?.totalActions || 0} ações hoje`}
+                color="default"
               />
             </>
           )}
@@ -128,8 +156,13 @@ export default function Dashboard() {
               <CardDescription>Suas últimas ações nos Nucleos</CardDescription>
             </CardHeader>
             <CardContent>
-              {activitiesLoading ? null : activities && // 👇 Substituído: não exibe skeletons
-                activities.length > 0 ? (
+              {activitiesLoading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-16 w-full" />
+                  <Skeleton className="h-16 w-full" />
+                  <Skeleton className="h-16 w-full" />
+                </div>
+              ) : activities && activities.length > 0 ? (
                 <ul className="space-y-4">
                   {activities.map((activity) => (
                     <li
@@ -171,37 +204,37 @@ export default function Dashboard() {
               <Button
                 variant="outline"
                 className="w-full justify-start"
-                onClick={() => router.push("/dashboard/tarefas")}
+                onClick={() => router.push("/dashboard/nucleos")}
               >
                 <div className="flex items-center gap-2">
                   <div className="p-1.5 rounded bg-primary/10">
-                    <Calendar className="h-4 w-4 text-primary" />
+                    <Sparkles className="h-4 w-4 text-primary" />
                   </div>
-                  <span>Ver tarefas de hoje</span>
+                  <span>Criar novo Nucleo</span>
                 </div>
               </Button>
               <Button
                 variant="outline"
                 className="w-full justify-start"
-                onClick={() => router.push("/dashboard/habitos")}
-              >
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded bg-primary/10">
-                    <Flame className="h-4 w-4 text-orange-500" />
-                  </div>
-                  <span>Registrar hábito</span>
-                </div>
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full justify-start"
-                onClick={() => router.push("/dashboard/conquistas")}
+                onClick={() => router.push("/dashboard/gamificacao")}
               >
                 <div className="flex items-center gap-2">
                   <div className="p-1.5 rounded bg-primary/10">
                     <Trophy className="h-4 w-4 text-amber-500" />
                   </div>
-                  <span>Ver conquistas</span>
+                  <span>Ver minhas conquistas</span>
+                </div>
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full justify-start"
+                onClick={() => router.push("/dashboard/gamificacao")}
+              >
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded bg-primary/10">
+                    <Flame className="h-4 w-4 text-orange-500" />
+                  </div>
+                  <span>Ver meu progresso</span>
                 </div>
               </Button>
             </CardContent>
@@ -218,14 +251,14 @@ export default function Dashboard() {
   );
 }
 
-// Componente StatsCard (inalterado)
+// Componente StatsCard atualizado
 interface StatsCardProps {
   title: string;
   value: number | string;
   icon: React.ReactNode;
   description: string;
   progress?: number;
-  color?: "yellow" | "orange" | "amber" | "blue" | "default";
+  color?: "yellow" | "orange" | "amber" | "blue" | "green" | "default";
 }
 
 function StatsCard({
@@ -237,11 +270,12 @@ function StatsCard({
   color = "default",
 }: StatsCardProps) {
   const colorClasses = {
-    yellow: "from-yellow-500/10 to-yellow-500/5 border-yellow-500/20",
-    orange: "from-orange-500/10 to-orange-500/5 border-orange-500/20",
-    amber: "from-amber-500/10 to-amber-500/5 border-amber-500/20",
-    blue: "from-blue-500/10 to-blue-500/5 border-blue-500/20",
-    default: "from-primary/10 to-primary/5 border-primary/20",
+    yellow: "from-primary/10 to-primary/1 border-primary/20",
+    orange: "from-primary/10 to-primary/1 border-primary/20",
+    amber: "from-primary/10 to-primary/1 border-primary/20",
+    blue: "from-primary/10 to-primary/1 border-primary/20",
+    green: "from-primary/10 to-primary/1 border-primary/20",
+    default: "from-primary/10 to-primary/1 border-primary/20",
   };
 
   return (

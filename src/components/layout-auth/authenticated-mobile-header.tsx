@@ -95,7 +95,7 @@ export function AuthenticatedMobileHeader({
   // Links principais do dashboard
   const mainNavItems = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-    { icon: LayoutGrid, label: "Núcleos", href: "/dashboard/nucleos" },
+    { icon: LayoutGrid, label: "Nucleos", href: "/dashboard/nucleos" },
     { icon: Layers, label: "Blocos", href: "/dashboard/blocos" },
     { icon: Calendar, label: "Calendário", href: "/dashboard/calendario" },
     { icon: Trophy, label: "Conquistas", href: "/dashboard/conquistas" },

@@ -266,6 +266,8 @@ export function AuthPage() {
 
               {/* GOOGLE LOGIN */}
               <div className="flex justify-center w-full mt-2">
+
+                
                 <GoogleLogin
                   onSuccess={(credentialResponse) => {
                     console.log("GOOGLE OK:", credentialResponse);

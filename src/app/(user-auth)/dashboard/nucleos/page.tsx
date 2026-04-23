@@ -20,7 +20,7 @@ export default function Dashboard() {
   const nucleosComStats: NucleoComStats[] =
     nucleos?.map(adaptNucleoToComStats) ?? [];
 
-  // CORRIGIDO: rota correta para a página de detalhes do núcleo
+  // CORRIGIDO: rota correta para a página de detalhes do Nucleo
   const handleNucleoClick = (nucleo: NucleoComStats) => {
     router.push(`/dashboard/nucleos/${nucleo.id}`); // ← adicionado "s" em nucleos
   };

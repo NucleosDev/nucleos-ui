@@ -59,7 +59,7 @@
 //     const input = userInput.toLowerCase();
 
 //     if (input.includes("tarefa") || input.includes("organizar")) {
-//       return "Que tal criar um novo núcleo para organizar suas tarefas? Você pode categorizar por 'Trabalho', 'Pessoal' ou 'Estudos'. Posso te ajudar a estruturar isso!";
+//       return "Que tal criar um novo Nucleo para organizar suas tarefas? Você pode categorizar por 'Trabalho', 'Pessoal' ou 'Estudos'. Posso te ajudar a estruturar isso!";
 //     }
 //     if (input.includes("hábito") || input.includes("rotina")) {
 //       return "Para criar um novo hábito, sugiro começar pequeno. Por exemplo, 5 minutos por dia. O sistema de streak do Nucleos vai te motivar a manter a consistência!";

@@ -7,6 +7,8 @@ import { AuthenticatedMobileHeader } from "@/components/layout-auth/authenticate
 import { AuthenticatedFooter } from "@/components/layout-auth/authenticated-footer";
 import { AuthenticatedMobileFooter } from "@/components/layout-auth/autenticated-mobile-footer";
 import { DashboardLayout } from "@/components/layout-auth/dashboard-layout";
+import { XpToast } from "@/components/gamification/XpToast";
+import { useGamificationSocket } from "@/hooks/useGamificationSocket";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { cn } from "@/lib/utils";
 
@@ -47,6 +49,8 @@ export default function UserAuthLayout({
     setIsMobileMenuOpen(false);
   };
 
+  useGamificationSocket();
+
   return (
     <ProtectedRoute>
       <div className="relative min-h-screen bg-background flex flex-col">
@@ -72,8 +76,8 @@ export default function UserAuthLayout({
           )}
           <div
             className={cn(
-              "flex-1",
-              "p-4 sm:p-6 lg:p-8",
+              "",
+              "",
               isMobile && "pb-20", // Espaço para footer mobile
               "transition-all duration-300",
             )}
@@ -84,6 +88,7 @@ export default function UserAuthLayout({
 
         {/* Footer condicional */}
         {!isMobile ? <AuthenticatedFooter /> : <AuthenticatedMobileFooter />}
+        <XpToast />
       </div>
     </ProtectedRoute>
   );

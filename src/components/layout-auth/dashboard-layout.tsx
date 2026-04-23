@@ -11,15 +11,15 @@ import {
   Activity,
   Lightbulb,
   Sparkles,
-  LayoutGrid,
+  Aperture,
   Menu,
-  Calendar,
+  CalendarDays,
   Trophy,
   BarChart3,
   Bell,
   User,
   Settings,
-  LayoutPanelLeft,
+  Grid2x2PlusIcon,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -102,8 +102,8 @@ function SidebarContentComponent({
   const mainLinks = [
     {
       id: "nucleos",
-      label: "Núcleos",
-      icon: LayoutGrid,
+      label: "Nucleos",
+      icon: Aperture,
       href: "/dashboard/nucleos",
       count: nucleosCount,
     },
@@ -127,13 +127,13 @@ function SidebarContentComponent({
     {
       id: "dashboard",
       label: "Dashboard",
-      icon: LayoutPanelLeft,
+      icon: Grid2x2PlusIcon,
       href: "/dashboard",
     },
     {
       id: "calendario",
       label: "Calendário",
-      icon: Calendar,
+      icon: CalendarDays,
       href: "/dashboard/calendario",
     },
     {
@@ -178,20 +178,19 @@ function SidebarContentComponent({
     },
     {
       id: "nucleos-recentes",
-      title: "Núcleos ativos",
+      title: "Nucleos ativos",
       description:
         recentNucleos.length > 0
           ? recentNucleos.map((n) => n.nome).join(", ")
-          : "Nenhum Núcleo criado ainda.",
+          : "Nenhum Nucleo criado ainda.",
       icon: Sparkles,
     },
   ];
 
   return (
     <div className="flex flex-col">
-      {/* Links de navegação */}
       <div className="px-3 py-3 space-y-1">
-        <p className="px-3 text-xs font-medium text-background uppercase tracking-wider mb-4">
+        <p className="px-3 text-xs font-medium uppercase tracking-wider mb-4">
           Navegação
         </p>
         {dashboardLinks.map((link) => {
@@ -206,7 +205,7 @@ function SidebarContentComponent({
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all hover:scale-[1.01]",
                 isActive
                   ? "bg-primary/10 text-primary"
-                  : "text-muted-background hover:bg-primary/20 hover:text-background",
+                  : "text-muted-background hover:text-accent",
               )}
             >
               <Icon className="h-4 w-4" />
@@ -214,110 +213,6 @@ function SidebarContentComponent({
             </Link>
           );
         })}
-      </div>
-
-      {/* Atalhos de volume de dados do usuário */}
-      <nav className="px-3 py-3 space-y-1">
-        <p className="px-3 text-xs font-medium text-muted-background uppercase tracking-wider mb-4">
-          Atividades
-        </p>
-        {mainLinks.map((link) => {
-          const Icon = link.icon;
-          const isActive =
-            pathname === link.href || pathname?.startsWith(link.href + "/");
-          return (
-            <Link
-              key={link.id}
-              href={link.href}
-              onClick={onClose}
-              className={cn(
-                "flex items-center justify-between px-3 py-2.5 rounded-xl transition-all hover:scale-[1.01]",
-                isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-background hover:bg-accent/50 hover:text-foreground",
-              )}
-            >
-              <div className="flex items-center gap-3">
-                <Icon className="h-4 w-4 bg-foreground" />
-                <span className="text-sm font-medium">{link.label}</span>
-              </div>
-              <span className="text-xs px-2 py-0.5 rounded-lg bg-primary/70 text-muted-background font-medium tabular-nums">
-                {link.count}
-              </span>
-            </Link>
-          );
-        })}
-      </nav>
-      {/* Insights (mock) */}
-      <div className="px-3 py-3">
-        <div className="flex items-center gap-2 mb-3">
-          <Lightbulb className="h-4 w-4 text-primary/90" />
-          <span className="text-sm font-semibold">Insights para você</span>
-        </div>
-
-        <div className="space-y-3">
-          {insights.map((insight) => {
-            const Icon = insight.icon;
-            return (
-              <div
-                key={insight.id}
-                className="bg-foreground/40 rounded-xl p-3 border border-border/40 backdrop-blur-sm"
-              >
-                <div className="flex items-center gap-2">
-                  <Icon className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium">{insight.title}</p>
-                    <p className="text-xs text-muted-background">
-                      {insight.description}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Atividades recentes (necessário correção pra atualizar sozinho)*/}
-
-      <div className="px-3 py-3 border-t border-border">
-        <p className="text-xs font-medium text-left uppercase mb-2">
-          Atividades recentes
-        </p>
-        <div className="space-y-1">
-          {recentNucleos.length > 0 ? (
-            recentNucleos.map((nucleo) => (
-              <div key={nucleo.id} onClick={onClose}>
-                <NucleoCardMini
-                  id={nucleo.id}
-                  nome={nucleo.nome}
-                  tipo={nucleo.tipo}
-                  nivel={nucleo.level || 1}
-                  iconId={nucleo.iconId}
-                  iconUrl={nucleo.icon?.iconUrl}
-                  corDestaque={nucleo.corDestaque}
-                />
-              </div>
-            ))
-          ) : (
-            <p className="text-xs text-muted-background">
-              Nenhuma atividade ainda
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Barra de progresso XP (mock)*/}
-      <div className="p-4 border-t border-border/60 mt-auto bg-foreground backdrop-blur-sm">
-        <div className="flex justify-between text-xs text-muted-background mb-1.5">
-          <span className="font-medium">
-            XP para nível {(userData.level || 1) + 1}
-          </span>
-          <span>
-            {userData.currentXp || 0}/{userData.nextLevelXp || 100}
-          </span>
-        </div>
-        <Progress value={xpPercent} className="h-1.5" />
       </div>
     </div>
   );
@@ -338,7 +233,7 @@ function DashboardSidebarDesktop({
 
   if (collapsed) {
     return (
-      <aside className="hidden md:flex w-16 border-r border-border flex-col items-center gap-8 transition-all duration-300 ease-in-out sticky top-0 bg-foreground/80 backdrop-blur-md z-100 pb-0 py-4">
+      <aside className="hidden md:flex w-16 border-r border-none flex-col items-center gap-8 transition-all duration-300 ease-in-out sticky top-0 bg-none backdrop-blur-md z-100 pb-0 py-4">
         {/* espaçamento do header */}
         <div className="">
           <Link
@@ -352,8 +247,8 @@ function DashboardSidebarDesktop({
         {/* Main icons */}
         <div className="flex flex-col items-center gap-2">
           {[
-            { icon: LayoutPanelLeft, href: "/dashboard", label: "Dashboard" },
-            { icon: LayoutGrid, href: "/dashboard/nucleos", label: "Núcleos" },
+            { icon: Grid2x2PlusIcon, href: "/dashboard", label: "Dashboard" },
+            { icon: Aperture, href: "/dashboard/nucleos", label: "Nucleos" },
             { icon: Layers, href: "/dashboard/blocos", label: "Blocos" },
             {
               icon: Activity,
@@ -377,7 +272,7 @@ function DashboardSidebarDesktop({
                 )}
                 title={item.label}
               >
-                <Icon className="w-5 h-5" />
+                <Icon className="w-5 h-5 hover:text-foreground" />
               </Link>
             );
           })}
@@ -408,7 +303,14 @@ function DashboardSidebarDesktop({
     text-background
     bg-foreground
     backdrop-blur-xl
-  dark:bg-[#f6f6f6]
+dark:bg-popover/80 
+dark:shadow-xl 
+
+dark:bg-gradient-to-r 
+dark:from-primary/10 
+dark:to-transparent 
+
+dark:text-foreground
     overflow-y-auto
     transition-all duration-300 ease-in-out
 

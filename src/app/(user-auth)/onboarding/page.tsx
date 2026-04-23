@@ -29,8 +29,8 @@ const OPTIONS: Option[] = [
     icon: BookOpen,
     templates: [
       {
-        title: "Meus Estudos",
-        blocks: ["tarefas", "calendario", "notas"],
+        title: "Estudos",
+        blocks: ["tarefa"], //
       },
     ],
   },
@@ -42,7 +42,7 @@ const OPTIONS: Option[] = [
     templates: [
       {
         title: "Treino",
-        blocks: ["checklist", "progresso"],
+        blocks: ["habito"], // 👈 EXISTE
       },
     ],
   },
@@ -54,7 +54,7 @@ const OPTIONS: Option[] = [
     templates: [
       {
         title: "Finanças",
-        blocks: ["entrada_saida", "metas"],
+        blocks: ["tarefa"], // usa tarefa por enquanto
       },
     ],
   },
@@ -65,8 +65,8 @@ const OPTIONS: Option[] = [
     icon: Zap,
     templates: [
       {
-        title: "Minhas Tarefas",
-        blocks: ["kanban", "tarefas"],
+        title: "Produtividade",
+        blocks: ["tarefa", "habito"], // mistura
       },
     ],
   },
@@ -146,7 +146,7 @@ export default function OnboardingPage() {
           disabled={selected.length === 0 || isCreating}
           className="w-full h-12"
         >
-          {isCreating ? "Criando seus núcleos..." : "Continuar"}
+          {isCreating ? "Criando seus Nucleos..." : "Continuar"}
         </Button>
       </div>
     </div>

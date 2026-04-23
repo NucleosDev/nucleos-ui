@@ -62,7 +62,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
-// Mapeamento de ícones baseado nos tipos de núcleo
+// Mapeamento de ícones baseado nos tipos de Nucleo
 const tipoIcons: Record<string, LucideIcon> = {
   estudo: BookOpen,
   hobby: Heart,

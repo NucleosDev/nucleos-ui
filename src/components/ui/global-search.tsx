@@ -30,7 +30,7 @@ import type { Timer } from "@/types/timer";
 
 interface SearchResult {
   type:
-    | "núcleo"
+    | "Nucleo"
     | "bloco"
     | "coleção"
     | "tarefa"
@@ -62,7 +62,7 @@ interface GlobalSearchProps {
 // Mapeamento de ícones por tipo
 const getTypeIcon = (type: SearchResult["type"]) => {
   switch (type) {
-    case "núcleo":
+    case "Nucleo":
       return <LayoutGrid className="w-4 h-4" />;
     case "bloco":
       return <Layers className="w-4 h-4" />;
@@ -183,11 +183,11 @@ export function GlobalSearch({
       .filter((n) => n.nome.toLowerCase().includes(searchTerm))
       .slice(0, 3)
       .map((n) => ({
-        type: "núcleo" as const,
+        type: "Nucleo" as const,
         title: n.nome,
         url: `/dashboard/nucleos/${n.id}`,
-        subtitle: n.tipo || "Núcleo",
-        icon: getTypeIcon("núcleo"),
+        subtitle: n.tipo || "Nucleo",
+        icon: getTypeIcon("Nucleo"),
       }));
     searchResults.push(...nucleosMatch);
 

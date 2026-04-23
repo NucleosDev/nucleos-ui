@@ -54,6 +54,7 @@ import { useBlocos } from "@/hooks/useBlocos";
 import { useColecoes } from "@/hooks/useColecoes";
 import { useTimers } from "@/hooks/useTimers";
 import NucleosLogo from "@/components/nucleo/NucleosLogo";
+import { NotificationBell } from "@/components/gamification/NotificationBell";
 
 interface AuthenticatedHeaderProps {
   onToggleSidebar?: () => void;
@@ -205,7 +206,7 @@ export function AuthenticatedHeader({
   return (
     <header className="bg-background/80 backdrop-blur-sm border-b border-border/30">
       <nav className="relative mx-auto grid h-14 w-full grid-cols-[1fr_auto_1fr] items-center px-6 sm:px-8 lg:px-10">
-        {/* Lado esquerdo: Botão de toggle e informações */}
+        {/* Lado esquerdo: Botão de toggle e busca */}
         <div className="flex justify-start items-center gap-3">
           <Button
             variant="ghost"
@@ -223,10 +224,6 @@ export function AuthenticatedHeader({
             )}
           </Button>
 
-          {/* <Link href={ROUTES.PLANOS} className={cn("ml-2", getPlanClassName())}>
-            {getPlanDisplay()}
-          </Link> */}
-
           <div className="w-full max-w-md">
             <GlobalSearch
               recentNucleos={recentNucleos}
@@ -241,12 +238,13 @@ export function AuthenticatedHeader({
           </div>
         </div>
 
-        {/* Centro: Busca global */}
+        {/* Centro: Logo (opcional) */}
         <div className="flex items-center justify-center"></div>
 
         {/* Lado direito: Ícones e avatar */}
         <div className="flex items-center justify-end gap-3">
           <div className="flex items-center gap-1">
+            {/* Mensagens - mantido como estava */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -266,24 +264,8 @@ export function AuthenticatedHeader({
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 rounded-full hover:bg-accent/50"
-                >
-                  <Bell className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-72 p-0">
-                <div className="p-4 text-center">
-                  <Bell className="h-8 w-8 mx-auto text-muted-foreground mb-2 opacity-50" />
-                  <p className="text-sm font-medium">Nenhuma notificação</p>
-                  <p className="text-xs text-muted-foreground mt-1">Em breve</p>
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {/* NOTIFICAÇÕES - SUBSTITUÍDO PELO NotificationBell */}
+            <NotificationBell />
           </div>
 
           {/* Barra vertical */}
