@@ -8,6 +8,7 @@ import { AuthenticatedFooter } from "@/components/layout-auth/authenticated-foot
 import { AuthenticatedMobileFooter } from "@/components/layout-auth/autenticated-mobile-footer";
 import { DashboardLayout } from "@/components/layout-auth/dashboard-layout";
 import { ProtectedRoute } from "@/components/auth/protected-route";
+import { cn } from "@/lib/utils";
 
 export default function UserAuthLayout({
   children,
@@ -17,16 +18,20 @@ export default function UserAuthLayout({
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Detectar se é mobile (768px é o breakpad do Tailwind para md)
   const isMobile = useMediaQuery("(max-width: 767px)");
 
-  // Recuperar estado salvo no localStorage
   useEffect(() => {
     const saved = localStorage.getItem("sidebar-collapsed");
     if (saved !== null) {
       setIsSidebarCollapsed(saved === "true");
     }
   }, []);
+
+  useEffect(() => {
+    if (!isMobile) {
+      setIsMobileMenuOpen(false);
+    }
+  }, [isMobile]);
 
   const handleToggleSidebar = () => {
     const newState = !isSidebarCollapsed;
@@ -38,43 +43,47 @@ export default function UserAuthLayout({
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
+  const handleMobileMenuClose = () => {
+    setIsMobileMenuOpen(false);
+  };
+
   return (
     <ProtectedRoute>
-      <div className="">
-        {/* Desktop Header - visível apenas em desktop */}
-        {!isMobile && (
-          <AuthenticatedHeader
-            onToggleSidebar={handleToggleSidebar}
-            isSidebarCollapsed={isSidebarCollapsed}
-          />
-        )}
+      <div className="relative min-h-screen bg-background flex flex-col">
+        {/* Header condicional */}
 
-        {/* Mobile Header - visível apenas em mobile */}
-        {isMobile && (
-          <AuthenticatedMobileHeader
-            onMenuToggle={handleMobileMenuToggle}
-            isOpen={isMobileMenuOpen}
-          />
-        )}
-
-        {/* Conteúdo principal com sidebar - sem footers dentro */}
-        <div>
-          <DashboardLayout
-            collapsed={isSidebarCollapsed}
-            isMobile={isMobile}
-            isMobileMenuOpen={isMobileMenuOpen}
-            onMobileMenuClose={() => setIsMobileMenuOpen(false)}
+        {/* Layout principal com sidebar e conteúdo */}
+        <DashboardLayout
+          collapsed={isSidebarCollapsed}
+          isMobile={isMobile}
+          isMobileMenuOpen={isMobileMenuOpen}
+          onMobileMenuClose={handleMobileMenuClose}
+        >
+          {!isMobile ? (
+            <AuthenticatedHeader
+              onToggleSidebar={handleToggleSidebar}
+              isSidebarCollapsed={isSidebarCollapsed}
+            />
+          ) : (
+            <AuthenticatedMobileHeader
+              onMenuToggle={handleMobileMenuToggle}
+              isOpen={isMobileMenuOpen}
+            />
+          )}
+          <div
+            className={cn(
+              "flex-1",
+              "p-4 sm:p-6 lg:p-8",
+              isMobile && "pb-20", // Espaço para footer mobile
+              "transition-all duration-300",
+            )}
           >
             {children}
-          </DashboardLayout>
-        </div>
+          </div>
+        </DashboardLayout>
 
-        {/* Footer - fora do DashboardLayout, na mesma camada que children */}
-        {/* Desktop Footer */}
-        {!isMobile && <AuthenticatedFooter />}
-
-        {/* Mobile Footer */}
-        {isMobile && <AuthenticatedMobileFooter />}
+        {/* Footer condicional */}
+        {!isMobile ? <AuthenticatedFooter /> : <AuthenticatedMobileFooter />}
       </div>
     </ProtectedRoute>
   );

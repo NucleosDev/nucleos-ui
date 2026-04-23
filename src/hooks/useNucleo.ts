@@ -6,7 +6,7 @@ import type {
   UpdateNucleoPayload,
 } from "@/types/nucleo";
 
-// Buscar um único Nucleo
+// Buscar um único Nucleo (já está correto)
 export function useNucleo(id: string) {
   return useQuery({
     queryKey: ["nucleo", id],
@@ -27,13 +27,18 @@ export function useNucleos() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (payload: CreateNucleoPayload) =>
-      nucleosService.create(payload),
-    onSuccess: () => {
+    mutationFn: (payload: CreateNucleoPayload) => {
+      console.log("ENVIANDO PRA API:", payload);
+      return nucleosService.create(payload);
+    },
+    onSuccess: (data) => {
+      console.log("CRIADO COM SUCESSO:", data);
       queryClient.invalidateQueries({ queryKey: ["nucleos"] });
     },
+    onError: (error) => {
+      console.error("ERRO AO CRIAR:", error);
+    },
   });
-
   const updateMutation = useMutation({
     mutationFn: ({
       id,

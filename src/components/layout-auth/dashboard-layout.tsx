@@ -35,6 +35,7 @@ import { useTimers } from "@/hooks/useTimers";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import NucleosLogo from "@/components/nucleo/NucleosLogo";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 
 interface DashboardLayoutProps {
@@ -159,7 +160,6 @@ function SidebarContentComponent({
       icon: MessageSquare,
       href: "/dashboard/chatbot",
     },
-
     { id: "perfil", label: "Perfil", icon: User, href: "/dashboard/perfil" },
     {
       id: "configuracoes",
@@ -189,95 +189,9 @@ function SidebarContentComponent({
 
   return (
     <div className="flex flex-col">
-      <div>
-        <div className="flex flex-col ">
-          {/* Header com Logo (centralizado) */}
-          <div className="p-6 flex flex-col items-center justify-center text-center border-b border-border">
-            <Link
-              href="/dashboard"
-              className="hover:opacity-80 transition-opacity"
-              onClick={onClose}
-            >
-              <NucleosLogo size="md" />{" "}
-              {/* ou size="md" dependendo do que você quer */}
-            </Link>
-
-            {isMobile && onClose && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onClose}
-                className="absolute right-2 top-2 h-8 w-8"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-
-          {/* Informações do usuário (sem avatar) */}
-          <div className="p-4 border-b border-border">
-            <div className="flex flex-col items-center justify-center text-center">
-              <p className="text-sm font-semibold truncate">
-                {userData.fullName || "Meu Workspace"}
-              </p>
-
-              <div className="flex items-center justify-center gap-2 mt-0.5">
-                <div className="flex items-center gap-1">
-                  <Zap className="w-3 h-3 text-yellow-500" />
-                  <span className="text-xs text-muted-foreground">
-                    Nv.{userData.level || 1}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Flame className="w-3 h-3 text-orange-500" />
-                  <span className="text-xs text-muted-foreground">
-                    {userData.streak || 0}d
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Perfil do usuário */}
-
-      {/* Links principais */}
-      <nav className="px-2 py-2 space-y-0.5">
-        <p className="px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
-          Principal
-        </p>
-        {mainLinks.map((link) => {
-          const Icon = link.icon;
-          const isActive =
-            pathname === link.href || pathname?.startsWith(link.href + "/");
-          return (
-            <Link
-              key={link.id}
-              href={link.href}
-              onClick={onClose}
-              className={cn(
-                "flex items-center justify-between px-3 py-2 rounded-lg transition-all",
-                isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
-              )}
-            >
-              <div className="flex items-center gap-3">
-                <Icon className="h-4 w-4" />
-                <span className="text-sm font-medium">{link.label}</span>
-              </div>
-              <span className="text-xs px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-medium tabular-nums">
-                {link.count}
-              </span>
-            </Link>
-          );
-        })}
-      </nav>
-
       {/* Links de navegação */}
-      <div className="px-2 py-2 space-y-0.5">
-        <p className="px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">
+      <div className="px-3 py-3 space-y-1">
+        <p className="px-3 text-xs font-medium text-background uppercase tracking-wider mb-4">
           Navegação
         </p>
         {dashboardLinks.map((link) => {
@@ -289,10 +203,10 @@ function SidebarContentComponent({
               href={link.href}
               onClick={onClose}
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-lg transition-all",
+                "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all hover:scale-[1.01]",
                 isActive
                   ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
+                  : "text-muted-background hover:bg-primary/20 hover:text-background",
               )}
             >
               <Icon className="h-4 w-4" />
@@ -302,25 +216,58 @@ function SidebarContentComponent({
         })}
       </div>
 
-      {/* Insights */}
+      {/* Atalhos de volume de dados do usuário */}
+      <nav className="px-3 py-3 space-y-1">
+        <p className="px-3 text-xs font-medium text-muted-background uppercase tracking-wider mb-4">
+          Atividades
+        </p>
+        {mainLinks.map((link) => {
+          const Icon = link.icon;
+          const isActive =
+            pathname === link.href || pathname?.startsWith(link.href + "/");
+          return (
+            <Link
+              key={link.id}
+              href={link.href}
+              onClick={onClose}
+              className={cn(
+                "flex items-center justify-between px-3 py-2.5 rounded-xl transition-all hover:scale-[1.01]",
+                isActive
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-background hover:bg-accent/50 hover:text-foreground",
+              )}
+            >
+              <div className="flex items-center gap-3">
+                <Icon className="h-4 w-4 bg-foreground" />
+                <span className="text-sm font-medium">{link.label}</span>
+              </div>
+              <span className="text-xs px-2 py-0.5 rounded-lg bg-primary/70 text-muted-background font-medium tabular-nums">
+                {link.count}
+              </span>
+            </Link>
+          );
+        })}
+      </nav>
+      {/* Insights (mock) */}
       <div className="px-3 py-3">
         <div className="flex items-center gap-2 mb-3">
-          <Lightbulb className="h-4 w-4 text-yellow-500" />
+          <Lightbulb className="h-4 w-4 text-primary/90" />
           <span className="text-sm font-semibold">Insights para você</span>
         </div>
+
         <div className="space-y-3">
           {insights.map((insight) => {
             const Icon = insight.icon;
             return (
               <div
                 key={insight.id}
-                className="bg-background/60 rounded-lg p-3 border border-border/50"
+                className="bg-foreground/40 rounded-xl p-3 border border-border/40 backdrop-blur-sm"
               >
-                <div className="flex items-start gap-2">
+                <div className="flex items-center gap-2">
                   <Icon className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                   <div>
                     <p className="text-sm font-medium">{insight.title}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-muted-background">
                       {insight.description}
                     </p>
                   </div>
@@ -331,7 +278,8 @@ function SidebarContentComponent({
         </div>
       </div>
 
-      {/* Atividades recentes */}
+      {/* Atividades recentes (necessário correção pra atualizar sozinho)*/}
+
       <div className="px-3 py-3 border-t border-border">
         <p className="text-xs font-medium text-left uppercase mb-2">
           Atividades recentes
@@ -352,16 +300,16 @@ function SidebarContentComponent({
               </div>
             ))
           ) : (
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-background">
               Nenhuma atividade ainda
             </p>
           )}
         </div>
       </div>
 
-      {/* Barra de progresso XP */}
-      <div className="p-3 border-t border-border mt-auto">
-        <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
+      {/* Barra de progresso XP (mock)*/}
+      <div className="p-4 border-t border-border/60 mt-auto bg-foreground backdrop-blur-sm">
+        <div className="flex justify-between text-xs text-muted-background mb-1.5">
           <span className="font-medium">
             XP para nível {(userData.level || 1) + 1}
           </span>
@@ -382,23 +330,118 @@ function DashboardSidebarDesktop({
   blocosCount,
   recentNucleos,
 }: DashboardSidebarProps) {
+  const pathname = usePathname();
+
+  {
+    /* Sidebar Fechada */
+  }
+
   if (collapsed) {
     return (
-      <aside className="hidden md:flex w-12 border-r border-border flex-col items-center py-4 transition-all duration-300 ease-in-out">
-        {/* Espaço vazio - o botão de toggle está no header */}
+      <aside className="hidden md:flex w-16 border-r border-border flex-col items-center gap-8 transition-all duration-300 ease-in-out sticky top-0 bg-foreground/80 backdrop-blur-md z-100 pb-0 py-4">
+        {/* espaçamento do header */}
+        <div className="">
+          <Link
+            href="/dashboard"
+            className="hover:opacity-80 transition-opacity"
+          >
+            <Image src={"/icon.svg"} height={32} width={32} alt="logo" />
+          </Link>
+        </div>
+
+        {/* Main icons */}
+        <div className="flex flex-col items-center gap-2">
+          {[
+            { icon: LayoutPanelLeft, href: "/dashboard", label: "Dashboard" },
+            { icon: LayoutGrid, href: "/dashboard/nucleos", label: "Núcleos" },
+            { icon: Layers, href: "/dashboard/blocos", label: "Blocos" },
+            {
+              icon: Activity,
+              href: "/dashboard/atividades",
+              label: "Atividades",
+            },
+          ].map((item, index) => {
+            const Icon = item.icon;
+            const isActive =
+              pathname === item.href || pathname?.startsWith(item.href + "/");
+
+            return (
+              <Link
+                key={index}
+                href={item.href}
+                className={cn(
+                  "p-2 rounded-lg transition-all group relative",
+                  isActive
+                    ? "bg-primary/10 text-primary"
+                    : "hover:bg-accent/60 text-muted-background hover:text-foreground",
+                )}
+                title={item.label}
+              >
+                <Icon className="w-5 h-5" />
+              </Link>
+            );
+          })}
+        </div>
+
+        <div className="mt-auto flex flex-col items-center gap-2">
+          <Link
+            href="/dashboard/configuracoes"
+            className="p-2 rounded-lg hover:bg-accent/60 text-muted-background hover:text-foreground"
+            title="Configurações"
+          >
+            <Settings className="w-5 h-5" />
+          </Link>
+        </div>
       </aside>
     );
   }
 
   return (
-    <aside className="hidden md:flex w-64 flex-col border-r border-border transition-all duration-300 ease-in-out overflow-y-auto">
-      <SidebarContentComponent
-        collapsed={collapsed}
-        userData={userData}
-        nucleosCount={nucleosCount}
-        blocosCount={blocosCount}
-        recentNucleos={recentNucleos}
-      />
+    <aside
+      className="
+    hidden md:flex
+    w-72
+    flex-col
+    border-r border-border/60
+    sticky top-0
+    h-screen
+    text-background
+    bg-foreground
+    backdrop-blur-xl
+  dark:bg-[#f6f6f6]
+    overflow-y-auto
+    transition-all duration-300 ease-in-out
+
+    z-30
+  "
+    >
+      {/* Logo que sobrepõe - posicionada para cobrir a borda do header */}
+      <div className="relative">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 z-50">
+          <Link href="/dashboard" className="block">
+            <div className="p-5">
+              <NucleosLogo
+                size={
+                  typeof window !== "undefined" && window.innerWidth < 768
+                    ? "md"
+                    : "lg"
+                }
+              />
+            </div>
+          </Link>
+        </div>
+      </div>
+
+      {/* Conteúdo da sidebar com padding extra no topo para compensar a logo */}
+      <div className="pt-24">
+        <SidebarContentComponent
+          collapsed={collapsed}
+          userData={userData}
+          nucleosCount={nucleosCount}
+          blocosCount={blocosCount}
+          recentNucleos={recentNucleos}
+        />
+      </div>
     </aside>
   );
 }
@@ -412,6 +455,7 @@ export function DashboardLayout({
   onMobileMenuClose = () => {},
 }: DashboardLayoutProps) {
   const { logout } = useAuth();
+  const pathname = usePathname();
 
   const { data: user } = useCurrentUser();
   const { data: nucleos } = useNucleos();
@@ -452,10 +496,21 @@ export function DashboardLayout({
     timersData,
   };
 
-  // Mobile: sem sidebar fixa, apenas o conteúdo (o menu está no header mobile)
+  // Mobile: menu em sheet
   if (isMobile) {
     return (
       <div className="flex">
+        <Sheet open={isMobileMenuOpen} onOpenChange={onMobileMenuClose}>
+          <SheetContent side="left" className="w-72 p-0">
+            <div className="pt-12">
+              <SidebarContentComponent
+                {...sidebarProps}
+                isMobile={true}
+                onClose={onMobileMenuClose}
+              />
+            </div>
+          </SheetContent>
+        </Sheet>
         <main className="flex-1 overflow-auto pb-16">{children}</main>
       </div>
     );
@@ -463,10 +518,10 @@ export function DashboardLayout({
 
   // Desktop: sidebar fixa
   return (
-    <div className="flex">
+    <div className="flex h-screen overflow-hidden">
       <DashboardSidebarDesktop {...sidebarProps} />
 
-      <main className="flex-1 overflow-auto">{children}</main>
+      <main className="flex-1 overflow-y-auto">{children}</main>
     </div>
   );
 }

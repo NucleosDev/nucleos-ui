@@ -36,7 +36,13 @@ export function RegisterForm() {
   // Redirecionamento após autenticação bem-sucedida
   useEffect(() => {
     if (isAuthenticated) {
-      router.replace("/dashboard");
+      const done = localStorage.getItem("onboarding");
+
+      if (done) {
+        router.replace("/painel");
+      } else {
+        router.replace("/onboarding");
+      }
     }
   }, [isAuthenticated, router]);
 
@@ -94,14 +100,13 @@ export function RegisterForm() {
   };
 
   return (
-    <Card className="w-full max-w-md shadow-lg border-0">
-      <CardHeader className="space-y-1 text-center">
-        <CardTitle className="text-2xl font-bold">Criar conta</CardTitle>
-        <CardDescription>
-          Preencha os dados abaixo para se cadastrar
-        </CardDescription>
-      </CardHeader>
+    // blur reutilizavel abaixo
+    //  <div className="absolute inset-0 -z-10">
+    //     <div className="absolute top-1/4 left-1/4 size-96 rounded-full bg-primary/15 blur-3xl" />
+    //     <div className="absolute right-1/4 bottom-1/4 size-96 rounded-full bg-accent/15 blur-3xl" />
+    //   </div>
 
+    <Card className="w-full py-5 shadow-lg border-0 bg-background/90 backdrop-blur-lg">
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           {error && (

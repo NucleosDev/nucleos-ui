@@ -39,7 +39,6 @@ export const authService = {
       localStorage.setItem(TOKEN_KEY, data.token);
       console.log("🔑 TOKEN SALVO:", localStorage.getItem(TOKEN_KEY));
 
-      // Opcional: salvar também os dados básicos do usuário no localStorage
       const user: Partial<User> = {
         userId: data.userId,
         email: data.email,
@@ -77,7 +76,6 @@ export const authService = {
     if (typeof window !== "undefined") {
       localStorage.setItem(TOKEN_KEY, res.token);
 
-      // Salvar dados básicos do usuário
       const user: Partial<User> = {
         userId: res.userId,
         email: res.email,
@@ -104,7 +102,7 @@ export const authService = {
     try {
       await api.post(API_ROUTES.AUTH.LOGOUT);
     } catch {
-      // Ignora erros no logout (ex: token já inválido)
+      // Ignora erro
     }
 
     if (typeof window !== "undefined") {
@@ -126,16 +124,14 @@ export const authService = {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      // O backend retorna { success, data: {...} }
       const responseData = response.data;
-      const userData = responseData?.data || responseData; // fallback por segurança
+      const userData = responseData?.data || responseData;
 
       if (!userData || !userData.id) {
         console.warn("❌ Dados do usuário não encontrados na resposta");
         return null;
       }
 
-      // Mapeia os campos (o backend pode usar `fullName` ou `full_name`)
       const user: User = {
         userId: userData.id,
         email: userData.email,
@@ -144,10 +140,8 @@ export const authService = {
         emailVerified: userData.emailVerified,
         active: userData.active,
         createdAt: userData.createdAt,
-        // outros campos se necessário
       };
 
-      // Atualiza o localStorage com os dados mais recentes
       localStorage.setItem(USER_KEY, JSON.stringify(user));
 
       return user;
@@ -157,7 +151,7 @@ export const authService = {
     }
   },
 
-  // 💾 GET STORED USER (LOCAL)
+  // 💾 GET STORED USER
 
   getStoredUser(): User | null {
     if (typeof window === "undefined") return null;
@@ -178,6 +172,47 @@ export const authService = {
   isAuthenticated(): boolean {
     if (typeof window === "undefined") return false;
     return !!localStorage.getItem(TOKEN_KEY);
+  },
+
+  // GOOGLE LOGIN
+
+  async loginWithGoogle(token: string): Promise<AuthResponse> {
+    console.log("🔥 GOOGLE LOGIN CHAMADO");
+
+    const response = await api.post<AuthResponseDto>("/api/v1/auth/google", {
+      token,
+    });
+
+    const data = response.data;
+
+    console.log("📦 GOOGLE RESPONSE:", data);
+
+    if (!data.token) {
+      throw new Error("Token não veio da API (Google)");
+    }
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem(TOKEN_KEY, data.token);
+
+      const user: Partial<User> = {
+        userId: data.userId,
+        email: data.email,
+        fullName: data.fullName,
+      };
+
+      localStorage.setItem(USER_KEY, JSON.stringify(user));
+    }
+
+    return {
+      success: data.success,
+      message: data.message,
+      token: data.token,
+      refreshToken: data.refreshToken,
+      expiresAt: data.expiresAt!,
+      userId: data.userId!,
+      email: data.email!,
+      fullName: data.fullName!,
+    };
   },
 };
 

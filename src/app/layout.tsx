@@ -8,6 +8,7 @@ import { AuthProvider } from "@/auth/";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { GlobalLoader } from "@/components/logo-loader-provider";
 import { InitialLoader } from "@/components/initial-loader";
+import { GoogleOAuthProvider } from "@react-oauth/google"; // GOOGLE LOGIN
 import "./globals.css";
 
 const geistSans = Geist({
@@ -91,13 +92,16 @@ export default function RootLayout({
         className={`min-h-dvh ${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
         suppressHydrationWarning
       >
-        <ThemeProvider>
-          <QueryProvider>
-            <AuthProvider>
-              <Suspense fallback={<InitialLoader />}>{children}</Suspense>
-            </AuthProvider>
-          </QueryProvider>
-        </ThemeProvider>
+        <GoogleOAuthProvider clientId="989373819860-qb1csbaig0afvm9s5ek3p1on3ojco7j4.apps.googleusercontent.com">
+          <ThemeProvider>
+            <QueryProvider>
+              <AuthProvider>
+                <Suspense fallback={<InitialLoader />}>{children}</Suspense>
+              </AuthProvider>
+            </QueryProvider>
+          </ThemeProvider>
+        </GoogleOAuthProvider>
+
         <Analytics />
       </body>
     </html>

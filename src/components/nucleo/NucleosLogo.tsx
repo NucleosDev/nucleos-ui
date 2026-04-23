@@ -24,9 +24,9 @@ const NucleosLogo: React.FC<NucleosLogoProps> = ({
     LogoSize,
     { container: string; icon: string; gap: string }
   > = {
-    sm: { container: "text-lg", icon: "h-6 w-6", gap: "gap-2" },
-    md: { container: "text-2xl", icon: "h-8 w-8", gap: "gap-3" },
-    lg: { container: "text-4xl", icon: "h-12 w-12", gap: "gap-4" },
+    sm: { container: "text-lg", icon: "h-6 w-6", gap: "gap-1" },
+    md: { container: "text-2xl", icon: "h-8 w-8", gap: "gap-1" },
+    lg: { container: "text-3xl", icon: "h-12 w-12", gap: "gap-1" },
   };
 
   const currentSize = sizes[size];
@@ -47,9 +47,7 @@ const NucleosLogo: React.FC<NucleosLogoProps> = ({
       </div>
 
       {/* Texto Nucleos com Tag Semântica h2 */}
-      <h2 className={`font-semibold text-foreground ${currentSize.container}`}>
-        Nucleos
-      </h2>
+      <h3 className={`font-semibold ${currentSize.container}`}>Nucleos</h3>
     </div>
   );
 };

@@ -135,7 +135,7 @@ function AddNucleoCard({ onClick }: { onClick: () => void }) {
       className="group h-full min-h-[280px] cursor-pointer border-2 border-dashed border-muted-foreground/25 bg-muted/20 transition-all hover:border-primary/50 hover:bg-muted/30"
       onClick={onClick}
     >
-      <CardContent className="flex flex-col items-center justify-center p-6 text-center">
+      <CardContent className="flex h-full flex-col items-center justify-center p-6 text-center">
         <div className="rounded-full bg-primary/10 p-4 transition-transform group-hover:scale-110">
           <Plus className="h-8 w-8 text-primary" />
         </div>

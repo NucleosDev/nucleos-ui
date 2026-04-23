@@ -53,6 +53,7 @@ import { useNucleos } from "@/hooks/useNucleo";
 import { useBlocos } from "@/hooks/useBlocos";
 import { useColecoes } from "@/hooks/useColecoes";
 import { useTimers } from "@/hooks/useTimers";
+import NucleosLogo from "@/components/nucleo/NucleosLogo";
 
 interface AuthenticatedHeaderProps {
   onToggleSidebar?: () => void;
@@ -202,22 +203,14 @@ export function AuthenticatedHeader({
   };
 
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-300 ",
-        scrolled
-          ? "bg-background/95 backdrop-blur-md border-b border-border/50 shadow-sm"
-          : "bg-background/80 backdrop-blur-sm border-b border-border/30",
-      )}
-    >
-      <nav className="relative mx-auto grid h-12 w-full grid-cols-[1fr_auto_1fr] items-center px-10 sm:px-6 lg:px-8">
-        {/* ========== COLUNA ESQUERDA ========== */}
-        <div className="flex justify-start items-center gap-2">
-          {/* Botão para abrir/fechar sidebar - PRIMEIRO COMPONENTE */}
+    <header className="bg-background/80 backdrop-blur-sm border-b border-border/30">
+      <nav className="relative mx-auto grid h-14 w-full grid-cols-[1fr_auto_1fr] items-center px-6 sm:px-8 lg:px-10">
+        {/* Lado esquerdo: Botão de toggle e informações */}
+        <div className="flex justify-start items-center gap-3">
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 rounded-full hover:bg-accent/50 transition-all duration-200"
+            className="h-9 w-9 rounded-full hover:bg-accent/50 transition-all duration-200"
             onClick={onToggleSidebar}
             aria-label={
               isSidebarCollapsed ? "Abrir menu lateral" : "Fechar menu lateral"
@@ -230,38 +223,36 @@ export function AuthenticatedHeader({
             )}
           </Button>
 
-          <Link href={ROUTES.PLANOS} className={getPlanClassName()}>
+          {/* <Link href={ROUTES.PLANOS} className={cn("ml-2", getPlanClassName())}>
             {getPlanDisplay()}
-          </Link>
-        </div>
+          </Link> */}
 
-        {/* ========== COLUNA CENTRAL (Logo) ========== */}
-        <div className="flex items-center justify-center">
-          <div>
+          <div className="w-full max-w-md">
             <GlobalSearch
               recentNucleos={recentNucleos}
               blocos={blocosData}
               colecoes={colecoesData}
               timers={timersData}
-              placeholder="Buscar por núcleos, blocos, coleções..."
+              placeholder="Procurar..."
               onResultClick={() => {
-                // Fechar modal, dropdown, etc.
                 console.log("Resultado clicado");
               }}
             />
           </div>
         </div>
 
-        {/* ========== COLUNA DIREITA ========== */}
-        <div className="flex items-center justify-end gap-4">
-          {/* Ícones de Mensagens e Notificações */}
+        {/* Centro: Busca global */}
+        <div className="flex items-center justify-center"></div>
+
+        {/* Lado direito: Ícones e avatar */}
+        <div className="flex items-center justify-end gap-3">
           <div className="flex items-center gap-1">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 rounded-full hover:bg-accent/50"
+                  className="h-9 w-9 rounded-full hover:bg-accent/50"
                 >
                   <Mail className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors" />
                 </Button>
@@ -280,7 +271,7 @@ export function AuthenticatedHeader({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 rounded-full hover:bg-accent/50"
+                  className="h-9 w-9 rounded-full hover:bg-accent/50"
                 >
                   <Bell className="h-4 w-4 text-muted-foreground hover:text-primary transition-colors" />
                 </Button>
@@ -307,8 +298,8 @@ export function AuthenticatedHeader({
               className="cursor-pointer"
             >
               <div className="flex items-center gap-1.5">
-                <div className="relative h-8 w-8 rounded-full">
-                  <Avatar className="h-8 w-8 ring-2 ring-primary/20 transition-all duration-300 hover:ring-primary/40">
+                <div className="relative h-9 w-9 rounded-full">
+                  <Avatar className="h-9 w-9 ring-2 ring-primary/20 transition-all duration-300 hover:ring-primary/40">
                     <AvatarImage src={user?.avatarUrl || undefined} />
                     <AvatarFallback className="bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white text-sm font-medium">
                       {getInitials()}

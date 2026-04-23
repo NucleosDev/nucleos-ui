@@ -61,7 +61,7 @@ export function LoginForm() {
   };
 
   return (
-    <Card className="w-full max-w-md shadow-lg border-0">
+    <Card className="w-full py-5 shadow-lg border-0 bg-background/90 backdrop-blur-lg">
       <CardHeader className="space-y-1 text-center">
         <CardTitle className="text-2xl font-bold">Entrar</CardTitle>
         <CardDescription>
