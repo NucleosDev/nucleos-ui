@@ -1,6 +1,7 @@
+// src/components/blocos/cruds/TarefasBlocoCard.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Plus,
   MoreVertical,
@@ -8,17 +9,12 @@ import {
   Trash2,
   CheckSquare,
   Loader2,
+  LayoutGrid,
+  List,
+  Flame,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,26 +23,37 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TarefaCard } from "@/components/tarefas/TarefaCard";
+import { Badge } from "@/components/ui/badge";
 import { useTarefas } from "@/hooks/useTarefas";
 import { toast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 import type { Bloco } from "@/types/bloco";
-import type { TarefaPrioridade } from "@/types/tarefas";
+import type { Tarefa, TarefaPrioridade, TarefaStatus } from "@/types/tarefas";
+import { KanbanBoard } from "@/components/tarefas/KanbanBoard";
+import { TaskListView } from "@/components/tarefas/TaskListView";
+import { DailyTrackerDialog } from "@/components/tarefas/DailyTrackerDialog";
+import { AddTaskDialog } from "@/components/tarefas/AddTaskDialog";
 
 interface TarefasBlocoCardProps {
   bloco: Bloco;
   nucleoId: string;
-  onDelete: (blocoId: string) => void;
-  onEdit: (blocoId: string) => void;
+  onDelete?: () => void;
+  onEdit?: () => void;
   isDeleting?: boolean;
 }
 
 export function TarefasBlocoCard({
   bloco,
+  nucleoId,
   onDelete,
   onEdit,
   isDeleting,
 }: TarefasBlocoCardProps) {
+  const [viewMode, setViewMode] = useState<"kanban" | "list">("kanban");
+  const [dailyTrackerOpen, setDailyTrackerOpen] = useState(false);
+  const [addTaskOpen, setAddTaskOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
   const {
     tarefas = [],
     isLoading,
@@ -58,40 +65,30 @@ export function TarefasBlocoCard({
     isUpdating,
   } = useTarefas(bloco.id);
 
-  const [novaTarefaTitulo, setNovaTarefaTitulo] = useState("");
-  const [novaTarefaPrioridade, setNovaTarefaPrioridade] =
-    useState<TarefaPrioridade>("media");
+  const handleRefresh = () => setRefreshKey((prev) => prev + 1);
 
-  const handleAddTarefa = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!novaTarefaTitulo.trim()) return;
+  const handleAddTask = async (
+    titulo: string,
+    prioridade: TarefaPrioridade,
+    dataVencimento?: string,
+  ) => {
     try {
       await criar({
         blocoId: bloco.id,
-        titulo: novaTarefaTitulo.trim(),
-        prioridade: novaTarefaPrioridade,
+        titulo: titulo.trim(),
+        prioridade,
+        dataVencimento,
       });
-      setNovaTarefaTitulo("");
-      setNovaTarefaPrioridade("media");
       toast({ title: "Tarefa adicionada!" });
+      handleRefresh();
+      return true;
     } catch (error: any) {
-      toast({
-        title: "Erro ao adicionar tarefa",
-        description: error?.message,
-        variant: "destructive",
-      });
+      toast({ title: "Erro ao adicionar tarefa", variant: "destructive" });
+      return false;
     }
   };
 
-  const handleToggle = async (id: string) => {
-    try {
-      await concluir(id);
-    } catch (error: any) {
-      toast({ title: "Erro ao concluir tarefa", variant: "destructive" });
-    }
-  };
-
-  const handleUpdate = async (
+  const handleUpdateTask = async (
     id: string,
     titulo: string,
     prioridade?: TarefaPrioridade,
@@ -99,123 +96,535 @@ export function TarefasBlocoCard({
     try {
       await atualizar({ id, payload: { titulo, prioridade } });
       toast({ title: "Tarefa atualizada!" });
+      handleRefresh();
     } catch (error: any) {
       toast({ title: "Erro ao atualizar", variant: "destructive" });
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleToggleStatus = async (id: string, status: TarefaStatus) => {
+    try {
+      await concluir(id);
+      handleRefresh();
+    } catch (error: any) {
+      toast({ title: "Erro ao mover tarefa", variant: "destructive" });
+    }
+  };
+
+  const handleDeleteTask = async (id: string) => {
     if (!confirm("Excluir esta tarefa?")) return;
     try {
       await excluir(id);
       toast({ title: "Tarefa excluída!" });
+      handleRefresh();
     } catch (error: any) {
       toast({ title: "Erro ao excluir", variant: "destructive" });
     }
   };
 
-  return (
-    <Card className="group relative hover:shadow-md transition-shadow">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
+  const completedCount = tarefas.filter((t) => t.status === "concluida").length;
+  const totalCount = tarefas.length;
+  const progressPercentage =
+    totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
+
+  if (isLoading) {
+    return (
+      <Card className="group relative hover:shadow-md transition-shadow">
+        <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
-            <CheckSquare className="h-5 w-5 text-muted-foreground" />
-            <CardTitle className="text-lg">
-              {bloco.titulo || "Tarefas"}
-            </CardTitle>
+            <Skeleton className="h-5 w-5 rounded" />
+            <Skeleton className="h-6 w-32" />
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onEdit(bloco.id)}>
-                <Pencil className="mr-2 h-4 w-4" /> Editar bloco
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => onDelete(bloco.id)}
-                className="text-destructive"
-                disabled={isDeleting}
-              >
-                <Trash2 className="mr-2 h-4 w-4" /> Excluir bloco
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </CardHeader>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-24 w-full" />
+        </CardContent>
+      </Card>
+    );
+  }
 
-      <CardContent className="space-y-4">
-        <form onSubmit={handleAddTarefa} className="flex flex-col gap-2">
-          <Input
-            placeholder="Nova tarefa..."
-            value={novaTarefaTitulo}
-            onChange={(e) => setNovaTarefaTitulo(e.target.value)}
-            className="h-9 w-full"
-            disabled={isCreating}
-          />
-
-          <div className="flex gap-2">
-            <Select
-              value={novaTarefaPrioridade}
-              onValueChange={(v) =>
-                setNovaTarefaPrioridade(v as TarefaPrioridade)
-              }
-              disabled={isCreating}
-            >
-              <SelectTrigger className="h-9 w-[120px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="baixa">Baixa</SelectItem>
-                <SelectItem value="media">Média</SelectItem>
-                <SelectItem value="alta">Alta</SelectItem>
-              </SelectContent>
-            </Select>
-
+  return (
+    <>
+      <Card className="group relative hover:shadow-md transition-shadow">
+        {/* Barra de ferramentas flutuante */}
+        <div className="absolute -top-3 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 z-10">
+          {onEdit && (
             <Button
-              type="submit"
-              size="sm"
-              className="flex-1"
-              disabled={isCreating || !novaTarefaTitulo.trim()}
+              variant="outline"
+              size="icon"
+              className="h-7 w-7 bg-background shadow-sm"
+              onClick={onEdit}
             >
-              {isCreating ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-1" />
-              ) : (
-                <Plus className="h-4 w-4 mr-1" />
-              )}
-              Adicionar
+              <Pencil className="h-3.5 w-3.5" />
             </Button>
+          )}
+          {onDelete && (
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-7 w-7 bg-background shadow-sm text-destructive hover:text-destructive"
+              onClick={onDelete}
+              disabled={isDeleting}
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </Button>
+          )}
+          <div className="cursor-move">
+            <div className="p-1 bg-background/80 backdrop-blur-sm rounded shadow-sm">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <circle cx="9" cy="6" r="1.5" fill="currentColor" />
+                <circle cx="9" cy="12" r="1.5" fill="currentColor" />
+                <circle cx="9" cy="18" r="1.5" fill="currentColor" />
+                <circle cx="15" cy="6" r="1.5" fill="currentColor" />
+                <circle cx="15" cy="12" r="1.5" fill="currentColor" />
+                <circle cx="15" cy="18" r="1.5" fill="currentColor" />
+              </svg>
+            </div>
           </div>
-        </form>
+        </div>
 
-        {isLoading ? (
-          <div className="space-y-3">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-12 w-full" />
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CheckSquare className="h-5 w-5 text-primary" />
+              <CardTitle className="text-lg">
+                {bloco.titulo || "Tarefas"}
+              </CardTitle>
+              <Badge variant="secondary" className="text-xs">
+                {completedCount}/{totalCount} concluídas
+              </Badge>
+            </div>
+            <div className="flex items-center gap-2">
+              {/* View Toggle */}
+              <div className="flex items-center gap-0.5 bg-muted/50 rounded-md p-0.5">
+                <button
+                  onClick={() => setViewMode("kanban")}
+                  className={cn(
+                    "p-1.5 rounded-md transition-colors",
+                    viewMode === "kanban" && "bg-background shadow-sm",
+                  )}
+                  title="Kanban"
+                >
+                  <LayoutGrid className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  onClick={() => setViewMode("list")}
+                  className={cn(
+                    "p-1.5 rounded-md transition-colors",
+                    viewMode === "list" && "bg-background shadow-sm",
+                  )}
+                  title="Lista"
+                >
+                  <List className="h-3.5 w-3.5" />
+                </button>
+              </div>
+
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setDailyTrackerOpen(true)}
+              >
+                <Flame className="h-4 w-4 mr-1" />
+                Diário
+              </Button>
+
+              <Button
+                size="sm"
+                onClick={() => setAddTaskOpen(true)}
+                disabled={isCreating}
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Nova tarefa
+              </Button>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {onEdit && (
+                    <DropdownMenuItem onClick={onEdit}>
+                      <Pencil className="mr-2 h-4 w-4" /> Editar bloco
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  {onDelete && (
+                    <DropdownMenuItem
+                      onClick={onDelete}
+                      className="text-destructive"
+                      disabled={isDeleting}
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" /> Excluir bloco
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
-        ) : tarefas.length === 0 ? (
-          <div className="text-center py-6 text-muted-foreground text-sm">
-            Nenhuma tarefa ainda.
-          </div>
-        ) : (
-          <div className="space-y-1">
-            {tarefas.map((tarefa) => (
-              <TarefaCard
-                key={tarefa.id}
-                tarefa={tarefa}
-                onToggle={handleToggle}
-                onUpdate={handleUpdate}
-                onDelete={handleDelete}
-                isUpdating={isUpdating}
-              />
-            ))}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+
+          {/* Progress Bar */}
+          {totalCount > 0 && (
+            <div className="mt-3">
+              <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                <span>Progresso</span>
+                <span>{Math.round(progressPercentage)}%</span>
+              </div>
+              <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-primary to-emerald-500 rounded-full transition-all duration-500"
+                  style={{ width: `${progressPercentage}%` }}
+                />
+              </div>
+            </div>
+          )}
+        </CardHeader>
+
+        <CardContent className="pt-0">
+          {viewMode === "kanban" ? (
+            <KanbanBoard
+              tasks={tarefas}
+              onTaskMove={handleToggleStatus}
+              onTaskEdit={handleUpdateTask}
+              onTaskDelete={handleDeleteTask}
+              isUpdating={isUpdating}
+            />
+          ) : (
+            <TaskListView
+              tasks={tarefas}
+              onTaskToggle={handleToggleStatus}
+              onTaskEdit={handleUpdateTask}
+              onTaskDelete={handleDeleteTask}
+              isUpdating={isUpdating}
+            />
+          )}
+        </CardContent>
+      </Card>
+
+      <AddTaskDialog
+        open={addTaskOpen}
+        onClose={() => setAddTaskOpen(false)}
+        onAdd={handleAddTask}
+        isSubmitting={isCreating}
+      />
+
+      <DailyTrackerDialog
+        open={dailyTrackerOpen}
+        onClose={() => setDailyTrackerOpen(false)}
+        tasks={tarefas}
+        onTaskToggle={handleToggleStatus}
+        onAddTask={handleAddTask}
+      />
+    </>
   );
 }
+// // src/components/blocos/cruds/TarefasBlocoCard.tsx
+// "use client";
+
+// import { useState, useEffect } from "react";
+// import {
+//   Plus,
+//   MoreVertical,
+//   Pencil,
+//   Trash2,
+//   CheckSquare,
+//   Loader2,
+//   LayoutGrid,
+//   List,
+//   Flame,
+// } from "lucide-react";
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// import { Button } from "@/components/ui/button";
+// import {
+//   DropdownMenu,
+//   DropdownMenuContent,
+//   DropdownMenuItem,
+//   DropdownMenuSeparator,
+//   DropdownMenuTrigger,
+// } from "@/components/ui/dropdown-menu";
+// import { Skeleton } from "@/components/ui/skeleton";
+// import { Badge } from "@/components/ui/badge";
+// import { useTarefas } from "@/hooks/useTarefas";
+// import { toast } from "@/hooks/use-toast";
+// import { cn } from "@/lib/utils";
+// import type { Bloco } from "@/types/bloco";
+// import type { Tarefa, TarefaPrioridade, TarefaStatus } from "@/types/tarefas";
+// import { KanbanBoard } from "@/components/tarefas/KanbanBoard";
+// import { TaskListView } from "@/components/tarefas/TaskListView";
+// import { DailyTrackerDialog } from "@/components/tarefas/DailyTrackerDialog";
+// import { AddTaskDialog } from "@/components/tarefas/AddTaskDialog";
+
+// interface TarefasBlocoCardProps {
+//   bloco: Bloco;
+//   nucleoId: string;
+//   onDelete?: () => void;
+//   onEdit?: () => void;
+//   isDeleting?: boolean;
+// }
+
+// export function TarefasBlocoCard({
+//   bloco,
+//   nucleoId,
+//   onDelete,
+//   onEdit,
+//   isDeleting,
+// }: TarefasBlocoCardProps) {
+//   const [viewMode, setViewMode] = useState<"kanban" | "list">("kanban");
+//   const [dailyTrackerOpen, setDailyTrackerOpen] = useState(false);
+//   const [addTaskOpen, setAddTaskOpen] = useState(false);
+//   const [refreshKey, setRefreshKey] = useState(0);
+
+//   const {
+//     tarefas = [],
+//     isLoading,
+//     criar,
+//     atualizar,
+//     concluir,
+//     excluir,
+//     isCreating,
+//     isUpdating,
+//   } = useTarefas(bloco.id);
+
+//   const handleRefresh = () => setRefreshKey(prev => prev + 1);
+
+//   const handleAddTask = async (titulo: string, prioridade: TarefaPrioridade, dataVencimento?: string) => {
+//     try {
+//       await criar({
+//         blocoId: bloco.id,
+//         titulo: titulo.trim(),
+//         prioridade,
+//         dataVencimento,
+//       });
+//       toast({ title: "Tarefa adicionada!" });
+//       handleRefresh();
+//       return true;
+//     } catch (error: any) {
+//       toast({ title: "Erro ao adicionar tarefa", variant: "destructive" });
+//       return false;
+//     }
+//   };
+
+//   const handleUpdateTask = async (id: string, titulo: string, prioridade?: TarefaPrioridade) => {
+//     try {
+//       await atualizar({ id, payload: { titulo, prioridade } });
+//       toast({ title: "Tarefa atualizada!" });
+//       handleRefresh();
+//     } catch (error: any) {
+//       toast({ title: "Erro ao atualizar", variant: "destructive" });
+//     }
+//   };
+
+//   const handleToggleStatus = async (id: string, status: TarefaStatus) => {
+//     try {
+//       await concluir(id);
+//       handleRefresh();
+//     } catch (error: any) {
+//       toast({ title: "Erro ao mover tarefa", variant: "destructive" });
+//     }
+//   };
+
+//   const handleDeleteTask = async (id: string) => {
+//     if (!confirm("Excluir esta tarefa?")) return;
+//     try {
+//       await excluir(id);
+//       toast({ title: "Tarefa excluída!" });
+//       handleRefresh();
+//     } catch (error: any) {
+//       toast({ title: "Erro ao excluir", variant: "destructive" });
+//     }
+//   };
+
+//   const completedCount = tarefas.filter(t => t.status === "concluida").length;
+//   const totalCount = tarefas.length;
+//   const progressPercentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
+
+//   if (isLoading) {
+//     return (
+//       <Card className="group relative hover:shadow-md transition-shadow">
+//         <CardHeader className="pb-3">
+//           <div className="flex items-center gap-2">
+//             <Skeleton className="h-5 w-5 rounded" />
+//             <Skeleton className="h-6 w-32" />
+//           </div>
+//         </CardHeader>
+//         <CardContent className="space-y-3">
+//           <Skeleton className="h-10 w-full" />
+//           <Skeleton className="h-24 w-full" />
+//           <Skeleton className="h-24 w-full" />
+//         </CardContent>
+//       </Card>
+//     );
+//   }
+
+//   return (
+//     <>
+//       <Card className="group relative hover:shadow-md transition-shadow">
+//         {/* Barra de ferramentas flutuante */}
+//         <div className="absolute -top-3 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 z-10">
+//           {onEdit && (
+//             <Button
+//               variant="outline"
+//               size="icon"
+//               className="h-7 w-7 bg-background shadow-sm"
+//               onClick={onEdit}
+//             >
+//               <Pencil className="h-3.5 w-3.5" />
+//             </Button>
+//           )}
+//           {onDelete && (
+//             <Button
+//               variant="outline"
+//               size="icon"
+//               className="h-7 w-7 bg-background shadow-sm text-destructive hover:text-destructive"
+//               onClick={onDelete}
+//               disabled={isDeleting}
+//             >
+//               <Trash2 className="h-3.5 w-3.5" />
+//             </Button>
+//           )}
+//           <div className="cursor-move">
+//             <div className="p-1 bg-background/80 backdrop-blur-sm rounded shadow-sm">
+//               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+//                 <circle cx="9" cy="6" r="1.5" fill="currentColor" />
+//                 <circle cx="9" cy="12" r="1.5" fill="currentColor" />
+//                 <circle cx="9" cy="18" r="1.5" fill="currentColor" />
+//                 <circle cx="15" cy="6" r="1.5" fill="currentColor" />
+//                 <circle cx="15" cy="12" r="1.5" fill="currentColor" />
+//                 <circle cx="15" cy="18" r="1.5" fill="currentColor" />
+//               </svg>
+//             </div>
+//           </div>
+//         </div>
+
+//         <CardHeader className="pb-3">
+//           <div className="flex items-center justify-between">
+//             <div className="flex items-center gap-2">
+//               <CheckSquare className="h-5 w-5 text-primary" />
+//               <CardTitle className="text-lg">{bloco.titulo || "Tarefas"}</CardTitle>
+//               <Badge variant="secondary" className="text-xs">
+//                 {completedCount}/{totalCount} concluídas
+//               </Badge>
+//             </div>
+//             <div className="flex items-center gap-2">
+//               {/* View Toggle */}
+//               <div className="flex items-center gap-0.5 bg-muted/50 rounded-md p-0.5">
+//                 <button
+//                   onClick={() => setViewMode("kanban")}
+//                   className={cn(
+//                     "p-1.5 rounded-md transition-colors",
+//                     viewMode === "kanban" && "bg-background shadow-sm"
+//                   )}
+//                   title="Kanban"
+//                 >
+//                   <LayoutGrid className="h-3.5 w-3.5" />
+//                 </button>
+//                 <button
+//                   onClick={() => setViewMode("list")}
+//                   className={cn(
+//                     "p-1.5 rounded-md transition-colors",
+//                     viewMode === "list" && "bg-background shadow-sm"
+//                   )}
+//                   title="Lista"
+//                 >
+//                   <List className="h-3.5 w-3.5" />
+//                 </button>
+//               </div>
+
+//               <Button size="sm" variant="outline" onClick={() => setDailyTrackerOpen(true)}>
+//                 <Flame className="h-4 w-4 mr-1" />
+//                 Diário
+//               </Button>
+
+//               <Button size="sm" onClick={() => setAddTaskOpen(true)} disabled={isCreating}>
+//                 <Plus className="h-4 w-4 mr-1" />
+//                 Nova tarefa
+//               </Button>
+
+//               <DropdownMenu>
+//                 <DropdownMenuTrigger asChild>
+//                   <Button variant="ghost" size="icon" className="h-8 w-8">
+//                     <MoreVertical className="h-4 w-4" />
+//                   </Button>
+//                 </DropdownMenuTrigger>
+//                 <DropdownMenuContent align="end">
+//                   {onEdit && (
+//                     <DropdownMenuItem onClick={onEdit}>
+//                       <Pencil className="mr-2 h-4 w-4" /> Editar bloco
+//                     </DropdownMenuItem>
+//                   )}
+//                   <DropdownMenuSeparator />
+//                   {onDelete && (
+//                     <DropdownMenuItem onClick={onDelete} className="text-destructive" disabled={isDeleting}>
+//                       <Trash2 className="mr-2 h-4 w-4" /> Excluir bloco
+//                     </DropdownMenuItem>
+//                   )}
+//                 </DropdownMenuContent>
+//               </DropdownMenu>
+//             </div>
+//           </div>
+
+//           {/* Progress Bar */}
+//           {totalCount > 0 && (
+//             <div className="mt-3">
+//               <div className="flex justify-between text-xs text-muted-foreground mb-1">
+//                 <span>Progresso</span>
+//                 <span>{Math.round(progressPercentage)}%</span>
+//               </div>
+//               <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+//                 <div
+//                   className="h-full bg-gradient-to-r from-primary to-emerald-500 rounded-full transition-all duration-500"
+//                   style={{ width: `${progressPercentage}%` }}
+//                 />
+//               </div>
+//             </div>
+//           )}
+//         </CardHeader>
+
+//         <CardContent className="pt-0">
+//           {viewMode === "kanban" ? (
+//             <KanbanBoard
+//               tasks={tarefas}
+//               onTaskMove={handleToggleStatus}
+//               onTaskEdit={handleUpdateTask}
+//               onTaskDelete={handleDeleteTask}
+//               isUpdating={isUpdating}
+//             />
+//           ) : (
+//             <TaskListView
+//               tasks={tarefas}
+//               onTaskToggle={handleToggleStatus}
+//               onTaskEdit={handleUpdateTask}
+//               onTaskDelete={handleDeleteTask}
+//               isUpdating={isUpdating}
+//             />
+//           )}
+//         </CardContent>
+//       </Card>
+
+//       <AddTaskDialog
+//         open={addTaskOpen}
+//         onClose={() => setAddTaskOpen(false)}
+//         onAdd={handleAddTask}
+//         isSubmitting={isCreating}
+//       />
+
+//       <DailyTrackerDialog
+//         open={dailyTrackerOpen}
+//         onClose={() => setDailyTrackerOpen(false)}
+//         tasks={tarefas}
+//         onTaskToggle={handleToggleStatus}
+//         onAddTask={handleAddTask}
+//       />
+//     </>
+//   );
+// }

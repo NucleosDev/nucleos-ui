@@ -83,12 +83,13 @@ export default function UserAuthLayout({
             )}
           >
             {children}
+            <div className="h-30"></div>
           </div>
         </DashboardLayout>
 
         {/* Footer condicional */}
-        {!isMobile ? <AuthenticatedFooter /> : <AuthenticatedMobileFooter />}
-        <XpToast />
+        {/* {!isMobile ? <AuthenticatedFooter /> : <AuthenticatedMobileFooter />}
+        <XpToast /> */}
       </div>
     </ProtectedRoute>
   );

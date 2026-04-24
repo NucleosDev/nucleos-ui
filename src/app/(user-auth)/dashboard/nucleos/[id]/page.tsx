@@ -52,6 +52,7 @@ import { ListasBlocoCard } from "@/components/blocos/cruds/ListasBlocoCard";
 import { CalendarioBlocoCard } from "@/components/blocos/cruds/CalendarioBlocoCard";
 import { TimersBlocoCard } from "@/components/blocos/cruds/TimersBlocoCard";
 import { HabitosBlocoCard } from "@/components/blocos/cruds/HabitosBlocoCard";
+import { BlocoDeNotas } from "@/components/blocos/cruds/BlocoDeNotas";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   DropdownMenu,
@@ -472,7 +473,6 @@ export default function NucleoDetailPage() {
           fill
           className="object-cover"
           priority
-          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
 
@@ -619,6 +619,13 @@ export default function NucleoDetailPage() {
                           bloco.tipo === "habito") && (
                           <HabitosBlocoCard {...commonProps} />
                         )}
+                        {bloco.tipo === "notas" && (
+                          <BlocoDeNotas
+                            bloco={bloco}
+                            nucleoId={id}
+                            onDelete={() => handleExcluirBloco(bloco.id)}
+                          />
+                        )}
                       </BlocoWrapper>
                     );
                   })}
@@ -664,6 +671,13 @@ export default function NucleoDetailPage() {
                           {(bloco.tipo === "habitos" ||
                             bloco.tipo === "habito") && (
                             <HabitosBlocoCard {...commonProps} />
+                          )}
+                          {bloco.tipo === "notas" && (
+                            <BlocoDeNotas
+                              bloco={bloco}
+                              nucleoId={id}
+                              onDelete={() => handleExcluirBloco(bloco.id)}
+                            />
                           )}
                         </BlocoWrapper>
                       );

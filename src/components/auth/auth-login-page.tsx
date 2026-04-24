@@ -8,6 +8,7 @@ import {
   AppleIcon,
   AtSignIcon,
   ChevronLeftIcon,
+  Fullscreen,
   GithubIcon,
   Grid2x2PlusIcon,
 } from "lucide-react";
@@ -15,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { LoginForm } from "@/components/auth/login-form";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { GoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
 import { useAuth } from "@/auth/auth-context";
 
 export function AuthPage() {
@@ -41,7 +42,7 @@ export function AuthPage() {
 
           <div
             className="
-    absolute top-0 right-0 h-[320px] w-[240px] -translate-y-[350px] rounded-full
+    absolute top-0 right-0 h-[320px] w-[240px] -translate-y-[350px] rounded-full scale-80
     bg-[radial-gradient(50%_50%,rgba(108,140,255,0.06)_0%,rgb(108, 140, 255)_80%,transparent_100%)]
   "
           />
@@ -57,31 +58,15 @@ export function AuthPage() {
           {/* Logo e título para mobile */}
           <div className=" flex w-full flex-col items-center gap-3 lg:hidden">
             <Image
-              src={"/logo-full.svg"}
+              src="/bg-sm-2.svg"
               alt="logo nucleos"
-              width={650}
-              height={650}
+              fill
               className="
     absolute top-0 left-0
-    -translate-x-1/3 -translate-y-1/3
-    opacity-20
-    -rotate-[10deg]
-    pointer-events-none
-  "
-            />
-
-            <Image
-              src={"/logo-full.svg"}
-              alt="logo nucleos"
-              width={650}
-              height={650}
-              className="
-    absolute bottom-0 right-0
-    translate-x-1/3 translate-y-1/3
-    opacity-20
-    rotate-[18deg]
-    scale-x-[-1]
-    pointer-events-none
+    w-full h-full
+    object-cover
+    opacity-10
+    scale-125
   "
             />
 
@@ -123,7 +108,7 @@ export function AuthPage() {
                     className="
       absolute top-1/2 left-1/2
       -translate-x-1/2 -translate-y-1/2
-      w-[520px] h-[400px]
+      w-[220px] h-[200px]
       rounded-full
       bg-[#4D7CFF]/20
       blur-3xl
@@ -135,7 +120,7 @@ export function AuthPage() {
                     className="
       absolute top-1/2 left-1/2
       -translate-x-[40%] -translate-y-[60%]
-      w-[420px] h-[620px]
+      w-[220px] h-[220px]
       rounded-full
       bg-[#00C9A7]/20
       blur-3xl
@@ -147,7 +132,7 @@ export function AuthPage() {
                     className="
       absolute top-1/2 left-1/2
       -translate-x-[60%] -translate-y-[30%]
-      w-[400px] h-[600px]
+      w-[200px] h-[200px]
       rounded-full
       bg-[#5B7FFF]/20
       blur-3xl
@@ -159,7 +144,7 @@ export function AuthPage() {
                     className="
       absolute top-1/2 left-1/2
       -translate-x-[30%] -translate-y-[40%]
-      w-[380px] h-[580px]
+      w-[280px] h-[280px]
       rounded-full
       bg-[#1FBFA8]/20
       blur-3xl
@@ -172,7 +157,7 @@ export function AuthPage() {
                   className="
       absolute top-1/2 left-1/2
       -translate-x-[40%] -translate-y-[60%]
-      size-[420px]
+      size-[220px]
       rounded-full
       bg-[#00C9A7]/20
       blur-3xl
@@ -184,7 +169,7 @@ export function AuthPage() {
                   className="
       absolute top-1/2 left-1/2
       -translate-x-[60%] -translate-y-[50%]
-      size-[450px]
+      size-[250px]
       rounded-full
       bg-[#5B7FFF]/20
       blur-3xl
@@ -196,7 +181,7 @@ export function AuthPage() {
                   className="
       absolute top-1/2 left-1/2
       -translate-x-[30%] -translate-y-[40%]
-      size-[380px]
+      size-[280px]
       rounded-full
       bg-[#1FBFA8]/20
       blur-3xl
@@ -213,8 +198,11 @@ export function AuthPage() {
               </div>
 
               {/* alternativas */}
-              <div className="flex justify-center w-full">
-                <button className="w-full flex items-center bg-background justify-center gap-x-3 py-2.5 border rounded-lg text-sm font-medium hover:bg-primary/50 duration-150 active:bg-gray-100">
+              <div className="flex justify-center w-full relative z-10">
+                <button
+                  // onClick={() => handleGoogleLogin()}
+                  className="w-full flex items-center bg-background justify-center gap-x-3 py-2.5 border rounded-lg text-sm font-medium hover:bg-primary/50 duration-150 active:bg-gray-100"
+                >
                   <svg
                     className="w-5 h-5"
                     viewBox="0 0 533.5 544.3"
@@ -242,60 +230,6 @@ export function AuthPage() {
               </div>
             </div>
           </div>
-
-          {/* <div className="space-y-2">
-            <Button type="button" size="lg" className="w-full">
-              <GoogleIcon className="size-4 me-2" />
-              Continue with Google
-            </Button>
-            <Button type="button" size="lg" className="w-full">
-              <AppleIcon className="size-4 me-2" />
-              Continue with Apple
-            </Button>
-            <Button type="button" size="lg" className="w-full">
-              <GithubIcon className="size-4 me-2" />
-              Continue with GitHub
-            </Button>
-          </div> */}
-
-          {/* <AuthSeparator /> */}
-
-          {/* <form className="space-y-2">
-            <p className="text-muted-foreground text-start text-xs">
-              Enter your email address to sign in or create an account
-            </p>
-            <div className="relative h-max">
-              <Input
-                placeholder="your.email@example.com"
-                className="peer ps-9"
-                type="email"
-              />
-              <div className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
-                <AtSignIcon className="size-4" aria-hidden="true" />
-              </div>
-            </div>
-
-            <Button type="button" className="w-full">
-              <span>Continue With Email</span>
-            </Button>
-          </form> */}
-          {/* <p className="text-muted-foreground mt-8 text-sm">
-            By clicking continue, you agree to our{" "}
-            
-              href="@"
-              className="hover:text-primary underline underline-offset-4"
-            >
-              Terms of Service
-            </a>{" "}
-            and{" "}
-            
-              href="#"
-              className="hover:text-primary underline underline-offset-4"
-            >
-              Privacy Policy
-            </a>
-            .
-          </p> */}
         </div>
       </div>
 

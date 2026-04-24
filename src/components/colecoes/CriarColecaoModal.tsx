@@ -1,3 +1,4 @@
+// src/components/colecoes/CriarColecaoModal.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -75,12 +76,7 @@ export function CriarColecaoModal({
             {error && <p className="text-xs text-destructive">{error}</p>}
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              type="button"
-              onClick={onClose}
-              disabled={isSubmitting}
-            >
+            <Button variant="outline" onClick={onClose} disabled={isSubmitting}>
               Cancelar
             </Button>
             <Button type="submit" disabled={isSubmitting || !nome.trim()}>

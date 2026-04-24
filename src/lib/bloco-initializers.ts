@@ -1,7 +1,8 @@
+// lib/bloco-initializers.ts
 import { listasService } from "@/services/index.service";
 import { tarefasService } from "@/services/tarefas.service";
 import { colecoesService } from "@/services/colecoes.service";
-import { habitosService } from "@/services/habitos.service"; // 👈 NOVO
+import { habitosService } from "@/services/habitos.service";
 import type { BlocoTipo } from "@/types/bloco";
 
 export type BlocoInitializer = (
@@ -32,7 +33,6 @@ export const BLOCO_INITIALIZERS: Partial<Record<BlocoTipo, BlocoInitializer>> =
       // Calendário não precisa de inicialização automática
     },
     habitos: async (blocoId, titulo) => {
-      // Criar um hábito de exemplo para o usuário começar
       await habitosService.criar({
         blocoId,
         nome: titulo || "Beber água",
@@ -46,7 +46,20 @@ export const BLOCO_INITIALIZERS: Partial<Record<BlocoTipo, BlocoInitializer>> =
         metaVezes: 1,
       });
     },
-
-    notas: undefined,
-    calculo: undefined,
+    timers: async () => {
+      // opcional
+    },
+    timer: async () => {
+      // opcional
+    },
+    habito: async () => {
+      // opcional
+    },
+    notas: async (blocoId, titulo) => {
+      // Bloco de notas - a coleção será criada sob demanda pelo componente
+      console.log(`Bloco de notas ${blocoId} criado: ${titulo || "Notas"}`);
+    },
+    calculo: async () => {
+      // opcional
+    },
   };

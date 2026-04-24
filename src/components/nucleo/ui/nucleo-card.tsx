@@ -167,9 +167,7 @@ export function NucleoCard({
       >
         <div
           className={cn(
-            "group relative overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br from-card to-card/80 transition-all duration-300",
-            "hover:border-[#4D7CFF]/40 hover:shadow-xl hover:shadow-[#4D7CFF]/10 hover:-translate-y-1",
-            "cursor-pointer",
+            "group relative isolate overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br from-card to-card/80 transition-all duration-300",
             className,
           )}
           onClick={onClick}
@@ -180,21 +178,66 @@ export function NucleoCard({
               src={capaUrl}
               alt={nome}
               fill
-              unoptimized
-              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+              className="z-0 object-cover transition-transform duration-700 group-hover:scale-110"
             />
 
             {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-card via-card/60 to-transparent opacity-90" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 z-10 bg-gradient-to-t from-card via-card/60 to-transparent opacity-90" />
+            <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/20 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-            {/* Logo no pontoghttrfrhfgjuiiu6ur5remkjru.  AIIIIII MEUUUUU CUUUUU   AIIII. BOTAAAAAAAA  mais alto da curva esquerdo */}
-            <div className="absolute top-30 left-8 z-50">
+            {/* Badge do tipo - canto superior direito */}
+            <div className="absolute top-3 right-3 z-30">
+              <Badge
+                variant="secondary"
+                className={cn(
+                  "px-2 py-1 text-xs font-medium backdrop-blur-md border border-white/20",
+                  typeStyles,
+                  "bg-black/40 text-white hover:bg-black/60",
+                )}
+              >
+                {tipo}
+              </Badge>
+            </div>
+
+            {/* Hover Overlay com botão */}
+            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/60 dark:bg-white/20 backdrop-blur-sm opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center gap-2 rounded-full bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] px-6 py-2.5 text-sm font-medium text-background shadow-lg shadow-[#4D7CFF]/30"
+              >
+                <Eye className="h-4 w-4" />
+                Explorar Nucleo
+              </motion.button>
+            </div>
+
+            <div className="absolute bottom-0 left-0 w-full leading-none z-20 pointer-events-none">
+              <svg
+                viewBox="0 0 500 80"
+                preserveAspectRatio="none"
+                className="w-full h-[60px]"
+              >
+                <path
+                  d="M0,20 C150,-40 340,80 500,40 L500,80 L0,80 Z"
+                  className="fill-card"
+                />
+              </svg>
+
+              <div className="absolute bottom-0 left-0 w-full leading-none z-20 pointer-events-none"></div>
+            </div>
+          </div>
+
+          {/* ICON (integrado ao conteúdo, não sobreposto) */}
+          <div className="relative z-30 -mt-10 ml-7 top--10">
+            <div className="relative flex h-17 w-17 items-center justify-center rounded-xl">
               <div
-                className="flex h-17 opacity-95 w-17 items-center justify-center rounded-xl shadow-lg transition-all duration-300 group-hover:hidden z-100"
+                className="absolute inset-0 rounded-xl blur-xl opacity-40"
+                style={{ background: corDestaque }}
+              />
+              <div
+                className="relative flex h-full w-full items-center justify-center rounded-xl"
                 style={{
-                  background: `linear-gradient(135deg, ${corDestaque}, ${corDestaque}dd)`,
-                  boxShadow: `0 0 20px ${corDestaque}40`,
+                  background: `linear-gradient(235deg, ${corDestaque}, ${corDestaque}dd)`,
                 }}
               >
                 {icon?.iconUrl ? (
@@ -209,58 +252,6 @@ export function NucleoCard({
                   <IconComponent className="h-8 w-8 text-white" />
                 )}
               </div>
-            </div>
-
-            {/* Badge do tipo - canto superior direito */}
-            <div className="absolute top-3 right-3 z-10">
-              <Badge
-                variant="secondary"
-                className={cn(
-                  "px-2 py-1 text-xs font-medium backdrop-blur-md border border-white/20",
-                  typeStyles,
-                  "bg-black/40 text-white hover:bg-black/60",
-                )}
-              >
-                <IconComponent className="mr-1 h-3 w-3" />
-                {tipo}
-              </Badge>
-            </div>
-
-            {/* XP Hoje - canto inferior esquerdo
-            {xpHoje !== undefined && xpHoje > 0 && (
-              <div className="absolute bottom-3 left-3 z-10">
-                <div className="flex items-center gap-1 rounded-full bg-black/40 backdrop-blur-md px-2 py-1">
-                  <Flame className="h-3 w-3 text-orange-400" />
-                  <span className="text-xs font-bold text-orange-400">
-                    +{formatXp(xpHoje)}
-                  </span>
-                </div>
-              </div>
-            )} */}
-
-            {/* Hover Overlay com botão */}
-            <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm opacity-0 transition-opacity duration-300 group-hover:opacity-100 z-20">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2 rounded-full bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] px-6 py-2.5 text-sm font-medium text-background shadow-lg shadow-[#4D7CFF]/30"
-              >
-                <Eye className="h-4 w-4" />
-                Explorar Nucleo
-              </motion.button>
-            </div>
-
-            <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
-              <svg
-                viewBox="0 0 500 80"
-                preserveAspectRatio="none"
-                className="w-full h-[60px]"
-              >
-                <path
-                  d="M0,10 C150,-40 340,80 500,40 L500,80 L0,80 Z"
-                  className="fill-card"
-                />
-              </svg>
             </div>
           </div>
 
@@ -297,7 +288,7 @@ export function NucleoCard({
                 <DropdownMenuContent align="end" className="w-48">
                   <DropdownMenuLabel>Ações do Nucleo</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  {/* Editar - SEMPRE abre o modal local */}
+
                   <DropdownMenuItem
                     onClick={(e) => {
                       e.stopPropagation();
@@ -371,31 +362,7 @@ export function NucleoCard({
               )}
             </div>
 
-            {/* Barra de Progresso XP */}
-            {/* <div className="mb-4 space-y-1.5">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Progresso</span>
-                <span className="font-medium text-foreground">
-                  {formatXp(xpTotal)} / {formatXp(nextLevelXp)} XP
-                </span>
-              </div>
-              <div className="h-2 w-full overflow-hidden rounded-full bg-secondary/50">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{
-                    width: `${Math.min((xpTotal / nextLevelXp) * 100, 100)}%`,
-                  }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  className={cn(
-                    "h-full rounded-full bg-gradient-to-r",
-                    getLevelColor(),
-                  )}
-                />
-              </div>
-            </div> */}
-
-            {/* Footer com data de criação */}
-            <div className="flex items-center justify-between border-t border-border/50 pt-3">
+            <div className="flex items-center justify-between  pt-3">
               <div className="flex items-center gap-1.5">
                 <Calendar className="h-3 w-3 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">

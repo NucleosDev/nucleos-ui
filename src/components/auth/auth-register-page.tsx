@@ -21,6 +21,7 @@ import { ROUTES } from "@/constants/routes";
 
 export default function RegisterPage() {
   const { loginWithGoogle } = useAuth();
+
   return (
     <div className="min-h-screen flex items-center justify-center">
       <AuthPage />
@@ -36,7 +37,7 @@ export function AuthPage() {
       {/* cores do fundo e das linhas animadas ["#4D7CFF", "#00C9A7", "#5B7FFF", "#1FBFA8"];*/}
       <div
         className="
-    relative hidden  flex-col border-r p-10 lg:flex
+    relative hidden flex-col border-r p-10 lg:flex
     bg-gradient-to-b 
     from-[#00C9A7]/75 
     via-[#5B7FFF]/35
@@ -81,14 +82,12 @@ export function AuthPage() {
     bg-[radial-gradient(68%_68%_at_55%_31%,rgb(108, 140, 255)_0%,#0D0F14_50%,rgba(108, 140, 255, 0.43)_80%)]
   "
           />
-
           <div
             className="
     absolute top-0 right-0 h-[320px] w-[240px] translate-x-[5%] -translate-y-[50%] rounded-full
     bg-[radial-gradient(50%_50%,rgb(31, 191, 167)_0%,rgba(31, 191, 167, 0.8)_80%,transparent_100%)]
   "
           />
-
           <div
             className="
     absolute top-0 right-0 h-[320px] w-[240px] -translate-y-[350px] rounded-full
@@ -102,39 +101,23 @@ export function AuthPage() {
             Voltar ao Início
           </Link>
         </Button>
-
         <div className="mx-auto flex flex-col items-center space-y-6 sm:w-lg">
           {/* Logo e título para mobile */}
           <div className=" flex w-full flex-col items-center gap-3 lg:hidden">
-            <Image
-              src={"/logo-full.svg"}
-              alt="logo nucleos"
-              width={650}
-              height={650}
-              className="
-    absolute top-0 left-0
-    -translate-x-1/3 -translate-y-1/3
-    opacity-20
-    -rotate-[10deg]
-    pointer-events-none
-  "
-            />
-
-            <Image
-              src={"/logo-full.svg"}
-              alt="logo nucleos"
-              width={650}
-              height={650}
-              className="
-    absolute bottom-0 right-0
-    translate-x-1/3 translate-y-1/3
-    opacity-20
-    rotate-[18deg]
-    scale-x-[-1]
-    pointer-events-none
-  "
-            />
-
+            <div className=" flex w-full flex-col items-center gap-3 lg:hidden">
+              <Image
+                src="/bg-sm-3.svg"
+                alt="logo nucleos"
+                fill
+                className="
+               absolute top-0 left-0
+               w-full h-full
+               object-cover
+               opacity-10
+               scale-140
+             "
+              />
+            </div>
             {/* Container do logo e nome */}
             <div className="relative z-10 flex items-center gap-3">
               <div className="rounded-xl bg-gradient-to-br from-[#4D7CFF]/10 via-[#00C9A7]/10 to-[#4D7CFF]/10 p-2 backdrop-blur-sm">
@@ -266,8 +249,6 @@ export function AuthPage() {
 
               {/* GOOGLE LOGIN */}
               <div className="flex justify-center w-full mt-2">
-
-                
                 <GoogleLogin
                   onSuccess={(credentialResponse) => {
                     console.log("GOOGLE OK:", credentialResponse);
@@ -295,58 +276,6 @@ export function AuthPage() {
               </Link>
             </p>
           </div>
-
-          {/* <div className="space-y-2">
-            <Button type="button" size="lg" className="w-full">
-              <GoogleIcon className="size-4 me-2" />
-              Continue with Google
-            </Button>
-            <Button type="button" size="lg" className="w-full">
-              <AppleIcon className="size-4 me-2" />
-              Continue with Apple
-            </Button>
-            <Button type="button" size="lg" className="w-full">
-              <GithubIcon className="size-4 me-2" />
-              Continue with GitHub
-            </Button>
-          </div> */}
-
-          {/* <form className="space-y-2">
-            <p className="text-muted-foreground text-start text-xs">
-              Enter your email address to sign in or create an account
-            </p>
-            <div className="relative h-max">
-              <Input
-                placeholder="your.email@example.com"
-                className="peer ps-9"
-                type="email"
-              />
-              <div className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
-                <AtSignIcon className="size-4" aria-hidden="true" />
-              </div>
-            </div>
-
-            <Button type="button" className="w-full">
-              <span>Continue With Email</span>
-            </Button>
-          </form> */}
-          {/* <p className="text-muted-foreground mt-8 text-sm">
-            By clicking continue, you agree to our{" "}
-            
-              href="@"
-              className="hover:text-primary underline underline-offset-4"
-            >
-              Terms of Service
-            </a>{" "}
-            and{" "}
-            
-              href="#"
-              className="hover:text-primary underline underline-offset-4"
-            >
-              Privacy Policy
-            </a>
-            .
-          </p> */}
         </div>
       </div>
     </main>

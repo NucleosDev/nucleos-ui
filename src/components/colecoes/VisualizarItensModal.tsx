@@ -1,3 +1,4 @@
+// src/components/colecoes/VisualizarItensModal.tsx
 "use client";
 
 import {
@@ -27,6 +28,7 @@ interface VisualizarItensModalProps {
   onClose: () => void;
   colecaoId: string;
   campos: Campo[];
+  onRefresh?: () => void;
 }
 
 export function VisualizarItensModal({
@@ -34,6 +36,7 @@ export function VisualizarItensModal({
   onClose,
   colecaoId,
   campos,
+  onRefresh,
 }: VisualizarItensModalProps) {
   const { itens, excluirItem } = useItensColecao(colecaoId);
   const [itemEditando, setItemEditando] = useState<any>(null);
@@ -43,7 +46,8 @@ export function VisualizarItensModal({
     try {
       await excluirItem(id);
       toast({ title: "Item excluído!" });
-    } catch (error) {
+      onRefresh?.();
+    } catch {
       toast({ title: "Erro ao excluir", variant: "destructive" });
     }
   };
@@ -113,13 +117,16 @@ export function VisualizarItensModal({
           </div>
         </DialogContent>
       </Dialog>
-
       {itemEditando && (
         <AdicionarItemColecaoModal
           open={!!itemEditando}
-          onClose={() => setItemEditando(null)}
+          onClose={() => {
+            setItemEditando(null);
+            onRefresh?.();
+          }}
           colecaoId={colecaoId}
           campos={campos}
+          onSuccess={onRefresh}
         />
       )}
     </>

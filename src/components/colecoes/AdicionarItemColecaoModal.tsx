@@ -1,6 +1,7 @@
+// src/components/colecoes/AdicionarItemColecaoModal.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -15,12 +16,14 @@ import { Switch } from "@/components/ui/switch";
 import { useItensColecao } from "@/hooks/useColecoes";
 import { toast } from "@/hooks/use-toast";
 import type { Campo } from "@/types/colecao";
+import { cn } from "@/lib/utils";
 
 interface AdicionarItemColecaoModalProps {
   open: boolean;
   onClose: () => void;
   colecaoId: string;
   campos: Campo[];
+  onSuccess?: () => void;
 }
 
 export function AdicionarItemColecaoModal({
@@ -28,28 +31,46 @@ export function AdicionarItemColecaoModal({
   onClose,
   colecaoId,
   campos,
+  onSuccess,
 }: AdicionarItemColecaoModalProps) {
   const { criarItem } = useItensColecao(colecaoId);
   const [valores, setValores] = useState<Record<string, any>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useEffect(() => {
+    if (open) {
+      const initial: Record<string, any> = {};
+      campos.forEach((campo) => {
+        if (campo.tipoCampo === "booleano") initial[campo.id] = false;
+        else initial[campo.id] = "";
+      });
+      setValores(initial);
+    }
+  }, [open, campos]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const valuesToSend: Record<string, any> = {};
+    campos.forEach((campo) => {
+      const val = valores[campo.id];
+      if (val !== undefined && val !== "") valuesToSend[campo.id] = val;
+    });
+    if (Object.keys(valuesToSend).length === 0) return;
     setIsSubmitting(true);
     try {
-      await criarItem(valores);
+      await criarItem(valuesToSend);
       toast({ title: "Item adicionado!" });
+      onSuccess?.();
       onClose();
-    } catch (error) {
+    } catch {
       toast({ title: "Erro ao adicionar item", variant: "destructive" });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleChange = (campoId: string, value: any) => {
+  const handleChange = (campoId: string, value: any) =>
     setValores((prev) => ({ ...prev, [campoId]: value }));
-  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -90,9 +111,7 @@ export function AdicionarItemColecaoModal({
                 <div className="flex items-center gap-2">
                   <Switch
                     checked={valores[campo.id] || false}
-                    onCheckedChange={(checked) =>
-                      handleChange(campo.id, checked)
-                    }
+                    onCheckedChange={(c) => handleChange(campo.id, c)}
                     disabled={isSubmitting}
                   />
                   <span>{valores[campo.id] ? "Sim" : "Não"}</span>
@@ -101,7 +120,7 @@ export function AdicionarItemColecaoModal({
             </div>
           ))}
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button variant="outline" onClick={onClose}>
               Cancelar
             </Button>
             <Button type="submit" disabled={isSubmitting}>

@@ -179,7 +179,7 @@ export const authService = {
   async loginWithGoogle(token: string): Promise<AuthResponse> {
     console.log("🔥 GOOGLE LOGIN CHAMADO");
 
-    const response = await api.post<AuthResponseDto>("/api/v1/auth/google", {
+    const response = await api.post<AuthResponseDto>("/auth/google", {
       token,
     });
 
