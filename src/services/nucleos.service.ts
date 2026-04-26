@@ -1,9 +1,11 @@
+// src/services/nucleos.service.ts
 import api from "@/services/api-auth";
 import type {
   Nucleo,
   CreateNucleoPayload,
   UpdateNucleoPayload,
 } from "@/types/nucleo";
+import type { CanvasBlock } from "@/components/canvas/types";
 
 export const nucleosService = {
   async getNucleos(): Promise<Nucleo[]> {
@@ -36,19 +38,22 @@ export const nucleosService = {
     return data;
   },
 
+  async updateCanvas(id: string, canvasBlocks: CanvasBlock[]): Promise<Nucleo> {
+    return this.update(id, {
+      configuracoes: { canvasBlocks }
+    });
+  },
+
   async delete(id: string): Promise<void> {
     await api.delete(`/nucleos/${id}`);
   },
 
-  // Método alternativo para compatibilidade com o hook existente
+  // Métodos de compatibilidade
   async createNucleo(payload: CreateNucleoPayload): Promise<Nucleo> {
     return this.create(payload);
   },
 
-  async updateNucleo(
-    id: string,
-    payload: UpdateNucleoPayload,
-  ): Promise<Nucleo> {
+  async updateNucleo(id: string, payload: UpdateNucleoPayload): Promise<Nucleo> {
     return this.update(id, payload);
   },
 

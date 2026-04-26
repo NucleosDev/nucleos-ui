@@ -59,6 +59,15 @@ export const API_ROUTES = {
     UPDATE: (id: string) => `/blocos/${id}`,
     DELETE: (id: string) => `/blocos/${id}`,
     REORDER: "/blocos/reorder",
+
+    PARENT: (parentId: string) => `/blocos/parent/${parentId}`,
+    ANCESTORS: (id: string) => `/blocos/${id}/ancestors`,
+    MOVE: (id: string) => `/blocos/${id}/move`,
+
+    CANVAS: {
+      GET: (nucleoId: string) => `/blocos/canvas/${nucleoId}`,
+      SAVE: (nucleoId: string) => `/blocos/canvas/${nucleoId}`,
+    },
   },
 
   // COLEÇÕES (com campos e itens aninhados)

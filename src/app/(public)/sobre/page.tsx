@@ -1,4 +1,4 @@
-import AboutPage from "@/components/about/about-nucleos";
+import AboutPage from "@/components/public/about/about-nucleos";
 
 export default function DemoPage() {
   return (

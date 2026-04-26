@@ -8,7 +8,7 @@ import { AuthProvider } from "@/auth/";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { GlobalLoader } from "@/components/logo-loader-provider";
 import { InitialLoader } from "@/components/initial-loader";
-import { GoogleOAuthProvider } from "@react-oauth/google"; // GOOGLE LOGIN
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import "./globals.css";
 
 const geistSans = Geist({

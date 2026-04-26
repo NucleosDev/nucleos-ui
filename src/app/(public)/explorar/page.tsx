@@ -35,9 +35,6 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { NucleoCardCompact } from "@/components/nucleo/ui/nucleo-card-mini";
-import { mockNucleos } from "@/components/nucleo/mocks/nucleo-card.mock";
-import type { NucleoWithStats } from "@/components/nucleo/types/nucleo-components.types";
 
 const categorias = [
   { nome: "Todos", icone: Sparkles, count: 156 },
@@ -125,109 +122,6 @@ const gerarXpAleatorio = () => Math.floor(Math.random() * 5000) + 500;
 type NucleoTipo = "pessoal" | "profissional" | "projeto" | "estudo" | "hobby";
 
 // Nucleos públicos tipados corretamente
-const nucleosPublicos: NucleoWithStats[] = [
-  ...mockNucleos.map((n) => ({
-    ...n,
-    autor: "Usuário Nucleos",
-    usos: Math.floor(Math.random() * 100) + 20,
-  })),
-  {
-    id: "public-1",
-    userId: "user2",
-    nome: "Estudando para Certificação AWS",
-    descricao: "Meus estudos para a certificação Solutions Architect",
-    tipo: "estudo" as NucleoTipo,
-    corDestaque: "#4D7CFF",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    icon: undefined,
-    blocos: [],
-    relations: [],
-    achievements: [],
-    autor: "João Cloud",
-    usos: 67,
-    xpTotal: 3450,
-    xpHoje: 120,
-    xpSemana: 850,
-    level: 14,
-    nextLevelXp: 4000,
-    energyTotal: 80,
-    energyHoje: 15,
-    conquistasDesbloqueadas: 2,
-  },
-  {
-    id: "public-2",
-    userId: "user3",
-    nome: "Rotina Fitness 2024",
-    descricao: "Treinos, dieta e acompanhamento de resultados",
-    tipo: "hobby" as NucleoTipo,
-    corDestaque: "#00C9A7",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    icon: undefined,
-    blocos: [],
-    relations: [],
-    achievements: [],
-    autor: "Mariana Atleta",
-    usos: 42,
-    xpTotal: 2100,
-    xpHoje: 75,
-    xpSemana: 450,
-    level: 9,
-    nextLevelXp: 2500,
-    energyTotal: 60,
-    energyHoje: 20,
-    conquistasDesbloqueadas: 1,
-  },
-  {
-    id: "public-3",
-    userId: "user4",
-    nome: "Organização Financeira",
-    descricao: "Controle de gastos e investimentos",
-    tipo: "pessoal" as NucleoTipo,
-    corDestaque: "#FFD700",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    icon: undefined,
-    blocos: [],
-    relations: [],
-    achievements: [],
-    autor: "Carlos Economia",
-    usos: 89,
-    xpTotal: 1800,
-    xpHoje: 60,
-    xpSemana: 320,
-    level: 7,
-    nextLevelXp: 2000,
-    energyTotal: 45,
-    energyHoje: 12,
-    conquistasDesbloqueadas: 0,
-  },
-  {
-    id: "public-4",
-    userId: "user5",
-    nome: "Desenvolvimento Pessoal",
-    descricao: "Metas e hábitos para crescimento",
-    tipo: "projeto" as NucleoTipo,
-    corDestaque: "#2EBD59",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    icon: undefined,
-    blocos: [],
-    relations: [],
-    achievements: [],
-    autor: "Ana Desenvolvimento",
-    usos: 56,
-    xpTotal: 2900,
-    xpHoje: 95,
-    xpSemana: 620,
-    level: 11,
-    nextLevelXp: 3000,
-    energyTotal: 70,
-    energyHoje: 25,
-    conquistasDesbloqueadas: 1,
-  },
-];
 
 export default function ExplorarPage() {
   const [categoriaSelecionada, setCategoriaSelecionada] = useState("Todos");
@@ -387,13 +281,13 @@ export default function ExplorarPage() {
                 Nucleos da comunidade
               </h2>
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {nucleosPublicos.map((nucleo, index) => (
+                {/* {nucleosPublicos.map((nucleo, index) => (
                   <NucleoCardCompact
                     key={nucleo.id}
                     nucleo={nucleo}
                     onClick={() => console.log("Abrir", nucleo.nome)}
                   />
-                ))}
+                ))} */}
               </div>
             </div>
           </TabsContent>

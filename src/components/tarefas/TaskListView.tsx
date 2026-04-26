@@ -35,7 +35,7 @@ const prioridadeConfig: Record<
   TarefaPrioridade,
   { label: string; color: string; icon: string }
 > = {
-  baixa: { label: "Baixa", color: "text-green-600", icon: "🔵" },
+  baixa: { label: "Baixa", color: "text-green-600", icon: "🟢" },
   media: { label: "Média", color: "text-yellow-600", icon: "🟡" },
   alta: { label: "Alta", color: "text-red-600", icon: "🔴" },
 };
@@ -82,7 +82,7 @@ export function TaskListView({
     switch (status) {
       case "pendente":
         return "Pending";
-      case "atrasada":
+      case "fazendo":
         return "In Progress";
       case "concluida":
         return "Completed";
@@ -95,7 +95,7 @@ export function TaskListView({
     switch (status) {
       case "pendente":
         return "bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100";
-      case "atrasada":
+      case "fazendo":
         return "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100";
       case "concluida":
         return "bg-green-50 text-green-700 border-green-200 hover:bg-green-100";
@@ -107,8 +107,8 @@ export function TaskListView({
   const TaskRow = ({ task, index }: { task: Tarefa; index: number }) => (
     <motion.tr
       layout
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, height: 0 }}
       transition={{ duration: 0.2 }}
       className={cn(
@@ -140,7 +140,7 @@ export function TaskListView({
               }
               className="h-8 text-sm rounded-md border bg-background px-2"
             >
-              <option value="baixa">🔵 Baixa</option>
+              <option value="baixa">🟢 Baixa</option>
               <option value="media">🟡 Média</option>
               <option value="alta">🔴 Alta</option>
             </select>

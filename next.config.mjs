@@ -19,8 +19,6 @@ const nextConfig = {
         ? { exclude: ["error"] } // mantém console.error
         : false,
   },
-  
-
 }
 
 export default nextConfig;

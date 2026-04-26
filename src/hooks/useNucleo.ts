@@ -1,3 +1,4 @@
+// src/hooks/useNucleo.ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { nucleosService } from "@/services/nucleos.service";
 import type {
@@ -6,7 +7,6 @@ import type {
   UpdateNucleoPayload,
 } from "@/types/nucleo";
 
-// Buscar um único Nucleo (já está correto)
 export function useNucleo(id: string) {
   return useQuery({
     queryKey: ["nucleo", id],
@@ -16,7 +16,6 @@ export function useNucleo(id: string) {
   });
 }
 
-// Listar Nucleos com mutations para CRUD
 export function useNucleos() {
   const queryClient = useQueryClient();
 
@@ -27,18 +26,13 @@ export function useNucleos() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (payload: CreateNucleoPayload) => {
-      console.log("ENVIANDO PRA API:", payload);
-      return nucleosService.create(payload);
-    },
-    onSuccess: (data) => {
-      console.log("CRIADO COM SUCESSO:", data);
+    mutationFn: (payload: CreateNucleoPayload) =>
+      nucleosService.create(payload),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["nucleos"] });
     },
-    onError: (error) => {
-      console.error("ERRO AO CRIAR:", error);
-    },
   });
+
   const updateMutation = useMutation({
     mutationFn: ({
       id,

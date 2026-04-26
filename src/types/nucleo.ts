@@ -1,6 +1,7 @@
-import { string } from "zod";
+// src/types/nucleo.ts
 import { Bloco } from "./bloco";
 import { User } from "./user";
+import { CanvasBlock } from "@/components/canvas/types";
 
 export interface Nucleo {
   id: string;
@@ -20,6 +21,10 @@ export interface Nucleo {
   achievements?: NucleoAchievement[];
   relations?: NucleoRelation[];
   user?: User;
+  configuracoes?: {
+    canvasBlocks?: CanvasBlock[];
+    [key: string]: any;
+  };
 }
 
 export type NucleoTipo =
@@ -60,7 +65,6 @@ export interface NucleoAchievement {
   createdAt: string;
 }
 
-// Para criação/atualização
 export interface CreateNucleoPayload {
   nome: string;
   descricao?: string;
@@ -79,6 +83,9 @@ export interface NucleoComStats extends Nucleo {
   xpHoje: number;
 }
 
-
-
-export interface UpdateNucleoPayload extends Partial<CreateNucleoPayload> {}
+export interface UpdateNucleoPayload extends Partial<CreateNucleoPayload> {
+  configuracoes?: {
+    canvasBlocks?: CanvasBlock[];
+    [key: string]: any;
+  };
+}

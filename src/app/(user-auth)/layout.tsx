@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { AuthenticatedHeader } from "@/components/layout-auth/authenticated-header";
-import { AuthenticatedMobileHeader } from "@/components/layout-auth/authenticated-mobile-header";
-import { AuthenticatedFooter } from "@/components/layout-auth/authenticated-footer";
-import { AuthenticatedMobileFooter } from "@/components/layout-auth/autenticated-mobile-footer";
-import { DashboardLayout } from "@/components/layout-auth/dashboard-layout";
+import { AuthenticatedHeader } from "@/components/user/authenticated-header";
+import { AuthenticatedMobileHeader } from "@/components/user/authenticated-mobile-header";
+import { AuthenticatedFooter } from "@/components/user/authenticated-footer";
+import { AuthenticatedMobileFooter } from "@/components/user/autenticated-mobile-footer";
+import { DashboardLayout } from "@/components/user/dashboard-layout";
 import { XpToast } from "@/components/gamification/XpToast";
 import { useGamificationSocket } from "@/hooks/useGamificationSocket";
 import { ProtectedRoute } from "@/components/auth/protected-route";

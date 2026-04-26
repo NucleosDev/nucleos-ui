@@ -25,9 +25,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { NucleoCoreCard } from "@/components/nucleo/ui/nucleo-core-card";
-import { NucleoCardCompact } from "@/components/nucleo/ui/nucleo-card-mini";
-import { mockNucleos } from "@/components/nucleo/mocks/nucleo-card.mock";
+import { NucleoCoreCard } from "@/components/nucleo/nucleo-core-card";
+import { NucleoCardCompact } from "@/components/nucleo/nucleo-card-mini";
+// import { mockNucleos } from "@/components/nucleo/mocks/nucleo-card.mock";
 
 const features = [
   {
@@ -195,9 +195,9 @@ export default function ProdutoPage() {
             </div>
             <CardContent className="p-6">
               <div className="grid gap-4 md:grid-cols-3">
-                <NucleoCoreCard nucleo={mockNucleos[0]} />
+                {/* <NucleoCoreCard nucleo={mockNucleos[0]} />
                 <NucleoCoreCard nucleo={mockNucleos[1]} />
-                <NucleoCoreCard nucleo={mockNucleos[2]} />
+                <NucleoCoreCard nucleo={mockNucleos[2]} /> */}
               </div>
             </CardContent>
           </Card>

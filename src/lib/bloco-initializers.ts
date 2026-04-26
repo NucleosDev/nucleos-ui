@@ -1,4 +1,4 @@
-// lib/bloco-initializers.ts
+// src/lib/bloco-initializers.ts
 import { listasService } from "@/services/index.service";
 import { tarefasService } from "@/services/tarefas.service";
 import { colecoesService } from "@/services/colecoes.service";
@@ -19,9 +19,7 @@ export const BLOCO_INITIALIZERS: Partial<Record<BlocoTipo, BlocoInitializer>> =
         tipoLista: "generica",
       });
     },
-    tarefas: async () => {
-      // opcional
-    },
+    tarefas: async () => {},
     colecoes: async (blocoId, titulo) => {
       const colecao = await colecoesService.createColecao(
         blocoId,
@@ -29,9 +27,7 @@ export const BLOCO_INITIALIZERS: Partial<Record<BlocoTipo, BlocoInitializer>> =
       );
       await colecoesService.createCampo(colecao.id, "Nome", "texto");
     },
-    calendario: async () => {
-      // Calendário não precisa de inicialização automática
-    },
+    calendario: async () => {},
     habitos: async (blocoId, titulo) => {
       await habitosService.criar({
         blocoId,
@@ -46,20 +42,12 @@ export const BLOCO_INITIALIZERS: Partial<Record<BlocoTipo, BlocoInitializer>> =
         metaVezes: 1,
       });
     },
-    timers: async () => {
-      // opcional
-    },
-    timer: async () => {
-      // opcional
-    },
-    habito: async () => {
-      // opcional
-    },
+    timers: async () => {},
+    timer: async () => {},
+    habito: async () => {},
     notas: async (blocoId, titulo) => {
-      // Bloco de notas - a coleção será criada sob demanda pelo componente
       console.log(`Bloco de notas ${blocoId} criado: ${titulo || "Notas"}`);
     },
-    calculo: async () => {
-      // opcional
-    },
+    calculo: async () => {},
+    canvas: async () => {}, // NOVO
   };

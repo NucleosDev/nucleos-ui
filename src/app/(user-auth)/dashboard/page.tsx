@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useAuth } from "@/auth";
-import { NucleosOverview } from "@/components/nucleo/ui/nucleos-overview";
-import { CreateNucleoModal } from "@/components/nucleo/ui/nucleo-create-modal";
+import { NucleosOverview } from "@/components/nucleo/nucleos-overview";
+import { CreateNucleoModal } from "@/components/nucleo/nucleo-create-modal";
 import {
   Card,
   CardContent,

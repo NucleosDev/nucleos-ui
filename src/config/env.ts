@@ -6,7 +6,6 @@ export const env = {
   environment: process.env.NEXT_PUBLIC_ENVIRONMENT || "development",
 };
 
-// Log para debug
 console.log("Environment:", {
   apiUrl: env.apiUrl,
   appUrl: env.appUrl,

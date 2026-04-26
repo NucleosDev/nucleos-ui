@@ -1,3 +1,4 @@
+// src/components/blocos/CriarBlocoModal.tsx
 "use client";
 
 import { useState } from "react";
@@ -28,6 +29,8 @@ interface CriarBlocoModalProps {
   onConfirm: (payload: CreateBlocoPayload) => Promise<void>;
   nucleoId: string;
   isCreating?: boolean;
+  // NOVO
+  parentId?: string | null;
 }
 
 export function CriarBlocoModal({
@@ -36,21 +39,25 @@ export function CriarBlocoModal({
   onConfirm,
   nucleoId,
   isCreating = false,
+  parentId = null,
 }: CriarBlocoModalProps) {
   const [titulo, setTitulo] = useState("");
   const [tipo, setTipo] = useState<BlocoTipo>("tarefas");
 
   const handleSubmit = async () => {
-    const payload = { nucleoId, tipo, titulo: titulo.trim() || undefined };
-    console.log("Payload enviado:", JSON.stringify(payload));
+    const payload: CreateBlocoPayload = {
+      nucleoId,
+      tipo,
+      titulo: titulo.trim() || undefined,
+      parentId, // NOVO
+    };
+
     try {
       await onConfirm(payload);
-      // Só limpa e fecha após sucesso
       setTitulo("");
       setTipo("tarefas");
       onClose();
     } catch (error) {
-      // O erro já é tratado no componente pai, mas logamos aqui
       console.error("Erro ao criar bloco:", error);
     }
   };
@@ -61,7 +68,9 @@ export function CriarBlocoModal({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Adicionar novo bloco</DialogTitle>
+          <DialogTitle>
+            {parentId ? "Adicionar sub-bloco" : "Adicionar novo bloco"}
+          </DialogTitle>
           <DialogDescription>
             Escolha o tipo de bloco e dê um título (opcional).
           </DialogDescription>

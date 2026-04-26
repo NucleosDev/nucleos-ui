@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/auth";
-import { NucleoGrid } from "@/components/nucleo/ui/nucleo-grid";
-import { CreateNucleoModal } from "@/components/nucleo/ui/nucleo-create-modal";
+import { NucleoGrid } from "@/components/nucleo/nucleo-grid";
+import { CreateNucleoModal } from "@/components/nucleo/nucleo-create-modal";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { useNucleos } from "@/hooks/useNucleo";

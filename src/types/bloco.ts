@@ -1,8 +1,9 @@
+// src/types/bloco.ts
 import { Tarefa } from "./tarefas";
 import { Lista } from "./lista";
 import { Habito } from "./habitos";
 import { Colecao } from "./colecao";
-// import { Timer } from ""
+
 export type BlocoTipo =
   | "tarefas"
   | "habitos"
@@ -13,7 +14,8 @@ export type BlocoTipo =
   | "lista"
   | "calendario"
   | "calculo"
-  | "colecoes";
+  | "colecoes"
+  | "canvas"; // NOVO TIPO
 
 export interface Bloco {
   id: string;
@@ -22,10 +24,16 @@ export interface Bloco {
   titulo: string | null;
   posicao: number;
   configuracoes: Record<string, any> | null;
+  // NOVOS CAMPOS
+  parentId?: string | null;
+  path?: string | null;
+  depth?: number;
+  isCanvas?: boolean;
+  children?: Bloco[]; // Para árvore no front-end
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;
-  // Relacionamentos opcionais (quando a API retorna expandido)
+  // Relacionamentos opcionais
   tarefas?: Tarefa[];
   listas?: Lista[];
   habitos?: Habito[];
@@ -49,15 +57,18 @@ export interface CreateBlocoPayload {
   titulo?: string;
   posicao?: number;
   configuracoes?: Record<string, any>;
+  parentId?: string | null; // NOVO
 }
 
 export interface UpdateBlocoPayload {
   titulo?: string;
   posicao?: number;
   configuracoes?: Record<string, any>;
+  parentId?: string | null; // NOVO
 }
 
 export interface ReorderBlocosPayload {
   nucleoId: string;
   orders: { id: string; posicao: number }[];
+  parentId?: string | null; // NOVO - para reordenar dentro de um pai
 }

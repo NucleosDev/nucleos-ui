@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { Header } from "@/components/landing/header";
-import { Footer } from "@/components/landing/footer";
 
 export const metadata: Metadata = {
   title: "Entrar",
@@ -13,10 +11,5 @@ export default function LoginLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div>
-      {/* <Header /> */}
-      {children}
-    </div>
-  );
+  return <div>{children}</div>;
 }

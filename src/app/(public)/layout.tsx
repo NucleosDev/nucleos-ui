@@ -4,8 +4,8 @@ import { Analytics } from "@vercel/analytics/next";
 import { siteConfig } from "@/config/site";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/auth/";
-import { Header } from "@/components/landing/header";
-import { Footer } from "@/components/landing/footer";
+import { Header } from "@/components/public/landing/header";
+import { Footer } from "@/components/public/landing/footer";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -88,14 +88,13 @@ export default function RootLayout({
         className={`min-h-dvh ${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
         suppressHydrationWarning
       >
-        
-          <AuthProvider>
-            <div className="relative flex min-h-dvh flex-col">
-              <Header />
-              <main className="flex-1 min-h-dvh">{children}</main>
-              <Footer />
-            </div>
-          </AuthProvider>
+        <AuthProvider>
+          <div className="relative flex min-h-dvh flex-col">
+            <Header />
+            <main className="flex-1 min-h-dvh">{children}</main>
+            <Footer />
+          </div>
+        </AuthProvider>
 
         <Analytics />
       </body>
