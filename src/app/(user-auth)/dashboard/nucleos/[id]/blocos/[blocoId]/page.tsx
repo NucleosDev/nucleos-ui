@@ -2,23 +2,14 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useBloco, useSubBlocos } from "@/hooks/useBlocos";
+import { useBloco, useBlocos } from "@/hooks/useBlocos";
 import { useNucleo } from "@/hooks/useNucleo";
 import Image from "next/image";
-import { Loader2, ArrowLeft, Layers, Plus, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { BlocoCard } from "@/components/blocos/BlocoCard";
-import { ListasBlocoCard } from "@/components/blocos/cruds/ListasBlocoCard";
-import { TarefasBlocoCard } from "@/components/blocos/cruds/TarefasBlocoCard";
-import { ColecoesBlocoCard } from "@/components/blocos/cruds/ColecoesBlocoCard";
-import { CalendarioBlocoCard } from "@/components/blocos/cruds/CalendarioBlocoCard";
-import { TimersBlocoCard } from "@/components/blocos/cruds/TimersBlocoCard";
-import { HabitosBlocoCard } from "@/components/blocos/cruds/HabitosBlocoCard";
-import { CanvasEditor } from "@/components/canvas/CanvasEditor";
-import { BlockRenderer } from "@/components/canvas/BlockRenderer";
-import type { CanvasBlock } from "@/components/canvas/types";
-import type { CreateBlocoPayload, Bloco } from "@/types/bloco";
 import {
+  Loader2,
+  ArrowLeft,
+  Layers,
+  Plus,
   BookOpen,
   Heart,
   Briefcase,
@@ -49,12 +40,24 @@ import {
   Calculator,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { useState, useEffect, useCallback } from "react";
+import { Button } from "@/components/ui/button";
 import { CriarBlocoModal } from "@/components/blocos/CriarBlocoModal";
+import { BlocoHoverActions } from "@/components/blocos/BlocoHoverActions";
+import { NucleoCanvas } from "@/components/nucleo/NucleoCanvas";
 import { toast } from "@/hooks/use-toast";
+import { useState } from "react";
+import type { CreateBlocoPayload, Bloco } from "@/types/bloco";
+import { BLOCO_INITIALIZERS } from "@/lib/bloco-initializers";
+import { ColecoesBlocoCard } from "@/components/blocos/cruds/ColecoesBlocoCard";
+import { TarefasBlocoCard } from "@/components/blocos/cruds/TarefasBlocoCard";
+import { ListasBlocoCard } from "@/components/blocos/cruds/ListasBlocoCard";
+import { CalendarioBlocoCard } from "@/components/blocos/cruds/CalendarioBlocoCard";
+import { TimersBlocoCard } from "@/components/blocos/cruds/TimersBlocoCard";
+import { HabitosBlocoCard } from "@/components/blocos/cruds/HabitosBlocoCard";
+import { BlocoDeNotas } from "@/components/blocos/cruds/BlocoDeNotas";
 import { motion } from "framer-motion";
 
-// Mapeamento de ícones para tipos de bloco
+// ICONS
 const blocoIconMap: Record<string, LucideIcon> = {
   tarefas: CheckSquare,
   habitos: Activity,
@@ -68,60 +71,8 @@ const blocoIconMap: Record<string, LucideIcon> = {
   colecoes: Layers,
 };
 
-const tipoIcons: Record<string, LucideIcon> = {
-  estudo: BookOpen,
-  hobby: Heart,
-  profissional: Briefcase,
-  pessoal: Home,
-  projeto: Target,
-  fitness: Dumbbell,
-  bemestar: Coffee,
-  social: Users,
-  programacao: Code,
-  musica: Music,
-  fotografia: Camera,
-  arte: Palette,
-  idiomas: Globe,
-  financas: Wallet,
-  trabalho: Briefcase,
-  saude: Heart,
-  educacao: GraduationCap,
-};
-
-const iconMap: Record<string, LucideIcon> = {
-  "book-open": BookOpen,
-  heart: Heart,
-  briefcase: Briefcase,
-  home: Home,
-  dumbbell: Dumbbell,
-  palette: Palette,
-  music: Music,
-  code: Code,
-  star: Star,
-  globe: Globe,
-  coffee: Coffee,
-  camera: Camera,
-  plane: Plane,
-  "shopping-bag": ShoppingBag,
-  users: Users,
-  mic: Mic,
-  "gamepad-2": Gamepad2,
-  leaf: Leaf,
-  "graduation-cap": GraduationCap,
-};
-
-function getNucleoIcon(tipo: string, iconId?: string | null): LucideIcon {
-  if (iconId && iconMap[iconId]) return iconMap[iconId];
-  const tipoLower = tipo?.toLowerCase() || "";
-  const icon = tipoIcons[tipoLower];
-  if (icon) return icon;
-  return Layers;
-}
-
 function getBlocoIcon(tipo: string): LucideIcon {
-  const icon = blocoIconMap[tipo];
-  if (icon) return icon;
-  return GripVertical;
+  return blocoIconMap[tipo] || GripVertical;
 }
 
 function getBlocoTitle(tipo: string): string {
@@ -140,91 +91,90 @@ function getBlocoTitle(tipo: string): string {
   return titles[tipo] || tipo.charAt(0).toUpperCase() + tipo.slice(1);
 }
 
+function renderBlocoContent(bloco: Bloco, nucleoId: string) {
+  const props = {
+    bloco,
+    nucleoId,
+    onDelete: () => {},
+    onEdit: () => {},
+    isDeleting: false,
+  };
+  switch (bloco.tipo) {
+    case "colecoes":
+      return <ColecoesBlocoCard {...props} />;
+    case "lista":
+      return <ListasBlocoCard {...props} />;
+    case "tarefas":
+      return <TarefasBlocoCard {...props} />;
+    case "calendario":
+      return <CalendarioBlocoCard {...props} />;
+    case "timer":
+    case "timers":
+      return <TimersBlocoCard {...props} />;
+    case "habitos":
+    case "habito":
+      return <HabitosBlocoCard {...props} />;
+    case "notas":
+      return (
+        <BlocoDeNotas bloco={bloco} nucleoId={nucleoId} onDelete={() => {}} />
+      );
+    default:
+      return (
+        <p className="text-muted-foreground text-sm">Bloco: {bloco.tipo}</p>
+      );
+  }
+}
+
+// PÁGINA
 export default function BlocoDetalhesPage() {
   const params = useParams();
   const router = useRouter();
-
   const nucleoId = params.id as string;
   const blocoId = params.blocoId as string;
-  const [modalCriarAberto, setModalCriarAberto] = useState(false);
 
-  // Buscar bloco atual
   const {
     bloco,
     isLoading: blocoLoading,
     error: blocoError,
-    update: updateBloco,
   } = useBloco(blocoId, nucleoId);
-
-  // Buscar núcleo
   const { data: nucleo, isLoading: nucleoLoading } = useNucleo(nucleoId);
+  const {
+    blocos: subBlocos,
+    create: createSub,
+    remove: removeSub,
+    update: updateSub,
+    isCreating,
+    isDeleting,
+  } = useBlocos(nucleoId, blocoId);
 
-  // Buscar sub-blocos - CORRIGIDO: useSubBlocos requer 2 argumentos
-  const subBlocosResult = useSubBlocos(blocoId, nucleoId);
+  const [modalCriarAberto, setModalCriarAberto] = useState(false);
 
-  // Garantir que temos os valores mesmo se o hook falhar
-  const subBlocos = subBlocosResult?.subBlocos ?? [];
-  const subBlocosLoading = subBlocosResult?.isLoading ?? false;
-  const createSubBloco = subBlocosResult?.create ?? (async () => {});
-  const removeSubBloco = subBlocosResult?.remove ?? (async () => {});
-
-  // Canvas blocks do bloco
-  const [canvasBlocks, setCanvasBlocks] = useState<CanvasBlock[]>([
-    { id: "welcome-1", type: "paragraph", content: "" },
-  ]);
-
-  // Carregar canvas blocks do bloco
-  useEffect(() => {
-    if (bloco?.configuracoes?.canvasBlocks) {
-      setCanvasBlocks(bloco.configuracoes.canvasBlocks);
-    }
-  }, [bloco]);
-
-  const handleCanvasChange = useCallback(
-    async (blocks: CanvasBlock[]) => {
-      setCanvasBlocks(blocks);
-      if (bloco && updateBloco) {
-        try {
-          await updateBloco({
-            payload: {
-              configuracoes: { ...bloco.configuracoes, canvasBlocks: blocks },
-            },
-          });
-        } catch (error) {
-          console.error("Erro ao salvar canvas:", error);
-        }
-      }
-    },
-    [bloco, updateBloco],
-  );
-
-  const handleAddSubBloco = async (payload: CreateBlocoPayload) => {
+  const handleCriarSubBloco = async (payload: CreateBlocoPayload) => {
     try {
-      await createSubBloco(payload);
-      toast({ title: "Sub-bloco criado com sucesso!" });
+      const blocoCriado = await createSub({ ...payload, parentId: blocoId });
+      const initializer = BLOCO_INITIALIZERS[payload.tipo];
+      if (initializer) await initializer(blocoCriado.id, payload.titulo);
+      toast({ title: "Sub-bloco criado!" });
       setModalCriarAberto(false);
-    } catch (error) {
-      toast({ title: "Erro ao criar sub-bloco", variant: "destructive" });
+    } catch {
+      toast({ title: "Erro", variant: "destructive" });
     }
   };
 
-  const handleDeleteSubBloco = async (id: string) => {
-    if (confirm("Tem certeza que deseja excluir este sub-bloco?")) {
-      try {
-        await removeSubBloco(id);
-        toast({ title: "Sub-bloco excluído!" });
-      } catch (error) {
-        toast({ title: "Erro ao excluir", variant: "destructive" });
-      }
+  const handleExcluirSubBloco = async (id: string) => {
+    if (!confirm("Excluir este sub-bloco?")) return;
+    try {
+      await removeSub(id);
+      toast({ title: "Excluído!" });
+    } catch {
+      toast({ title: "Erro", variant: "destructive" });
     }
   };
 
-  const isLoading = blocoLoading || nucleoLoading || subBlocosLoading;
-
-  if (isLoading) {
+  if (blocoLoading || nucleoLoading) {
     return (
       <div className="flex h-96 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <Loader2 className="h-8 w-8 animate-spin" />
       </div>
     );
   }
@@ -251,34 +201,29 @@ export default function BlocoDetalhesPage() {
     );
   }
 
-  const randomImageUrl = `https://picsum.photos/seed/${nucleo.id}/1200/400`;
-  const capaUrl = nucleo.imagemCapa || randomImageUrl;
+  const capaUrl =
+    nucleo.imagemCapa || `https://picsum.photos/seed/${nucleo.id}/1200/400`;
   const IconComponentBloco = getBlocoIcon(bloco.tipo);
   const corDestaque = nucleo.corDestaque || "#6366f1";
   const blocoTitle = bloco.titulo || getBlocoTitle(bloco.tipo);
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Banner de capa */}
-      <div className="relative w-full h-[340px] overflow-hidden">
-        {/* CAPA */}
+      {/* Banner */}
+      <div className="relative w-full h-[240px] md:h-[300px] overflow-hidden">
         <Image
           src={capaUrl}
-          alt={`Capa de ${nucleo.nome}`}
+          alt={nucleo.nome}
           fill
-          className="object-cover scale-105"
+          className="object-cover"
           priority
         />
-
-        {/* OVERLAY GRADIENT */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/30 to-transparent" />
-
-        {/* WAVE */}
-        <div className="absolute bottom-0 left-0 w-full z-10 pointer-events-none text-background">
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+        <div className="absolute bottom-0 w-full text-background">
           <svg
             viewBox="0 0 500 100"
             preserveAspectRatio="none"
-            className="w-full h-[110px]"
+            className="w-full h-[60px]"
             fill="hsl(var(--background))"
           >
             <path
@@ -287,127 +232,128 @@ export default function BlocoDetalhesPage() {
             />
           </svg>
         </div>
-
         <Button
           variant="ghost"
-          className="absolute top-12 left-6 bg-foreground/20 backdrop-blur text-background group"
-          onClick={() => router.back()}
+          className="absolute top-6 left-6 bg-background/20 backdrop-blur text-white"
+          onClick={() => router.push(`/dashboard/nucleos/${nucleoId}`)}
         >
-          <ArrowLeft className="mr-2 h-6 w-4 transition-transform group-hover:-translate-x-0.5" />
-          <div className="flex items-center gap-2">
-            <span>Voltar</span>
-            <div className="flex items-center gap-1.5 px-2 py-0.5 bg-foreground/20 rounded-md">
-              <Layers className="h-3.5 w-3.5" />
-              <span className="font-medium">{blocoTitle}</span>
-            </div>
-          </div>
+          <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para {nucleo.nome}
         </Button>
-        <div className="absolute top-12 right-6">
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/20">
-            <IconComponentBloco className="h-4 w-4 text-white" />
-            <span className="text-sm font-medium text-white">
-              {getBlocoTitle(bloco.tipo)}
-            </span>
-          </div>
+        <div className="absolute top-6 right-6 flex items-center gap-2 px-3 py-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/20">
+          <IconComponentBloco className="h-4 w-4 text-white" />
+          <span className="text-sm font-medium text-white">{blocoTitle}</span>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 md:px-6 lg:px-8 pb-12">
-        <div
-          className=" relative left-8 -mt-27 mb-10 z-30
-        sm:relative sm:left-5 sm:-mt-26 sm:mb-12 sm:z-30 "
-        >
+      {/* Conteúdo */}
+      <div className="container mx-auto px-4 md:px-6 lg:px-8 pb-15">
+        <div className="relative z-30 -mt-21 ml-8 top--10">
+          {" "}
           <div
-            className="w-16 h-16 md:w-20 md:h-20 rounded-xl flex items-center justify-center text-white shadow-lg border-4 border-background"
+            className="w-16 h-16 md:w-20 md:h-20 rounded-xl flex items-center justify-center text-white shadow-xl border-4 border-background"
             style={{ backgroundColor: corDestaque }}
           >
             <IconComponentBloco className="w-8 h-8 md:w-10 md:h-10" />
           </div>
         </div>
 
-        {/* Bloco Card */}
-        <div className="mb-6">
-          <BlocoCard
-            bloco={bloco}
-            nucleoId={nucleoId}
-            compact={false}
-            onEdit={() => {}}
-            onDelete={() => {}}
-          />
+        <div className="max-w-3xl mb-8 pt-8">
+          <h1 className="text-3xl font-bold">{blocoTitle}</h1>
+          <p className="text-muted-foreground mt-1">
+            Tipo: {bloco.tipo} • Profundidade: {bloco.depth || 0}
+          </p>
         </div>
 
-        {/* CANVAS EDITOR */}
-        <div className="mb-12">
-          <CanvasEditor
-            blocks={canvasBlocks}
-            onBlocksChange={handleCanvasChange}
-            placeholder="Digite '/' para comandos..."
-          />
-        </div>
+        {/* CANVAS (Substitui o CanvasEditor) */}
+        <NucleoCanvas
+          nucleoId={nucleoId}
+          onAddFunctionalBlock={() => setModalCriarAberto(true)}
+        />
 
-        {/* Separador */}
+        {/* CONTEÚDO DO BLOCO */}
         <div className="my-8 flex items-center gap-4">
           <div className="flex-1 border-t border-border/50" />
-          <span className="text-xs text-muted-foreground font-medium flex items-center gap-1">
-            <Sparkles className="h-3 w-3" />
+          <span className="text-xs text-muted-foreground font-medium">
+            CONTEÚDO
+          </span>
+          <div className="flex-1 border-t border-border/50" />
+        </div>
+        <div className="rounded-xl border border-border/50 bg-card p-4">
+          {renderBlocoContent(bloco, nucleoId)}
+        </div>
+
+        {/* SUB-BLOCOS */}
+        <div className="my-8 flex items-center gap-4">
+          <div className="flex-1 border-t border-border/50" />
+          <span className="text-xs text-muted-foreground font-medium">
             SUB-BLOCOS
           </span>
           <div className="flex-1 border-t border-border/50" />
         </div>
 
-        {/* Sub-blocos */}
-        <div className="space-y-4">
+        <div className="space-y-4 max-w-3xl mx-auto">
           <div className="flex justify-end">
             <Button onClick={() => setModalCriarAberto(true)} size="sm">
-              <Plus className="mr-2 h-4 w-4" /> Adicionar sub-bloco
+              <Plus className="mr-2 h-4 w-4" /> Sub-bloco
             </Button>
           </div>
 
           {subBlocos.length === 0 ? (
             <div
-              className="rounded-xl border-2 border-dashed p-12 text-center cursor-pointer hover:border-primary/40 transition-all"
               onClick={() => setModalCriarAberto(true)}
+              className="rounded-xl border-2 border-dashed p-8 text-center cursor-pointer hover:border-primary/40"
             >
-              <div className="flex flex-col items-center gap-3">
-                <div className="rounded-full bg-primary/10 p-3">
-                  <Plus className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <p className="font-medium">Nenhum sub-bloco ainda</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Clique para adicionar
-                  </p>
-                </div>
-              </div>
+              <Plus className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+              <p className="font-medium">Nenhum sub-bloco</p>
             </div>
           ) : (
-            <div className="space-y-4">
-              {subBlocos.map((subBloco: Bloco) => (
-                <motion.div
-                  key={subBloco.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="ml-6 border-l-2 border-primary/30 pl-4"
-                >
-                  <BlockRenderer
-                    bloco={subBloco}
-                    nucleoId={nucleoId}
-                    isSubBloco
-                    onDelete={() => handleDeleteSubBloco(subBloco.id)}
-                  />
-                </motion.div>
-              ))}
-            </div>
+            subBlocos.map((subBloco) => (
+              <motion.div
+                key={subBloco.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="group relative ml-6 border-l-2 border-primary/30 pl-4"
+              >
+                <BlocoHoverActions
+                  bloco={subBloco}
+                  nucleoId={nucleoId}
+                  onOpenFullPage={() =>
+                    router.push(
+                      `/dashboard/nucleos/${nucleoId}/blocos/${subBloco.id}`,
+                    )
+                  }
+                  onEdit={() => {
+                    const novoTitulo = prompt(
+                      "Novo título:",
+                      subBloco.titulo || "",
+                    );
+                    if (novoTitulo !== null && novoTitulo.trim()) {
+                      updateSub({
+                        id: subBloco.id,
+                        payload: { titulo: novoTitulo.trim() },
+                      });
+                    }
+                  }}
+                  onDelete={() => handleExcluirSubBloco(subBloco.id)}
+                  isDeleting={isDeleting}
+                />
+                <div className="rounded-xl border border-border/50 bg-card p-4 hover:border-border transition-all">
+                  {renderBlocoContent(subBloco, nucleoId)}
+                </div>
+              </motion.div>
+            ))
           )}
         </div>
       </div>
 
+      {/* Modal */}
       <CriarBlocoModal
         open={modalCriarAberto}
         onClose={() => setModalCriarAberto(false)}
-        onConfirm={handleAddSubBloco}
+        onConfirm={handleCriarSubBloco}
         nucleoId={nucleoId}
-        isCreating={false}
+        isCreating={isCreating}
+        parentId={blocoId}
       />
     </div>
   );

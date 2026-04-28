@@ -1,7 +1,7 @@
 // /app/planos/page.tsx
 "use client";
 
-import { PricingSection } from "@/components/nucleo/pricing-section";
+import Pricing from "@/components/nucleo/pricing-section";
 import {
   ArrowLeft,
   Sparkles,
@@ -111,12 +111,7 @@ export default function PlanosPage() {
     <div className="min-h-screen bg-gradient-to-r from-[#4D7CFF]/5 via-transparent to-[#00C9A7]/5">
       {/* Pricing Section */}
       <div className="container mx-auto px-4 py-12">
-        <PricingSection
-          title="Invista em você mesmo"
-          subtitle="Comece grátis e evolua conforme suas necessidades. Todos os planos incluem atualizações gratuitas."
-          frequencies={PAYMENT_FREQUENCIES}
-          tiers={TIERS}
-        />
+        <Pricing />
 
         {/* Features extras */}
         <div className="mt-16 grid gap-6 md:grid-cols-3">

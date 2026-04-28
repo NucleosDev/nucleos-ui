@@ -1,79 +1,61 @@
-// src/hooks/useCanvasBlocks.ts
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+// src/hooks/useCanvas.ts — VERSÃO CORRIGIDA
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+// ⚠️ useRef é do React, não do tanstack
+import { useRef } from "react";
 import { canvasService } from "@/services/canvas.service";
-import type { CanvasBlock } from "@/components/canvas/types";
+import type { CanvasItem } from "@/components/canvas/types";
 
 export function useCanvasBlocks(nucleoId: string) {
   const queryClient = useQueryClient();
-  let debounceTimer: NodeJS.Timeout | null = null;
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null); // ← FIX: useRef
 
-  // 📖 Buscar blocks - igual ao useColecoes
   const {
-    data: blocks = [],
+    data: items = [],
     isLoading,
     error,
   } = useQuery({
     queryKey: ["canvas-blocks", nucleoId],
     queryFn: async () => {
-      console.log("🔍 Buscando blocks do canvas...");
       const data = await canvasService.getCanvas(nucleoId);
-      console.log("📥 Dados brutos:", data);
-
-      if (!data || !data.content) return [];
-
-      const parsed = JSON.parse(data.content);
-      console.log("📦 Parsed:", parsed);
-
-      // 🔥 Garante que os tipos estão corretos
-      const typedBlocks: CanvasBlock[] = parsed.map((block: any) => ({
-        id: block.id,
-        type: block.type as CanvasBlock["type"],
-        content: block.content || "",
-        completed: block.completed || false,
-      }));
-
-      console.log("✅ Blocks tipados:", typedBlocks);
-      return typedBlocks;
+      if (!data?.content) return [];
+      try {
+        return JSON.parse(data.content) as CanvasItem[];
+      } catch {
+        return []; // JSON corrompido não quebra o canvas
+      }
     },
     enabled: !!nucleoId,
     staleTime: 1000 * 60,
   });
 
-  // 💾 Salvar blocks
   const saveMutation = useMutation({
-    mutationFn: async (newBlocks: CanvasBlock[]) => {
-      console.log("💾 Salvando blocks:", newBlocks);
-      const content = JSON.stringify(newBlocks);
-      await canvasService.saveCanvas(nucleoId, content);
-    },
-    onSuccess: () => {
-      console.log("✅ Canvas salvo com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ["canvas-blocks", nucleoId] });
-    },
-    onError: (error) => {
-      console.error("❌ Erro ao salvar canvas:", error);
-    },
+    mutationFn: (newItems: CanvasItem[]) =>
+      canvasService.saveCanvas(nucleoId, JSON.stringify(newItems)),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["canvas-blocks", nucleoId] }),
   });
 
-  // Função para atualizar os blocks com debounce
-  const updateBlocks = (newBlocks: CanvasBlock[]) => {
-    if (debounceTimer) clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-      saveMutation.mutate(newBlocks);
+  const updateItems = (newItems: CanvasItem[]) => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current); // ← FIX
+    debounceTimer.current = setTimeout(() => {
+      saveMutation.mutate(newItems);
     }, 800);
   };
 
-  // Salvar imediatamente
-  const saveNow = (newBlocks: CanvasBlock[]) => {
-    if (debounceTimer) clearTimeout(debounceTimer);
-    saveMutation.mutate(newBlocks);
+  const saveNow = (newItems: CanvasItem[]) => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    saveMutation.mutate(newItems);
   };
 
   return {
-    blocks,
+    items,
     isLoading,
     error,
-    updateBlocks,
+    updateItems,
     saveNow,
     isSaving: saveMutation.isPending,
   };

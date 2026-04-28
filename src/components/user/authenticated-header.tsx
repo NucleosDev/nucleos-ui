@@ -204,7 +204,7 @@ export function AuthenticatedHeader({
   };
 
   return (
-    <header className="bg-background/80 backdrop-blur-sm border-b border-border/30">
+    <header className="relative z-[51] bg-background/80 backdrop-blur-sm border-b border-border/30">
       <nav className="relative mx-auto grid h-14 w-full grid-cols-[1fr_auto_1fr] items-center px-6 sm:px-8 lg:px-10">
         {/* Lado esquerdo: Botão de toggle e busca */}
         <div className="flex justify-start items-center gap-3">

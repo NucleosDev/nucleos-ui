@@ -213,7 +213,7 @@ export function TaskListView({
         {task.dataVencimento ? formatDate(task.dataVencimento) : "—"}
       </TableCell>
 
-      <TableCell className="align-top">
+      {/* <TableCell className="align-top">
         <div className="flex items-center gap-1">
           <Button
             variant="ghost"
@@ -232,7 +232,7 @@ export function TaskListView({
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>
-      </TableCell>
+      </TableCell> */}
     </motion.tr>
   );
 

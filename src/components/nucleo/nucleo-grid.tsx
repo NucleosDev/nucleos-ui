@@ -1,10 +1,11 @@
+// src/components/nucleo/nucleo-grid.tsx
 "use client";
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { NucleoCard } from "./nucleo-card";
-import { NucleoCardCompact } from "./nucleo-card-mini";
+import { NucleoCardMobile } from "./nucleo-card-mini";
 import { NucleoCoreCard } from "./nucleo-core-card";
 import { EditNucleoModal } from "./edit-nucleo-modal";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,7 +25,6 @@ interface NucleoGridProps {
 
 type LayoutMode = "grid" | "list";
 
-// Variantes de animação para os cards
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 },
@@ -35,17 +35,11 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.05,
-      delayChildren: 0.1,
-    },
+    transition: { staggerChildren: 0.05, delayChildren: 0.1 },
   },
   exit: {
     opacity: 0,
-    transition: {
-      staggerChildren: 0.03,
-      staggerDirection: -1,
-    },
+    transition: { staggerChildren: 0.03, staggerDirection: -1 },
   },
 };
 
@@ -77,35 +71,17 @@ export function NucleoGrid({
     setTimeout(() => setIsAnimating(false), 300);
   };
 
-  const adaptNucleo = (nucleo: any): NucleoComStats => ({
-    ...nucleo,
-    xpTotal: nucleo.xpTotal ?? 0,
-    level: nucleo.level ?? 1,
-    nextLevelXp: nucleo.nextLevelXp ?? 1000,
-    currentXp: nucleo.currentXp ?? 0,
-    conquistas: nucleo.conquistas ?? 0,
-    xpHoje: nucleo.xpHoje ?? 0,
-    blocos:
-      nucleo.blocos?.map((b: any) => ({ ...b, titulo: b.titulo ?? null })) ??
-      [],
-    relations: nucleo.relations ?? [],
-  });
-
+  // Loading state
   if (loading) {
     return (
       <div className="space-y-4">
-        <div className="hidden sm:flex justify-between items-center gap-2">
-          <div className="flex gap-2">
-            <Skeleton className="h-9 w-16" />
-            <Skeleton className="h-9 w-16" />
-          </div>
-          <Skeleton className="h-9 w-28" />
-        </div>
+        {/* Mobile skeleton */}
         <div className="block sm:hidden space-y-2">
           {[1, 2, 3].map((i) => (
             <Skeleton key={i} className="h-20 w-full rounded-lg" />
           ))}
         </div>
+        {/* Desktop skeleton */}
         <div className="hidden sm:grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <NucleoCardSkeleton key={i} />
@@ -115,12 +91,12 @@ export function NucleoGrid({
     );
   }
 
+  // Empty state
   if (nucleos.length === 0) {
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3 }}
         className="flex flex-col items-center justify-center py-16 px-4 border-2 border-dashed rounded-lg"
       >
         <div className="flex items-center justify-center w-16 h-16 rounded-full bg-muted mb-4">
@@ -141,6 +117,7 @@ export function NucleoGrid({
     );
   }
 
+  // Card "Adicionar novo"
   const addCard = (
     <motion.div
       key="add-card"
@@ -149,12 +126,11 @@ export function NucleoGrid({
       animate="visible"
       exit="exit"
       whileHover={{ scale: 1.02 }}
-      transition={{ duration: 0.2 }}
       className="cursor-pointer rounded-lg border-2 border-dashed border-muted-foreground/25 bg-muted/20 p-6 text-center transition-all hover:border-primary/50 hover:bg-muted/30"
       onClick={onAddNucleo}
     >
       <div className="flex flex-col items-center justify-center">
-        <div className="rounded-full bg-primary/10 p-3 transition-transform group-hover:scale-110">
+        <div className="rounded-full bg-primary/10 p-3">
           <Plus className="h-6 w-6 text-primary" />
         </div>
         <p className="mt-2 text-sm font-medium">Novo Nucleo</p>
@@ -164,54 +140,43 @@ export function NucleoGrid({
 
   return (
     <div className="space-y-4">
-      {/* Header com botões de layout e botão Novo Nucleo */}
+      {/* Header com botões de layout */}
       <motion.div
         className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
       >
-        {/* Botões de layout à esquerda */}
+        {/* Botões de layout */}
         <div className="flex items-center gap-2">
           <Button
             variant={layoutMode === "grid" ? "default" : "outline"}
             size="sm"
             onClick={() => handleLayoutChange("grid")}
-            className="gap-1 transition-all duration-200"
+            className="gap-1"
             disabled={isAnimating}
           >
-            <LayoutGrid
-              className={cn(
-                "h-4 w-4 transition-transform duration-200",
-                layoutMode === "grid" && "scale-110",
-              )}
-            />
+            <LayoutGrid className="h-4 w-4" />
             <span className="hidden sm:inline">Grid</span>
           </Button>
           <Button
             variant={layoutMode === "list" ? "default" : "outline"}
             size="sm"
             onClick={() => handleLayoutChange("list")}
-            className="gap-1 transition-all duration-200"
+            className="gap-1"
             disabled={isAnimating}
           >
-            <List
-              className={cn(
-                "h-4 w-4 transition-transform duration-200",
-                layoutMode === "list" && "scale-110",
-              )}
-            />
+            <List className="h-4 w-4" />
             <span className="hidden sm:inline">Lista</span>
           </Button>
         </div>
 
-        {/* Botão Novo Nucleo à direita (apenas desktop) */}
+        {/* Botão Novo Nucleo (desktop) */}
         <div className="hidden sm:block">
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
             <Button
               onClick={onAddNucleo}
               size="sm"
-              className="bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90 transition shadow-md shadow-primary/20 gap-1"
+              className="bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90 transition shadow-md gap-1"
             >
               <Plus className="h-4 w-4" />
               <span>Novo Nucleo</span>
@@ -220,38 +185,47 @@ export function NucleoGrid({
         </div>
       </motion.div>
 
-      {/* Mobile - Sempre lista com animação */}
+      {/* ============ MOBILE - Grid de 2 colunas ============ */}
       <div className="block sm:hidden">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key="mobile-list"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            transition={{ duration: 0.2 }}
-            className="space-y-2"
-          >
-            {nucleos.map((nucleo, index) => (
-              <motion.div
-                key={nucleo.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.03 }}
-              >
-                <NucleoCardCompact
-                  nucleo={adaptNucleo(nucleo)}
-                  onClick={() => onNucleoClick?.(nucleo)}
-                  onEdit={() => handleEdit(nucleo)}
-                  onDelete={() => onNucleoDelete?.(nucleo)}
-                />
-              </motion.div>
-            ))}
-            {addCard}
-          </motion.div>
-        </AnimatePresence>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="grid grid-cols-2 gap-3"
+        >
+          {nucleos.map((nucleo, index) => (
+            <motion.div
+              key={nucleo.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.03 }}
+            >
+              <NucleoCardMobile
+                nucleo={nucleo}
+                index={index}
+                onClick={() => onNucleoClick?.(nucleo)}
+                onEdit={() => handleEdit(nucleo)}
+                onDelete={() => onNucleoDelete?.(nucleo)}
+              />
+            </motion.div>
+          ))}
+          {onAddNucleo && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: nucleos.length * 0.03 }}
+              className="cursor-pointer rounded-2xl border-2 border-dashed border-muted-foreground/25 bg-muted/20 flex flex-col items-center justify-center p-6 transition-all hover:border-primary/50 hover:bg-muted/30 active:scale-95"
+              onClick={onAddNucleo}
+            >
+              <div className="rounded-full bg-primary/10 p-2 mb-2">
+                <Plus className="h-5 w-5 text-primary" />
+              </div>
+              <p className="text-xs font-medium text-muted-foreground">Novo</p>
+            </motion.div>
+          )}
+        </motion.div>
       </div>
 
-      {/* Desktop - Grid ou Lista com animação suave */}
+      {/* ============ DESKTOP - Grid ou Lista ============ */}
       <div className="hidden sm:block">
         <AnimatePresence mode="wait">
           {layoutMode === "grid" ? (
@@ -267,21 +241,18 @@ export function NucleoGrid({
               )}
             >
               {nucleos.map((nucleo) => (
-                <motion.div
-                  key={nucleo.id}
-                  variants={cardVariants}
-                  layout
-                  transition={{ duration: 0.2 }}
-                >
-                  <NucleoCard
-                    nucleo={adaptNucleo(nucleo)}
+                <motion.div key={nucleo.id} variants={cardVariants} layout>
+                  <NucleoCoreCard
+                    nucleo={nucleo}
                     onClick={() => onNucleoClick?.(nucleo)}
                     onEdit={() => handleEdit(nucleo)}
                     onDelete={() => onNucleoDelete?.(nucleo)}
                   />
                 </motion.div>
               ))}
-              {addCard}
+              <motion.div variants={cardVariants} layout>
+                {addCard}
+              </motion.div>
             </motion.div>
           ) : (
             <motion.div
@@ -293,26 +264,16 @@ export function NucleoGrid({
               className="space-y-2"
             >
               {nucleos.map((nucleo) => (
-                <motion.div
-                  key={nucleo.id}
-                  variants={cardVariants}
-                  layout
-                  transition={{ duration: 0.2 }}
-                >
+                <motion.div key={nucleo.id} variants={cardVariants} layout>
                   <NucleoCoreCard
-                    nucleo={adaptNucleo(nucleo)}
+                    nucleo={nucleo}
                     onClick={() => onNucleoClick?.(nucleo)}
                     onEdit={() => handleEdit(nucleo)}
                     onDelete={() => onNucleoDelete?.(nucleo)}
                   />
                 </motion.div>
               ))}
-              <motion.div
-                variants={cardVariants}
-                layout
-                transition={{ duration: 0.2 }}
-                className="mt-4"
-              >
+              <motion.div variants={cardVariants} layout className="mt-4">
                 {addCard}
               </motion.div>
             </motion.div>
@@ -320,16 +281,17 @@ export function NucleoGrid({
         </AnimatePresence>
       </div>
 
+      {/* Modal de edição */}
       <EditNucleoModal
         open={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
         nucleo={editingNucleo}
-        // EditNucleo={onNucleoUpdate || (async () => {})}
       />
     </div>
   );
 }
 
+// ============ SKELETON ============
 function NucleoCardSkeleton() {
   return (
     <div className="rounded-lg border bg-card overflow-hidden">

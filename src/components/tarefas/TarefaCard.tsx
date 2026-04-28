@@ -286,7 +286,7 @@ export function TarefaCard({
         )}
       </div>
 
-      {!isEditing && (
+      {/* {!isEditing && (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -310,7 +310,7 @@ export function TarefaCard({
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      )}
+      )} */}
     </div>
   );
 }

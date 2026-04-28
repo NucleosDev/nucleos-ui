@@ -1,5 +1,4 @@
-// src/components/canvas/types.ts
-import type { BlocoTipo } from "@/types/bloco";
+// src/types/canvas.ts
 
 export type TextBlockType =
   | "h1"
@@ -17,7 +16,6 @@ export interface TextBlock {
   id: string;
   type: TextBlockType;
   content: string;
-  completed?: boolean;
 }
 
 export interface FunctionalBlockRef {
@@ -25,8 +23,7 @@ export interface FunctionalBlockRef {
   type: "functional";
   blockId: string;
   blockType: string;
-  title: string;
+  title?: string;
 }
 
 export type CanvasItem = TextBlock | FunctionalBlockRef;
-export type CanvasBlock = TextBlock; // Para compatibilidade

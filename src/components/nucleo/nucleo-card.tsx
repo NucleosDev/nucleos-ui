@@ -173,17 +173,17 @@ export function NucleoCard({
           onClick={onClick}
         >
           {/* Image Section - Occupies full width top */}
-          <div className="relative aspect-[16/9] w-full overflow-hidden">
+          <div className="relative w-full overflow-hidden h-[180px] sm:h-[220px] md:h-[260px] lg:h-[200px]">
             <Image
               src={capaUrl}
               alt={nome}
               fill
-              className="z-0 object-cover transition-transform duration-700 group-hover:scale-110"
+              className="z-0 object-cover transition-transform duration-700 group-hover:scale-110 will-change-transform"
             />
 
             {/* Gradient Overlay */}
             <div className="absolute inset-0 z-10 bg-gradient-to-t from-card via-card/60 to-transparent opacity-90" />
-            <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/20 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 z-10 bg-gradient-to-r from-foreground/20 via-transparent to-foreground/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
             {/* Badge do tipo - canto superior direito */}
             <div className="absolute top-3 right-3 z-30">
@@ -192,7 +192,7 @@ export function NucleoCard({
                 className={cn(
                   "px-2 py-1 text-xs font-medium backdrop-blur-md border border-white/20",
                   typeStyles,
-                  "bg-black/40 text-white hover:bg-black/60",
+                  "bg-foreground/40 text-white hover:bg-foreground/60",
                 )}
               >
                 {tipo}
@@ -200,7 +200,7 @@ export function NucleoCard({
             </div>
 
             {/* Hover Overlay com botão */}
-            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/60 dark:bg-white/20 backdrop-blur-sm opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            <div className="absolute inset-0 z-20 flex items-center justify-center bg-foreground/60 dark:bg-white/20 backdrop-blur-sm opacity-0 transition-opacity duration-300 group-hover:opacity-100">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -215,8 +215,9 @@ export function NucleoCard({
               <svg
                 viewBox="0 0 500 80"
                 preserveAspectRatio="none"
-                className="w-full h-[60px -mb-[2px]]"
+                className="w-full h-[60px] -mb-[2px]"
               >
+                <div className="absolute bottom-0 left-0 w-full h-[6px] bg-card z-20" />
                 <path
                   d="M0,20 C150,-40 340,80 500,40 L500,80 L0,80 Z"
                   className="fill-card"
@@ -228,10 +229,10 @@ export function NucleoCard({
           </div>
 
           {/* ICON (integrado ao conteúdo, não sobreposto) */}
-          <div className="relative z-30 -mt-10 ml-7 top--10">
+          <div className="absolute z-30 -mt-22 ml-8 top--10">
             <div className="relative flex h-17 w-17 items-center justify-center rounded-xl">
               <div
-                className="absolute inset-0 rounded-xl blur-xl opacity-40"
+                className="absolute inset-0 rounded-2xl blur-2xl opacity-50"
                 style={{ background: corDestaque }}
               />
               <div
@@ -246,10 +247,10 @@ export function NucleoCard({
                     alt={nome}
                     width={18}
                     height={18}
-                    className="object-contain brightness-0 invert"
+                    className="object-contain brightness-0  invert"
                   />
                 ) : (
-                  <IconComponent className="h-8 w-8 text-white" />
+                  <IconComponent className="h-8 w-8 text-background" />
                 )}
               </div>
             </div>

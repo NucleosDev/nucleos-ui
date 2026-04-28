@@ -3,27 +3,11 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import {
-  MoreHorizontal,
-  GripVertical,
-  Plus,
-  ExternalLink,
-  Pencil,
-  Trash2,
-  Copy,
-  CornerDownRight,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { GripVertical, CornerDownRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TIPO_BLOCO_META } from "@/lib/bloco-utils";
 import { CriarBlocoModal } from "@/components/blocos/CriarBlocoModal";
+import { BlocoHoverActions } from "@/components/blocos/BlocoHoverActions";
 import { cn } from "@/lib/utils";
 import type { Bloco, CreateBlocoPayload } from "@/types/bloco";
 
@@ -37,7 +21,7 @@ interface BlocoCardProps {
   isDeleting?: boolean;
   isCreating?: boolean;
   compact?: boolean;
-  depth?: number; // NOVO
+  depth?: number;
 }
 
 export function BlocoCard({
@@ -50,10 +34,11 @@ export function BlocoCard({
   isDeleting = false,
   isCreating = false,
   compact = true,
-  depth = 0, // NOVO
+  depth = 0,
 }: BlocoCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [modalCriarAberto, setModalCriarAberto] = useState(false);
+  const [modalTipo, setModalTipo] = useState<"sub" | "abaixo">("sub");
   const [isDragging, setIsDragging] = useState(false);
 
   const {
@@ -78,23 +63,30 @@ export function BlocoCard({
     setIsDragging(false);
   };
 
-  const handleCriarBlocoAbaixo = async (payload: CreateBlocoPayload) => {
-    if (onCreateBloco) {
-      await onCreateBloco({
-        ...payload,
-        posicao: (bloco.posicao || 0) + 1,
-        parentId: bloco.parentId, // Mantém o mesmo parent
-      });
-    }
-    setModalCriarAberto(false);
+  const handleOpenSubBlocoModal = () => {
+    setModalTipo("sub");
+    setModalCriarAberto(true);
   };
 
-  const handleCriarSubBloco = async (payload: CreateBlocoPayload) => {
+  const handleOpenAbaixoModal = () => {
+    setModalTipo("abaixo");
+    setModalCriarAberto(true);
+  };
+
+  const handleCriarBloco = async (payload: CreateBlocoPayload) => {
     if (onCreateBloco) {
-      await onCreateBloco({
-        ...payload,
-        parentId: bloco.id, // Sub-bloco
-      });
+      if (modalTipo === "sub") {
+        await onCreateBloco({
+          ...payload,
+          parentId: bloco.id,
+        });
+      } else {
+        await onCreateBloco({
+          ...payload,
+          posicao: (bloco.posicao || 0) + 1,
+          parentId: bloco.parentId,
+        });
+      }
     }
     setModalCriarAberto(false);
   };
@@ -107,12 +99,12 @@ export function BlocoCard({
           "hover:shadow-md border-border/50",
           isDragging && "opacity-50 shadow-lg ring-2 ring-primary",
           !compact && "shadow-sm",
-          depth > 0 && "ml-6", // Indentação para sub-blocos
         )}
         style={{ marginLeft: depth > 0 ? `${depth * 24}px` : undefined }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
+        {/* Link para tela cheia (apenas no modo compacto) */}
         {compact && (
           <Link
             href={`/dashboard/nucleos/${nucleoId}/blocos/${bloco.id}`}
@@ -120,6 +112,25 @@ export function BlocoCard({
             aria-label={`Abrir bloco ${tituloExibicao}`}
           />
         )}
+
+        {/* Ações de hover no topo direito */}
+        <BlocoHoverActions
+          bloco={bloco}
+          nucleoId={nucleoId}
+          onOpenFullPage={
+            compact
+              ? undefined
+              : () => {
+                  // Já está em tela cheia (não-compacto)
+                }
+          }
+          onEdit={onEdit}
+          onDuplicate={onDuplicate}
+          onAddBelow={handleOpenAbaixoModal}
+          onDelete={onDelete}
+          isDeleting={isDeleting}
+        />
+
         <CardHeader
           className={cn(
             "flex flex-row items-start justify-between",
@@ -135,9 +146,10 @@ export function BlocoCard({
               />
             )}
 
+            {/* Drag handle */}
             <div
               className={cn(
-                "cursor-grab transition-opacity",
+                "cursor-grab transition-all duration-200",
                 isHovered ? "opacity-100" : "opacity-0",
                 compact && "relative z-10",
               )}
@@ -147,93 +159,43 @@ export function BlocoCard({
               title="Arraste para reordenar"
               data-no-nav="true"
             >
-              <GripVertical className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+              <div className="p-1 rounded-md hover:bg-accent/50 transition-colors">
+                <GripVertical className="h-4 w-4 text-muted-foreground" />
+              </div>
             </div>
 
-            <div className="rounded-md bg-primary/10 p-1.5" data-no-nav="true">
+            {/* Ícone do tipo de bloco */}
+            <div className="rounded-lg bg-primary/10 p-1.5" data-no-nav="true">
               <IconComponent className="h-4 w-4 text-primary" />
             </div>
 
+            {/* Título */}
             <CardTitle
-              className={cn("font-medium", compact ? "text-base" : "text-lg")}
+              className={cn("font-semibold", compact ? "text-sm" : "text-base")}
               data-no-nav="true"
             >
               {tituloExibicao}
             </CardTitle>
           </div>
-
-          <div data-no-nav="true">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={cn(
-                    "relative z-10 h-8 w-8 transition-opacity",
-                    !isHovered && "opacity-0",
-                  )}
-                  disabled={isDeleting}
-                >
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="z-20 w-48">
-                {compact && (
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href={`/dashboard/nucleos/${nucleoId}/blocos/${bloco.id}`}
-                    >
-                      <ExternalLink className="mr-2 h-4 w-4" /> Abrir em tela
-                      cheia
-                    </Link>
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem onClick={onEdit}>
-                  <Pencil className="mr-2 h-4 w-4" /> Editar
-                </DropdownMenuItem>
-                {onDuplicate && (
-                  <DropdownMenuItem onClick={onDuplicate}>
-                    <Copy className="mr-2 h-4 w-4" /> Duplicar
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setModalCriarAberto(true)}>
-                  <Plus className="mr-2 h-4 w-4" /> Adicionar sub-bloco
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    setModalCriarAberto(true);
-                  }}
-                >
-                  <CornerDownRight className="mr-2 h-4 w-4" /> Adicionar bloco
-                  abaixo
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={onDelete}
-                  className="text-destructive"
-                  disabled={isDeleting}
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />{" "}
-                  {isDeleting ? "Excluindo..." : "Excluir"}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
         </CardHeader>
-        <CardContent data-no-nav="true">
-          <p className="text-xs text-muted-foreground">{descricao}</p>
-        </CardContent>
+
+        {/* Descrição (apenas quando não compacto ou com descrição) */}
+        {(!compact || descricao) && (
+          <CardContent data-no-nav="true">
+            <p className="text-xs text-muted-foreground">{descricao}</p>
+          </CardContent>
+        )}
       </Card>
 
+      {/* Modal de criação de bloco */}
       {onCreateBloco && (
         <CriarBlocoModal
           open={modalCriarAberto}
           onClose={() => setModalCriarAberto(false)}
-          onConfirm={handleCriarSubBloco}
+          onConfirm={handleCriarBloco}
           nucleoId={nucleoId}
           isCreating={isCreating}
-          parentId={bloco.id}
+          parentId={modalTipo === "sub" ? bloco.id : null}
         />
       )}
     </>

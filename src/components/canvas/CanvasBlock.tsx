@@ -8,66 +8,67 @@ import {
   GripVertical,
   Plus,
   Trash2,
-  Type,
   Heading1,
   Heading2,
   Heading3,
+  Type,
   List,
   ListOrdered,
-  CheckSquare,
   Quote,
   Code2,
   Minus,
+  CheckSquare,
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { motion, AnimatePresence } from "framer-motion";
-import type { CanvasBlock as CanvasBlockType } from "./types";
-
-type TextBlockType =
-  | "h1"
-  | "h2"
-  | "h3"
-  | "paragraph"
-  | "quote"
-  | "code"
-  | "divider"
-  | "bullet-list"
-  | "numbered-list"
-  | "todo";
+import { CanvasSlashMenu } from "./CanvasSlashMenu";
+import type { TextBlock, TextBlockType } from "@/types/canvas";
 
 interface CanvasBlockProps {
-  block: CanvasBlockType;
+  block: TextBlock;
   isActive: boolean;
   onActivate: () => void;
   onUpdate: (id: string, content: string) => void;
   onDelete: (id: string) => void;
-  onAddBelow: (id: string, type: TextBlockType) => void;
+  onAddBelow: (id: string, type?: TextBlockType) => void;
   onTypeChange: (id: string, type: TextBlockType) => void;
   readOnly?: boolean;
-  placeholder?: string;
 }
 
-const FORMAT_COMMANDS = [
-  { type: "h1" as TextBlockType, label: "Título 1", icon: Heading1 },
-  { type: "h2" as TextBlockType, label: "Título 2", icon: Heading2 },
-  { type: "h3" as TextBlockType, label: "Título 3", icon: Heading3 },
-  { type: "paragraph" as TextBlockType, label: "Parágrafo", icon: Type },
-  { type: "quote" as TextBlockType, label: "Citação", icon: Quote },
-  { type: "code" as TextBlockType, label: "Código", icon: Code2 },
-  { type: "divider" as TextBlockType, label: "Divisor", icon: Minus },
-  { type: "bullet-list" as TextBlockType, label: "Lista", icon: List },
+export const TEXT_FORMAT_COMMANDS = [
+  { type: "h1" as const, label: "Título 1", icon: Heading1, shortcut: "⌘⌥1" },
+  { type: "h2" as const, label: "Título 2", icon: Heading2, shortcut: "⌘⌥2" },
+  { type: "h3" as const, label: "Título 3", icon: Heading3, shortcut: "⌘⌥3" },
+  { type: "paragraph" as const, label: "Texto", icon: Type, shortcut: "⌘⌥0" },
+  { type: "quote" as const, label: "Citação", icon: Quote, shortcut: ">" },
+  { type: "code" as const, label: "Código", icon: Code2, shortcut: "```" },
+  { type: "divider" as const, label: "Divisor", icon: Minus, shortcut: "---" },
+  { type: "bullet-list" as const, label: "Lista", icon: List, shortcut: "-" },
   {
-    type: "numbered-list" as TextBlockType,
+    type: "numbered-list" as const,
     label: "Lista numerada",
     icon: ListOrdered,
+    shortcut: "1.",
   },
-  { type: "todo" as TextBlockType, label: "Checklist", icon: CheckSquare },
+  {
+    type: "todo" as const,
+    label: "Checklist",
+    icon: CheckSquare,
+    shortcut: "[]",
+  },
 ];
+
+const typeClasses: Record<TextBlockType, string> = {
+  h1: "text-[2rem] font-bold leading-tight tracking-tight",
+  h2: "text-[1.5rem] font-semibold leading-tight",
+  h3: "text-[1.25rem] font-medium leading-tight",
+  paragraph: "text-base leading-relaxed",
+  quote: "border-l-[3px] border-primary/40 pl-4 italic text-muted-foreground",
+  code: "font-mono text-sm bg-muted/60 rounded-lg px-3 py-1.5",
+  divider: "",
+  "bullet-list": "ml-2",
+  "numbered-list": "ml-2",
+  todo: "ml-2",
+};
 
 export function CanvasBlock({
   block,
@@ -78,191 +79,162 @@ export function CanvasBlock({
   onAddBelow,
   onTypeChange,
   readOnly = false,
-  placeholder = "Digite '/' para comandos...",
 }: CanvasBlockProps) {
   const [showSlashMenu, setShowSlashMenu] = useState(false);
-  const [slashPosition, setSlashPosition] = useState({ top: 0, left: 0 });
+  const [slashPos, setSlashPos] = useState({ top: 0, left: 0 });
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // 🔥 Inicializar o conteúdo do block no DOM
   useEffect(() => {
     if (
       contentRef.current &&
       contentRef.current.textContent !== block.content
     ) {
-      contentRef.current.textContent = block.content;
+      contentRef.current.textContent = block.content || "";
     }
-  }, [block.content]);
+  }, [block.id]); // Só sincroniza quando o bloco muda de ID
 
   const handleInput = () => {
-    const content = contentRef.current?.textContent || "";
-    if (content.startsWith("/") && content.length <= 10 && !readOnly) {
+    const text = contentRef.current?.textContent || "";
+    if (text === "/" && !readOnly) {
+      const r = contentRef.current?.getBoundingClientRect();
+      if (r) setSlashPos({ top: r.bottom + 4, left: r.left });
       setShowSlashMenu(true);
-      const rect = contentRef.current?.getBoundingClientRect();
-      if (rect) setSlashPosition({ top: rect.bottom + 4, left: rect.left });
     } else {
       setShowSlashMenu(false);
     }
-    onUpdate(block.id, content);
+    onUpdate(block.id, text);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (readOnly) return;
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      onAddBelow(block.id, "paragraph");
+      onAddBelow(block.id);
     }
-    if (e.key === "Backspace" && !contentRef.current?.textContent?.trim()) {
+    if (
+      e.key === "Backspace" &&
+      !contentRef.current?.textContent?.trim() &&
+      !readOnly
+    ) {
       e.preventDefault();
       onDelete(block.id);
     }
   };
 
-  const getPlaceholder = () => {
-    switch (block.type) {
-      case "h1":
-        return "Título 1...";
-      case "h2":
-        return "Título 2...";
-      case "h3":
-        return "Título 3...";
-      case "quote":
-        return "Citação...";
-      case "code":
-        return "Código...";
-      case "bullet-list":
-        return "Item da lista...";
-      case "numbered-list":
-        return "Item numerado...";
-      case "todo":
-        return "Tarefa...";
-      default:
-        return placeholder;
-    }
-  };
-
-  // 🔥 Divisor
+  // Divisor
   if (block.type === "divider") {
     return (
-      <div className="group relative py-2">
+      <div className="group relative py-2" onClick={onActivate}>
         <div className="flex items-center gap-3">
-          {!readOnly && (
-            <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6"
-                onClick={() => onAddBelow(block.id, "paragraph")}
-              >
-                <Plus className="h-3 w-3" />
-              </Button>
-              <GripVertical className="h-3 w-3 text-muted-foreground" />
-            </div>
-          )}
-          <div className="flex-1 border-t border-border" />
-          {!readOnly && (
+          <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-opacity">
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6 opacity-0 group-hover:opacity-100"
-              onClick={() => onDelete(block.id)}
+              className="h-6 w-6"
+              onClick={() => onAddBelow(block.id)}
             >
-              <Trash2 className="h-3 w-3" />
+              <Plus className="h-3 w-3" />
             </Button>
-          )}
+            <GripVertical className="h-3 w-3 text-muted-foreground" />
+          </div>
+          <div className="flex-1 border-t border-border" />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 opacity-0 group-hover:opacity-100"
+            onClick={() => onDelete(block.id)}
+          >
+            <Trash2 className="h-3 w-3 text-muted-foreground" />
+          </Button>
         </div>
       </div>
     );
   }
 
-  const typeClasses: Record<TextBlockType, string> = {
-    h1: "text-4xl font-bold leading-tight",
-    h2: "text-3xl font-semibold leading-tight",
-    h3: "text-2xl font-medium leading-tight",
-    paragraph: "text-base leading-relaxed",
-    quote: "border-l-4 border-primary pl-4 italic text-muted-foreground",
-    code: "font-mono text-sm bg-muted/50 rounded-lg px-3 py-1.5",
-    divider: "",
-    "bullet-list": "",
-    "numbered-list": "",
-    todo: "",
+  const placeholderMap: Record<string, string> = {
+    h1: "Título 1",
+    h2: "Título 2",
+    h3: "Título 3",
+    quote: "Citação...",
+    code: "Código...",
+    "bullet-list": "Item da lista",
+    "numbered-list": "Item numerado",
+    todo: "Tarefa",
+    paragraph: "Pressione '/' para comandos",
   };
 
   return (
     <div
       className={cn(
-        "group relative flex items-start gap-2 py-1.5 rounded-lg transition-colors",
-        isActive && "bg-muted/30",
+        "group relative flex items-start gap-2 py-1 px-1 -mx-1 rounded-lg transition-colors",
+        isActive && "bg-muted/20",
       )}
       onClick={onActivate}
     >
+      {/* Handles */}
       {!readOnly && (
         <div
           className={cn(
-            "flex items-center gap-0.5 pt-1 transition-opacity",
+            "flex items-center gap-0.5 pt-[0.35rem] transition-opacity flex-shrink-0",
             isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100",
           )}
         >
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6 cursor-grab"
+          <button
+            className="p-0.5 cursor-grab active:cursor-grabbing rounded hover:bg-accent/50 transition-colors"
             draggable
           >
             <GripVertical className="h-3.5 w-3.5 text-muted-foreground" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6"
-            onClick={() => onAddBelow(block.id, "paragraph")}
+          </button>
+          <button
+            className="p-0.5 rounded hover:bg-accent/50 transition-colors"
+            onClick={() => onAddBelow(block.id)}
           >
             <Plus className="h-3.5 w-3.5 text-muted-foreground" />
-          </Button>
+          </button>
         </div>
       )}
 
-      <div
-        className={cn(
-          "flex-1 min-w-0",
-          typeClasses[block.type as TextBlockType],
-        )}
-      >
+      {/* Conteúdo */}
+      <div className={cn("flex-1 min-w-0", typeClasses[block.type])}>
         {block.type === "bullet-list" ? (
           <div className="flex items-start gap-2">
-            <span className="text-primary font-bold mt-0.5">•</span>
+            <span className="text-primary font-bold mt-[0.15rem] select-none">
+              •
+            </span>
             <div
               ref={contentRef}
               contentEditable={!readOnly}
               suppressContentEditableWarning
-              className="outline-none flex-1 min-w-0"
-              data-placeholder={getPlaceholder()}
+              className="outline-none flex-1 min-w-0 empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/50"
+              data-placeholder={placeholderMap[block.type]}
               onInput={handleInput}
               onKeyDown={handleKeyDown}
             />
           </div>
         ) : block.type === "todo" ? (
           <div className="flex items-start gap-2">
-            <div className="w-4 h-4 mt-1 rounded border-2 border-muted-foreground/30 cursor-pointer hover:border-primary transition-colors" />
+            <div className="w-4 h-4 mt-1 rounded border-2 border-muted-foreground/30 cursor-pointer hover:border-primary/50 transition-colors flex-shrink-0" />
             <div
               ref={contentRef}
               contentEditable={!readOnly}
               suppressContentEditableWarning
-              className="outline-none flex-1 min-w-0"
-              data-placeholder={getPlaceholder()}
+              className="outline-none flex-1 min-w-0 empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/50"
+              data-placeholder={placeholderMap[block.type]}
               onInput={handleInput}
               onKeyDown={handleKeyDown}
             />
           </div>
         ) : block.type === "numbered-list" ? (
           <div className="flex items-start gap-2">
-            <span className="text-primary font-medium min-w-[24px]">1.</span>
+            <span className="text-primary font-medium min-w-[1.5rem] select-none">
+              1.
+            </span>
             <div
               ref={contentRef}
               contentEditable={!readOnly}
               suppressContentEditableWarning
-              className="outline-none flex-1 min-w-0"
-              data-placeholder={getPlaceholder()}
+              className="outline-none flex-1 min-w-0 empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/50"
+              data-placeholder={placeholderMap[block.type]}
               onInput={handleInput}
               onKeyDown={handleKeyDown}
             />
@@ -272,62 +244,40 @@ export function CanvasBlock({
             ref={contentRef}
             contentEditable={!readOnly}
             suppressContentEditableWarning
-            className="outline-none"
-            data-placeholder={getPlaceholder()}
+            className="outline-none empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/50"
+            data-placeholder={
+              placeholderMap[block.type] || placeholderMap.paragraph
+            }
             onInput={handleInput}
             onKeyDown={handleKeyDown}
           />
         )}
       </div>
 
+      {/* Botão de deletar */}
       {!readOnly && (
-        <Button
-          variant="ghost"
-          size="icon"
+        <button
           className={cn(
-            "h-6 w-6 transition-opacity",
+            "p-0.5 rounded hover:bg-destructive/10 transition-all flex-shrink-0 mt-[0.35rem]",
             isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100",
           )}
           onClick={() => onDelete(block.id)}
         >
-          <Trash2 className="h-3.5 w-3.5 text-destructive" />
-        </Button>
+          <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
+        </button>
       )}
 
-      <AnimatePresence>
-        {showSlashMenu && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="fixed z-50 w-72 bg-popover border rounded-xl shadow-xl overflow-hidden"
-            style={{ top: slashPosition.top, left: slashPosition.left }}
-          >
-            <div className="p-2 max-h-96 overflow-y-auto">
-              <p className="text-xs font-medium text-muted-foreground px-2 py-1 uppercase">
-                Blocos de texto
-              </p>
-              {FORMAT_COMMANDS.map((cmd) => (
-                <button
-                  key={cmd.type}
-                  className="w-full flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-accent text-left"
-                  onClick={() => {
-                    onTypeChange(block.id, cmd.type);
-                    setShowSlashMenu(false);
-                  }}
-                >
-                  <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
-                    <cmd.icon className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">{cmd.label}</p>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Slash Menu */}
+      <CanvasSlashMenu
+        isOpen={showSlashMenu}
+        position={slashPos}
+        commands={TEXT_FORMAT_COMMANDS}
+        onSelect={(type) => {
+          onTypeChange(block.id, type);
+          setShowSlashMenu(false);
+        }}
+        onClose={() => setShowSlashMenu(false)}
+      />
     </div>
   );
 }
