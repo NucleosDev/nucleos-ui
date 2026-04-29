@@ -20,8 +20,8 @@ export const TIERS = [
     id: "gratis",
     name: "Grátis",
     price: {
-      mensal: "Grátis",
-      anual: "Grátis",
+      mensal: "0",
+      anual: "0",
     },
     description: "Para começar sua jornada",
     features: [
