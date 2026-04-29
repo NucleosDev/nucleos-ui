@@ -154,13 +154,12 @@ const faqs = [
       "Sim, todos os dados são criptografados e armazenados com segurança. O Nucleos segue as melhores práticas de segurança da indústria.",
   },
   {
-    pergunta: "Como cancelar minha assinatura?",
+    pergunta: "Como posso cancelar minha assinatura?",
     resposta:
       "Você pode cancelar sua assinatura a qualquer momento nas configurações da sua conta. O cancelamento é imediato e sem multa.",
   },
 ];
 
-// Adicionar slugs
 const categorias = adicionarSlugs(categoriasData, "titulo");
 const artigosPopulares = adicionarSlugs(artigosPopularesData, "titulo", {
   removeStopWords: true,

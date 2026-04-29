@@ -1,4 +1,3 @@
-// /app/planos/page.tsx
 "use client";
 
 import Pricing from "@/components/nucleo/pricing-section";
