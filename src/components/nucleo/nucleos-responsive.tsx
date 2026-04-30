@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NucleoCard } from "./nucleo-card";
-import { NucleoCardCompact } from "./nucleo-card-mini";
+import { NucleoCardMobile } from "./nucleo-card-mini";
 import { NucleoCoreCard } from "./nucleo-core-card";
 import { CreateNucleoModal } from "./nucleo-create-modal";
 import { EditNucleoModal } from "./edit-nucleo-modal";
@@ -133,7 +133,7 @@ export function NucleosResponsive() {
       {/* MOBILE: sempre lista compacta */}
       <div className="block sm:hidden space-y-2">
         {nucleos.map((nucleo) => (
-          <NucleoCardCompact
+          <NucleoCardMobile
             key={nucleo.id}
             nucleo={adaptNucleo(nucleo)}
             onClick={() => handleNucleoClick(nucleo.id)}
