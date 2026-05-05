@@ -221,7 +221,7 @@ export function TextBlockEditor({
                 >
                   <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
                     <cmd.icon className="h-4 w-4" />
-                  </div>a
+                  </div>
                   <div>
                     <p className="text-sm font-medium">{cmd.label}</p>
                   </div>

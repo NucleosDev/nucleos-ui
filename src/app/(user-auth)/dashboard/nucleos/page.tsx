@@ -1,4 +1,3 @@
-// src/app/(user-auth)/dashboard/nucleos/page.tsx
 "use client";
 
 import { useState } from "react";

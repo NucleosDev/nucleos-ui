@@ -18,6 +18,8 @@ export interface TextBlock {
   type: TextBlockType;
   content: string;
   completed?: boolean;
+  x?: number;
+  y?: number;
 }
 
 export interface FunctionalBlockRef {
@@ -26,6 +28,8 @@ export interface FunctionalBlockRef {
   blockId: string;
   blockType: string;
   title: string;
+   x?: number;
+  y?: number;
 }
 
 export type CanvasItem = TextBlock | FunctionalBlockRef;

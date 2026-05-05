@@ -1,0 +1,9 @@
+// src/components/document/index.ts
+export { NucleoDocument } from "./NucleoDocument";
+export { HeaderBlock } from "./HeaderBlock";
+export { SortableDocumentBlock } from "./SortableDocumentBlock";
+export { TextBlockRenderer } from "./TextBlockRenderer";
+export { FunctionalBlockCard } from "./FunctionalBlockCard";
+export { AddBlockTrigger } from "./AddBlockTrigger";
+export { SlashMenu } from "./SlashMenu";
+export type { DocumentBlock, DocumentBlockType } from "./document-types";
