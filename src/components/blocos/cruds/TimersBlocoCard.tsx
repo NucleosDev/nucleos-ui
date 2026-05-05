@@ -176,61 +176,6 @@ export function TimersBlocoCard({
 
   return (
     <Card className="group relative hover:shadow-md transition-shadow">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-2">
-            <div
-              className={cn(
-                "p-1.5 rounded-md transition-colors",
-                hasRunningTimer ? "bg-primary/20" : "bg-primary/10",
-              )}
-            >
-              <TimerIcon
-                className={cn(
-                  "h-4 w-4 transition-colors",
-                  hasRunningTimer
-                    ? "text-primary animate-pulse"
-                    : "text-primary",
-                )}
-              />
-            </div>
-            <CardTitle className="text-base font-semibold">
-              {bloco.titulo || "Timer Focus"}
-            </CardTitle>
-            {hasRunningTimer && (
-              <Badge variant="default" className="ml-1 text-xs animate-pulse">
-                Em andamento
-              </Badge>
-            )}
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                disabled={isStartingTimer || isStopping}
-              >
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onEdit(bloco.id)}>
-                <Pencil className="mr-2 h-4 w-4" /> Editar bloco
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => onDelete(bloco.id)}
-                className="text-destructive"
-                disabled={isDeleting}
-              >
-                <Trash2 className="mr-2 h-4 w-4" /> Excluir bloco
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </CardHeader>
-
       <CardContent className="space-y-4">
         {/* Timer ativo */}
         {hasRunningTimer && activeTimer && (
@@ -255,7 +200,7 @@ export function TimersBlocoCard({
                 htmlFor="descricao"
                 className="text-xs text-muted-foreground"
               >
-                O que você vai fazer?
+                Você vai..?
               </Label>
               <Input
                 id="descricao"

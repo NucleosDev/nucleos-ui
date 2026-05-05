@@ -329,13 +329,10 @@ export function CalendarioCard({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="">
       {/* Container principal com design inspirado */}
-      <div className="rounded-[24px] bg-card p-4 transition-all duration-300 hover:border-indigo-400/50 hover:shadow-lg hover:shadow-indigo-500/5">
-        <div
-          className="rounded-2xl border border-border/10 bg-background/50 p-4"
-          style={{ boxShadow: "0px 2px 1.5px 0px rgba(0,0,0,0.05) inset" }}
-        >
+      <div className="">
+        <div className="">
           {/* Cabeçalho do mês */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">

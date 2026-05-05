@@ -6,4 +6,13 @@ export { TextBlockRenderer } from "./TextBlockRenderer";
 export { FunctionalBlockCard } from "./FunctionalBlockCard";
 export { AddBlockTrigger } from "./AddBlockTrigger";
 export { SlashMenu } from "./SlashMenu";
-export type { DocumentBlock, DocumentBlockType } from "./document-types";
+export { SelectionToolbar } from "./SelectionToolbar";
+export { LayoutRowRenderer } from "./LayoutRowRenderer";
+export type {
+  DocumentBlock,
+  DocumentBlockType,
+  NucleoDocumentState,
+  LayoutRow,
+  LayoutColumn,
+  DocumentLayout,
+} from "./document-types";

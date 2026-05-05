@@ -1,30 +1,22 @@
+// src/components/blocos/cruds/ListasBlocoCard.tsx
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Plus, MoreVertical, Pencil, Trash2, ListChecks } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Plus, ListChecks, ChevronDown, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ListaCard } from "@/components/lista/ListaCard";
 import { CriarListaModal } from "@/components/lista/CriarListaModal";
+import { ListaFinanceiraInteligente } from "@/components/lista/ListaFinanceiraInteligente";
 import { useListas } from "@/hooks/useListas";
+import { useItensLista } from "@/hooks/useItensLista";
 import { toast } from "@/hooks/use-toast";
 import type { Bloco } from "@/types/bloco";
-import type { Lista } from "@/types/lista";
 
 interface ListasBlocoCardProps {
   bloco: Bloco;
   nucleoId: string;
-  onDelete: (blocoId: string) => void;
-  onEdit: (blocoId: string) => void;
+  onDelete?: () => void;
+  onEdit?: () => void;
   isDeleting?: boolean;
 }
 
@@ -35,41 +27,27 @@ export function ListasBlocoCard({
   onEdit,
   isDeleting,
 }: ListasBlocoCardProps) {
-  const router = useRouter();
-  const {
-    listas,
-    isLoading,
-    criar,
-    atualizar,
-    excluir,
-    isCreating,
-    isDeleting: isDeletingLista,
-  } = useListas(bloco.id);
-
+  const { listas, isLoading, criar, isCreating } = useListas(bloco.id);
   const [modalCriarAberta, setModalCriarAberta] = useState(false);
-  const [listaEditando, setListaEditando] = useState<Lista | null>(null);
+  const [listasColapsadas, setListasColapsadas] = useState<Set<string>>(
+    new Set(),
+  );
 
-  const handleCriarLista = async (
-    nome: string,
-    tipoLista: string,
-    metadata?: Record<string, any>,
-  ) => {
+  const toggleLista = (listaId: string) => {
+    setListasColapsadas((prev) => {
+      const next = new Set(prev);
+      if (next.has(listaId)) next.delete(listaId);
+      else next.add(listaId);
+      return next;
+    });
+  };
+
+  const handleCriarLista = async (nome: string, tipoLista: string) => {
     try {
-      const payload: any = {
-        blocoId: bloco.id,
-        nome,
-        tipoLista: tipoLista as any,
-      };
-
-      if (metadata) {
-        console.log("Metadados da lista:", metadata);
-      }
-
-      await criar(payload);
+      await criar({ blocoId: bloco.id, nome, tipoLista: tipoLista as any });
       toast({ title: "Lista criada com sucesso!" });
       setModalCriarAberta(false);
     } catch (error: any) {
-      console.error("Erro ao criar lista:", error);
       toast({
         title: "Erro ao criar lista",
         description: error?.message,
@@ -78,135 +56,136 @@ export function ListasBlocoCard({
     }
   };
 
-  const handleEditarLista = async (
-    lista: Lista,
-    novoNome: string,
-    novoTipo?: string,
-    metadata?: Record<string, any>,
-  ) => {
-    try {
-      await atualizar({
-        id: lista.id,
-        payload: { nome: novoNome, tipoLista: novoTipo as any },
-      });
-      toast({ title: "Lista atualizada" });
-      setListaEditando(null);
-    } catch (error: any) {
-      toast({
-        title: "Erro ao atualizar",
-        description: error?.message,
-        variant: "destructive",
-      });
-    }
-  };
+  if (isLoading) {
+    return (
+      <div className="space-y-2 px-1">
+        <Skeleton className="h-16 w-full rounded-xl" />
+      </div>
+    );
+  }
 
-  const handleExcluirLista = async (listaId: string) => {
-    if (!confirm("Tem certeza que deseja excluir esta lista?")) return;
-    try {
-      await excluir(listaId);
-      toast({ title: "Lista excluída" });
-    } catch (error: any) {
-      toast({
-        title: "Erro ao excluir",
-        description: error?.message,
-        variant: "destructive",
-      });
-    }
-  };
-
-  return (
-    <>
-      <Card className="group relative hover:shadow-md transition-shadow">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-2">
-              <ListChecks className="h-5 w-5 text-muted-foreground" />
-              <CardTitle className="text-lg">
-                {bloco.titulo || "Listas"}
-              </CardTitle>
-            </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => onEdit(bloco.id)}>
-                  <Pencil className="mr-2 h-4 w-4" /> Editar bloco
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => onDelete(bloco.id)}
-                  className="text-destructive"
-                  disabled={isDeleting}
-                >
-                  <Trash2 className="mr-2 h-4 w-4" /> Excluir bloco
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+  if (listas.length === 0) {
+    return (
+      <>
+        <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
+          <div className="w-10 h-10 rounded-xl bg-cyan-100 flex items-center justify-center mb-2">
+            <ListChecks className="h-5 w-5 text-cyan-600" />
           </div>
-        </CardHeader>
-
-        <CardContent className="space-y-4">
-          {isLoading ? (
-            <div className="space-y-2">
-              <Skeleton className="h-28 w-full" />
-              <Skeleton className="h-28 w-full" />
-            </div>
-          ) : listas.length === 0 ? (
-            <div className="text-center py-6 text-muted-foreground text-sm">
-              Nenhuma lista ainda. Clique em "Nova lista" para começar.
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {listas.map((lista) => (
-                <ListaCard
-                  key={lista.id}
-                  lista={lista}
-                  nucleoId={nucleoId}
-                  blocoId={bloco.id}
-                  onEdit={() => setListaEditando(lista)}
-                  onDelete={() => handleExcluirLista(lista.id)}
-                  showProgressDetails
-                />
-              ))}
-            </div>
-          )}
-
-          {/* BOTÃO AGORA EMBAIXO */}
+          <p className="text-xs text-muted-foreground mb-3">
+            Nenhuma lista ainda
+          </p>
           <Button
-            variant="outline"
             size="sm"
-            className="w-full"
             onClick={() => setModalCriarAberta(true)}
+            className="bg-cyan-600 hover:bg-cyan-700"
             disabled={isCreating}
           >
-            <Plus className="mr-2 h-4 w-4" /> Nova lista
+            <Plus className="mr-1.5 h-3.5 w-3.5" />
+            Criar primeira lista
           </Button>
-        </CardContent>
-      </Card>
+        </div>
+        <CriarListaModal
+          open={modalCriarAberta}
+          onClose={() => setModalCriarAberta(false)}
+          onConfirm={handleCriarLista}
+          isSubmitting={isCreating}
+        />
+      </>
+    );
+  }
 
+  return (
+    <div className="space-y-3">
+      {listas.map((lista) => (
+        <ListaExpandivel
+          key={lista.id}
+          lista={lista}
+          isExpanded={!listasColapsadas.has(lista.id)}
+          onToggle={() => toggleLista(lista.id)}
+        />
+      ))}
+      <Button
+        variant="ghost"
+        size="sm"
+        className="w-full gap-1.5 text-muted-foreground hover:text-foreground"
+        onClick={() => setModalCriarAberta(true)}
+        disabled={isCreating}
+      >
+        <Plus className="h-3.5 w-3.5" />
+        Nova lista
+      </Button>
       <CriarListaModal
         open={modalCriarAberta}
         onClose={() => setModalCriarAberta(false)}
         onConfirm={handleCriarLista}
         isSubmitting={isCreating}
       />
+    </div>
+  );
+}
 
-      {listaEditando && (
-        <CriarListaModal
-          open={!!listaEditando}
-          onClose={() => setListaEditando(null)}
-          onConfirm={(nome, tipo, metadata) =>
-            handleEditarLista(listaEditando, nome, tipo, metadata)
-          }
-          initialNome={listaEditando.nome}
-          initialTipo={listaEditando.tipoLista}
-          titulo="Editar lista"
-          isSubmitting={false}
-        />
+// ── Lista Expansível ─────────────────────────────────────────────────────
+
+function ListaExpandivel({
+  lista,
+  isExpanded,
+  onToggle,
+}: {
+  lista: any;
+  isExpanded: boolean;
+  onToggle: () => void;
+}) {
+  const { itens, criarItem, atualizarItem, excluirItem, toggleItem } =
+    useItensLista(lista.id);
+
+  return (
+    <div className="rounded-xl border bg-card overflow-hidden">
+      <div
+        className="flex items-center gap-2 px-4 py-2.5 bg-muted/30 cursor-pointer hover:bg-muted/50 transition-colors"
+        onClick={onToggle}
+      >
+        <div className="text-muted-foreground">
+          {isExpanded ? (
+            <ChevronDown className="h-4 w-4" />
+          ) : (
+            <ChevronRight className="h-4 w-4" />
+          )}
+        </div>
+        <div className="p-1 rounded-md bg-cyan-100 shrink-0">
+          <ListChecks className="h-3.5 w-3.5 text-cyan-600" />
+        </div>
+        <span className="text-sm font-medium flex-1 truncate">
+          {lista.nome}
+        </span>
+        <span className="text-[11px] text-muted-foreground">
+          {lista.tipoLista === "compras"
+            ? "Compras"
+            : lista.tipoLista === "financeiro"
+              ? "Financeiro"
+              : "Geral"}
+          {itens.length > 0 ? ` · ${itens.length}` : ""}
+        </span>
+      </div>
+      {isExpanded && (
+        <div className="px-4 pb-4 pt-2">
+          <ListaFinanceiraInteligente
+            lista={lista}
+            itens={itens}
+            onAddItem={async (p) => {
+              await criarItem(p as any);
+            }}
+            onUpdateItem={async (id, p) => {
+              await atualizarItem({ id, payload: p });
+            }}
+            onDeleteItem={async (id) => {
+              await excluirItem(id);
+            }}
+            onToggleItem={async (id) => {
+              await toggleItem(id);
+            }}
+          />
+        </div>
       )}
-    </>
+    </div>
   );
 }

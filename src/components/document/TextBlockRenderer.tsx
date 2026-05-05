@@ -22,7 +22,8 @@ const TYPE_CLASSES: Record<string, string> = {
   h2: "text-[1.5rem] font-semibold leading-tight",
   h3: "text-[1.25rem] font-medium leading-tight",
   paragraph: "text-base leading-7",
-  quote: "border-l-[3px] border-primary/50 pl-4 italic text-muted-foreground leading-7",
+  quote:
+    "border-l-[3px] border-primary/50 pl-4 italic text-muted-foreground leading-7",
   code: "font-mono text-sm bg-muted/60 rounded-lg px-3 py-2 block",
   "bullet-list": "text-base leading-7",
   "numbered-list": "text-base leading-7",
@@ -41,7 +42,6 @@ const PLACEHOLDER_MAP: Record<string, string> = {
   todo: "Tarefa...",
 };
 
-// Detectar shortcut de markdown no início da linha
 function detectMarkdownShortcut(text: string): DocumentBlockType | null {
   const t = text.trim();
   if (t === "#") return "h1";
@@ -68,21 +68,24 @@ export function TextBlockRenderer({
   readOnly = false,
 }: TextBlockRendererProps) {
   const contentRef = useRef<HTMLDivElement>(null);
-  const [localCompleted, setLocalCompleted] = useState(block.completed ?? false);
+  const [localCompleted, setLocalCompleted] = useState(
+    block.completed ?? false,
+  );
 
-  // Sincronizar DOM apenas na montagem ou troca de bloco
   useEffect(() => {
     if (!contentRef.current) return;
     if (contentRef.current.textContent !== (block.conteudo ?? "")) {
       contentRef.current.textContent = block.conteudo ?? "";
     }
-  }, [block.id]); // Só re-sync quando o ID muda
+  }, [block.id]);
 
-  // Auto-focus quando o bloco é ativado
   useEffect(() => {
-    if (isActive && contentRef.current && document.activeElement !== contentRef.current) {
+    if (
+      isActive &&
+      contentRef.current &&
+      document.activeElement !== contentRef.current
+    ) {
       contentRef.current.focus();
-      // Mover cursor para o final
       const range = document.createRange();
       const sel = window.getSelection();
       range.selectNodeContents(contentRef.current);
@@ -95,7 +98,6 @@ export function TextBlockRenderer({
   const handleInput = useCallback(() => {
     const text = contentRef.current?.textContent ?? "";
 
-    // Detectar shortcut markdown
     if (!readOnly) {
       const shortcut = detectMarkdownShortcut(text);
       if (shortcut) {
@@ -109,7 +111,6 @@ export function TextBlockRenderer({
         return;
       }
 
-      // Slash menu
       if (text === "/") {
         const rect = contentRef.current?.getBoundingClientRect();
         if (rect && onSlashMenu) {
@@ -122,29 +123,31 @@ export function TextBlockRenderer({
     onUpdate(block.id, { conteudo: text });
   }, [block.id, onUpdate, onTypeChange, onSlashMenu, readOnly]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (readOnly) return;
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (readOnly) return;
 
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      onAddBelow("paragraph");
-    }
-
-    if (e.key === "Backspace") {
-      const text = contentRef.current?.textContent ?? "";
-      if (!text.trim()) {
+      if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
-        onDelete(block.id);
+        onAddBelow("paragraph");
       }
-    }
 
-    // Escape fecha slash menu
-    if (e.key === "Escape") {
-      contentRef.current?.blur();
-    }
-  }, [readOnly, block.id, onAddBelow, onDelete]);
+      if (e.key === "Backspace") {
+        const text = contentRef.current?.textContent ?? "";
+        if (!text.trim()) {
+          e.preventDefault();
+          onDelete(block.id);
+        }
+      }
 
-  // Divider — não é editável
+      if (e.key === "Escape") {
+        contentRef.current?.blur();
+      }
+    },
+    [readOnly, block.id, onAddBelow, onDelete],
+  );
+
+  // Divider
   if (block.tipo === "divider") {
     return (
       <div className="py-3 px-1">
@@ -153,7 +156,7 @@ export function TextBlockRenderer({
     );
   }
 
-  // Todo — checkbox
+  // Todo
   if (block.tipo === "todo") {
     return (
       <div className="flex items-start gap-2.5 py-0.5">
@@ -162,7 +165,7 @@ export function TextBlockRenderer({
             "mt-[3px] h-4 w-4 flex-shrink-0 rounded border-2 transition-colors duration-200",
             localCompleted
               ? "bg-primary border-primary"
-              : "border-muted-foreground/40 hover:border-primary/60"
+              : "border-muted-foreground/40 hover:border-primary/60",
           )}
           onClick={() => {
             const next = !localCompleted;
@@ -172,7 +175,13 @@ export function TextBlockRenderer({
         >
           {localCompleted && (
             <svg viewBox="0 0 10 8" fill="none" className="text-white">
-              <path d="M1 4l3 3 5-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              <path
+                d="M1 4l3 3 5-6"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           )}
         </button>
@@ -184,7 +193,7 @@ export function TextBlockRenderer({
           className={cn(
             "outline-none flex-1 min-w-0 empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40",
             TYPE_CLASSES.todo,
-            localCompleted && "line-through text-muted-foreground"
+            localCompleted && "line-through text-muted-foreground",
           )}
           data-placeholder={PLACEHOLDER_MAP.todo}
           onInput={handleInput}
@@ -207,7 +216,7 @@ export function TextBlockRenderer({
           suppressContentEditableWarning
           className={cn(
             "outline-none flex-1 min-w-0 empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40",
-            TYPE_CLASSES["bullet-list"]
+            TYPE_CLASSES["bullet-list"],
           )}
           data-placeholder={PLACEHOLDER_MAP["bullet-list"]}
           onInput={handleInput}
@@ -232,7 +241,7 @@ export function TextBlockRenderer({
           suppressContentEditableWarning
           className={cn(
             "outline-none flex-1 min-w-0 empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40",
-            TYPE_CLASSES["numbered-list"]
+            TYPE_CLASSES["numbered-list"],
           )}
           data-placeholder={PLACEHOLDER_MAP["numbered-list"]}
           onInput={handleInput}
@@ -267,7 +276,9 @@ export function TextBlockRenderer({
     return (
       <div className="my-1 rounded-lg bg-muted/60 border border-border/40 overflow-hidden">
         <div className="flex items-center justify-between px-3 py-1.5 border-b border-border/40 bg-muted/40">
-          <span className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">código</span>
+          <span className="text-[10px] text-muted-foreground font-mono uppercase tracking-wider">
+            código
+          </span>
         </div>
         <div
           id={`block-${block.id}`}
@@ -293,9 +304,11 @@ export function TextBlockRenderer({
       suppressContentEditableWarning
       className={cn(
         "outline-none py-0.5 empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40",
-        TYPE_CLASSES[block.tipo] ?? TYPE_CLASSES.paragraph
+        TYPE_CLASSES[block.tipo] ?? TYPE_CLASSES.paragraph,
       )}
-      data-placeholder={PLACEHOLDER_MAP[block.tipo] ?? PLACEHOLDER_MAP.paragraph}
+      data-placeholder={
+        PLACEHOLDER_MAP[block.tipo] ?? PLACEHOLDER_MAP.paragraph
+      }
       onInput={handleInput}
       onKeyDown={handleKeyDown}
       onClick={onActivate}

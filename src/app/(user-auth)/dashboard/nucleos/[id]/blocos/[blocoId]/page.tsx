@@ -191,81 +191,10 @@ export default function BlocoDetalhesPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Banner */}
-      <div className="relative w-full h-[200px] md:h-[240px] overflow-hidden">
-        <Image
-          src={capaUrl}
-          alt={nucleo.nome}
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg
-            viewBox="0 0 1440 50"
-            preserveAspectRatio="none"
-            className="w-full h-10"
-            fill="hsl(var(--background))"
-          >
-            <path d="M0,25 C360,50 720,0 1080,25 C1260,37 1380,15 1440,25 L1440,50 L0,50 Z" />
-          </svg>
-        </div>
-
-        <div className="absolute top-4 left-4 flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 rounded-full bg-background/20 backdrop-blur-md text-white border border-white/20"
-            onClick={() => router.push(`/dashboard/nucleos/${nucleoId}`)}
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <span className="text-sm text-white/80 backdrop-blur-sm bg-background/20 px-2 py-1 rounded-full border border-white/20">
-            {nucleo.nome}
-          </span>
-        </div>
-      </div>
 
       {/* Conteúdo */}
       <div className="mx-auto max-w-3xl px-4 md:px-6 -mt-10 relative z-10 pb-32">
         {/* Ícone e título */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6"
-        >
-          <div
-            className="w-14 h-14 rounded-xl flex items-center justify-center text-white shadow-xl border-4 border-background mb-4"
-            style={{ backgroundColor: cor }}
-          >
-            <Icon className="h-7 w-7" />
-          </div>
-
-          {/* Breadcrumb */}
-          <nav className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="hover:text-foreground transition-colors"
-            >
-              Dashboard
-            </button>
-            <span>/</span>
-            <button
-              onClick={() => router.push(`/dashboard/nucleos/${nucleoId}`)}
-              className="hover:text-foreground transition-colors"
-            >
-              {nucleo.nome}
-            </button>
-            <span>/</span>
-            <span className="text-foreground font-medium">{label}</span>
-          </nav>
-
-          <h1 className="text-3xl font-bold">{label}</h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            {BLOCO_LABELS[bloco.tipo] ?? bloco.tipo}
-            {(bloco.depth ?? 0) > 0 && <> · Profundidade {bloco.depth}</>}
-          </p>
-        </motion.div>
 
         {/* Conteúdo principal do bloco */}
         <div className="rounded-xl border border-border/50 bg-card overflow-hidden mb-8">

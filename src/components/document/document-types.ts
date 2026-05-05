@@ -3,18 +3,17 @@
 import type { Bloco } from "@/types/bloco";
 
 export type DocumentBlockType =
-  | "header"
   | "paragraph"
   | "h1"
   | "h2"
   | "h3"
   | "quote"
   | "code"
-  | "divider"
   | "bullet-list"
   | "numbered-list"
   | "todo"
-  // Funcionais (do banco)
+  | "divider"
+  | "header"
   | "tarefas"
   | "calendario"
   | "habitos"
@@ -29,26 +28,32 @@ export interface DocumentBlock {
   id: string;
   nucleoId: string;
   tipo: DocumentBlockType;
-  titulo?: string;
   conteudo?: string;
+  titulo?: string;
   posicao: number;
-  completed?: boolean; // Para todo
   isDeletable?: boolean;
-  /** Referência ao bloco original do banco (blocos funcionais) */
+  completed?: boolean;
   blocoRef?: Bloco;
 }
 
-export type TextDocumentBlockType = Exclude<
-  DocumentBlockType,
-  "header" | "tarefas" | "calendario" | "habitos" | "habito" | "lista" | "timer" | "timers" | "colecoes" | "notas"
->;
+export interface NucleoDocumentState {
+  blocks: DocumentBlock[];
+  selectedIds: Set<string>;
+  activeBlockId: string | null;
+}
 
-export const TEXT_BLOCK_TYPES: TextDocumentBlockType[] = [
-  "paragraph", "h1", "h2", "h3", "quote", "code",
-  "divider", "bullet-list", "numbered-list", "todo",
-];
+// Tipos para layout em colunas (uso futuro)
+export interface LayoutColumn {
+  id: string;
+  width: number;
+  blocks: DocumentBlock[];
+}
 
-export const FUNCTIONAL_BLOCK_TYPES = [
-  "tarefas", "calendario", "habitos", "habito",
-  "lista", "timer", "timers", "colecoes", "notas",
-] as const;
+export interface LayoutRow {
+  id: string;
+  type: "full" | "columns";
+  blocks?: DocumentBlock[];
+  columns?: LayoutColumn[];
+}
+
+export type DocumentLayout = LayoutRow[];

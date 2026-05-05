@@ -202,9 +202,6 @@ export default function BlocoLayout({
         {/* Título e informações */}
         <div className="max-w-3xl mb-8">
           <h1 className="text-3xl md:text-4xl font-bold">{blocoTitle}</h1>
-          <p className="text-muted-foreground mt-2">
-            Tipo: {bloco.tipo} • Profundidade: {bloco.depth || 0}
-          </p>
         </div>
 
         {/* Conteúdo da página */}

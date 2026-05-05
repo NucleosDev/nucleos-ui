@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Plus,
   MoreVertical,
@@ -10,11 +10,9 @@ import {
   Trash2,
   LayoutGrid,
   Table as TableIcon,
-  ChevronDown,
   GripVertical,
-  Settings,
   Copy,
-  ExternalLink,
+  Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -28,13 +26,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useColecoes } from "@/hooks/useColecoes";
-import { useBlocos } from "@/hooks/useBlocos";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { CriarColecaoModal } from "@/components/colecoes/CriarColecaoModal";
+import { CriarTabelaRapidaModal } from "@/components/colecoes/CriarTabelaRapidaModal";
 import { ColecaoBoard } from "@/components/colecoes/ColecaoBoard";
+import { colecoesService } from "@/services/colecoes.service";
 import type { Bloco } from "@/types/bloco";
-import type { Colecao } from "@/types/colecao";
 
 interface ColecoesBlocoCardProps {
   bloco: Bloco;
@@ -51,10 +49,9 @@ export function ColecoesBlocoCard({
   onEdit,
   isDeleting,
 }: ColecoesBlocoCardProps) {
-  const { update } = useBlocos();
   const [viewMode, setViewMode] = useState<"board" | "table">("board");
   const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [selectedColecao, setSelectedColecao] = useState<Colecao | null>(null);
+  const [quickTableModalOpen, setQuickTableModalOpen] = useState(false);
 
   const { colecoes, isLoading, criarColecao, isCreating } = useColecoes(
     bloco.id,
@@ -62,16 +59,7 @@ export function ColecoesBlocoCard({
 
   const handleCreateColecao = async (nome: string) => {
     try {
-      const novaColecao = await criarColecao({ nome });
-      await update({
-        id: bloco.id,
-        payload: {
-          configuracoes: {
-            ...bloco.configuracoes,
-            colecaoId: novaColecao.id,
-          },
-        },
-      });
+      await criarColecao({ nome });
       setCreateModalOpen(false);
       toast({ title: "Coleção criada com sucesso!" });
     } catch (error) {
@@ -79,6 +67,33 @@ export function ColecoesBlocoCard({
     }
   };
 
+  const handleCreateTabelaRapida = async (
+    nome: string,
+    campos: { nome: string; tipoCampo: string }[],
+  ) => {
+    try {
+      const novaColecao = await criarColecao({ nome });
+
+      for (const campo of campos) {
+        await colecoesService.createCampo(
+          novaColecao.id,
+          campo.nome,
+          campo.tipoCampo,
+        );
+      }
+
+      setQuickTableModalOpen(false);
+      toast({
+        title: "Tabela criada com sucesso!",
+        description: `${campos.length} campo${campos.length !== 1 ? "s" : ""} adicionado${campos.length !== 1 ? "s" : ""}`,
+      });
+    } catch (error) {
+      console.error("[v0] Erro ao criar tabela rápida:", error);
+      toast({ title: "Erro ao criar tabela", variant: "destructive" });
+    }
+  };
+
+  // ── Loading ──────────────────────────────────────────────────────────────
   if (isLoading) {
     return (
       <div className="space-y-3">
@@ -92,56 +107,74 @@ export function ColecoesBlocoCard({
     );
   }
 
+  // ── Estado vazio ─────────────────────────────────────────────────────────
   if (colecoes.length === 0) {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative"
-      >
-        <div className="absolute -top-3 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 z-10">
-          {onEdit && (
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 bg-background shadow-sm"
-              onClick={onEdit}
-            >
-              <Pencil className="h-4 w-4" />
-            </Button>
-          )}
-          {onDelete && (
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 bg-background shadow-sm text-destructive hover:text-destructive"
-              onClick={onDelete}
-              disabled={isDeleting}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          )}
-          <div className="cursor-move">
-            <GripVertical className="h-4 w-4 text-muted-foreground" />
-          </div>
-        </div>
-
-        <Card className="border-2 border-dashed border-border bg-muted/20 hover:bg-muted/30 transition-colors">
-          <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
-              <LayoutGrid className="h-8 w-8 text-primary" />
+      <>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative group"
+        >
+          <div className="absolute -top-4 right-0 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2 z-10">
+            {onEdit && (
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-9 w-9 bg-white shadow-md border-slate-200"
+                onClick={onEdit}
+              >
+                <Pencil className="h-4 w-4 text-slate-700" />
+              </Button>
+            )}
+            {onDelete && (
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-9 w-9 bg-white shadow-md border-slate-200 text-destructive hover:text-destructive hover:bg-destructive/5"
+                onClick={onDelete}
+                disabled={isDeleting}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            )}
+            <div className="cursor-move h-9 w-9 flex items-center justify-center">
+              <GripVertical className="h-4 w-4 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-medium mb-2">Nenhuma coleção ainda</h3>
-            <p className="text-sm text-muted-foreground mb-6 max-w-md">
-              Crie sua primeira coleção para começar a organizar seus dados como
-              uma planilha, banco de dados ou quadro kanban.
-            </p>
-            <Button onClick={() => setCreateModalOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              Criar coleção
-            </Button>
           </div>
-        </Card>
+
+          <Card className="border-2 border-dashed border-slate-300 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 hover:border-blue-400 transition-all hover:shadow-lg">
+            <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+              <div className="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center mb-5">
+                <LayoutGrid className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-slate-900 mb-2">
+                Crie sua primeira coleção
+              </h3>
+              <p className="text-sm text-slate-600 mb-6 max-w-sm leading-relaxed">
+                Organize dados em tabelas intuitivas. Adicione campos, itens e
+                gerencie tudo em um só lugar, como no Notion.
+              </p>
+              <div className="flex flex-col gap-3">
+                <Button
+                  onClick={() => setQuickTableModalOpen(true)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white shadow-md"
+                >
+                  <Zap className="mr-2 h-4 w-4" />
+                  Criar Tabela Rápida
+                </Button>
+                <Button
+                  onClick={() => setCreateModalOpen(true)}
+                  variant="outline"
+                  className="border-blue-300 text-blue-600 hover:bg-blue-50"
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Coleção Vazia
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </motion.div>
 
         <CriarColecaoModal
           open={createModalOpen}
@@ -149,37 +182,37 @@ export function ColecoesBlocoCard({
           onConfirm={handleCreateColecao}
           isSubmitting={isCreating}
         />
-      </motion.div>
+
+        <CriarTabelaRapidaModal
+          open={quickTableModalOpen}
+          onClose={() => setQuickTableModalOpen(false)}
+          onConfirm={handleCreateTabelaRapida}
+          isSubmitting={isCreating}
+        />
+      </>
     );
   }
 
+  // ── Com coleções ─────────────────────────────────────────────────────────
   return (
-    <div className="space-y-4">
-      {/* Header com controles */}
-      <div className="flex items-center justify-between">
+    <div className="p-3">
+      <div className="flex items-center justify-between px-">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <LayoutGrid className="h-5 w-5 text-primary" />
-            <h3 className="font-medium">{bloco.titulo || "Coleções"}</h3>
-            <Badge variant="secondary" className="text-xs">
-              {colecoes.length} {colecoes.length === 1 ? "coleção" : "coleções"}
-            </Badge>
-          </div>
+          <div className="flex items-center gap-2"></div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* View Toggle */}
-          <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-1">
+        <div className="flex items-center gap-2 py-2">
+          {/* <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-1">
             <button
               onClick={() => setViewMode("board")}
               className={cn(
                 "px-3 py-1.5 rounded-md text-sm font-medium transition-all",
                 viewMode === "board"
-                  ? "bg-background shadow-sm text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
+                  ? "bg-white shadow-sm text-blue-600"
+                  : "text-slate-600 hover:text-slate-900",
               )}
             >
-              <LayoutGrid className="h-4 w-4 inline mr-1" />
+              <LayoutGrid className="h-4 w-4 inline mr-1.5" />
               Quadro
             </button>
             <button
@@ -187,21 +220,33 @@ export function ColecoesBlocoCard({
               className={cn(
                 "px-3 py-1.5 rounded-md text-sm font-medium transition-all",
                 viewMode === "table"
-                  ? "bg-background shadow-sm text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
+                  ? "bg-white shadow-sm text-blue-600"
+                  : "text-slate-600 hover:text-slate-900",
               )}
             >
-              <TableIcon className="h-4 w-4 inline mr-1" />
+              <TableIcon className="h-4 w-4 inline mr-1.5" />
               Tabela
             </button>
-          </div>
+          </div> */}
 
-          <Button size="sm" onClick={() => setCreateModalOpen(true)}>
-            <Plus className="h-4 w-4 mr-1" />
-            Nova coleção
+          <Button
+            size="sm"
+            onClick={() => setQuickTableModalOpen(true)}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            <Zap className="h-4 w-4 mr-1.5" />
+            Nova Tabela
+          </Button>
+          <Button
+            size="sm"
+            onClick={() => setCreateModalOpen(true)}
+            variant="outline"
+            className="border-blue-300 text-blue-600 hover:bg-blue-50"
+          >
+            <Plus className="h-4 w-4 mr-1.5" />
+            Nova Coleção
           </Button>
 
-          {/* Menu do bloco */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -235,15 +280,9 @@ export function ColecoesBlocoCard({
         </div>
       </div>
 
-      {/* Coleções */}
       <div className="space-y-4">
         {colecoes.map((colecao) => (
-          <ColecaoBoard
-            key={colecao.id}
-            colecao={colecao}
-            blocoId={bloco.id}
-            // viewMode={viewMode}
-          />
+          <ColecaoBoard key={colecao.id} colecao={colecao} blocoId={bloco.id} />
         ))}
       </div>
 
@@ -251,6 +290,13 @@ export function ColecoesBlocoCard({
         open={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
         onConfirm={handleCreateColecao}
+        isSubmitting={isCreating}
+      />
+
+      <CriarTabelaRapidaModal
+        open={quickTableModalOpen}
+        onClose={() => setQuickTableModalOpen(false)}
+        onConfirm={handleCreateTabelaRapida}
         isSubmitting={isCreating}
       />
     </div>

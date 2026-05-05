@@ -149,62 +149,10 @@ export function TarefasBlocoCard({
     <>
       <Card className="group relative hover:shadow-md transition-shadow">
         {/* Barra de ferramentas flutuante */}
-        <div className="absolute -top-3 right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 z-10">
-          {onEdit && (
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-7 w-7 bg-background shadow-sm"
-              onClick={onEdit}
-            >
-              <Pencil className="h-3.5 w-3.5" />
-            </Button>
-          )}
-          {onDelete && (
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-7 w-7 bg-background shadow-sm text-destructive hover:text-destructive"
-              onClick={onDelete}
-              disabled={isDeleting}
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-            </Button>
-          )}
-          <div className="cursor-move">
-            <div className="p-1 bg-background/80 backdrop-blur-sm rounded shadow-sm">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <circle cx="9" cy="6" r="1.5" fill="currentColor" />
-                <circle cx="9" cy="12" r="1.5" fill="currentColor" />
-                <circle cx="9" cy="18" r="1.5" fill="currentColor" />
-                <circle cx="15" cy="6" r="1.5" fill="currentColor" />
-                <circle cx="15" cy="12" r="1.5" fill="currentColor" />
-                <circle cx="15" cy="18" r="1.5" fill="currentColor" />
-              </svg>
-            </div>
-          </div>
-        </div>
 
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <CheckSquare className="h-5 w-5 text-primary" />
-              <CardTitle className="text-lg">
-                {bloco.titulo || "Tarefas"}
-              </CardTitle>
-              <Badge variant="secondary" className="text-xs">
-                {completedCount}/{totalCount} concluídas
-              </Badge>
-            </div>
-            <div className="flex items-center gap-2">
-              {/* View Toggle */}
+            <div className="flex items-center gap-5">
               <div className="flex items-center gap-0.5 bg-muted/50 rounded-md p-0.5">
                 <button
                   onClick={() => setViewMode("kanban")}
@@ -227,6 +175,12 @@ export function TarefasBlocoCard({
                   <List className="h-3.5 w-3.5" />
                 </button>
               </div>
+              {/* <Badge className="text-xs">
+                {completedCount}/{totalCount}
+              </Badge> */}
+            </div>
+            <div className="flex items-center gap-2">
+              {/* View Toggle */}
 
               <Button
                 size="sm"

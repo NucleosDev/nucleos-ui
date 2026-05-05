@@ -74,5 +74,3 @@ export const listasService = {
     return api.delete(API_ROUTES.LISTAS.CATEGORIAS.DELETE(id));
   },
 };
-
-

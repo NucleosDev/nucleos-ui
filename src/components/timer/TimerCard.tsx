@@ -25,10 +25,10 @@ interface TimerCardProps {
   timer: Timer;
   onStop: (id: string) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
-  onUpdate?: (id: string, titulo: string) => Promise<void>; // 👈 NOVO
+  onUpdate?: (id: string, titulo: string) => Promise<void>; // NOVO
   isStopping?: boolean;
   isDeleting?: boolean;
-  isUpdating?: boolean; // 👈 NOVO
+  isUpdating?: boolean; // NOVO
 }
 
 export function TimerCard({
