@@ -15,6 +15,7 @@ interface TextBlockRendererProps {
   onTypeChange: (id: string, tipo: DocumentBlockType) => void;
   onSlashMenu?: (pos: { top: number; left: number }) => void;
   readOnly?: boolean;
+  listIndex?: number;
 }
 
 const TYPE_CLASSES: Record<string, string> = {
@@ -42,6 +43,7 @@ const PLACEHOLDER_MAP: Record<string, string> = {
   todo: "Tarefa...",
 };
 
+// Markdown shortcuts que convertem o tipo do bloco ao digitar
 function detectMarkdownShortcut(text: string): DocumentBlockType | null {
   const t = text.trim();
   if (t === "#") return "h1";
@@ -56,6 +58,12 @@ function detectMarkdownShortcut(text: string): DocumentBlockType | null {
   return null;
 }
 
+// innerText normalizado — remove trailing \n que browsers adicionam
+function readInnerText(el: HTMLElement): string {
+  const raw = el.innerText ?? "";
+  return raw.endsWith("\n") ? raw.slice(0, -1) : raw;
+}
+
 export function TextBlockRenderer({
   block,
   isActive,
@@ -66,18 +74,27 @@ export function TextBlockRenderer({
   onTypeChange,
   onSlashMenu,
   readOnly = false,
+  listIndex = 1,
 }: TextBlockRendererProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const [localCompleted, setLocalCompleted] = useState(
     block.completed ?? false,
   );
 
+  // Sincroniza conteúdo apenas quando o bloco muda de ID (sem matar cursor)
   useEffect(() => {
     if (!contentRef.current) return;
-    if (contentRef.current.textContent !== (block.conteudo ?? "")) {
-      contentRef.current.textContent = block.conteudo ?? "";
+    const current = readInnerText(contentRef.current);
+    const target = block.conteudo ?? "";
+    if (current !== target) {
+      contentRef.current.innerText = target;
     }
   }, [block.id]);
+
+  // Sincroniza completed com o estado do bloco (evita desync após refetch)
+  useEffect(() => {
+    setLocalCompleted(block.completed ?? false);
+  }, [block.completed]);
 
   useEffect(() => {
     if (
@@ -96,7 +113,8 @@ export function TextBlockRenderer({
   }, [isActive]);
 
   const handleInput = useCallback(() => {
-    const text = contentRef.current?.textContent ?? "";
+    if (!contentRef.current) return;
+    const text = readInnerText(contentRef.current);
 
     if (!readOnly) {
       const shortcut = detectMarkdownShortcut(text);
@@ -104,7 +122,7 @@ export function TextBlockRenderer({
         onTypeChange(block.id, shortcut);
         setTimeout(() => {
           if (contentRef.current) {
-            contentRef.current.textContent = "";
+            contentRef.current.innerText = "";
             contentRef.current.focus();
           }
         }, 10);
@@ -127,13 +145,18 @@ export function TextBlockRenderer({
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (readOnly) return;
 
-      if (e.key === "Enter" && !e.shiftKey) {
+      if (e.key === "Enter") {
+        if (e.shiftKey) {
+          // Shift+Enter: quebra de linha dentro do bloco — browser lida nativamente
+          // handleInput dispara depois e persiste o \n via innerText
+          return;
+        }
         e.preventDefault();
         onAddBelow("paragraph");
       }
 
       if (e.key === "Backspace") {
-        const text = contentRef.current?.textContent ?? "";
+        const text = readInnerText(contentRef.current!);
         if (!text.trim()) {
           e.preventDefault();
           onDelete(block.id);
@@ -147,7 +170,7 @@ export function TextBlockRenderer({
     [readOnly, block.id, onAddBelow, onDelete],
   );
 
-  // Divider
+  // ── Divider ──────────────────────────────────────────────────────────────
   if (block.tipo === "divider") {
     return (
       <div className="py-3 px-1">
@@ -156,7 +179,7 @@ export function TextBlockRenderer({
     );
   }
 
-  // Todo
+  // ── Todo ─────────────────────────────────────────────────────────────────
   if (block.tipo === "todo") {
     return (
       <div className="flex items-start gap-2.5 py-0.5">
@@ -191,7 +214,8 @@ export function TextBlockRenderer({
           contentEditable={!readOnly}
           suppressContentEditableWarning
           className={cn(
-            "outline-none flex-1 min-w-0 empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40",
+            "outline-none flex-1 min-w-0 whitespace-pre-wrap",
+            "empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40",
             TYPE_CLASSES.todo,
             localCompleted && "line-through text-muted-foreground",
           )}
@@ -204,7 +228,7 @@ export function TextBlockRenderer({
     );
   }
 
-  // Bullet list
+  // ── Bullet list ──────────────────────────────────────────────────────────
   if (block.tipo === "bullet-list") {
     return (
       <div className="flex items-start gap-2 py-0.5">
@@ -215,7 +239,8 @@ export function TextBlockRenderer({
           contentEditable={!readOnly}
           suppressContentEditableWarning
           className={cn(
-            "outline-none flex-1 min-w-0 empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40",
+            "outline-none flex-1 min-w-0 whitespace-pre-wrap",
+            "empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40",
             TYPE_CLASSES["bullet-list"],
           )}
           data-placeholder={PLACEHOLDER_MAP["bullet-list"]}
@@ -227,12 +252,12 @@ export function TextBlockRenderer({
     );
   }
 
-  // Numbered list
+  // ── Numbered list ────────────────────────────────────────────────────────
   if (block.tipo === "numbered-list") {
     return (
       <div className="flex items-start gap-2 py-0.5">
         <span className="mt-[2px] min-w-[1.5rem] text-right text-sm font-medium text-foreground/70 flex-shrink-0">
-          1.
+          {listIndex}.
         </span>
         <div
           id={`block-${block.id}`}
@@ -240,7 +265,8 @@ export function TextBlockRenderer({
           contentEditable={!readOnly}
           suppressContentEditableWarning
           className={cn(
-            "outline-none flex-1 min-w-0 empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40",
+            "outline-none flex-1 min-w-0 whitespace-pre-wrap",
+            "empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40",
             TYPE_CLASSES["numbered-list"],
           )}
           data-placeholder={PLACEHOLDER_MAP["numbered-list"]}
@@ -252,7 +278,7 @@ export function TextBlockRenderer({
     );
   }
 
-  // Quote
+  // ── Quote ────────────────────────────────────────────────────────────────
   if (block.tipo === "quote") {
     return (
       <div className={cn(TYPE_CLASSES.quote, "py-1 my-1")}>
@@ -261,7 +287,7 @@ export function TextBlockRenderer({
           ref={contentRef}
           contentEditable={!readOnly}
           suppressContentEditableWarning
-          className="outline-none empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40"
+          className="outline-none whitespace-pre-wrap empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40"
           data-placeholder={PLACEHOLDER_MAP.quote}
           onInput={handleInput}
           onKeyDown={handleKeyDown}
@@ -271,7 +297,7 @@ export function TextBlockRenderer({
     );
   }
 
-  // Code
+  // ── Code ─────────────────────────────────────────────────────────────────
   if (block.tipo === "code") {
     return (
       <div className="my-1 rounded-lg bg-muted/60 border border-border/40 overflow-hidden">
@@ -285,7 +311,7 @@ export function TextBlockRenderer({
           ref={contentRef}
           contentEditable={!readOnly}
           suppressContentEditableWarning
-          className="outline-none font-mono text-sm px-3 py-2 leading-relaxed empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40"
+          className="outline-none font-mono text-sm px-3 py-2 leading-relaxed whitespace-pre-wrap empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40"
           data-placeholder="// Seu código aqui..."
           onInput={handleInput}
           onKeyDown={handleKeyDown}
@@ -295,7 +321,7 @@ export function TextBlockRenderer({
     );
   }
 
-  // Default: h1, h2, h3, paragraph
+  // ── h1 / h2 / h3 / paragraph ─────────────────────────────────────────────
   return (
     <div
       id={`block-${block.id}`}
@@ -303,7 +329,8 @@ export function TextBlockRenderer({
       contentEditable={!readOnly}
       suppressContentEditableWarning
       className={cn(
-        "outline-none py-0.5 empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40",
+        "outline-none py-0.5 whitespace-pre-wrap",
+        "empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40",
         TYPE_CLASSES[block.tipo] ?? TYPE_CLASSES.paragraph,
       )}
       data-placeholder={

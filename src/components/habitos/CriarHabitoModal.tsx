@@ -1,3 +1,4 @@
+// src/components/habitos/CriarHabitoModal.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -61,7 +62,12 @@ export function CriarHabitoModal({
       if (initialData) {
         setNome(initialData.nome);
         setFrequencia(initialData.frequencia);
-        setDiasSemana(initialData.diasSemana || []);
+        // ✅ Garantir que diasSemana é array de números
+        setDiasSemana(
+          Array.isArray(initialData.diasSemana)
+            ? initialData.diasSemana.map(Number)
+            : [],
+        );
         setMetaVezes(initialData.metaVezes || 1);
       } else {
         setNome("");
@@ -76,11 +82,14 @@ export function CriarHabitoModal({
     e.preventDefault();
     if (!nome.trim()) return;
 
+    // ✅ Garantir que diasSemana é array de números
+    const diasLimpos = diasSemana.map(Number).filter((d) => !isNaN(d));
+
     await onConfirm({
       nome: nome.trim(),
       frequencia,
-      diasSemana: frequencia === "semanal" ? diasSemana : undefined,
-      metaVezes,
+      diasSemana: frequencia === "semanal" ? diasLimpos : undefined,
+      metaVezes: metaVezes || 1,
     });
   };
 

@@ -1,20 +1,6 @@
 // src/components/document/HeaderBlock.tsx
-"use client";
-
-import { useRouter } from "next/navigation";
-import type { Nucleo } from "@/types/nucleo";
-
-interface HeaderBlockProps {
-  nucleo: Nucleo;
-  fullWidth?: boolean;
-}
-
-export function HeaderBlock({ nucleo, fullWidth = false }: HeaderBlockProps) {
-  const router = useRouter();
-
-  return (
-    <div className="w-full mb-2">
-      <div>test</div>
-    </div>
-  );
+// Espaçador silencioso no topo do canvas — o título real vem do layout da página.
+// Mantido como bloco para preservar a estrutura (isDeletable: false, posicao: -1).
+export function HeaderBlock() {
+  return <div className="h-2" />;
 }

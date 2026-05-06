@@ -250,7 +250,7 @@ export function AuthPage() {
           alt="logo nucleos"
           width={600}
           height={600}
-          className="absolute right-35 top-50 z-10 opacity-50"
+          className="absolute right-15 top-50 z-1 opacity-50"
         />
         <div className="from-background absolute inset-0 z-10 bg-gradient-to-t to-transparent" />
         <div className="z-10 flex items-center justify-end w-full gap-2 text-right">

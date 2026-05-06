@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, ListChecks, ChevronDown, ChevronRight } from "lucide-react";
+import { Plus, Check, ChevronDown, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CriarListaModal } from "@/components/lista/CriarListaModal";
@@ -69,7 +69,7 @@ export function ListasBlocoCard({
       <>
         <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
           <div className="w-10 h-10 rounded-xl bg-cyan-100 flex items-center justify-center mb-2">
-            <ListChecks className="h-5 w-5 text-cyan-600" />
+            <Check className="h-5 w-5 text-cyan-600" />
           </div>
           <p className="text-xs text-muted-foreground mb-3">
             Nenhuma lista ainda
@@ -152,7 +152,7 @@ function ListaExpandivel({
           )}
         </div>
         <div className="p-1 rounded-md bg-cyan-100 shrink-0">
-          <ListChecks className="h-3.5 w-3.5 text-cyan-600" />
+          <Check className="h-3.5 w-3.5 text-cyan-600" />
         </div>
         <span className="text-sm font-medium flex-1 truncate">
           {lista.nome}

@@ -72,7 +72,7 @@ interface LayoutRowRendererProps {
 
 export function LayoutRowRenderer({
   row,
-  nucleo,
+  nucleo: _nucleo,
   nucleoId,
   activeBlockId,
   readOnly = false,
@@ -93,7 +93,7 @@ export function LayoutRowRenderer({
 
   const renderBlock = (block: DocumentBlock, columnId?: string) => {
     if (block.tipo === "header") {
-      return <HeaderBlock key={block.id} nucleo={nucleo} fullWidth={false} />;
+      return <HeaderBlock key={block.id} />;
     }
 
     // Coleções renderizam como tabela completa inline

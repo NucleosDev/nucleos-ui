@@ -122,14 +122,9 @@ export function HabitosBlocoCard({
   return (
     <>
       <Card className="group relative hover:shadow-md transition-shadow">
-        <CardHeader className="pb-3">
+        <CardHeader className="">
           <div className="flex items-start justify-between">
-            <div className="flex items-center gap-2">
-              <CheckSquare className="h-5 w-5 text-muted-foreground" />
-              <CardTitle className="text-lg">
-                {bloco.titulo || "Hábitos"}
-              </CardTitle>
-            </div>
+            <div className="flex items-center gap-2"></div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-8 w-8">

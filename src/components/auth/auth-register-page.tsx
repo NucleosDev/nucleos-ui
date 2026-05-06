@@ -51,7 +51,7 @@ export function AuthPage() {
           alt="logo nucleos"
           width={600}
           height={600}
-          className="absolute right-35 top-50 z-10 opacity-50"
+          className="absolute left-15 top-50 z-1 opacity-50"
         />
         <div className="from-background absolute inset-0 z-10 bg-gradient-to-t to-transparent" />
         <div className="z-10 flex items-center gap-2">
@@ -241,14 +241,14 @@ export function AuthPage() {
               <RegisterForm />
 
               {/* Separador */}
-              <div className="my-4 flex items-center gap-2 w-full">
+              {/* <div className="my-4 flex items-center gap-2 w-full">
                 <div className="h-px flex-1 bg-border" />
                 <span className="text-xs text-muted-foreground">ou</span>
                 <div className="h-px flex-1 bg-border" />
-              </div>
+              </div> */}
 
               {/* GOOGLE LOGIN */}
-              <div className="flex justify-center w-full mt-2">
+              {/* <div className="flex justify-center w-full mt-2">
                 <GoogleLogin
                   onSuccess={(credentialResponse) => {
                     console.log("GOOGLE OK:", credentialResponse);
@@ -265,16 +265,10 @@ export function AuthPage() {
                   text="signup_with"
                   width="100%"
                 />
-              </div>
+              </div> */}
             </div>
 
             {/* LINK LOGIN */}
-            <p className="text-sm text-muted-foreground">
-              Já tem uma conta?{" "}
-              <Link href="/entrar" className="text-primary hover:underline">
-                Entrar
-              </Link>
-            </p>
           </div>
         </div>
       </div>

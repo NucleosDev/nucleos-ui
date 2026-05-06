@@ -1,7 +1,6 @@
 // components/habitos/HabitoCard.tsx
 "use client";
 
-import { useState } from "react";
 import {
   Check,
   MoreVertical,
@@ -49,12 +48,15 @@ export function HabitoCard({
   isRegistering = false,
   isDeleting = false,
 }: HabitoCardProps) {
+  // ✅ Usar dados reais do backend
   const meta = habito.metaVezes || 1;
-  // TODO: Substituir por dados reais do backend
-  const streak = (habito as any).streak || 0;
-  const recorde = (habito as any).recorde || 0;
-  const isCompletoHoje = (habito as any).isCompletoHoje || false;
+  const streak = habito.streakAtual || 0;
+  const recorde = habito.streakMaximo || 0;
+  const isCompletoHoje = habito.completoHoje || false;
   const progresso = isCompletoHoje ? 100 : 0;
+
+  // ✅ Garantir que diasSemana é um array antes de mapear
+  const diasSemana = Array.isArray(habito.diasSemana) ? habito.diasSemana : [];
 
   return (
     <Card
@@ -92,12 +94,10 @@ export function HabitoCard({
                   <Badge variant="secondary" className="text-xs">
                     {frequenciaLabels[habito.frequencia] || habito.frequencia}
                   </Badge>
-                  {habito.frequencia === "semanal" && habito.diasSemana && (
+                  {habito.frequencia === "semanal" && diasSemana.length > 0 && (
                     <Badge variant="outline" className="text-xs">
                       <Calendar className="h-3 w-3 mr-1" />
-                      {habito.diasSemana
-                        .map((d) => diasSemanaLabels[d])
-                        .join(", ")}
+                      {diasSemana.map((d) => diasSemanaLabels[d]).join(", ")}
                     </Badge>
                   )}
                   {meta > 1 && (
@@ -125,6 +125,7 @@ export function HabitoCard({
                   <DropdownMenuItem
                     onClick={() => onDelete(habito.id)}
                     className="text-destructive"
+                    disabled={isDeleting}
                   >
                     <Trash2 className="mr-2 h-4 w-4" /> Excluir
                   </DropdownMenuItem>
@@ -146,15 +147,17 @@ export function HabitoCard({
                     streak > 0 && "text-orange-500",
                   )}
                 >
-                  {streak} dias
+                  {streak} {streak === 1 ? "dia" : "dias"}
                 </span>
               </div>
-              <div className="flex items-center gap-1">
-                <Trophy className="h-4 w-4 text-amber-500" />
-                <span className="text-sm text-muted-foreground">
-                  Recorde: {recorde}
-                </span>
-              </div>
+              {recorde > 0 && (
+                <div className="flex items-center gap-1">
+                  <Trophy className="h-4 w-4 text-amber-500" />
+                  <span className="text-sm text-muted-foreground">
+                    Recorde: {recorde}
+                  </span>
+                </div>
+              )}
             </div>
 
             <div className="mt-2">

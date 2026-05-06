@@ -6,11 +6,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { useBloco, useBlocos } from "@/hooks/useBlocos";
 import { useNucleo } from "@/hooks/useNucleo";
-import { useCanvasBlocks } from "@/hooks/useCanvas";
-import Image from "next/image";
 import {
-  ArrowLeft,
-  Loader2,
   Plus,
   CheckSquare,
   CalendarDays,
@@ -26,9 +22,18 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "@/hooks/use-toast";
 import { CriarBlocoModal } from "@/components/blocos/CriarBlocoModal";
-import { NucleoDocument } from "@/components/document";
 import { ColecoesBlocoCard } from "@/components/blocos/cruds/ColecoesBlocoCard";
 import { TarefasBlocoCard } from "@/components/blocos/cruds/TarefasBlocoCard";
 import { ListasBlocoCard } from "@/components/blocos/cruds/ListasBlocoCard";
@@ -39,8 +44,6 @@ import { BlocoDeNotas } from "@/components/blocos/cruds/BlocoDeNotas";
 import { BLOCO_INITIALIZERS } from "@/lib/bloco-initializers";
 import { cn } from "@/lib/utils";
 import type { CreateBlocoPayload, Bloco } from "@/types/bloco";
-
-// ── Mapa de ícones de bloco ────────────────────────────────────────────────
 
 const BLOCO_ICONS: Record<string, LucideIcon> = {
   tarefas: CheckSquare,
@@ -107,12 +110,13 @@ function renderConteudo(bloco: Bloco, nucleoId: string) {
       );
     default:
       return (
-        <p className="text-muted-foreground text-sm p-4">Bloco: {bloco.tipo}</p>
+        <div className="flex flex-col items-center justify-center py-12 gap-2">
+          <FileText className="h-8 w-8 text-muted-foreground/40" />
+          <p className="text-muted-foreground text-sm">Bloco: {bloco.tipo}</p>
+        </div>
       );
   }
 }
-
-// ── Componente principal ───────────────────────────────────────────────────
 
 export default function BlocoDetalhesPage() {
   const params = useParams();
@@ -120,22 +124,18 @@ export default function BlocoDetalhesPage() {
   const nucleoId = params.id as string;
   const blocoId = params.blocoId as string;
 
-  const {
-    bloco,
-    isLoading: blocoLoading,
-    error: blocoError,
-  } = useBloco(blocoId, nucleoId);
+  const { bloco, isLoading: blocoLoading, error: blocoError } = useBloco(blocoId, nucleoId);
   const { data: nucleo, isLoading: nucleoLoading } = useNucleo(nucleoId);
   const {
     blocos: subBlocos,
     create: createSub,
     remove: removeSub,
-    update: updateSub,
     isCreating,
     isDeleting,
   } = useBlocos(nucleoId, blocoId);
 
   const [modalAberto, setModalAberto] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   const handleCriarSub = async (payload: CreateBlocoPayload) => {
     try {
@@ -149,8 +149,10 @@ export default function BlocoDetalhesPage() {
     }
   };
 
-  const handleExcluirSub = async (id: string) => {
-    if (!confirm("Excluir este sub-bloco?")) return;
+  const confirmExcluirSub = async () => {
+    if (!deleteTarget) return;
+    const id = deleteTarget;
+    setDeleteTarget(null);
     try {
       await removeSub(id);
       toast({ title: "Excluído!" });
@@ -159,14 +161,12 @@ export default function BlocoDetalhesPage() {
     }
   };
 
-  // ── Loading ──────────────────────────────────────────────────────────────
-
   if (blocoLoading || nucleoLoading) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-8 space-y-4">
+      <div className="max-w-3xl mx-auto px-6 md:pl-20 md:pr-8 py-6 space-y-4">
         <Skeleton className="h-52 w-full rounded-xl" />
         <Skeleton className="h-10 w-1/2 rounded-lg" />
-        <Skeleton className="h-32 w-full rounded-xl mt-6" />
+        <Skeleton className="h-32 w-full rounded-xl" />
       </div>
     );
   }
@@ -182,70 +182,54 @@ export default function BlocoDetalhesPage() {
     );
   }
 
-  const Icon = BLOCO_ICONS[bloco.tipo] ?? GripVertical;
   const cor = BLOCO_COLORS[bloco.tipo] ?? nucleo.corDestaque ?? "#4D7CFF";
-  const label = bloco.titulo || BLOCO_LABELS[bloco.tipo] || bloco.tipo;
-  const capaUrl =
-    nucleo.imagemCapa || `https://picsum.photos/seed/${nucleo.id}/1400/400`;
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Banner */}
+    <div className="max-w-3xl mx-auto px-6 md:pl-20 md:pr-8 pb-32">
+      {/* Conteúdo principal do bloco */}
+      <div className="rounded-xl border border-border/50 bg-card overflow-hidden mb-10">
+        {renderConteudo(bloco, nucleoId)}
+      </div>
 
-      {/* Conteúdo */}
-      <div className="mx-auto max-w-3xl px-4 md:px-6 -mt-10 relative z-10 pb-32">
-        {/* Ícone e título */}
-
-        {/* Conteúdo principal do bloco */}
-        <div className="rounded-xl border border-border/50 bg-card overflow-hidden mb-8">
-          {renderConteudo(bloco, nucleoId)}
+      {/* Sub-blocos */}
+      <section>
+        {/* Separador */}
+        <div className="flex items-center gap-3 mb-6">
+          <div className="flex-1 border-t border-border/40" />
+          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
+            Sub-blocos
+          </span>
+          <div className="flex-1 border-t border-border/40" />
         </div>
 
-        {/* Canvas de notas do bloco */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="flex-1 border-t border-border/40" />
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
-              Notas do bloco
-            </span>
-            <div className="flex-1 border-t border-border/40" />
-          </div>
-          <NucleoDocument nucleoId={nucleoId} />
-        </div>
-
-        {/* Sub-blocos */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="flex-1 border-t border-border/40" />
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
-              Sub-blocos
-            </span>
-            <div className="flex-1 border-t border-border/40" />
-          </div>
-
-          <div className="flex justify-end mb-3">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setModalAberto(true)}
-              className="gap-2"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Adicionar sub-bloco
-            </Button>
-          </div>
-
-          {subBlocos.length === 0 ? (
-            <div
-              onClick={() => setModalAberto(true)}
-              className="rounded-xl border-2 border-dashed border-border/50 p-10 text-center cursor-pointer hover:border-primary/40 hover:bg-muted/20 transition-all"
-            >
-              <Plus className="h-6 w-6 mx-auto mb-2 text-muted-foreground/40" />
+        {subBlocos.length === 0 ? (
+          <button
+            onClick={() => setModalAberto(true)}
+            className="w-full rounded-xl border-2 border-dashed border-border/50 p-10 text-center hover:border-primary/40 hover:bg-muted/20 transition-all group"
+          >
+            <div className="flex flex-col items-center gap-2">
+              <div className="h-9 w-9 rounded-full border-2 border-dashed border-muted-foreground/30 flex items-center justify-center group-hover:border-primary/50 transition-colors">
+                <Plus className="h-4 w-4 text-muted-foreground/50 group-hover:text-primary/70" />
+              </div>
               <p className="text-sm text-muted-foreground">
                 Nenhum sub-bloco. Clique para adicionar.
               </p>
             </div>
-          ) : (
+          </button>
+        ) : (
+          <>
+            <div className="flex justify-end mb-4">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setModalAberto(true)}
+                className="gap-1.5 h-8 text-xs"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Adicionar sub-bloco
+              </Button>
+            </div>
+
             <div className="space-y-3">
               {subBlocos.map((sub) => {
                 const SubIcon = BLOCO_ICONS[sub.tipo] ?? GripVertical;
@@ -253,17 +237,23 @@ export default function BlocoDetalhesPage() {
                 return (
                   <motion.div
                     key={sub.id}
-                    initial={{ opacity: 0, y: 12 }}
+                    initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.15 }}
                     className="group relative"
                   >
-                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-primary/30 rounded-full" />
-                    <div className="ml-4 rounded-xl border border-border/50 bg-card overflow-hidden hover:border-border hover:shadow-sm transition-all">
-                      {/* Header sub-bloco */}
+                    {/* Indicador lateral de hierarquia */}
+                    <div
+                      className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full opacity-40"
+                      style={{ backgroundColor: subCor }}
+                    />
+
+                    <div className="ml-4 rounded-xl border border-border/50 bg-card overflow-hidden hover:border-border hover:shadow-sm transition-all duration-150">
+                      {/* Header do sub-bloco */}
                       <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/30 bg-muted/20">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2.5">
                           <div
-                            className="h-6 w-6 rounded-md flex items-center justify-center text-white"
+                            className="h-6 w-6 rounded-md flex items-center justify-center text-white shrink-0"
                             style={{ backgroundColor: subCor }}
                           >
                             <SubIcon className="h-3.5 w-3.5" />
@@ -272,40 +262,44 @@ export default function BlocoDetalhesPage() {
                             {sub.titulo || BLOCO_LABELS[sub.tipo] || sub.tipo}
                           </span>
                         </div>
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+
+                        <div className={cn(
+                          "flex items-center gap-1 transition-opacity",
+                          "opacity-0 group-hover:opacity-100",
+                        )}>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-6 w-6"
+                            className="h-7 w-7"
                             onClick={() =>
-                              router.push(
-                                `/dashboard/nucleos/${nucleoId}/blocos/${sub.id}`,
-                              )
+                              router.push(`/dashboard/nucleos/${nucleoId}/blocos/${sub.id}`)
                             }
-                            title="Abrir"
+                            title="Abrir em tela cheia"
                           >
-                            <ExternalLink className="h-3 w-3" />
+                            <ExternalLink className="h-3.5 w-3.5" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-6 w-6 text-destructive hover:text-destructive"
-                            onClick={() => handleExcluirSub(sub.id)}
+                            className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            onClick={() => setDeleteTarget(sub.id)}
                             disabled={isDeleting}
+                            title="Excluir"
                           >
-                            <span className="text-xs">×</span>
+                            <span className="text-sm leading-none">×</span>
                           </Button>
                         </div>
                       </div>
+
                       <div>{renderConteudo(sub, nucleoId)}</div>
                     </div>
                   </motion.div>
                 );
               })}
             </div>
-          )}
-        </div>
-      </div>
+          </>
+        )}
+      </section>
 
       <CriarBlocoModal
         open={modalAberto}
@@ -315,6 +309,29 @@ export default function BlocoDetalhesPage() {
         isCreating={isCreating}
         parentId={blocoId}
       />
+
+      <AlertDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir sub-bloco?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmExcluirSub}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

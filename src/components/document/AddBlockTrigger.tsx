@@ -23,6 +23,7 @@ import {
   Layers,
   FileText,
   Loader2,
+  Columns2,
 } from "lucide-react";
 import type { DocumentBlockType } from "./document-types";
 
@@ -47,6 +48,7 @@ const TEXT_BLOCKS = [
   },
   { type: "todo" as const, label: "Checklist", icon: CheckSquare },
   { type: "divider" as const, label: "Divisor", icon: Minus },
+  { type: "column-layout" as const, label: "2 Colunas", icon: Columns2 },
 ];
 
 const FUNCTIONAL_BLOCKS = [

@@ -232,7 +232,7 @@ export function ColecoesBlocoCard({
           <Button
             size="sm"
             onClick={() => setQuickTableModalOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-primary hover:bg-primary/20 hover:text-foreground"
           >
             <Zap className="h-4 w-4 mr-1.5" />
             Nova Tabela
@@ -241,7 +241,7 @@ export function ColecoesBlocoCard({
             size="sm"
             onClick={() => setCreateModalOpen(true)}
             variant="outline"
-            className="border-blue-300 text-blue-600 hover:bg-blue-50"
+            className="border-primary text-primary hover:bg-primary/50"
           >
             <Plus className="h-4 w-4 mr-1.5" />
             Nova Coleção

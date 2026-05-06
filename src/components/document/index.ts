@@ -1,4 +1,3 @@
-// src/components/document/index.ts
 export { NucleoDocument } from "./NucleoDocument";
 export { HeaderBlock } from "./HeaderBlock";
 export { SortableDocumentBlock } from "./SortableDocumentBlock";

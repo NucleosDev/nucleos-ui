@@ -21,6 +21,7 @@ import {
   ListTodo,
   Layers,
   FileText,
+  Columns2,
 } from "lucide-react";
 
 interface SlashMenuProps {
@@ -102,6 +103,13 @@ const ALL_COMMANDS = [
     shortcut: "---",
   },
   {
+    type: "column-layout",
+    label: "2 Colunas",
+    icon: Columns2,
+    group: "Layout",
+    shortcut: "",
+  },
+  {
     type: "tarefas",
     label: "Tarefas",
     icon: CheckSquare,
@@ -156,6 +164,19 @@ export function SlashMenu({
   const [selectedIdx, setSelectedIdx] = useState(0);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  const filtered = ALL_COMMANDS.filter(
+    (c) =>
+      !query ||
+      c.label.toLowerCase().includes(query.toLowerCase()) ||
+      c.type.includes(query.toLowerCase()),
+  );
+
+  // Refs para evitar stale closure no handler de teclado — atualizados a cada render
+  const filteredRef = useRef(filtered);
+  const selectedIdxRef = useRef(selectedIdx);
+  filteredRef.current = filtered;
+  selectedIdxRef.current = selectedIdx;
+
   useEffect(() => {
     if (open) {
       setQuery("");
@@ -166,10 +187,10 @@ export function SlashMenu({
   useEffect(() => {
     if (!open) return;
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") { onClose(); return; }
       if (e.key === "ArrowDown") {
         e.preventDefault();
-        setSelectedIdx((i) => Math.min(i + 1, filtered.length - 1));
+        setSelectedIdx((i) => Math.min(i + 1, filteredRef.current.length - 1));
       }
       if (e.key === "ArrowUp") {
         e.preventDefault();
@@ -177,19 +198,13 @@ export function SlashMenu({
       }
       if (e.key === "Enter") {
         e.preventDefault();
-        if (filtered[selectedIdx]) onSelect(filtered[selectedIdx].type);
+        const item = filteredRef.current[selectedIdxRef.current];
+        if (item) onSelect(item.type);
       }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [open, selectedIdx, query]);
-
-  const filtered = ALL_COMMANDS.filter(
-    (c) =>
-      !query ||
-      c.label.toLowerCase().includes(query.toLowerCase()) ||
-      c.type.includes(query.toLowerCase()),
-  );
+  }, [open, onClose, onSelect]);
 
   const groups = [...new Set(filtered.map((c) => c.group))];
 

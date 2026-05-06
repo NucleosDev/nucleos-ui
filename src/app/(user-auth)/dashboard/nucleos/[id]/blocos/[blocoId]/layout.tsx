@@ -169,19 +169,19 @@ export default function BlocoLayout({
         </div>
       </div>
 
-      {/* Header com ícone e breadcrumb */}
-      <div className="container mx-auto px-4 md:px-6 lg:px-8 pb-15">
-        <div className="relative z-30 -mt-16 ml-8">
+      {/* Header — alinhado ao mesmo grid do canvas */}
+      <div className="max-w-5xl mx-auto px-6 md:px-8">
+        <div className="relative z-30 -mt-22 mb-4 pb-5">
           <div
-            className="w-16 h-16 md:w-20 md:h-20 rounded-xl flex items-center justify-center text-white shadow-xl border-4 border-background"
+            className="w-14 h-14 md:w-16 md:h-16 rounded-xl flex items-center justify-center text-white shadow-xl border-4 border-background"
             style={{ backgroundColor: corDestaque }}
           >
-            <IconComponentBloco className="w-8 h-8 md:w-10 md:h-10" />
+            <IconComponentBloco className="w-7 h-7 md:w-8 md:h-8" />
           </div>
         </div>
 
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-1.5 text-sm text-muted-foreground mb-2 mt-4">
+        <nav className="flex items-center gap-1.5 text-sm text-muted-foreground mb-3">
           <button
             onClick={() => router.push("/dashboard")}
             className="hover:text-foreground transition-colors"
@@ -199,14 +199,14 @@ export default function BlocoLayout({
           <span className="text-foreground font-medium">{blocoTitle}</span>
         </nav>
 
-        {/* Título e informações */}
-        <div className="max-w-3xl mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold">{blocoTitle}</h1>
+        <div className="mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
+            {blocoTitle}
+          </h1>
         </div>
-
-        {/* Conteúdo da página */}
-        {children}
       </div>
+
+      {children}
     </div>
   );
 }
