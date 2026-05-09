@@ -4,7 +4,6 @@
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useNucleo } from "@/hooks/useNucleo";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   BookOpen,
@@ -34,7 +33,6 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-// ICONS
 const tipoIcons: Record<string, LucideIcon> = {
   estudo: BookOpen,
   hobby: Heart,
@@ -84,101 +82,138 @@ function getNucleoIcon(tipo: string, iconId?: string | null): LucideIcon {
 
 export default function NucleoLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   const params = useParams();
   const pathname = usePathname();
   const router = useRouter();
   const id = params.id as string;
 
-  // Se estiver em uma rota de bloco, renderiza apenas o children sem o layout
-  if (pathname.includes("/blocos/")) {
-    return <>{children}</>;
-  }
+  if (pathname.includes("/blocos/")) return <>{children}</>;
 
-  // Buscar dados do núcleo
   const { data: nucleo, isLoading, error } = useNucleo(id);
 
-  // Estado de carregamento
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen">
         <Skeleton className="h-[240px] md:h-[300px] w-full" />
-        <div className="container mx-auto px-4 py-8">
-          <Skeleton className="h-8 w-64 mb-4" />
+        <div className="max-w-5xl mx-auto px-6 py-8 space-y-3">
+          <Skeleton className="h-8 w-64" />
           <Skeleton className="h-4 w-96" />
         </div>
       </div>
     );
   }
 
-  // Estado de erro ou núcleo não encontrado
   if (error || !nucleo) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">Núcleo não encontrado</h2>
-          <p className="text-muted-foreground mb-4">
+          <h2 className="text-xl font-semibold mb-2">Núcleo não encontrado</h2>
+          <p className="text-sm text-muted-foreground mb-5">
             O núcleo que você procura não existe ou foi removido.
           </p>
-          <Button onClick={() => router.push("/dashboard")}>
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="px-4 py-2 rounded-[var(--radius-md)] bg-primary text-primary-foreground text-sm font-medium hover:opacity-90"
+          >
             Voltar ao Dashboard
-          </Button>
+          </button>
         </div>
       </div>
     );
   }
 
-  // Preparar dados para renderização
   const capaUrl =
     nucleo.imagemCapa || `https://picsum.photos/seed/${nucleo.id}/1200/400`;
-  const corDestaque = nucleo.corDestaque;
+  const corDestaque = nucleo.corDestaque || "#6366f1";
   const IconComponent = getNucleoIcon(nucleo.tipo, nucleo.iconId);
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Banner */}
+    <div className="bg-background">
+      {/* ── Liquid glass banner ── */}
       <div className="relative w-full h-[240px] md:h-[300px] overflow-hidden">
         <Image
           src={capaUrl}
           alt={nucleo.nome}
           fill
-          className="object-cover"
+          className="object-cover scale-[1.04] transition-transform duration-700"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-        <div className="absolute bottom-0 w-full text-background">
+
+        {/* Multi-layer gradient — creates depth without killing the photo */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/30 to-transparent" />
+        <div
+          className="absolute inset-0 opacity-40"
+          style={{
+            background: `radial-gradient(ellipse 60% 80% at 80% 20%, ${corDestaque}44 0%, transparent 70%)`,
+          }}
+        />
+
+        {/* Wave transition */}
+        <div className="absolute bottom-0 left-0 w-full pointer-events-none z-10">
           <svg
             viewBox="0 0 500 100"
             preserveAspectRatio="none"
-            className="w-full h-[60px]"
-            fill="hsl(var(--background))"
+            className="w-full h-[60px] -mb-px"
+            fill="var(--background)"
           >
-            <path
-              d="M0,40 C150,-20 350,120 500,60 L500,100 L0,100 Z"
-              fill="currentColor"
-            />
+            <path d="M0,40 C150,-20 350,120 500,60 L500,100 L0,100 Z" />
           </svg>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute top-4 left-4 bg-background/20 backdrop-blur-sm text-white z-20 hover:bg-background/40"
-          onClick={() => router.push("/dashboard")}
+
+        {/* Glass back button */}
+        <button
+          onClick={() => router.push("/dashboard/nucleos")}
+          className="absolute top-4 left-4 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium text-white transition-all duration-[var(--duration-fast)]"
+          style={{
+            background: "rgba(0,0,0,0.22)",
+            backdropFilter: "blur(12px) saturate(160%)",
+            WebkitBackdropFilter: "blur(12px) saturate(160%)",
+            border: "1px solid rgba(255,255,255,0.18)",
+            boxShadow:
+              "inset 0 1px 0 rgba(255,255,255,0.2), 0 2px 8px rgba(0,0,0,0.15)",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.background = "rgba(0,0,0,0.32)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.background = "rgba(0,0,0,0.22)")
+          }
         >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
+          <ArrowLeft className="h-4 w-4" />
+          Nucleos
+        </button>
       </div>
 
-      {/* Header com ícone e título — centralizado igual ao canvas */}
-      <div className="max-w-5xl mx-auto px-6 md:px-8 pb-16">
-        <div className="relative z-30 -mt-20 mb-4">
-          <div
-            className="w-14 h-14 md:w-16 md:h-16 rounded-xl flex items-center justify-center text-white shadow-xl border-4 border-background"
-            style={{ backgroundColor: corDestaque }}
-          >
-            <IconComponent className="w-7 h-7 md:w-8 md:h-8" />
+      <div className="max-w-4xl mx-auto px-8 md:px-4 pb-4">
+        {/* Floating liquid glass icon */}
+        <div
+          className="relative z-30 -mt-8 mb-5 "
+          style={{ top: "-45px", left: "18px" }}
+        >
+          <div className="relative inline-flex">
+            {/* Glass icon container */}
+            <div
+              className="relative flex h-16 w-16 items-center justify-center rounded-2xl"
+              style={{
+                background: `linear-gradient(145deg, ${corDestaque}ee, ${corDestaque}bb)`,
+                border: "1.5px solid rgba(255,255,255,0.28)",
+                boxShadow:
+                  "inset 0 1.5px 0 rgba(255,255,255,0.40), 0 8px 24px rgba(0,0,0,0.22)",
+              }}
+            >
+              {nucleo.icon?.iconUrl ? (
+                <Image
+                  src={nucleo.icon.iconUrl}
+                  alt=""
+                  width={20}
+                  height={20}
+                  className="object-contain brightness-0 invert"
+                />
+              ) : (
+                <IconComponent className="w-8 h-8 text-white" />
+              )}
+            </div>
           </div>
         </div>
 
@@ -194,20 +229,17 @@ export default function NucleoLayout({
           <span className="text-foreground font-medium">{nucleo.nome}</span>
         </nav>
 
-        {/* Nome e descrição */}
+        {/* Title */}
         <div className="mb-2">
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
             {nucleo.nome}
           </h1>
           {nucleo.descricao && (
-            <p className="text-muted-foreground mt-1.5 text-base">
-              {nucleo.descricao}
-            </p>
+            <p className="text-muted-foreground mt-1.5">{nucleo.descricao}</p>
           )}
         </div>
       </div>
 
-      {/* Canvas — gerencia seu próprio max-width e padding */}
       {children}
     </div>
   );

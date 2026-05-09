@@ -50,4 +50,15 @@ export const blocosService = {
   ): Promise<void> {
     return api.put(`/blocos/${blocoId}/move`, { newParentId, position });
   },
+
+  async patchContent(
+    id: string,
+    html: string,
+    tipo?: string,
+  ): Promise<{ success: boolean }> {
+    return api.patch<{ success: boolean }>(
+      API_ROUTES.BLOCOS.PATCH_CONTENT(id),
+      { html, tipo },
+    );
+  },
 };

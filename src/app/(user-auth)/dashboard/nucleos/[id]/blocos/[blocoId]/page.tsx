@@ -20,18 +20,8 @@ import {
   ExternalLink,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { GlassModal, GlassModalFooter, GlassButton } from "@/components/ui/glass-modal";
 import { toast } from "@/hooks/use-toast";
 import { CriarBlocoModal } from "@/components/blocos/CriarBlocoModal";
 import { ColecoesBlocoCard } from "@/components/blocos/cruds/ColecoesBlocoCard";
@@ -124,7 +114,11 @@ export default function BlocoDetalhesPage() {
   const nucleoId = params.id as string;
   const blocoId = params.blocoId as string;
 
-  const { bloco, isLoading: blocoLoading, error: blocoError } = useBloco(blocoId, nucleoId);
+  const {
+    bloco,
+    isLoading: blocoLoading,
+    error: blocoError,
+  } = useBloco(blocoId, nucleoId);
   const { data: nucleo, isLoading: nucleoLoading } = useNucleo(nucleoId);
   const {
     blocos: subBlocos,
@@ -175,9 +169,12 @@ export default function BlocoDetalhesPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
         <p className="text-muted-foreground">Bloco não encontrado.</p>
-        <Button variant="link" onClick={() => router.back()}>
+        <button
+          onClick={() => router.back()}
+          className="text-sm text-primary hover:underline transition-colors"
+        >
           Voltar
-        </Button>
+        </button>
       </div>
     );
   }
@@ -219,15 +216,13 @@ export default function BlocoDetalhesPage() {
         ) : (
           <>
             <div className="flex justify-end mb-4">
-              <Button
-                size="sm"
-                variant="outline"
+              <button
                 onClick={() => setModalAberto(true)}
-                className="gap-1.5 h-8 text-xs"
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border/50 bg-background/40 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors duration-[var(--duration-fast)]"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Adicionar sub-bloco
-              </Button>
+              </button>
             </div>
 
             <div className="space-y-3">
@@ -253,7 +248,7 @@ export default function BlocoDetalhesPage() {
                       <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/30 bg-muted/20">
                         <div className="flex items-center gap-2.5">
                           <div
-                            className="h-6 w-6 rounded-md flex items-center justify-center text-white shrink-0"
+                            className="h-6 w-6 rounded-md flex items-center justify-center text shrink-0"
                             style={{ backgroundColor: subCor }}
                           >
                             <SubIcon className="h-3.5 w-3.5" />
@@ -263,31 +258,27 @@ export default function BlocoDetalhesPage() {
                           </span>
                         </div>
 
-                        <div className={cn(
-                          "flex items-center gap-1 transition-opacity",
-                          "opacity-0 group-hover:opacity-100",
-                        )}>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-7 w-7"
-                            onClick={() =>
-                              router.push(`/dashboard/nucleos/${nucleoId}/blocos/${sub.id}`)
-                            }
+                        <div
+                          className={cn(
+                            "flex items-center gap-1 transition-opacity",
+                            "opacity-0 group-hover:opacity-100",
+                          )}
+                        >
+                          <button
+                            onClick={() => router.push(`/dashboard/nucleos/${nucleoId}/blocos/${sub.id}`)}
                             title="Abrir em tela cheia"
+                            className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-accent transition-colors duration-[var(--duration-fast)]"
                           >
                             <ExternalLink className="h-3.5 w-3.5" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          </button>
+                          <button
                             onClick={() => setDeleteTarget(sub.id)}
                             disabled={isDeleting}
                             title="Excluir"
+                            className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground/60 hover:text-destructive hover:bg-destructive/10 transition-colors duration-[var(--duration-fast)] disabled:opacity-40"
                           >
-                            <span className="text-sm leading-none">×</span>
-                          </Button>
+                            <span className="text-base leading-none">×</span>
+                          </button>
                         </div>
                       </div>
 
@@ -310,28 +301,24 @@ export default function BlocoDetalhesPage() {
         parentId={blocoId}
       />
 
-      <AlertDialog
+      <GlassModal
         open={!!deleteTarget}
-        onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}
+        onClose={() => setDeleteTarget(null)}
+        size="max-w-sm"
       >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Excluir sub-bloco?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta ação não pode ser desfeita.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmExcluirSub}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              Excluir
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        <div className="px-5 pt-5 pb-2 space-y-3">
+          <h3 className="text-sm font-semibold">Excluir sub-bloco?</h3>
+          <p className="text-xs text-muted-foreground/70">Esta ação não pode ser desfeita.</p>
+        </div>
+        <GlassModalFooter>
+          <GlassButton variant="outline" onClick={() => setDeleteTarget(null)}>
+            Cancelar
+          </GlassButton>
+          <GlassButton variant="destructive" onClick={confirmExcluirSub}>
+            Excluir
+          </GlassButton>
+        </GlassModalFooter>
+      </GlassModal>
     </div>
   );
 }

@@ -1,15 +1,7 @@
 "use client";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertTriangle, Loader2 } from "lucide-react";
+import { GlassModal, GlassModalFooter, GlassButton } from "@/components/ui/glass-modal";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -25,16 +17,10 @@ interface ConfirmDialogProps {
 }
 
 export function ConfirmDialog({
-  open,
-  onOpenChange,
-  title,
-  description,
-  onConfirm,
-  onCancel,
-  confirmText = "Confirmar",
-  cancelText = "Cancelar",
-  isDangerous = false,
-  isLoading = false,
+  open, onOpenChange, title, description,
+  onConfirm, onCancel,
+  confirmText = "Confirmar", cancelText = "Cancelar",
+  isDangerous = false, isLoading = false,
 }: ConfirmDialogProps) {
   const handleConfirm = async () => {
     await onConfirm();
@@ -47,39 +33,38 @@ export function ConfirmDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-sm">
-        <DialogHeader>
-          <div className="flex items-center gap-2">
-            {isDangerous && (
-              <AlertCircle className="h-5 w-5 text-destructive" />
-            )}
-            <DialogTitle>{title}</DialogTitle>
+    <GlassModal open={open} onClose={() => !isLoading && onOpenChange(false)} size="max-w-sm">
+      <div className="px-5 pt-5 pb-2 space-y-3">
+        <div className="flex items-start gap-3">
+          {isDangerous && (
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-destructive/10">
+              <AlertTriangle className="h-4.5 w-4.5 text-destructive" />
+            </div>
+          )}
+          <div>
+            <h3 className="text-sm font-semibold text-foreground">{title}</h3>
+            <p className="mt-1 text-xs text-muted-foreground/70 leading-relaxed">{description}</p>
           </div>
-          <DialogDescription className="pt-2">{description}</DialogDescription>
-        </DialogHeader>
+        </div>
+      </div>
 
-        <DialogFooter className="flex gap-2 pt-4">
-          <Button variant="outline" onClick={handleCancel} disabled={isLoading}>
-            {cancelText}
-          </Button>
-          <Button
-            onClick={handleConfirm}
-            disabled={isLoading}
-            variant={isDangerous ? "destructive" : "default"}
-            className="min-w-[100px]"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processando...
-              </>
-            ) : (
-              confirmText
-            )}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      <GlassModalFooter>
+        <GlassButton variant="outline" onClick={handleCancel} disabled={isLoading}>
+          {cancelText}
+        </GlassButton>
+        <button
+          onClick={handleConfirm}
+          disabled={isLoading}
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50 min-w-[90px] justify-center"
+          style={{
+            background: isDangerous ? "hsl(var(--destructive))" : "#6366f1",
+            boxShadow: isDangerous ? "0 4px 12px hsl(var(--destructive) / 0.35)" : "0 4px 12px #6366f135",
+          }}
+        >
+          {isLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+          {isLoading ? "Processando..." : confirmText}
+        </button>
+      </GlassModalFooter>
+    </GlassModal>
   );
 }

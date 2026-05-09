@@ -74,7 +74,7 @@
 //           translateY: textTransform,
 
 //         }}
-//         className="mb-20 text-center text-3xl font-bold text-neutral-800 dark:text-white"
+//         className="mb-20 text-center text-3xl font-bold text-neutral-800 dark:text"
 //       ></motion.h2>
 //       {/* Lid */}
 //       <Lid
@@ -143,7 +143,7 @@
 //           }}
 //           className="absolute inset-0 flex items-center justify-center rounded-lg bg-[#010101]"
 //         >
-//           <span className="text-white">
+//           <span className="text">
 //             <AceternityLogo />
 //           </span>
 //         </div>
@@ -554,7 +554,7 @@
 //     <div
 //       className={cn(
 //         "[transform:translateZ(0)] rounded-[4px] p-[0.5px] [will-change:transform]",
-//         backlit && "bg-white/[0.2] shadow-xl shadow-white",
+//         backlit && "bg/[0.2] shadow-xl shadow",
 //       )}
 //     >
 //       <div
@@ -571,7 +571,7 @@
 //           className={cn(
 //             "flex w-full flex-col items-center justify-center text-[5px] text-neutral-200",
 //             childrenClassName,
-//             backlit && "text-white",
+//             backlit && "text",
 //           )}
 //         >
 //           {children}
@@ -636,7 +636,7 @@
 //       viewBox="0 0 66 65"
 //       fill="none"
 //       xmlns="http://www.w3.org/2000/svg"
-//       className="h-3 w-3 text-white"
+//       className="h-3 w-3 text"
 //     >
 //       <path
 //         d="M8 8.05571C8 8.05571 54.9009 18.1782 57.8687 30.062C60.8365 41.9458 9.05432 57.4696 9.05432 57.4696"

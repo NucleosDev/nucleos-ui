@@ -43,13 +43,13 @@
 //       className="relative pb-60 pt-60 overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8"
 //     >
 //       {/* GRADIENTE SUPERIOR */}
-//       <div className="absolute top-0 left-0 right-0 h-100 pointer-events-none z-10 bg-gradient-to-b from-white via-white/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
+//       <div className="absolute top-0 left-0 right-0 h-100 pointer-events-none z-10 bg-gradient-to-b from via/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
 
 //       {/* GRADIENTE INFERIOR */}
-//       <div className="absolute bottom-0 left-0 right-0 h-64 pointer-events-none z-10 bg-gradient-to-t from-white via-white/60 to-transparent dark:from-black dark:via-black/60 dark:to-transparent" />
+//       <div className="absolute bottom-0 left-0 right-0 h-64 pointer-events-none z-10 bg-gradient-to-t from via/60 to-transparent dark:from-black dark:via-black/60 dark:to-transparent" />
 
 //       {/* SEGUNDA CAMADA DE DEGRADÊ */}
-//       <div className="absolute bottom-0 left-0 right-0 h-80 pointer-events-none z-5 bg-gradient-to-t from-white/40 via-transparent to-transparent dark:from-black/40 dark:via-transparent dark:to-transparent" />
+//       <div className="absolute bottom-0 left-0 right-0 h-80 pointer-events-none z-5 bg-gradient-to-t from/40 via-transparent to-transparent dark:from-black/40 dark:via-transparent dark:to-transparent" />
 
 //       {/* Background elements com parallax */}
 //       <motion.div

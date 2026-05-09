@@ -2,18 +2,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Table2 } from "lucide-react";
+import { Layers, Check, Loader2 } from "lucide-react";
+import { GlassModal, GlassModalHeader, GlassInput, GlassModalFooter, GlassButton } from "@/components/ui/glass-modal";
+
+const ACCENT = "#10b981";
+
 interface CriarColecaoModalProps {
   open: boolean;
   onClose: () => void;
@@ -31,80 +24,54 @@ export function CriarColecaoModal({
   titulo = "Nova coleção",
   isSubmitting = false,
 }: CriarColecaoModalProps) {
-  const [nome, setNome] = useState(initialNome);
+  const [nome,  setNome]  = useState(initialNome);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (open) {
-      setNome(initialNome);
-      setError(null);
-    }
+    if (open) { setNome(initialNome); setError(null); }
   }, [open, initialNome]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nome.trim()) {
-      setError("O nome da coleção é obrigatório.");
-      return;
-    }
+    if (!nome.trim()) { setError("O nome da coleção é obrigatório."); return; }
     await onConfirm(nome.trim());
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2.5 rounded-lg bg-blue-100">
-              <Table2 className="h-5 w-5 text-blue-600" />
-            </div>
-            <DialogTitle className="text-xl">{titulo}</DialogTitle>
-          </div>
-          <DialogDescription className="text-sm text-muted-foreground">
-            Crie uma nova coleção para organizar seus dados. Você poderá
-            adicionar campos e itens depois.
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 pt-2">
-          <div className="space-y-2">
-            <Label htmlFor="nome" className="text-sm font-semibold">
-              Nome da coleção
-            </Label>
-            <Input
-              id="nome"
-              placeholder="Ex: Biblioteca de Filmes, Clientes..."
-              value={nome}
-              onChange={(e) => {
-                setNome(e.target.value);
-                setError(null);
-              }}
-              autoFocus
-              disabled={isSubmitting}
-              className="h-10 border-slate-300 focus:border-blue-500"
-            />
-            {error && (
-              <p className="text-xs text-destructive font-medium">{error}</p>
-            )}
-          </div>
-          <DialogFooter className="gap-2">
-            <Button
-              variant="outline"
-              onClick={onClose}
-              disabled={isSubmitting}
-              className="w-24"
-            >
-              Cancelar
-            </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting || !nome.trim()}
-              className="w-24 bg-blue-600 hover:bg-blue-700"
-            >
-              {isSubmitting ? "Salvando..." : "Criar"}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <GlassModal open={open} onClose={onClose}>
+      <GlassModalHeader
+        title={titulo}
+        description="Organize dados em tabelas flexíveis. Você pode adicionar campos e itens depois."
+        icon={Layers}
+        accent={ACCENT}
+        onClose={onClose}
+      />
+
+      <form onSubmit={handleSubmit} className="px-5 py-4">
+        <GlassInput
+          label="Nome da coleção"
+          placeholder="Ex: Biblioteca de Filmes, Clientes..."
+          value={nome}
+          onChange={(e) => { setNome(e.target.value); setError(null); }}
+          autoFocus
+          disabled={isSubmitting}
+          error={error}
+        />
+        <GlassModalFooter>
+          <GlassButton variant="outline" type="button" onClick={onClose} disabled={isSubmitting}>
+            Cancelar
+          </GlassButton>
+          <GlassButton
+            type="submit"
+            disabled={isSubmitting || !nome.trim()}
+            style={{ background: ACCENT, boxShadow: `0 4px 12px ${ACCENT}35` }}
+            className="text-white hover:opacity-90 bg-transparent"
+          >
+            {isSubmitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
+            Criar
+          </GlassButton>
+        </GlassModalFooter>
+      </form>
+    </GlassModal>
   );
 }

@@ -1,38 +1,24 @@
 "use client";
 
-import { NucleoCardMini } from "@/components/nucleo/nucleo-card-nano";
-import { ReactNode, useState, useEffect } from "react";
-import { useAuth } from "@/auth";
-import { MessageSquare } from "lucide-react";
+import { useGamification } from "@/hooks/useGamification";
 import {
-  Zap,
   Flame,
-  Layers,
-  Activity,
-  Lightbulb,
-  Sparkles,
-  Aperture,
-  Menu,
   CalendarDays,
   Trophy,
   BarChart3,
   Bell,
   User,
   Settings,
-  Grid2x2PlusIcon,
-  X,
+  Grid2x2,
+  MessageSquare,
+  Aperture,
+  ChevronRight,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { useCurrentUser } from "@/hooks/useDashboard";
 import { useNucleos } from "@/hooks/useNucleo";
 import { useTotalBlocosCount } from "@/hooks/useBlocos";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useBlocos } from "@/hooks/useBlocos";
-import { useColecoes } from "@/hooks/useColecoes";
-import { useTimers } from "@/hooks/useTimers";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import NucleosLogo from "@/components/nucleo/NucleosLogo";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -62,229 +48,190 @@ interface DashboardSidebarProps {
     id: string;
     nome: string;
     tipo?: string;
-    level?: number;
     iconId?: string | null;
-    icon?: { iconUrl?: string };
     corDestaque?: string;
   }>;
-  blocosData?: any[];
-  colecoesData?: any[];
-  timersData?: any[];
-  isMobile?: boolean;
   onClose?: () => void;
 }
 
-// Componente de conteúdo da sidebar (reutilizável para desktop e mobile)
-function SidebarContentComponent({
-  userData,
-  nucleosCount,
-  blocosCount,
-  recentNucleos,
-  isMobile,
-  onClose,
-}: DashboardSidebarProps) {
-  const pathname = usePathname();
-  const xpPercent = Math.min(
-    ((userData.currentXp || 0) / (userData.nextLevelXp || 100)) * 100,
-    100,
+const NAV_MAIN = [
+  { id: "dashboard",     label: "Início",        icon: Grid2x2,     href: "/dashboard" },
+  { id: "nucleos",       label: "Núcleos",        icon: Aperture,    href: "/dashboard/nucleos" },
+  { id: "calendario",   label: "Calendário",     icon: CalendarDays,href: "/dashboard/calendario" },
+  { id: "insights",     label: "Insights",        icon: BarChart3,   href: "/dashboard/insights" },
+];
+
+const NAV_SECONDARY = [
+  { id: "conquistas",   label: "Conquistas",     icon: Trophy,      href: "/dashboard/conquistas" },
+  { id: "chatbot",      label: "Assistente",      icon: MessageSquare, href: "/dashboard/chatbot" },
+  { id: "notificacoes", label: "Notificações",   icon: Bell,        href: "/dashboard/notificacoes" },
+];
+
+const NAV_BOTTOM = [
+  { id: "perfil",          label: "Perfil",         icon: User,     href: "/dashboard/perfil" },
+  { id: "configuracoes",   label: "Configurações",  icon: Settings, href: "/dashboard/configuracoes" },
+];
+
+const COLLAPSED_LINKS = [
+  { icon: Grid2x2,     href: "/dashboard",           label: "Início" },
+  { icon: Aperture,    href: "/dashboard/nucleos",   label: "Núcleos" },
+  { icon: CalendarDays,href: "/dashboard/calendario",label: "Calendário" },
+  { icon: BarChart3,   href: "/dashboard/insights",  label: "Insights" },
+];
+
+function NavLink({
+  href,
+  icon: Icon,
+  label,
+  isActive,
+  onClick,
+  className,
+}: {
+  href: string;
+  icon: React.ElementType;
+  label: string;
+  isActive: boolean;
+  onClick?: () => void;
+  className?: string;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className={cn(
+        "nav-item group",
+        isActive && "active",
+        className,
+      )}
+    >
+      <Icon
+        className={cn(
+          "h-4 w-4 shrink-0 transition-colors duration-[var(--duration-fast)]",
+          isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground",
+        )}
+      />
+      <span>{label}</span>
+      {isActive && (
+        <span className="ml-auto h-1.5 w-1.5 rounded-full bg-primary/70" />
+      )}
+    </Link>
   );
+}
 
-  const getInitials = () => {
-    if (!userData.fullName) return "U";
-    return userData.fullName
-      .split(" ")
-      .map((n) => n[0])
-      .slice(0, 2)
-      .join("")
-      .toUpperCase();
-  };
-
-  const mainLinks = [
-    {
-      id: "nucleos",
-      label: "Nucleos",
-      icon: Aperture,
-      href: "/dashboard/nucleos",
-      count: nucleosCount,
-    },
-    {
-      id: "blocos",
-      label: "Blocos",
-      icon: Layers,
-      href: "/dashboard/blocos",
-      count: blocosCount,
-    },
-    {
-      id: "atividades",
-      label: "Atividades Recentes",
-      icon: Activity,
-      href: "/dashboard/atividades",
-      count: 0,
-    },
-  ];
-
-  const dashboardLinks = [
-    {
-      id: "dashboard",
-      label: "Dashboard",
-      icon: Grid2x2PlusIcon,
-      href: "/dashboard",
-    },
-    {
-      id: "calendario",
-      label: "Calendário",
-      icon: CalendarDays,
-      href: "/dashboard/calendario",
-    },
-    {
-      id: "conquistas",
-      label: "Conquistas",
-      icon: Trophy,
-      href: "/dashboard/conquistas",
-    },
-    {
-      id: "insights",
-      label: "Insights",
-      icon: BarChart3,
-      href: "/dashboard/insights",
-    },
-    {
-      id: "notificacoes",
-      label: "Notificações",
-      icon: Bell,
-      href: "/dashboard/notificacoes",
-    },
-    {
-      id: "chat-bot",
-      label: "Chat-Bot",
-      icon: MessageSquare,
-      href: "/dashboard/chatbot",
-    },
-    { id: "perfil", label: "Perfil", icon: User, href: "/dashboard/perfil" },
-    {
-      id: "configuracoes",
-      label: "Configurações",
-      icon: Settings,
-      href: "/dashboard/configuracoes",
-    },
-  ];
-
-  const insights = [
-    {
-      id: "streak",
-      title: "Streak",
-      description: `${userData.streak || 0} dias consecutivos! Continue assim.`,
-      icon: Flame,
-    },
-    {
-      id: "nucleos-recentes",
-      title: "Nucleos ativos",
-      description:
-        recentNucleos.length > 0
-          ? recentNucleos.map((n) => n.nome).join(", ")
-          : "Nenhum Nucleo criado ainda.",
-      icon: Sparkles,
-    },
-  ];
+function SidebarContent({ userData, onClose }: DashboardSidebarProps) {
+  const pathname = usePathname();
 
   return (
-    <div className="flex flex-col">
-      <div className="px-3 py-3 space-y-1">
-        <p className="px-3 text-xs font-medium uppercase tracking-wider mb-4">
-          Navegação
-        </p>
-        {dashboardLinks.map((link) => {
-          const Icon = link.icon;
-          const isActive = pathname === link.href;
-          return (
-            <Link
-              key={link.id}
-              href={link.href}
-              onClick={onClose}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all hover:scale-[1.01]",
-                isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-background hover:text-accent",
-              )}
-            >
-              <Icon className="h-4 w-4" />
-              <span className="text-sm font-medium">{link.label}</span>
-            </Link>
-          );
-        })}
+    <div className="flex flex-col flex-1 overflow-y-auto py-3">
+      {/* Main nav */}
+      <div className="px-2 space-y-0.5">
+        {NAV_MAIN.map((link) => (
+          <NavLink
+            key={link.id}
+            href={link.href}
+            icon={link.icon}
+            label={link.label}
+            isActive={
+              link.href === "/dashboard"
+                ? pathname === link.href
+                : pathname === link.href || pathname?.startsWith(link.href + "/")
+            }
+            onClick={onClose}
+          />
+        ))}
+      </div>
+
+      {/* Divider */}
+      <div className="mx-3 my-3 h-px bg-border/50" />
+
+      {/* Secondary nav */}
+      <div className="px-2 space-y-0.5">
+        {NAV_SECONDARY.map((link) => (
+          <NavLink
+            key={link.id}
+            href={link.href}
+            icon={link.icon}
+            label={link.label}
+            isActive={pathname === link.href || pathname?.startsWith(link.href + "/")}
+            onClick={onClose}
+          />
+        ))}
+      </div>
+
+      {/* Streak indicator */}
+      {userData.streak !== undefined && userData.streak > 0 && (
+        <div className="mx-3 mt-4">
+          <div className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-orange-500/8 border border-orange-500/15">
+            <Flame className="h-3.5 w-3.5 text-orange-500 shrink-0" />
+            <span className="text-xs font-medium text-orange-600 dark:text-orange-400">
+              {userData.streak} dias seguidos
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Bottom nav */}
+      <div className="mt-auto pt-3 border-t border-border/50 mx-2 space-y-0.5">
+        {NAV_BOTTOM.map((link) => (
+          <NavLink
+            key={link.id}
+            href={link.href}
+            icon={link.icon}
+            label={link.label}
+            isActive={pathname === link.href}
+            onClick={onClose}
+          />
+        ))}
       </div>
     </div>
   );
 }
 
-function DashboardSidebarDesktop({
-  collapsed,
-  userData,
-  nucleosCount,
-  blocosCount,
-  recentNucleos,
-}: DashboardSidebarProps) {
+function SidebarDesktop({ collapsed, userData, nucleosCount, blocosCount, recentNucleos }: DashboardSidebarProps) {
   const pathname = usePathname();
-
-  {
-    /* Sidebar Fechada */
-  }
 
   if (collapsed) {
     return (
-      <aside className="hidden md:flex w-16 border-r border-none flex-col items-center gap-8 transition-all duration-300 ease-in-out sticky top-0 bg-none backdrop-blur-md z-100 pb-0 py-4">
-        {/* espaçamento do header */}
-        <div className="">
-          <Link
-            href="/dashboard"
-            className="hover:opacity-80 transition-opacity"
-          >
-            <Image src={"/icon.svg"} height={32} width={32} alt="logo" />
-          </Link>
-        </div>
+      <aside className="hidden md:flex w-14 flex-col items-center border-r border-border/40 sticky top-0 h-screen py-4 bg-sidebar z-30">
+        {/* Logo */}
+        <Link href="/dashboard" className="mb-6 hover:opacity-75 transition-opacity">
+          <Image src="/icon.svg" height={24} width={24} alt="logo" />
+        </Link>
 
-        {/* Main icons */}
-        <div className="flex flex-col items-center gap-2">
-          {[
-            { icon: Grid2x2PlusIcon, href: "/dashboard", label: "Dashboard" },
-            { icon: Aperture, href: "/dashboard/nucleos", label: "Nucleos" },
-            { icon: Layers, href: "/dashboard/blocos", label: "Blocos" },
-            {
-              icon: Activity,
-              href: "/dashboard/atividades",
-              label: "Atividades",
-            },
-          ].map((item, index) => {
+        {/* Collapsed nav icons */}
+        <div className="flex flex-col items-center gap-1 w-full px-2">
+          {COLLAPSED_LINKS.map((item) => {
             const Icon = item.icon;
             const isActive =
-              pathname === item.href || pathname?.startsWith(item.href + "/");
-
+              item.href === "/dashboard"
+                ? pathname === item.href
+                : pathname === item.href || pathname?.startsWith(item.href + "/");
             return (
               <Link
-                key={index}
+                key={item.href}
                 href={item.href}
+                title={item.label}
                 className={cn(
-                  "p-2 rounded-lg transition-all group relative",
+                  "flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-[var(--duration-fast)]",
                   isActive
                     ? "bg-primary/10 text-primary"
-                    : "hover:bg-accent/60 text-muted-background hover:text-foreground",
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground",
                 )}
-                title={item.label}
               >
-                <Icon className="w-5 h-5 hover:text-foreground" />
+                <Icon className="h-4 w-4" />
               </Link>
             );
           })}
         </div>
 
-        <div className="mt-auto flex flex-col items-center gap-2">
+        {/* Bottom icon */}
+        <div className="mt-auto px-2">
           <Link
             href="/dashboard/configuracoes"
-            className="p-2 rounded-lg hover:bg-accent/60 text-muted-background hover:text-foreground"
             title="Configurações"
+            className="flex items-center justify-center w-9 h-9 rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground transition-all duration-[var(--duration-fast)]"
           >
-            <Settings className="w-5 h-5" />
+            <Settings className="h-4 w-4" />
           </Link>
         </div>
       </aside>
@@ -292,63 +239,26 @@ function DashboardSidebarDesktop({
   }
 
   return (
-    <aside
-      className="
-    hidden md:flex
-    w-72
-    flex-col
-    border-r border-border/60
-    sticky top-0
-    h-screen
-    text-background
-    bg-foreground
-    backdrop-blur-xl
-dark:bg-popover/80 
-dark:shadow-xl 
-
-dark:bg-gradient-to-r 
-dark:from-primary/10 
-dark:to-transparent 
-
-dark:text-foreground
-    overflow-y-auto
-    transition-all duration-300 ease-in-out
-
-    z-30
-  "
-    >
-      {/* Logo que sobrepõe - posicionada para cobrir a borda do header */}
-      <div className="relative">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 z-50">
-          <Link href="/dashboard" className="block">
-            <div className="p-5">
-              <NucleosLogo
-                size={
-                  typeof window !== "undefined" && window.innerWidth < 768
-                    ? "md"
-                    : "lg"
-                }
-              />
-            </div>
-          </Link>
-        </div>
+    <aside className="hidden md:flex w-[220px] flex-col border-r border-border/40 sticky top-0 h-screen bg-sidebar z-30 transition-all duration-[var(--duration-base)]">
+      {/* Header / Logo */}
+      <div className="px-4 py-4 border-b border-border/40">
+        <Link href="/dashboard" className="block">
+          <NucleosLogo size="md" />
+        </Link>
       </div>
 
-      {/* Conteúdo da sidebar com padding extra no topo para compensar a logo */}
-      <div className="pt-24">
-        <SidebarContentComponent
-          collapsed={collapsed}
-          userData={userData}
-          nucleosCount={nucleosCount}
-          blocosCount={blocosCount}
-          recentNucleos={recentNucleos}
-        />
-      </div>
+      {/* Nav content */}
+      <SidebarContent
+        collapsed={collapsed}
+        userData={userData}
+        nucleosCount={nucleosCount}
+        blocosCount={blocosCount}
+        recentNucleos={recentNucleos}
+      />
     </aside>
   );
 }
 
-// ========== LAYOUT PRINCIPAL ==========
 export function DashboardLayout({
   children,
   collapsed = false,
@@ -356,35 +266,28 @@ export function DashboardLayout({
   isMobileMenuOpen = false,
   onMobileMenuClose = () => {},
 }: DashboardLayoutProps) {
-  const { logout } = useAuth();
-  const pathname = usePathname();
-
   const { data: user } = useCurrentUser();
   const { data: nucleos } = useNucleos();
   const { data: totalBlocos = 0 } = useTotalBlocosCount(nucleos || []);
-
-  const { blocos: blocosData = [] } = useBlocos();
-  const { colecoes: colecoesData = [] } = useColecoes();
-  const { timers: timersData = [] } = useTimers();
+  const gamification = useGamification();
+  const { data: stats } = gamification.useStats();
 
   const userData = {
     fullName: user?.fullName || user?.email?.split("@")[0] || "Usuário",
     avatarUrl: user?.avatarUrl || "",
-    level: 5,
-    currentXp: 340,
-    nextLevelXp: 500,
-    streak: 12,
+    level: stats?.level,
+    currentXp: stats?.currentXp,
+    nextLevelXp: stats?.nextLevelXp,
+    streak: stats?.currentStreak,
   };
 
-  const nucleosCount = nucleos?.length || 0;
-  const recentNucleos = (nucleos || []).slice(0, 3).map((nucleo) => ({
-    id: nucleo.id,
-    nome: nucleo.nome,
-    tipo: nucleo.tipo,
-    level: (nucleo as any)?.level || 1,
-    iconId: nucleo.iconId,
-    icon: (nucleo as any)?.icon,
-    corDestaque: nucleo.corDestaque,
+  const nucleosCount = nucleos?.length ?? 0;
+  const recentNucleos = (nucleos ?? []).slice(0, 5).map((n) => ({
+    id: n.id,
+    nome: n.nome,
+    tipo: n.tipo,
+    iconId: n.iconId,
+    corDestaque: n.corDestaque,
   }));
 
   const sidebarProps = {
@@ -393,24 +296,20 @@ export function DashboardLayout({
     nucleosCount,
     blocosCount: totalBlocos,
     recentNucleos,
-    blocosData,
-    colecoesData,
-    timersData,
   };
 
-  // Mobile: menu em sheet
   if (isMobile) {
     return (
       <div className="flex">
         <Sheet open={isMobileMenuOpen} onOpenChange={onMobileMenuClose}>
-          <SheetContent side="left" className="w-72 p-0">
-            <div className="pt-12">
-              <SidebarContentComponent
-                {...sidebarProps}
-                isMobile={true}
-                onClose={onMobileMenuClose}
-              />
+          <SheetContent side="left" className="w-[220px] p-0 bg-sidebar border-r border-border/40">
+            <div className="px-4 py-4 border-b border-border/40">
+              <NucleosLogo size="md" />
             </div>
+            <SidebarContent
+              {...sidebarProps}
+              onClose={onMobileMenuClose}
+            />
           </SheetContent>
         </Sheet>
         <main className="flex-1 overflow-auto pb-16">{children}</main>
@@ -418,12 +317,10 @@ export function DashboardLayout({
     );
   }
 
-  // Desktop: sidebar fixa
   return (
-    <div className="flex h-screen overflow-hidden">
-      <DashboardSidebarDesktop {...sidebarProps} />
-
-      <main className="flex-1 overflow-y-auto">{children}</main>
+    <div className="flex h-screen overflow-hidden bg-background">
+      <SidebarDesktop {...sidebarProps} />
+      <main className="flex-1 overflow-y-auto min-w-0">{children}</main>
     </div>
   );
 }

@@ -5,8 +5,6 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  GripVertical,
-  CornerDownRight,
   MoreHorizontal,
   ExternalLink,
   Copy,
@@ -22,7 +20,7 @@ import {
   FileText,
   BookOpen,
   ChevronDown,
-  ChevronRight,
+  GripVertical,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -64,83 +62,73 @@ const BLOCK_META: Record<
   {
     label: string;
     icon: React.ElementType;
-    color: string;
-    bg: string;
-    gradient: string;
-    descricao: string;
+    accent: string;
+    accentBg: string;
+    accentLight: string;
   }
 > = {
   tarefas: {
     label: "Tarefas",
     icon: CheckSquare,
-    color: "text-blue-500",
-    bg: "bg-blue-500/10",
-    gradient: "from-blue-500/10 to-blue-500/5 border-blue-500/20",
-    descricao: "Gerencie suas tarefas e projetos",
+    accent: "#3b82f6",
+    accentBg: "#eff6ff",
+    accentLight: "#dbeafe",
   },
   calendario: {
     label: "Calendário",
     icon: CalendarDays,
-    color: "text-indigo-500",
-    bg: "bg-indigo-500/10",
-    gradient: "from-indigo-500/10 to-indigo-500/5 border-indigo-500/20",
-    descricao: "Visualize e organize eventos",
+    accent: "#6366f1",
+    accentBg: "#eef2ff",
+    accentLight: "#e0e7ff",
   },
   habitos: {
     label: "Hábitos",
     icon: Activity,
-    color: "text-green-500",
-    bg: "bg-green-500/10",
-    gradient: "from-green-500/10 to-green-500/5 border-green-500/20",
-    descricao: "Acompanhe seus hábitos diários",
+    accent: "#22c55e",
+    accentBg: "#f0fdf4",
+    accentLight: "#dcfce7",
   },
   habito: {
     label: "Hábito",
     icon: Activity,
-    color: "text-green-500",
-    bg: "bg-green-500/10",
-    gradient: "from-green-500/10 to-green-500/5 border-green-500/20",
-    descricao: "Monitore um hábito específico",
+    accent: "#22c55e",
+    accentBg: "#f0fdf4",
+    accentLight: "#dcfce7",
   },
   lista: {
     label: "Lista",
     icon: ListTodo,
-    color: "text-cyan-500",
-    bg: "bg-cyan-500/10",
-    gradient: "from-cyan-500/10 to-cyan-500/5 border-cyan-500/20",
-    descricao: "Crie listas organizadas",
+    accent: "#06b6d4",
+    accentBg: "#ecfeff",
+    accentLight: "#cffafe",
   },
   timer: {
     label: "Timer",
     icon: Timer,
-    color: "text-orange-500",
-    bg: "bg-orange-500/10",
-    gradient: "from-orange-500/10 to-orange-500/5 border-orange-500/20",
-    descricao: "Gerencie seu tempo com timers",
+    accent: "#f97316",
+    accentBg: "#fff7ed",
+    accentLight: "#ffedd5",
   },
   timers: {
     label: "Timers",
     icon: Timer,
-    color: "text-orange-500",
-    bg: "bg-orange-500/10",
-    gradient: "from-orange-500/10 to-orange-500/5 border-orange-500/20",
-    descricao: "Múltiplos timers para produtividade",
+    accent: "#f97316",
+    accentBg: "#fff7ed",
+    accentLight: "#ffedd5",
   },
   colecoes: {
     label: "Base de Dados",
     icon: Layers,
-    color: "text-emerald-500",
-    bg: "bg-emerald-500/10",
-    gradient: "from-emerald-500/10 to-emerald-500/5 border-emerald-500/20",
-    descricao: "Crie bases de dados flexíveis e veja como tabela ou cards",
+    accent: "#10b981",
+    accentBg: "#ecfdf5",
+    accentLight: "#d1fae5",
   },
   notas: {
     label: "Notas",
     icon: BookOpen,
-    color: "text-purple-500",
-    bg: "bg-purple-500/10",
-    gradient: "from-purple-500/10 to-purple-500/5 border-purple-500/20",
-    descricao: "Anotações e lembretes",
+    accent: "#a855f7",
+    accentBg: "#faf5ff",
+    accentLight: "#f3e8ff",
   },
 };
 
@@ -174,9 +162,11 @@ function renderContent(bloco: Bloco, nucleoId: string, onDelete: () => void) {
       );
     default:
       return (
-        <div className="py-8 text-center">
-          <FileText className="h-8 w-8 mx-auto mb-2 opacity-40 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">Bloco: {bloco.tipo}</p>
+        <div className="py-12 px-6 text-center">
+          <FileText className="h-10 w-10 mx-auto mb-3 text-muted-foreground/20" />
+          <p className="text-sm text-muted-foreground/50">
+            Tipo de bloco não reconhecido: {bloco.tipo}
+          </p>
         </div>
       );
   }
@@ -191,46 +181,41 @@ export function BlocoCard({
   onCreateBloco,
   isDeleting = false,
   isCreating = false,
-  compact = true,
+  compact = false, // Changed default to false for better UX
   depth = 0,
   onEditTitle,
   onAddBelow,
 }: BlocoCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [titleValue, setTitleValue] = useState(bloco.titulo || "");
   const [modalCriarAberto, setModalCriarAberto] = useState(false);
-  const [modalTipo, setModalTipo] = useState<"sub" | "abaixo">("sub");
+  const [modalTipo, setModalTipo] = useState<"sub" | "abaixo">("abaixo");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const meta = BLOCK_META[bloco.tipo] || {
+  const meta = BLOCK_META[bloco.tipo] ?? {
     label: bloco.tipo || "Bloco",
     icon: FileText,
-    color: "text-muted-foreground",
-    bg: "bg-muted/40",
-    gradient: "from-muted/20 to-muted/10 border-border",
-    descricao: "",
+    accent: "#6b7280",
+    accentBg: "#f9fafb",
+    accentLight: "#f3f4f6",
   };
-
   const IconComponent = meta.icon;
-  const tituloExibicao = titleValue || meta.label; // ✅ Usa titleValue para refletir edições instantâneas
+  const titulo = titleValue || meta.label;
 
-  // ✅ Sincroniza titleValue quando bloco.titulo muda externamente
   useEffect(() => {
     setTitleValue(bloco.titulo || "");
   }, [bloco.titulo]);
 
-  // Foca o input ao entrar em modo de edição
   useEffect(() => {
-    if (isEditing && inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.select();
+    if (isEditing) {
+      inputRef.current?.focus();
+      inputRef.current?.select();
     }
   }, [isEditing]);
 
-  const handleSaveTitle = () => {
+  const saveTitle = () => {
     setIsEditing(false);
     if (titleValue !== bloco.titulo && titleValue.trim() && onEditTitle) {
       onEditTitle(titleValue.trim());
@@ -239,33 +224,15 @@ export function BlocoCard({
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      handleSaveTitle();
-    } else if (e.key === "Escape") {
+      saveTitle();
+    }
+    if (e.key === "Escape") {
       setTitleValue(bloco.titulo || "");
       setIsEditing(false);
     }
   };
 
-  const handleDragStart = (e: React.DragEvent) => {
-    e.dataTransfer.setData("text/plain", bloco.id);
-    e.dataTransfer.effectAllowed = "move";
-    e.stopPropagation();
-    setIsDragging(true);
-  };
-
-  const handleDragEnd = () => setIsDragging(false);
-
-  const handleOpenSubBlocoModal = () => {
-    setModalTipo("sub");
-    setModalCriarAberto(true);
-  };
-
-  const handleOpenAbaixoModal = () => {
-    setModalTipo("abaixo");
-    setModalCriarAberto(true);
-  };
-
-  const handleCriarBloco = async (payload: CreateBlocoPayload) => {
+  const handleCriar = async (payload: CreateBlocoPayload) => {
     if (onCreateBloco) {
       if (modalTipo === "sub") {
         await onCreateBloco({ ...payload, parentId: bloco.id });
@@ -280,270 +247,384 @@ export function BlocoCard({
     setModalCriarAberto(false);
   };
 
-  const handleDelete = () => {
-    if (onDelete) onDelete();
+  // Determine max-width based on depth to prevent horizontal overflow
+  const getMaxWidth = () => {
+    const baseWidth = 100;
+    const depthReduction = depth * 2;
+    return `${baseWidth - depthReduction}%`;
   };
 
   return (
-    <>
+    <div className="w-full" style={{ maxWidth: getMaxWidth() }}>
       <motion.div
         layout
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        transition={{ duration: 0.2 }}
-        className="group relative my-2"
+        exit={{ opacity: 0, scale: 0.97 }}
+        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+        className="group relative mb-4"
+        style={{
+          marginLeft: depth > 0 ? `${Math.min(depth * 24, 120)}px` : undefined,
+        }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Drag Handle externo */}
-        <div
-          className={cn(
-            "absolute -left-8 top-1/2 -translate-y-1/2 transition-all duration-200 md:-left-10",
-            isHovered
-              ? "opacity-100 translate-x-0"
-              : "opacity-0 -translate-x-1",
-            "z-10",
-          )}
-        >
-          <div
-            className="cursor-grab active:cursor-grabbing p-1.5 rounded-lg hover:bg-accent/50 transition-colors"
-            draggable
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            title="Arraste para reordenar"
-          >
-            <GripVertical className="h-4 w-4 text-muted-foreground" />
+        {/* Depth connector line - improved visibility */}
+        {depth > 0 && (
+          <div className="absolute left-[-20px] top-0 bottom-0 flex items-stretch">
+            <span className="w-px bg-gradient-to-b from-border/60 via-border/40 to-transparent" />
+            <span className="absolute left-[-6px] top-6 h-3 w-3 rounded-full border border-border/60 bg-background" />
           </div>
-        </div>
+        )}
 
-        {/* Card Principal */}
-        <div
-          className={cn(
-            "relative rounded-xl border bg-card transition-all duration-200",
-            meta.gradient,
-            isDragging &&
-              "opacity-50 shadow-lg ring-2 ring-primary scale-[1.02]",
-            isHovered && "shadow-md border-border",
-          )}
-          style={{ marginLeft: depth > 0 ? `${depth * 24}px` : undefined }}
-        >
-          {/* Link para tela cheia (apenas no modo compacto) */}
-          {compact && (
+        {compact ? (
+          /* ── Compact card (grid/list view) - IMPROVED SPACING ── */
+          <div
+            className={cn(
+              "relative overflow-hidden",
+              "rounded-xl border border-border/60 bg-card",
+              "transition-all duration-200 ease-out",
+              isHovered && "shadow-md border-border ring-1 ring-border/10",
+              isDeleting && "opacity-50 pointer-events-none",
+            )}
+            style={{
+              minHeight: "120px",
+              background: `linear-gradient(135deg, ${meta.accentBg} 0%, var(--card) 100%)`,
+            }}
+          >
+            {/* Accent left rail - more subtle */}
+            <div
+              className="absolute left-0 top-0 bottom-0 w-1 opacity-50 transition-opacity duration-200"
+              style={{
+                background: `linear-gradient(to bottom, ${meta.accent}, ${meta.accent}88)`,
+              }}
+            />
+
+            {/* Clickable link overlay */}
             <Link
               href={`/dashboard/nucleos/${nucleoId}/blocos/${bloco.id}`}
               className="absolute inset-0 z-0 rounded-xl"
-              aria-label={`Abrir bloco ${tituloExibicao}`}
+              aria-label={`Abrir ${titulo}`}
             />
-          )}
 
-          {/* BlocoHoverActions no topo direito (modo não-compacto) */}
-          {!compact && (
+            {/* Header - IMPROVED with more padding */}
+            <div className="flex items-center gap-3 px-5 py-4 pl-6 relative z-10">
+              <div
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg shadow-sm"
+                style={{ background: `${meta.accent}15` }}
+              >
+                <IconComponent
+                  className="h-4.5 w-4.5"
+                  style={{ color: meta.accent }}
+                />
+              </div>
+
+              <div className="flex-1 min-w-0">
+                {isEditing ? (
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={titleValue}
+                    onChange={(e) => setTitleValue(e.target.value)}
+                    onBlur={saveTitle}
+                    onKeyDown={handleKeyDown}
+                    className="text-base font-semibold bg-white/50 rounded-md px-2 py-1 outline-none ring-1 ring-border w-full"
+                    placeholder={meta.label}
+                  />
+                ) : (
+                  <p
+                    className={cn(
+                      "text-base font-semibold text-foreground truncate",
+                      onEditTitle &&
+                        "cursor-text hover:text-primary/80 transition-colors",
+                    )}
+                    onClick={() => onEditTitle && setIsEditing(true)}
+                    title={titulo}
+                  >
+                    {titulo}
+                  </p>
+                )}
+                {/* Subtitle with block type */}
+                <p className="text-xs text-muted-foreground/60 mt-0.5">
+                  {meta.label}
+                </p>
+              </div>
+
+              {/* Actions - always visible on compact */}
+              <div className="relative z-10 flex items-center gap-1">
+                {onAddBelow || onCreateBloco ? (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (onAddBelow) onAddBelow();
+                      else {
+                        setModalTipo("abaixo");
+                        setModalCriarAberto(true);
+                      }
+                    }}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/60 hover:text-foreground hover:bg-accent/50 transition-all"
+                    title="Adicionar abaixo"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                ) : null}
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/60 hover:text-foreground hover:bg-accent/50 transition-all"
+                      disabled={isDeleting}
+                    >
+                      <MoreHorizontal className="h-4 w-4" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48">
+                    {onEdit && (
+                      <DropdownMenuItem
+                        onClick={onEdit}
+                        className="gap-2.5 py-2"
+                      >
+                        <ExternalLink className="h-4 w-4" /> Abrir em página
+                        completa
+                      </DropdownMenuItem>
+                    )}
+                    {onEditTitle && (
+                      <DropdownMenuItem
+                        onClick={() => setIsEditing(true)}
+                        className="gap-2.5 py-2"
+                      >
+                        <Pencil className="h-4 w-4" /> Renomear
+                      </DropdownMenuItem>
+                    )}
+                    {onDuplicate && (
+                      <DropdownMenuItem
+                        onClick={onDuplicate}
+                        className="gap-2.5 py-2"
+                      >
+                        <Copy className="h-4 w-4" /> Duplicar
+                      </DropdownMenuItem>
+                    )}
+                    {onCreateBloco && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setModalTipo("sub");
+                            setModalCriarAberto(true);
+                          }}
+                          className="gap-2.5 py-2"
+                        >
+                          <Plus className="h-4 w-4" /> Adicionar sub-bloco
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => onDelete?.()}
+                      className="gap-2.5 py-2 text-destructive focus:text-destructive"
+                      disabled={isDeleting}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      {isDeleting ? "Excluindo…" : "Excluir"}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+
+            {/* Content preview - shows a mini version of the content */}
+            <div className="px-6 pb-4 relative z-10 opacity-70">
+              <div className="text-sm text-muted-foreground/60 line-clamp-2">
+                {/* This would ideally show a preview of the block's content */}
+                {bloco.tipo === "notas" && bloco.conteudo
+                  ? bloco.conteudo.substring(0, 100) + "..."
+                  : `Clique para abrir o bloco de ${meta.label.toLowerCase()}`}
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* ── Non-compact document-native section - IMPROVED SPACING ── */
+          <div className="relative">
+            {/* Accent left rail — document section marker - more visible */}
+            <div
+              className="absolute left-0 top-0 bottom-0 w-1 rounded-full transition-all duration-200"
+              style={{
+                background: `linear-gradient(to bottom, ${meta.accent}, ${meta.accent}44)`,
+                opacity: isHovered ? 0.8 : 0.4,
+                boxShadow: isHovered ? `0 0 8px ${meta.accent}44` : "none",
+              }}
+            />
+
+            {/* Hover actions - positioned absolutely */}
             <BlocoHoverActions
               bloco={bloco}
               nucleoId={nucleoId}
               onOpenFullPage={onEdit}
               onDelete={onDelete}
               onDuplicate={onDuplicate}
-              onAddBelow={onAddBelow || handleOpenAbaixoModal}
+              onAddBelow={
+                onAddBelow ||
+                (() => {
+                  setModalTipo("abaixo");
+                  setModalCriarAberto(true);
+                })
+              }
               onEdit={() => setIsEditing(true)}
               isDeleting={isDeleting}
             />
-          )}
 
-          {/* Header do card */}
-          <div className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                {depth > 0 && (
-                  <CornerDownRight className="h-4 w-4 text-muted-foreground/50 shrink-0" />
-                )}
-
-                <div className="relative shrink-0">
-                  <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-primary/30 to-primary/10 blur-sm" />
-                  <div className={cn("relative rounded-lg p-2", meta.bg)}>
-                    <IconComponent className={cn("h-4 w-4", meta.color)} />
-                  </div>
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  {isEditing ? (
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      value={titleValue}
-                      onChange={(e) => setTitleValue(e.target.value)}
-                      onBlur={handleSaveTitle}
-                      onKeyDown={handleKeyDown}
-                      className="font-semibold text-sm md:text-base bg-transparent border-b border-primary outline-none w-full max-w-[300px] px-0 py-0.5"
-                      placeholder={meta.label}
-                    />
-                  ) : (
-                    <h3
-                      className={cn(
-                        "font-semibold truncate",
-                        compact ? "text-sm" : "text-base",
-                        onEditTitle &&
-                          "cursor-pointer hover:text-primary transition-colors",
-                      )}
-                      onClick={() => onEditTitle && setIsEditing(true)}
-                      title={onEditTitle ? "Clique para editar" : undefined}
-                    >
-                      {tituloExibicao}
-                    </h3>
-                  )}
-                  {!compact && meta.descricao && (
-                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
-                      {meta.descricao}
-                    </p>
-                  )}
-                </div>
+            {/* Section header — document heading style - IMPROVED */}
+            <div
+              className="flex items-center gap-3 pl-6 pr-3 py-3 rounded-t-xl border border-border/50 transition-all duration-200"
+              style={{
+                background: `linear-gradient(135deg, ${meta.accentBg} 0%, var(--card) 100%)`,
+                borderColor: isHovered ? `${meta.accent}44` : undefined,
+              }}
+            >
+              {/* Drag handle for reordering */}
+              <div className="flex items-center justify-center h-5 w-5 text-muted-foreground/30 hover:text-muted-foreground/60 cursor-grab active:cursor-grabbing transition-colors">
+                <GripVertical className="h-4 w-4" />
               </div>
 
-              {/* Menu dropdown (modo compacto) */}
-              {compact && (
-                <div className="relative z-10 shrink-0" data-no-nav="true">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button
-                        className={cn(
-                          "p-1.5 rounded-lg transition-all duration-200 hover:bg-accent/50",
-                          isHovered ? "opacity-100" : "opacity-0",
-                        )}
-                        disabled={isDeleting}
-                      >
-                        <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48">
-                      {onEdit && (
-                        <DropdownMenuItem onClick={onEdit} className="gap-2">
-                          <ExternalLink className="h-4 w-4" />
-                          <span>Abrir em tela cheia</span>
-                        </DropdownMenuItem>
-                      )}
-                      {onEditTitle && (
-                        <DropdownMenuItem
-                          onClick={() => setIsEditing(true)}
-                          className="gap-2"
-                        >
-                          <Pencil className="h-4 w-4" />
-                          <span>Editar título</span>
-                        </DropdownMenuItem>
-                      )}
-                      {onDuplicate && (
-                        <DropdownMenuItem
-                          onClick={onDuplicate}
-                          className="gap-2"
-                        >
-                          <Copy className="h-4 w-4" />
-                          <span>Duplicar</span>
-                        </DropdownMenuItem>
-                      )}
-                      {onCreateBloco && (
-                        <>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={handleOpenSubBlocoModal}
-                            className="gap-2"
-                          >
-                            <Plus className="h-4 w-4" />
-                            <span>Adicionar sub-bloco</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={handleOpenAbaixoModal}
-                            className="gap-2"
-                          >
-                            <Plus className="h-4 w-4" />
-                            <span>Adicionar abaixo</span>
-                          </DropdownMenuItem>
-                        </>
-                      )}
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={handleDelete}
-                        className="gap-2 text-destructive focus:text-destructive"
-                        disabled={isDeleting}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        <span>{isDeleting ? "Excluindo..." : "Excluir"}</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              )}
+              <div
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg shadow-sm transition-all duration-200"
+                style={{
+                  background: isHovered
+                    ? `${meta.accent}20`
+                    : `${meta.accent}10`,
+                }}
+              >
+                <IconComponent
+                  className="h-4 w-4"
+                  style={{ color: meta.accent }}
+                />
+              </div>
+
+              <div className="flex-1 min-w-0">
+                {isEditing ? (
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={titleValue}
+                    onChange={(e) => setTitleValue(e.target.value)}
+                    onBlur={saveTitle}
+                    onKeyDown={handleKeyDown}
+                    className="text-lg font-semibold bg-white/50 rounded-md px-2 py-1 outline-none ring-1 ring-border w-full"
+                    placeholder={meta.label}
+                  />
+                ) : (
+                  <p
+                    className={cn(
+                      "text-lg font-semibold text-foreground truncate",
+                      onEditTitle &&
+                        "cursor-text hover:text-primary/80 transition-colors",
+                    )}
+                    onClick={() => onEditTitle && setIsEditing(true)}
+                    title={titulo}
+                  >
+                    {titulo}
+                  </p>
+                )}
+                {/* Block type badge */}
+                <span
+                  className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium mt-1"
+                  style={{
+                    background: `${meta.accent}15`,
+                    color: meta.accent,
+                  }}
+                >
+                  {meta.label}
+                </span>
+              </div>
+
+              {/* Collapse toggle — always visible but subtle */}
+              <motion.button
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                className={cn(
+                  "relative z-10 flex h-8 w-8 items-center justify-center rounded-lg",
+                  "text-muted-foreground/50 hover:text-foreground hover:bg-accent/50",
+                  "transition-all duration-150",
+                )}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <motion.div
+                  animate={{ rotate: isCollapsed ? -90 : 0 }}
+                  transition={{ duration: 0.2, ease: "easeInOut" }}
+                >
+                  <ChevronDown className="h-4 w-4" />
+                </motion.div>
+              </motion.button>
             </div>
 
-            {/* Controles de expansão (modo não-compacto) */}
-            {!compact && (
-              <div className="flex items-center justify-between mt-2">
-                <button
-                  onClick={() => setIsCollapsed(!isCollapsed)}
-                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {isCollapsed ? (
-                    <ChevronRight className="h-3 w-3" />
-                  ) : (
-                    <ChevronDown className="h-3 w-3" />
-                  )}
-                  <span>
-                    {isCollapsed ? "Expandir conteúdo" : "Recolher conteúdo"}
-                  </span>
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Conteúdo expansível (apenas modo não-compacto) */}
-          {!compact && (
+            {/* Content — with proper padding and spacing */}
             <AnimatePresence initial={false}>
               {!isCollapsed && (
                 <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
+                  initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                  animate={{ height: "auto", opacity: 1, marginTop: 0 }}
+                  exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                   className="overflow-hidden"
                 >
-                  <div>{renderContent(bloco, nucleoId, handleDelete)}</div>
+                  <div className="border-x border-b border-border/50 rounded-b-xl bg-card/50 p-6">
+                    {renderContent(bloco, nucleoId, () => onDelete?.())}
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
-          )}
-        </div>
 
-        {/* Botão "+" flutuante inferior (modo compacto) */}
-        <AnimatePresence>
-          {isHovered && compact && (onAddBelow || onCreateBloco) && (
-            <motion.button
-              initial={{ opacity: 0, scale: 0.8, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8, y: 10 }}
-              transition={{ duration: 0.15 }}
-              onClick={onAddBelow || handleOpenAbaixoModal}
-              className="absolute -bottom-3 left-1/2 -translate-x-1/2 z-20"
-            >
-              <div className="bg-background border border-border rounded-full shadow-md hover:shadow-lg transition-shadow">
-                <div className="p-1">
-                  <Plus className="h-3 w-3 text-muted-foreground" />
-                </div>
-              </div>
-            </motion.button>
-          )}
-        </AnimatePresence>
+            {/* Bottom action bar - appears on hover */}
+            <AnimatePresence>
+              {isHovered && !isCollapsed && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  className="absolute -bottom-4 left-1/2 -translate-x-1/2 z-20"
+                >
+                  <div className="flex items-center gap-1 bg-background border border-border rounded-full shadow-lg px-2 py-1.5">
+                    <button
+                      onClick={() => {
+                        setModalTipo("abaixo");
+                        setModalCriarAberto(true);
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-all"
+                      title="Adicionar bloco abaixo"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                      Adicionar abaixo
+                    </button>
+                    <div className="w-px h-4 bg-border" />
+                    <button
+                      onClick={() => {
+                        setModalTipo("sub");
+                        setModalCriarAberto(true);
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-all"
+                      title="Adicionar sub-bloco"
+                    >
+                      <Layers className="h-3.5 w-3.5" />
+                      Sub-bloco
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
       </motion.div>
 
-      {/* Modal de criação de bloco */}
       {onCreateBloco && (
         <CriarBlocoModal
           open={modalCriarAberto}
           onClose={() => setModalCriarAberto(false)}
-          onConfirm={handleCriarBloco}
+          onConfirm={handleCriar}
           nucleoId={nucleoId}
           isCreating={isCreating}
           parentId={modalTipo === "sub" ? bloco.id : null}
         />
       )}
-    </>
+    </div>
   );
 }

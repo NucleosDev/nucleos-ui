@@ -349,7 +349,7 @@ export default function DashboardPage() {
                         }`}
                       >
                         {tarefa.concluida && (
-                          <CheckCheck className="size-3 text-white" />
+                          <CheckCheck className="size-3 text" />
                         )}
                       </button>
 
@@ -543,7 +543,7 @@ export default function DashboardPage() {
               <CardContent className="p-6">
                 <div className="flex items-start gap-3">
                   <div className="size-8 rounded-full bg-[#4D7CFF] flex items-center justify-center">
-                    <Sparkles className="size-4 text-white" />
+                    <Sparkles className="size-4 text" />
                   </div>
                   <div>
                     <h4 className="font-semibold">Dica do Dia</h4>

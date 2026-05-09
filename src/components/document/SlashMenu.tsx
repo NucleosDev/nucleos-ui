@@ -5,23 +5,9 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import {
-  Type,
-  Heading1,
-  Heading2,
-  Heading3,
-  Quote,
-  Code2,
-  List,
-  ListOrdered,
-  CheckSquare,
-  Minus,
-  CalendarDays,
-  Timer,
-  Activity,
-  ListTodo,
-  Layers,
-  FileText,
-  Columns2,
+  Type, Heading1, Heading2, Heading3, Quote, Code2,
+  List, ListOrdered, CheckSquare, Minus,
+  CalendarDays, Timer, Activity, ListTodo, Layers, FileText, Columns2,
 } from "lucide-react";
 
 interface SlashMenuProps {
@@ -32,170 +18,50 @@ interface SlashMenuProps {
 }
 
 const ALL_COMMANDS = [
-  {
-    type: "paragraph",
-    label: "Parágrafo",
-    icon: Type,
-    group: "Texto",
-    shortcut: "P",
-  },
-  {
-    type: "h1",
-    label: "Título 1",
-    icon: Heading1,
-    group: "Texto",
-    shortcut: "#",
-  },
-  {
-    type: "h2",
-    label: "Título 2",
-    icon: Heading2,
-    group: "Texto",
-    shortcut: "##",
-  },
-  {
-    type: "h3",
-    label: "Título 3",
-    icon: Heading3,
-    group: "Texto",
-    shortcut: "###",
-  },
-  {
-    type: "quote",
-    label: "Citação",
-    icon: Quote,
-    group: "Texto",
-    shortcut: ">",
-  },
-  {
-    type: "code",
-    label: "Código",
-    icon: Code2,
-    group: "Texto",
-    shortcut: "```",
-  },
-  {
-    type: "bullet-list",
-    label: "Lista",
-    icon: List,
-    group: "Texto",
-    shortcut: "-",
-  },
-  {
-    type: "numbered-list",
-    label: "Lista numerada",
-    icon: ListOrdered,
-    group: "Texto",
-    shortcut: "1.",
-  },
-  {
-    type: "todo",
-    label: "Checklist",
-    icon: CheckSquare,
-    group: "Texto",
-    shortcut: "[]",
-  },
-  {
-    type: "divider",
-    label: "Divisor",
-    icon: Minus,
-    group: "Texto",
-    shortcut: "---",
-  },
-  {
-    type: "column-layout",
-    label: "2 Colunas",
-    icon: Columns2,
-    group: "Layout",
-    shortcut: "",
-  },
-  {
-    type: "tarefas",
-    label: "Tarefas",
-    icon: CheckSquare,
-    group: "Blocos",
-    shortcut: "",
-  },
-  {
-    type: "calendario",
-    label: "Calendário",
-    icon: CalendarDays,
-    group: "Blocos",
-    shortcut: "",
-  },
-  {
-    type: "habitos",
-    label: "Hábitos",
-    icon: Activity,
-    group: "Blocos",
-    shortcut: "",
-  },
-  {
-    type: "lista",
-    label: "Lista",
-    icon: ListTodo,
-    group: "Blocos",
-    shortcut: "",
-  },
-  { type: "timer", label: "Timer", icon: Timer, group: "Blocos", shortcut: "" },
-  {
-    type: "colecoes",
-    label: "Coleções",
-    icon: Layers,
-    group: "Blocos",
-    shortcut: "",
-  },
-  {
-    type: "notas",
-    label: "Notas",
-    icon: FileText,
-    group: "Blocos",
-    shortcut: "",
-  },
+  { type: "paragraph",     label: "Parágrafo",      icon: Type,        group: "Texto",   shortcut: "P",   accent: "" },
+  { type: "h1",            label: "Título 1",        icon: Heading1,    group: "Texto",   shortcut: "#",   accent: "" },
+  { type: "h2",            label: "Título 2",        icon: Heading2,    group: "Texto",   shortcut: "##",  accent: "" },
+  { type: "h3",            label: "Título 3",        icon: Heading3,    group: "Texto",   shortcut: "###", accent: "" },
+  { type: "quote",         label: "Citação",         icon: Quote,       group: "Texto",   shortcut: ">",   accent: "" },
+  { type: "code",          label: "Código",          icon: Code2,       group: "Texto",   shortcut: "```", accent: "" },
+  { type: "bullet-list",   label: "Lista",           icon: List,        group: "Texto",   shortcut: "-",   accent: "" },
+  { type: "numbered-list", label: "Lista numerada",  icon: ListOrdered, group: "Texto",   shortcut: "1.",  accent: "" },
+  { type: "todo",          label: "Checklist",       icon: CheckSquare, group: "Texto",   shortcut: "[]",  accent: "" },
+  { type: "divider",       label: "Divisor",         icon: Minus,       group: "Texto",   shortcut: "---", accent: "" },
+  { type: "column-layout", label: "2 Colunas",       icon: Columns2,    group: "Layout",  shortcut: "",    accent: "" },
+  { type: "tarefas",       label: "Tarefas",         icon: CheckSquare, group: "Módulos", shortcut: "",    accent: "#3b82f6" },
+  { type: "calendario",    label: "Calendário",      icon: CalendarDays,group: "Módulos", shortcut: "",    accent: "#6366f1" },
+  { type: "habitos",       label: "Hábitos",         icon: Activity,    group: "Módulos", shortcut: "",    accent: "#22c55e" },
+  { type: "lista",         label: "Lista",           icon: ListTodo,    group: "Módulos", shortcut: "",    accent: "#06b6d4" },
+  { type: "timer",         label: "Timer",           icon: Timer,       group: "Módulos", shortcut: "",    accent: "#f97316" },
+  { type: "colecoes",      label: "Coleções",        icon: Layers,      group: "Módulos", shortcut: "",    accent: "#10b981" },
+  { type: "notas",         label: "Notas",           icon: FileText,    group: "Módulos", shortcut: "",    accent: "#a855f7" },
 ];
 
-export function SlashMenu({
-  open,
-  position,
-  onSelect,
-  onClose,
-}: SlashMenuProps) {
-  const [query, setQuery] = useState("");
+export function SlashMenu({ open, position, onSelect, onClose }: SlashMenuProps) {
+  const [query,       setQuery]       = useState("");
   const [selectedIdx, setSelectedIdx] = useState(0);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const filtered = ALL_COMMANDS.filter(
-    (c) =>
-      !query ||
-      c.label.toLowerCase().includes(query.toLowerCase()) ||
-      c.type.includes(query.toLowerCase()),
+    (c) => !query || c.label.toLowerCase().includes(query.toLowerCase()) || c.type.includes(query.toLowerCase()),
   );
 
-  // Refs para evitar stale closure no handler de teclado — atualizados a cada render
-  const filteredRef = useRef(filtered);
+  const filteredRef    = useRef(filtered);
   const selectedIdxRef = useRef(selectedIdx);
-  filteredRef.current = filtered;
+  filteredRef.current    = filtered;
   selectedIdxRef.current = selectedIdx;
 
   useEffect(() => {
-    if (open) {
-      setQuery("");
-      setSelectedIdx(0);
-    }
+    if (open) { setQuery(""); setSelectedIdx(0); }
   }, [open]);
 
   useEffect(() => {
     if (!open) return;
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") { onClose(); return; }
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        setSelectedIdx((i) => Math.min(i + 1, filteredRef.current.length - 1));
-      }
-      if (e.key === "ArrowUp") {
-        e.preventDefault();
-        setSelectedIdx((i) => Math.max(i - 1, 0));
-      }
+      if (e.key === "ArrowDown") { e.preventDefault(); setSelectedIdx((i) => Math.min(i + 1, filteredRef.current.length - 1)); }
+      if (e.key === "ArrowUp")   { e.preventDefault(); setSelectedIdx((i) => Math.max(i - 1, 0)); }
       if (e.key === "Enter") {
         e.preventDefault();
         const item = filteredRef.current[selectedIdxRef.current];
@@ -209,8 +75,8 @@ export function SlashMenu({
   const groups = [...new Set(filtered.map((c) => c.group))];
 
   const safePos = {
-    top: Math.min(position.top, window.innerHeight - 320),
-    left: Math.min(position.left, window.innerWidth - 290),
+    top:  Math.min(position.top,  (typeof window !== "undefined" ? window.innerHeight : 800) - 320),
+    left: Math.min(position.left, (typeof window !== "undefined" ? window.innerWidth  : 1200) - 290),
   };
 
   return (
@@ -220,81 +86,82 @@ export function SlashMenu({
           <div className="fixed inset-0 z-40" onClick={onClose} />
           <motion.div
             ref={menuRef}
-            initial={{ opacity: 0, scale: 0.95, y: -4 }}
+            initial={{ opacity: 0, scale: 0.96, y: -6 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -4 }}
-            transition={{ duration: 0.12 }}
-            className="fixed z-50 w-72 bg-popover border border-border rounded-xl shadow-2xl overflow-hidden"
-            style={{ top: safePos.top, left: safePos.left }}
+            exit={{ opacity: 0, scale: 0.96, y: -6 }}
+            transition={{ duration: 0.13, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed z-50 w-72 overflow-hidden rounded-2xl"
+            style={{
+              top: safePos.top,
+              left: safePos.left,
+              background: "var(--popover)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              boxShadow: "0 16px 40px -8px oklch(0.18 0.02 250 / 0.22), 0 4px 12px -4px oklch(0.18 0.02 250 / 0.12), inset 0 1px 0 rgba(255,255,255,0.07)",
+              backdropFilter: "blur(20px) saturate(180%)",
+            }}
           >
-            <div className="flex items-center gap-2 px-3 py-2 border-b border-border bg-muted/30">
-              <span className="text-muted-foreground text-sm">/</span>
+            {/* Search */}
+            <div className="flex items-center gap-2 px-3 py-2.5 border-b border-border/40">
+              <span className="text-muted-foreground/50 text-sm font-mono">/</span>
               <input
                 autoFocus
                 value={query}
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                  setSelectedIdx(0);
-                }}
+                onChange={(e) => { setQuery(e.target.value); setSelectedIdx(0); }}
                 placeholder="Buscar comando..."
-                className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground/60"
+                className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground/40"
               />
             </div>
 
+            {/* Items */}
             <div className="max-h-72 overflow-y-auto p-1.5">
               {filtered.length === 0 ? (
-                <p className="text-xs text-muted-foreground text-center py-6">
+                <p className="text-xs text-muted-foreground/50 text-center py-6">
                   Nenhum comando encontrado
                 </p>
               ) : (
                 groups.map((group) => (
                   <div key={group}>
-                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider px-2 pt-2 pb-1">
+                    <p className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-wider px-2.5 pt-2.5 pb-1">
                       {group}
                     </p>
                     {filtered
                       .filter((c) => c.group === group)
-                      .map((cmd, i) => {
+                      .map((cmd) => {
                         const globalIdx = filtered.indexOf(cmd);
                         const Icon = cmd.icon;
+                        const isModule = group === "Módulos";
                         return (
                           <button
                             key={cmd.type}
-                            className={cn(
-                              "w-full flex items-center gap-3 px-2 py-2 rounded-lg transition-colors text-left",
-                              globalIdx === selectedIdx
-                                ? "bg-accent"
-                                : "hover:bg-accent/60",
-                            )}
                             onClick={() => onSelect(cmd.type)}
                             onMouseEnter={() => setSelectedIdx(globalIdx)}
+                            className={cn(
+                              "w-full flex items-center gap-3 px-2.5 py-1.5 rounded-xl transition-colors text-left",
+                              globalIdx === selectedIdx ? "bg-accent" : "hover:bg-accent/60",
+                            )}
                           >
                             <div
-                              className={cn(
-                                "h-7 w-7 rounded-md flex items-center justify-center flex-shrink-0",
-                                group === "Blocos"
-                                  ? "bg-primary/10"
-                                  : "bg-muted",
-                              )}
+                              className="h-7 w-7 rounded-lg flex items-center justify-center shrink-0"
+                              style={isModule && cmd.accent
+                                ? { background: `${cmd.accent}18` }
+                                : { background: "hsl(var(--muted) / 0.6)" }
+                              }
                             >
                               <Icon
-                                className={cn(
-                                  "h-3.5 w-3.5",
-                                  group === "Blocos" && "text-primary",
-                                )}
+                                className="h-3.5 w-3.5"
+                                style={isModule && cmd.accent ? { color: cmd.accent } : undefined}
                               />
                             </div>
-                            <div className="min-w-0 flex-1">
-                              <p className="text-sm font-medium">{cmd.label}</p>
-                            </div>
+                            <p className="text-sm font-medium flex-1">{cmd.label}</p>
                             {cmd.shortcut && (
-                              <kbd className="text-[10px] font-mono text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+                              <kbd className="text-[10px] font-mono text-muted-foreground/50 bg-muted/60 px-1.5 py-0.5 rounded-md">
                                 {cmd.shortcut}
                               </kbd>
                             )}
                           </button>
                         );
-                      })}
+                      })
+                    }
                   </div>
                 ))
               )}

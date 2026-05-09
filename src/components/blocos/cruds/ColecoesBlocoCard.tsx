@@ -2,32 +2,11 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
-import {
-  Plus,
-  MoreVertical,
-  Pencil,
-  Trash2,
-  LayoutGrid,
-  Table as TableIcon,
-  GripVertical,
-  Copy,
-  Zap,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
+import { Plus, Zap, Layers, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 import { useColecoes } from "@/hooks/useColecoes";
 import { toast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
 import { CriarColecaoModal } from "@/components/colecoes/CriarColecaoModal";
 import { CriarTabelaRapidaModal } from "@/components/colecoes/CriarTabelaRapidaModal";
 import { ColecaoBoard } from "@/components/colecoes/ColecaoBoard";
@@ -42,263 +21,124 @@ interface ColecoesBlocoCardProps {
   isDeleting?: boolean;
 }
 
-export function ColecoesBlocoCard({
-  bloco,
-  nucleoId,
-  onDelete,
-  onEdit,
-  isDeleting,
-}: ColecoesBlocoCardProps) {
-  const [viewMode, setViewMode] = useState<"board" | "table">("board");
-  const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [quickTableModalOpen, setQuickTableModalOpen] = useState(false);
+export function ColecoesBlocoCard({ bloco }: ColecoesBlocoCardProps) {
+  const [createOpen, setCreateOpen]         = useState(false);
+  const [quickTableOpen, setQuickTableOpen] = useState(false);
 
-  const { colecoes, isLoading, criarColecao, isCreating } = useColecoes(
-    bloco.id,
-  );
+  const { colecoes, isLoading, criarColecao, isCreating } = useColecoes(bloco.id);
 
-  const handleCreateColecao = async (nome: string) => {
+  const handleCreate = async (nome: string) => {
     try {
       await criarColecao({ nome });
-      setCreateModalOpen(false);
-      toast({ title: "Coleção criada com sucesso!" });
-    } catch (error) {
+      setCreateOpen(false);
+      toast({ title: "Coleção criada!" });
+    } catch {
       toast({ title: "Erro ao criar coleção", variant: "destructive" });
     }
   };
 
-  const handleCreateTabelaRapida = async (
-    nome: string,
-    campos: { nome: string; tipoCampo: string }[],
-  ) => {
+  const handleQuickTable = async (nome: string, campos: { nome: string; tipoCampo: string }[]) => {
     try {
-      const novaColecao = await criarColecao({ nome });
-
+      const nova = await criarColecao({ nome });
       for (const campo of campos) {
-        await colecoesService.createCampo(
-          novaColecao.id,
-          campo.nome,
-          campo.tipoCampo,
-        );
+        await colecoesService.createCampo(nova.id, campo.nome, campo.tipoCampo);
       }
-
-      setQuickTableModalOpen(false);
-      toast({
-        title: "Tabela criada com sucesso!",
-        description: `${campos.length} campo${campos.length !== 1 ? "s" : ""} adicionado${campos.length !== 1 ? "s" : ""}`,
-      });
-    } catch (error) {
-      console.error("[v0] Erro ao criar tabela rápida:", error);
+      setQuickTableOpen(false);
+      toast({ title: "Tabela criada!", description: `${campos.length} campo${campos.length !== 1 ? "s" : ""} adicionado${campos.length !== 1 ? "s" : ""}` });
+    } catch {
       toast({ title: "Erro ao criar tabela", variant: "destructive" });
     }
   };
 
-  // ── Loading ──────────────────────────────────────────────────────────────
   if (isLoading) {
     return (
       <div className="space-y-3">
-        <Skeleton className="h-12 w-full rounded-lg" />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Skeleton className="h-48 rounded-xl" />
-          <Skeleton className="h-48 rounded-xl" />
-          <Skeleton className="h-48 rounded-xl" />
-        </div>
+        <Skeleton className="h-9 w-full rounded-lg" />
+        <Skeleton className="h-40 w-full rounded-xl" />
       </div>
     );
   }
 
-  // ── Estado vazio ─────────────────────────────────────────────────────────
+  /* ── Empty state ── */
   if (colecoes.length === 0) {
     return (
       <>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative group"
-        >
-          <div className="absolute -top-4 right-0 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2 z-10">
-            {onEdit && (
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-9 w-9 bg-white shadow-md border-slate-200"
-                onClick={onEdit}
-              >
-                <Pencil className="h-4 w-4 text-slate-700" />
-              </Button>
-            )}
-            {onDelete && (
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-9 w-9 bg-white shadow-md border-slate-200 text-destructive hover:text-destructive hover:bg-destructive/5"
-                onClick={onDelete}
-                disabled={isDeleting}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            )}
-            <div className="cursor-move h-9 w-9 flex items-center justify-center">
-              <GripVertical className="h-4 w-4 text-muted-foreground" />
-            </div>
+        <div className="flex flex-col items-center justify-center py-12 text-center">
+          <div
+            className="flex h-12 w-12 items-center justify-center rounded-2xl mb-4"
+            style={{
+              background: "linear-gradient(135deg, #10b98122, #10b98108)",
+              border: "1px solid #10b98130",
+            }}
+          >
+            <Layers className="h-6 w-6 text-emerald-500/70" />
           </div>
+          <p className="text-sm font-medium text-foreground/70 mb-1">Nenhuma coleção ainda</p>
+          <p className="text-xs text-muted-foreground/60 max-w-xs mb-5">
+            Organize dados em tabelas flexíveis — como um banco de dados pessoal.
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setQuickTableOpen(true)}
+              disabled={isCreating}
+              className={cn(
+                "flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold",
+                "bg-emerald-500 text-white hover:opacity-90 transition-opacity",
+                "shadow-[0_4px_12px_rgba(16,185,129,0.25)]",
+              )}
+            >
+              <Zap className="h-3.5 w-3.5" />
+              Tabela rápida
+            </button>
+            <button
+              onClick={() => setCreateOpen(true)}
+              disabled={isCreating}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-medium border border-border/60 text-muted-foreground hover:text-foreground hover:border-border transition-colors"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Vazia
+            </button>
+          </div>
+        </div>
 
-          <Card className="border-2 border-dashed border-slate-300 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 hover:border-blue-400 transition-all hover:shadow-lg">
-            <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center mb-5">
-                <LayoutGrid className="h-8 w-8 text-blue-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">
-                Crie sua primeira coleção
-              </h3>
-              <p className="text-sm text-slate-600 mb-6 max-w-sm leading-relaxed">
-                Organize dados em tabelas intuitivas. Adicione campos, itens e
-                gerencie tudo em um só lugar, como no Notion.
-              </p>
-              <div className="flex flex-col gap-3">
-                <Button
-                  onClick={() => setQuickTableModalOpen(true)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white shadow-md"
-                >
-                  <Zap className="mr-2 h-4 w-4" />
-                  Criar Tabela Rápida
-                </Button>
-                <Button
-                  onClick={() => setCreateModalOpen(true)}
-                  variant="outline"
-                  className="border-blue-300 text-blue-600 hover:bg-blue-50"
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Coleção Vazia
-                </Button>
-              </div>
-            </div>
-          </Card>
-        </motion.div>
-
-        <CriarColecaoModal
-          open={createModalOpen}
-          onClose={() => setCreateModalOpen(false)}
-          onConfirm={handleCreateColecao}
-          isSubmitting={isCreating}
-        />
-
-        <CriarTabelaRapidaModal
-          open={quickTableModalOpen}
-          onClose={() => setQuickTableModalOpen(false)}
-          onConfirm={handleCreateTabelaRapida}
-          isSubmitting={isCreating}
-        />
+        <CriarColecaoModal open={createOpen} onClose={() => setCreateOpen(false)} onConfirm={handleCreate} isSubmitting={isCreating} />
+        <CriarTabelaRapidaModal open={quickTableOpen} onClose={() => setQuickTableOpen(false)} onConfirm={handleQuickTable} isSubmitting={isCreating} />
       </>
     );
   }
 
-  // ── Com coleções ─────────────────────────────────────────────────────────
+  /* ── Com coleções ── */
   return (
-    <div className="p-3">
-      <div className="flex items-center justify-between px-">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2"></div>
-        </div>
-
-        <div className="flex items-center gap-2 py-2">
-          {/* <div className="flex items-center gap-1 bg-slate-100 rounded-lg p-1">
-            <button
-              onClick={() => setViewMode("board")}
-              className={cn(
-                "px-3 py-1.5 rounded-md text-sm font-medium transition-all",
-                viewMode === "board"
-                  ? "bg-white shadow-sm text-blue-600"
-                  : "text-slate-600 hover:text-slate-900",
-              )}
-            >
-              <LayoutGrid className="h-4 w-4 inline mr-1.5" />
-              Quadro
-            </button>
-            <button
-              onClick={() => setViewMode("table")}
-              className={cn(
-                "px-3 py-1.5 rounded-md text-sm font-medium transition-all",
-                viewMode === "table"
-                  ? "bg-white shadow-sm text-blue-600"
-                  : "text-slate-600 hover:text-slate-900",
-              )}
-            >
-              <TableIcon className="h-4 w-4 inline mr-1.5" />
-              Tabela
-            </button>
-          </div> */}
-
-          <Button
-            size="sm"
-            onClick={() => setQuickTableModalOpen(true)}
-            className="bg-primary hover:bg-primary/20 hover:text-foreground"
-          >
-            <Zap className="h-4 w-4 mr-1.5" />
-            Nova Tabela
-          </Button>
-          <Button
-            size="sm"
-            onClick={() => setCreateModalOpen(true)}
-            variant="outline"
-            className="border-primary text-primary hover:bg-primary/50"
-          >
-            <Plus className="h-4 w-4 mr-1.5" />
-            Nova Coleção
-          </Button>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {onEdit && (
-                <DropdownMenuItem onClick={onEdit}>
-                  <Pencil className="mr-2 h-4 w-4" />
-                  Editar bloco
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuItem>
-                <Copy className="mr-2 h-4 w-4" />
-                Duplicar
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              {onDelete && (
-                <DropdownMenuItem
-                  onClick={onDelete}
-                  className="text-destructive"
-                  disabled={isDeleting}
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Excluir bloco
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+    <div className="space-y-4">
+      {/* Toolbar */}
+      <div className="flex items-center justify-end gap-1.5">
+        <button
+          onClick={() => setQuickTableOpen(true)}
+          disabled={isCreating}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-emerald-600 hover:bg-emerald-500/8 border border-emerald-500/25 transition-colors"
+        >
+          {isCreating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5" />}
+          Nova Tabela
+        </button>
+        <button
+          onClick={() => setCreateOpen(true)}
+          disabled={isCreating}
+          className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent border border-border/40 transition-colors"
+        >
+          <Plus className="h-3.5 w-3.5" />
+          Coleção
+        </button>
       </div>
 
+      {/* Boards */}
       <div className="space-y-4">
         {colecoes.map((colecao) => (
           <ColecaoBoard key={colecao.id} colecao={colecao} blocoId={bloco.id} />
         ))}
       </div>
 
-      <CriarColecaoModal
-        open={createModalOpen}
-        onClose={() => setCreateModalOpen(false)}
-        onConfirm={handleCreateColecao}
-        isSubmitting={isCreating}
-      />
-
-      <CriarTabelaRapidaModal
-        open={quickTableModalOpen}
-        onClose={() => setQuickTableModalOpen(false)}
-        onConfirm={handleCreateTabelaRapida}
-        isSubmitting={isCreating}
-      />
+      <CriarColecaoModal open={createOpen} onClose={() => setCreateOpen(false)} onConfirm={handleCreate} isSubmitting={isCreating} />
+      <CriarTabelaRapidaModal open={quickTableOpen} onClose={() => setQuickTableOpen(false)} onConfirm={handleQuickTable} isSubmitting={isCreating} />
     </div>
   );
 }

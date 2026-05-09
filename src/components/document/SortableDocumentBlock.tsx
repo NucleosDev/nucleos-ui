@@ -1,4 +1,3 @@
-// src/components/document/SortableDocumentBlock.tsx
 "use client";
 
 import { useSortable } from "@dnd-kit/sortable";
@@ -19,6 +18,15 @@ interface SortableDocumentBlockProps {
   readOnly?: boolean;
   children?: React.ReactNode;
 }
+
+// Headings get structural breathing room above them
+const BLOCK_TOP_SPACING: Partial<Record<string, string>> = {
+  h1:      "mt-10 first:mt-0",
+  h2:      "mt-7  first:mt-0",
+  h3:      "mt-5  first:mt-0",
+  divider: "my-6",
+  header:  "",
+};
 
 export function SortableDocumentBlock({
   block,
@@ -43,10 +51,13 @@ export function SortableDocumentBlock({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.4 : 1,
+    opacity: isDragging ? 0.3 : 1,
   };
 
   const showGutter = !readOnly && (isHovered || isActive) && !isDragging;
+  const topSpacing  = BLOCK_TOP_SPACING[block.tipo] ?? "";
+  const isFunctional = block.tipo !== "header" &&
+    !["paragraph","h1","h2","h3","bullet","numbered","quote","callout","code","divider","todo","column-layout"].includes(block.tipo);
 
   return (
     <div
@@ -54,61 +65,69 @@ export function SortableDocumentBlock({
       style={style}
       className={cn(
         "group relative",
+        topSpacing,
         isDragging && "z-50",
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Indicador de seleção (barra esquerda azul) */}
-      <div
-        className={cn(
-          "absolute left-0 inset-y-0 w-0.5 rounded-full transition-all duration-150",
-          isSelected ? "bg-blue-500 opacity-100" : "opacity-0",
-        )}
-      />
+      {/* Selection rail — left edge, minimal */}
+      {isSelected && (
+        <div className="absolute left-0 inset-y-1 w-[2.5px] rounded-full bg-primary/50 -translate-x-1" />
+      )}
 
-      {/* Gutter: drag handle + add below (aparecem no hover, na margem esquerda) */}
-      {!readOnly && (
+      {/* Gutter — floats to the left, revealed on hover */}
+      {!readOnly && block.tipo !== "header" && (
         <div
           className={cn(
-            "absolute right-full top-1/2 -translate-y-1/2 pr-1.5 flex items-center gap-0.5 transition-opacity duration-150",
+            "absolute right-full top-1/2 -translate-y-1/2 pr-1.5",
+            "flex items-center gap-0.5",
+            "transition-opacity duration-[var(--duration-fast)]",
             showGutter ? "opacity-100" : "opacity-0 pointer-events-none",
           )}
         >
-          {/* Adicionar bloco abaixo */}
-          {onAddBelow && (
+          {/* Add below */}
+          {onAddBelow && !isFunctional && (
             <button
               onClick={(e) => { e.stopPropagation(); onAddBelow(); }}
-              title="Adicionar bloco abaixo"
-              className="flex h-6 w-6 items-center justify-center rounded hover:bg-accent text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+              title="Adicionar bloco"
+              className={cn(
+                "flex h-5 w-5 items-center justify-center rounded-md",
+                "text-muted-foreground/30 hover:text-muted-foreground hover:bg-accent",
+                "transition-colors duration-[var(--duration-fast)]",
+              )}
             >
-              <Plus className="h-3.5 w-3.5" />
+              <Plus className="h-3 w-3" />
             </button>
           )}
 
           {/* Drag handle */}
           <div
-            title="Arrastar para reordenar"
-            className="flex h-6 w-6 items-center justify-center rounded hover:bg-accent cursor-grab active:cursor-grabbing text-muted-foreground/50 hover:text-muted-foreground transition-colors touch-none"
+            title="Arrastar"
+            className={cn(
+              "flex h-5 w-5 items-center justify-center rounded-md cursor-grab active:cursor-grabbing",
+              "text-muted-foreground/30 hover:text-muted-foreground hover:bg-accent",
+              "transition-colors duration-[var(--duration-fast)] touch-none",
+            )}
             {...attributes}
             {...listeners}
           >
-            <GripVertical className="h-4 w-4" />
+            <GripVertical className="h-3.5 w-3.5" />
           </div>
         </div>
       )}
 
-      {/* Conteúdo do bloco */}
+      {/* Content wrapper */}
       <div
         className={cn(
-          "rounded-md px-1 py-0.5 transition-colors duration-100 cursor-text",
-          isSelected
-            ? "bg-blue-50/70 dark:bg-blue-950/30"
-            : isActive
-              ? "bg-accent/20"
-              : "hover:bg-accent/10",
+          "rounded-md px-1 transition-colors duration-75",
+          isSelected && "bg-primary/[0.035]",
         )}
-        onClick={(e) => onSelect(block.id, e)}
+        onClick={(e) => {
+          const target = e.target as HTMLElement;
+          if (target.closest("[contenteditable]") || target.closest(".ProseMirror")) return;
+          onSelect(block.id, e);
+        }}
       >
         {children}
       </div>

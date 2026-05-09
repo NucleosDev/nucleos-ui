@@ -42,7 +42,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
 import { EditNucleoModal } from "./edit-nucleo-modal";
 import { getTypeStyles, formatXp } from "./utils/nucleo-helpers";
 import type { NucleoCardProps } from "./nucleo-components.types";
@@ -167,78 +166,102 @@ export function NucleoCard({
       >
         <div
           className={cn(
-            "group relative isolate overflow-hidden rounded-2xl border border-border/50 bg-gradient-to-br from-card to-card/80 transition-all duration-300",
+            "group relative isolate overflow-hidden rounded-2xl border border-border/50 bg-card transition-all duration-300 hover:shadow-[var(--shadow-lg)]",
             className,
           )}
           onClick={onClick}
         >
-          {/* Image Section - Occupies full width top */}
-          <div className="relative w-full overflow-hidden h-[180px] sm:h-[220px] md:h-[260px] lg:h-[200px]">
+          {/* Image Section - Altura fixa e consistente em todas as telas */}
+          <div className="relative w-full overflow-hidden h-[200px]">
             <Image
               src={capaUrl}
               alt={nome}
               fill
-              className="z-0 object-cover transition-transform duration-700 group-hover:scale-110 will-change-transform"
+              className="z-0 object-cover transition-transform duration-700 group-hover:scale-105 will-change-transform"
             />
 
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 z-10 bg-gradient-to-t from-card via-card/60 to-transparent opacity-90" />
-            <div className="absolute inset-0 z-10 bg-gradient-to-r from-foreground/20 via-transparent to-foreground/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            {/* Multi-layer gradient overlay */}
+            <div className="absolute inset-0 z-10 bg-gradient-to-t from-card/95 via-card/50 to-transparent" />
+            <div
+              className="absolute inset-0 z-10 opacity-30"
+              style={{
+                background: `radial-gradient(ellipse 60% 80% at 80% 20%, ${corDestaque}44 0%, transparent 70%)`,
+              }}
+            />
 
-            {/* Badge do tipo - canto superior direito */}
+            {/* Liquid glass type badge */}
             <div className="absolute top-3 right-3 z-30">
-              <Badge
-                variant="secondary"
-                className={cn(
-                  "px-2 py-1 text-xs font-medium backdrop-blur-md border border-white/20",
-                  typeStyles,
-                  "bg-foreground/40 text-white hover:bg-foreground/60",
-                )}
+              <div
+                className="px-2.5 py-1 rounded-full text-xs font-medium text-white capitalize"
+                style={{
+                  background: `${corDestaque}55`,
+                  backdropFilter: "blur(10px) saturate(140%)",
+                  WebkitBackdropFilter: "blur(10px) saturate(140%)",
+                  border: `1px solid ${corDestaque}66`,
+                  boxShadow:
+                    "inset 0 1px 0 rgba(255,255,255,0.18), 0 2px 6px rgba(0,0,0,0.12)",
+                }}
               >
                 {tipo}
-              </Badge>
+              </div>
             </div>
 
-            {/* Hover Overlay com botão */}
-            <div className="absolute inset-0 z-20 flex items-center justify-center bg-foreground/60 dark:bg-white/20 backdrop-blur-sm opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            {/* Liquid glass hover overlay */}
+            <div
+              className="absolute inset-0 z-20 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+              style={{
+                background: "rgba(0,0,0,0.28)",
+                backdropFilter: "blur(4px) saturate(120%)",
+                WebkitBackdropFilter: "blur(4px) saturate(120%)",
+              }}
+            >
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2 rounded-full bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] px-6 py-2.5 text-sm font-medium text-background shadow-lg shadow-[#4D7CFF]/30"
+                className="flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium text-white"
+                style={{
+                  background: "rgba(255,255,255,0.18)",
+                  backdropFilter: "blur(14px) saturate(160%)",
+                  WebkitBackdropFilter: "blur(14px) saturate(160%)",
+                  border: "1px solid rgba(255,255,255,0.30)",
+                  boxShadow:
+                    "inset 0 1px 0 rgba(255,255,255,0.30), 0 4px 16px rgba(0,0,0,0.18)",
+                }}
               >
                 <Eye className="h-4 w-4" />
                 Explorar Nucleo
               </motion.button>
             </div>
 
+            {/* Wave transition */}
             <div className="absolute bottom-0 left-0 w-full leading-none z-20 pointer-events-none">
               <svg
                 viewBox="0 0 500 80"
                 preserveAspectRatio="none"
-                className="w-full h-[60px] -mb-[2px]"
+                className="w-full h-[60px] -mb-px"
+                fill="var(--card)"
               >
-                <div className="absolute bottom-0 left-0 w-full h-[6px] bg-card z-20" />
-                <path
-                  d="M0,20 C150,-40 340,80 500,40 L500,80 L0,80 Z"
-                  className="fill-card"
-                />
+                <path d="M0,20 C150,-40 340,80 500,40 L500,80 L0,80 Z" />
               </svg>
-
-              <div className="absolute bottom-0 left-0 w-full leading-none z-20 pointer-events-none"></div>
             </div>
           </div>
 
-          {/* ICON (integrado ao conteúdo, não sobreposto) */}
-          <div className="absolute z-30 -mt-22 ml-8 top--10">
-            <div className="relative flex h-17 w-17 items-center justify-center rounded-xl">
+          {/* Floating liquid glass icon - Posição consistente */}
+          <div className="absolute z-30 left-12" style={{ top: "122px" }}>
+            <div className="relative inline-flex">
+              {/* Glow */}
               <div
-                className="absolute inset-0 rounded-2xl blur-2xl opacity-50"
+                className="absolute inset-0 rounded-2xl blur-xl opacity-55"
                 style={{ background: corDestaque }}
               />
+              {/* Glass icon container */}
               <div
-                className="relative flex h-full w-full items-center justify-center rounded-xl"
+                className="relative flex h-14 w-14 items-center justify-center rounded-2xl"
                 style={{
-                  background: `linear-gradient(235deg, ${corDestaque}, ${corDestaque}dd)`,
+                  background: `linear-gradient(145deg, ${corDestaque}ee, ${corDestaque}bb)`,
+                  border: "1.5px solid rgba(255,255,255,0.28)",
+                  boxShadow:
+                    "inset 0 1.5px 0 rgba(255,255,255,0.40), 0 8px 20px rgba(0,0,0,0.22)",
                 }}
               >
                 {icon?.iconUrl ? (
@@ -247,10 +270,10 @@ export function NucleoCard({
                     alt={nome}
                     width={18}
                     height={18}
-                    className="object-contain brightness-0  invert"
+                    className="object-contain brightness-0 invert"
                   />
                 ) : (
-                  <IconComponent className="h-8 w-8 text-background" />
+                  <IconComponent className="h-7 w-7 text-white" />
                 )}
               </div>
             </div>
@@ -363,7 +386,7 @@ export function NucleoCard({
               )}
             </div>
 
-            <div className="flex items-center justify-between  pt-3">
+            <div className="flex items-center justify-between pt-3">
               <div className="flex items-center gap-1.5">
                 <Calendar className="h-3 w-3 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">
@@ -384,7 +407,7 @@ export function NucleoCard({
         open={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
         nucleo={nucleo}
-        onSuccess={handleUpdateComplete} // ← mudado de onUpdate para onSuccess
+        onSuccess={handleUpdateComplete}
       />
     </>
   );

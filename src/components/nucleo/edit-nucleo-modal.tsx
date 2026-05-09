@@ -26,7 +26,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { nucleosService } from "@/services/nucleos.service";
 import type { Nucleo } from "@/types/nucleo";
 import { Loader2, Sparkles } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
 const tiposPredefinidos = [
@@ -157,11 +156,11 @@ export function EditNucleoModal({
           transition={{ type: "spring", damping: 25, stiffness: 200 }}
           className="relative overflow-hidden rounded-t-2xl bg-gradient-to-r from-[#4D7CFF]/10 to-[#00C9A7]/10 border-b border-border/50"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via/5 to-transparent animate-shimmer" />
           <DialogHeader className="p-6 pb-4">
             <div className="flex items-center gap-3">
               <div className="rounded-full bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] p-2 shadow-lg">
-                <Sparkles className="h-5 w-5 text-white" />
+                <Sparkles className="h-5 w-5 text" />
               </div>
               <DialogTitle className="text-xl font-bold bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] bg-clip-text text-transparent">
                 Editar Núcleo
@@ -265,13 +264,15 @@ export function EditNucleoModal({
               <Input
                 type="color"
                 className="w-12 h-10 p-1 cursor-pointer"
-                {...register("corDestaque")}
+                value={watch("corDestaque") || "#6366f1"}
+                onChange={(e) => setValue("corDestaque", e.target.value, { shouldDirty: true })}
               />
               <Input
                 type="text"
                 placeholder="#6366f1"
                 className="flex-1 transition-all focus:ring-2 focus:ring-[#4D7CFF]/20"
-                {...register("corDestaque")}
+                value={watch("corDestaque") || ""}
+                onChange={(e) => setValue("corDestaque", e.target.value, { shouldDirty: true })}
               />
             </div>
           </motion.div>
@@ -327,7 +328,7 @@ export function EditNucleoModal({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90 transition-all shadow-lg shadow-[#4D7CFF]/20"
+              className="bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text hover:opacity-90 transition-all shadow-lg shadow-[#4D7CFF]/20"
             >
               {isSubmitting && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

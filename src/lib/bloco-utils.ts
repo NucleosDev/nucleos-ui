@@ -3,7 +3,6 @@ import {
   CheckSquare,
   ListChecks,
   Calendar,
-  FileText,
   Timer,
   Layers,
   BookOpen,
@@ -18,8 +17,14 @@ export type BlocoInitializer = (
   titulo?: string,
 ) => Promise<void>;
 
-export const TIPO_BLOCO_META: Record<
+// Only functional block types have meta (text block types are handled by the document editor)
+type FunctionalBlocoTipo = Extract<
   BlocoTipo,
+  "tarefas" | "habitos" | "habito" | "timer" | "timers" | "notas" | "lista" | "calendario" | "calculo" | "colecoes" | "canvas"
+>;
+
+export const TIPO_BLOCO_META: Record<
+  FunctionalBlocoTipo,
   { rotulo: string; descricao: string; icon: LucideIcon }
 > = {
   tarefas: {
@@ -79,4 +84,4 @@ export const TIPO_BLOCO_META: Record<
   }, // NOVO
 };
 
-export const TIPOS_BLOCO = Object.keys(TIPO_BLOCO_META) as BlocoTipo[];
+export const TIPOS_BLOCO = Object.keys(TIPO_BLOCO_META) as FunctionalBlocoTipo[];

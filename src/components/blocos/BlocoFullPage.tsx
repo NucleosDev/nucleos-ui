@@ -185,7 +185,7 @@
 //         {/* Botão voltar */}
 //         <Button
 //           variant="ghost"
-//           className="absolute top-4 left-4 bg-background/20 backdrop-blur-sm text-white hover:bg-background/40"
+//           className="absolute top-4 left-4 bg-background/20 backdrop-blur-sm text hover:bg-background/40"
 //           onClick={() => router.back()}
 //         >
 //           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -197,7 +197,7 @@
 //         {/* Ícone flutuante */}
 //         <div className="relative -mt-12 mb-6 z-30">
 //           <div
-//             className="w-16 h-16 rounded-xl flex items-center justify-center text-white shadow-lg border-4 border-background"
+//             className="w-16 h-16 rounded-xl flex items-center justify-center text shadow-lg border-4 border-background"
 //             style={{ backgroundColor: corDestaque }}
 //           >
 //             <Layers className="w-8 h-8" />

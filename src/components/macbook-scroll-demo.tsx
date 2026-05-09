@@ -3,7 +3,7 @@
 
 // export default function MacbookScrollDemo() {
 //   return (
-//     <div className="w-full overflow-hidden bg-white dark:bg-[#0B0B0F]">
+//     <div className="w-full overflow-hidden bg dark:bg-[#0B0B0F]">
 //       <MacbookScroll
 //         title={
 //           <span>

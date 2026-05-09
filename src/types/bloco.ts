@@ -15,13 +15,25 @@ export type BlocoTipo =
   | "calendario"
   | "calculo"
   | "colecoes"
-  | "canvas";
+  | "canvas"
+  | "paragraph"
+  | "h1"
+  | "h2"
+  | "h3"
+  | "quote"
+  | "code"
+  | "bullet-list"
+  | "numbered-list"
+  | "todo"
+  | "divider"
+  | "column-layout";
 
 export interface Bloco {
   id: string;
   nucleoId: string;
   tipo: BlocoTipo;
   titulo: string | null;
+  conteudo?: string | null;
   posicao: number;
   configuracoes: Record<string, any> | null;
   parentId?: string | null;

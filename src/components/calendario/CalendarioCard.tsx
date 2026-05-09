@@ -83,7 +83,7 @@ const CalendarDay: React.FC<{
         "col-span-1 row-span-1 flex h-9 w-9 items-center justify-center transition-all duration-200",
         isHeader ? "cursor-default" : "rounded-xl hover:scale-105",
         isToday && !isSelected && "bg-indigo-500/10 ring-1 ring-indigo-500/30",
-        isSelected && "bg-indigo-500 text-white shadow-lg shadow-indigo-500/25",
+        isSelected && "bg-indigo-500 text shadow-lg shadow-indigo-500/25",
         hasEvents && !isSelected && !isToday && "bg-indigo-500/5",
         !isHeader &&
           !isToday &&
@@ -97,7 +97,7 @@ const CalendarDay: React.FC<{
         className={cn(
           "font-medium",
           isHeader ? "text-xs text-muted-foreground" : "text-sm",
-          isSelected && "text-white",
+          isSelected && "text",
           isToday &&
             !isSelected &&
             "text-indigo-600 dark:text-indigo-400 font-semibold",
@@ -282,7 +282,7 @@ export function CalendarioCard({
     const daysArray: React.ReactNode[] = [];
 
     // Cabeçalho dos dias da semana
-    dayNames.forEach((day, i) => {
+    dayNames.forEach((day) => {
       daysArray.push(<CalendarDay key={`header-${day}`} day={day} isHeader />);
     });
 
@@ -317,9 +317,9 @@ export function CalendarioCard({
             day={format(day, "d")}
             isToday={isToday(day)}
             hasEvents={hasEvents}
-            isSelected={isSelected ?? undefined} // Converte null para undefined
+            isSelected={isSelected ?? undefined}
             onClick={() => handleDayClick(day)}
-            disabled={isLoading ?? undefined} // Converte null para undefined
+            disabled={isLoading ?? undefined}
           />,
         );
       }
@@ -330,7 +330,6 @@ export function CalendarioCard({
 
   return (
     <div className="">
-      {/* Container principal com design inspirado */}
       <div className="">
         <div className="">
           {/* Cabeçalho do mês */}

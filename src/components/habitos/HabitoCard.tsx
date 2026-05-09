@@ -1,19 +1,7 @@
 // components/habitos/HabitoCard.tsx
 "use client";
 
-import {
-  Check,
-  MoreVertical,
-  Pencil,
-  Trash2,
-  Flame,
-  Calendar,
-  Trophy,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+import { Check, MoreVertical, Pencil, Trash2, Flame, Trophy } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,12 +10,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import type { Habito } from "@/types/habitos";
-
-const frequenciaLabels: Record<string, string> = {
-  diaria: "Diária",
-  semanal: "Semanal",
-  personalizada: "Personalizada",
-};
 
 const diasSemanaLabels = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
@@ -46,141 +28,107 @@ export function HabitoCard({
   onEdit,
   onDelete,
   isRegistering = false,
-  isDeleting = false,
 }: HabitoCardProps) {
-  // ✅ Usar dados reais do backend
-  const meta = habito.metaVezes || 1;
-  const streak = habito.streakAtual || 0;
-  const recorde = habito.streakMaximo || 0;
-  const isCompletoHoje = habito.completoHoje || false;
-  const progresso = isCompletoHoje ? 100 : 0;
-
-  // ✅ Garantir que diasSemana é um array antes de mapear
-  const diasSemana = Array.isArray(habito.diasSemana) ? habito.diasSemana : [];
+  const streak      = habito.streakAtual    ?? 0;
+  const recorde     = habito.streakMaximo   ?? 0;
+  const done        = habito.completoHoje   ?? false;
+  const diasSemana  = Array.isArray(habito.diasSemana) ? habito.diasSemana : [];
 
   return (
-    <Card
+    <div
       className={cn(
-        "group relative transition-all duration-200 hover:shadow-md border-l-4",
-        isCompletoHoje
-          ? "border-l-green-500 bg-green-50/30 dark:bg-green-950/10"
-          : "border-l-transparent",
+        "group relative flex items-center gap-3 px-4 py-3 rounded-xl",
+        "border transition-all duration-200",
+        "bg-card/60 backdrop-blur-sm",
+        done
+          ? "border-emerald-500/30 bg-emerald-500/5"
+          : "border-border/50 hover:border-border hover:shadow-[var(--shadow-xs)]",
       )}
     >
-      <CardContent className="p-4">
-        <div className="flex items-start gap-3">
-          <Button
-            variant={isCompletoHoje ? "default" : "outline"}
-            size="icon"
+      {/* Accent strip */}
+      <div
+        className={cn(
+          "absolute left-0 top-3 bottom-3 w-[3px] rounded-full transition-colors duration-300",
+          done ? "bg-emerald-500" : "bg-border/60",
+        )}
+      />
+
+      {/* Check button */}
+      <button
+        onClick={() => !done && onRegistrar(habito.id)}
+        disabled={isRegistering || done}
+        className={cn(
+          "shrink-0 flex h-8 w-8 items-center justify-center rounded-full border-2 transition-all duration-200",
+          done
+            ? "border-emerald-500 bg-emerald-500 text-white"
+            : "border-border hover:border-emerald-500 hover:bg-emerald-500/10 hover:text-emerald-600",
+          "disabled:cursor-default",
+        )}
+      >
+        <Check className="h-4 w-4" strokeWidth={done ? 2.5 : 2} />
+      </button>
+
+      {/* Content */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-baseline gap-2">
+          <p
             className={cn(
-              "h-10 w-10 rounded-full shrink-0 transition-all",
-              isCompletoHoje &&
-                "bg-green-500 hover:bg-green-600 border-green-500",
-              !isCompletoHoje && "hover:border-green-500 hover:text-green-500",
+              "text-sm font-semibold truncate transition-colors",
+              done && "text-emerald-700 dark:text-emerald-400",
             )}
-            onClick={() => !isCompletoHoje && onRegistrar(habito.id)}
-            disabled={isRegistering || isCompletoHoje}
           >
-            <Check className={cn("h-5 w-5", isCompletoHoje && "text-white")} />
-          </Button>
-
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2">
-              <div>
-                <h4 className="font-semibold text-base truncate">
-                  {habito.nome}
-                </h4>
-                <div className="flex items-center gap-2 mt-1 flex-wrap">
-                  <Badge variant="secondary" className="text-xs">
-                    {frequenciaLabels[habito.frequencia] || habito.frequencia}
-                  </Badge>
-                  {habito.frequencia === "semanal" && diasSemana.length > 0 && (
-                    <Badge variant="outline" className="text-xs">
-                      <Calendar className="h-3 w-3 mr-1" />
-                      {diasSemana.map((d) => diasSemanaLabels[d]).join(", ")}
-                    </Badge>
-                  )}
-                  {meta > 1 && (
-                    <Badge variant="outline" className="text-xs">
-                      Meta: {meta}x
-                    </Badge>
-                  )}
-                </div>
-              </div>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
-                  >
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={onEdit}>
-                    <Pencil className="mr-2 h-4 w-4" /> Editar
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => onDelete(habito.id)}
-                    className="text-destructive"
-                    disabled={isDeleting}
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" /> Excluir
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-
-            <div className="flex items-center gap-4 mt-3">
-              <div className="flex items-center gap-1">
-                <Flame
-                  className={cn(
-                    "h-4 w-4",
-                    streak > 0 ? "text-orange-500" : "text-muted-foreground",
-                  )}
-                />
-                <span
-                  className={cn(
-                    "text-sm font-medium",
-                    streak > 0 && "text-orange-500",
-                  )}
-                >
-                  {streak} {streak === 1 ? "dia" : "dias"}
-                </span>
-              </div>
-              {recorde > 0 && (
-                <div className="flex items-center gap-1">
-                  <Trophy className="h-4 w-4 text-amber-500" />
-                  <span className="text-sm text-muted-foreground">
-                    Recorde: {recorde}
-                  </span>
-                </div>
-              )}
-            </div>
-
-            <div className="mt-2">
-              {isCompletoHoje ? (
-                <div className="flex items-center gap-1 text-xs text-green-600">
-                  <Check className="h-3 w-3" />
-                  <span>Concluído hoje</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                  <span>Pendente hoje</span>
-                </div>
-              )}
-            </div>
-
-            {meta > 1 && (
-              <div className="mt-2">
-                <Progress value={progresso} className="h-1.5" />
-              </div>
-            )}
-          </div>
+            {habito.nome}
+          </p>
+          {habito.frequencia === "semanal" && diasSemana.length > 0 && (
+            <span className="text-[10px] text-muted-foreground shrink-0">
+              {diasSemana.map((d) => diasSemanaLabels[d]).join(" · ")}
+            </span>
+          )}
         </div>
-      </CardContent>
-    </Card>
+
+        <div className="flex items-center gap-3 mt-1">
+          {streak > 0 && (
+            <span className="flex items-center gap-1 text-xs font-medium text-orange-500">
+              <Flame className="h-3 w-3" />
+              {streak}d
+            </span>
+          )}
+          {recorde > 0 && (
+            <span className="flex items-center gap-1 text-xs text-muted-foreground/70">
+              <Trophy className="h-3 w-3 text-amber-400/80" />
+              {recorde}
+            </span>
+          )}
+          <span
+            className={cn(
+              "text-xs",
+              done ? "text-emerald-600 dark:text-emerald-500" : "text-muted-foreground/50",
+            )}
+          >
+            {done ? "Feito hoje" : "Pendente"}
+          </span>
+        </div>
+      </div>
+
+      {/* Menu */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground/40 hover:text-muted-foreground hover:bg-accent opacity-0 group-hover:opacity-100 transition-all duration-[var(--duration-fast)] shrink-0">
+            <MoreVertical className="h-3.5 w-3.5" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-36 text-sm">
+          <DropdownMenuItem onClick={onEdit} className="gap-2">
+            <Pencil className="h-3.5 w-3.5" /> Editar
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => onDelete(habito.id)}
+            className="gap-2 text-destructive focus:text-destructive"
+          >
+            <Trash2 className="h-3.5 w-3.5" /> Excluir
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 }

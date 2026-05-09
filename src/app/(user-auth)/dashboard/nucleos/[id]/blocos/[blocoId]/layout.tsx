@@ -4,205 +4,204 @@
 import { useParams, useRouter } from "next/navigation";
 import { useBloco } from "@/hooks/useBlocos";
 import { useNucleo } from "@/hooks/useNucleo";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import Image from "next/image";
 import {
-  Loader2,
-  ArrowLeft,
-  Layers,
-  BookOpen,
-  CheckSquare,
-  ListTodo,
-  CalendarDays,
-  Timer,
-  Activity,
-  GripVertical,
-  Calculator,
-  ChevronRight,
+  ArrowLeft, Layers, BookOpen, CheckSquare, ListTodo,
+  CalendarDays, Timer, Activity, GripVertical, Calculator,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-// ICONS
 const blocoIconMap: Record<string, LucideIcon> = {
-  tarefas: CheckSquare,
-  habitos: Activity,
-  habito: Activity,
-  timer: Timer,
-  timers: Timer,
-  notas: BookOpen,
-  lista: ListTodo,
+  tarefas:   CheckSquare,
+  habitos:   Activity,
+  habito:    Activity,
+  timer:     Timer,
+  timers:    Timer,
+  notas:     BookOpen,
+  lista:     ListTodo,
   calendario: CalendarDays,
-  calculo: Calculator,
-  colecoes: Layers,
+  calculo:   Calculator,
+  colecoes:  Layers,
 };
 
-function getBlocoIcon(tipo: string): LucideIcon {
-  return blocoIconMap[tipo] || GripVertical;
-}
+const blocoAccent: Record<string, string> = {
+  tarefas:   "#3b82f6",
+  habitos:   "#22c55e",
+  habito:    "#22c55e",
+  timer:     "#f97316",
+  timers:    "#f97316",
+  notas:     "#a855f7",
+  lista:     "#06b6d4",
+  calendario: "#6366f1",
+  calculo:   "#ec4899",
+  colecoes:  "#10b981",
+};
 
-function getBlocoTitle(tipo: string): string {
-  const titles: Record<string, string> = {
-    tarefas: "Tarefas",
-    habitos: "Hábitos",
-    habito: "Hábito",
-    timer: "Timer",
-    timers: "Timers",
-    notas: "Notas",
-    lista: "Lista",
-    calendario: "Calendário",
-    calculo: "Calculadora",
-    colecoes: "Coleções",
-  };
-  return titles[tipo] || tipo.charAt(0).toUpperCase() + tipo.slice(1);
-}
+const blocoLabels: Record<string, string> = {
+  tarefas: "Tarefas", habitos: "Hábitos", habito: "Hábito",
+  timer: "Timer", timers: "Timers", notas: "Notas",
+  lista: "Lista", calendario: "Calendário",
+  calculo: "Calculadora", colecoes: "Coleções",
+};
 
 export default function BlocoLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const params = useParams();
-  const router = useRouter();
+}: Readonly<{ children: React.ReactNode }>) {
+  const params   = useParams();
+  const router   = useRouter();
   const nucleoId = params.id as string;
-  const blocoId = params.blocoId as string;
+  const blocoId  = params.blocoId as string;
 
-  const {
-    bloco,
-    isLoading: blocoLoading,
-    error: blocoError,
-  } = useBloco(blocoId, nucleoId);
+  const { bloco, isLoading: blocoLoading, error: blocoError } = useBloco(blocoId, nucleoId);
   const { data: nucleo, isLoading: nucleoLoading } = useNucleo(nucleoId);
 
-  // Loading
   if (blocoLoading || nucleoLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Skeleton className="h-[240px] md:h-[300px] w-full" />
-        <div className="container mx-auto px-4 py-8">
-          <Skeleton className="h-8 w-64 mb-4" />
-          <Skeleton className="h-4 w-96" />
+      <div className="min-h-screen">
+        <Skeleton className="h-[200px] md:h-[240px] w-full" />
+        <div className="max-w-3xl mx-auto px-6 pt-6 space-y-3">
+          <Skeleton className="h-6 w-40" />
+          <Skeleton className="h-4 w-64" />
         </div>
       </div>
     );
   }
 
-  // Error - Bloco não encontrado
   if (blocoError || !bloco) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">Bloco não encontrado</h2>
-          <p className="text-muted-foreground mb-4">
-            O bloco que você procura não existe ou foi removido.
-          </p>
-          <Button onClick={() => router.back()}>Voltar</Button>
+          <p className="text-base font-semibold mb-2">Bloco não encontrado</p>
+          <p className="text-sm text-muted-foreground mb-5">O bloco foi removido ou não existe.</p>
+          <button
+            onClick={() => router.back()}
+            className="px-4 py-2 rounded-[var(--radius-md)] bg-primary text-primary-foreground text-sm font-medium hover:opacity-90"
+          >
+            Voltar
+          </button>
         </div>
       </div>
     );
   }
 
-  // Error - Núcleo não encontrado
   if (!nucleo) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">Núcleo não encontrado</h2>
-          <p className="text-muted-foreground mb-4">
-            O núcleo associado a este bloco não foi encontrado.
-          </p>
-          <Button onClick={() => router.push("/dashboard")}>
-            Voltar ao Dashboard
-          </Button>
+          <p className="text-base font-semibold mb-2">Núcleo não encontrado</p>
+          <button
+            onClick={() => router.push("/dashboard/nucleos")}
+            className="mt-4 px-4 py-2 rounded-[var(--radius-md)] bg-primary text-primary-foreground text-sm font-medium hover:opacity-90"
+          >
+            Ver Núcleos
+          </button>
         </div>
       </div>
     );
   }
 
-  // Preparar dados
-  const capaUrl =
-    nucleo.imagemCapa || `https://picsum.photos/seed/${nucleo.id}/1200/400`;
+  const accent     = blocoAccent[bloco.tipo] ?? nucleo.corDestaque ?? "#6366f1";
   const corDestaque = nucleo.corDestaque || "#6366f1";
-  const IconComponentBloco = getBlocoIcon(bloco.tipo);
-  const blocoTitle = bloco.titulo || getBlocoTitle(bloco.tipo);
+  const BlocoIcon  = blocoIconMap[bloco.tipo] ?? GripVertical;
+  const blocoTitle = bloco.titulo || blocoLabels[bloco.tipo] || bloco.tipo;
+  const capaUrl    = nucleo.imagemCapa || `https://picsum.photos/seed/${nucleo.id}/1200/400`;
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Banner */}
-      <div className="relative w-full h-[240px] md:h-[300px] overflow-hidden">
+      {/* ── Liquid glass banner ── */}
+      <div className="relative w-full h-[200px] md:h-[240px] overflow-hidden">
         <Image
           src={capaUrl}
           alt={nucleo.nome}
           fill
-          className="object-cover"
+          className="object-cover scale-[1.04] transition-transform duration-700"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-        <div className="absolute bottom-0 w-full text-background">
-          <svg
-            viewBox="0 0 500 100"
-            preserveAspectRatio="none"
-            className="w-full h-[60px]"
-            fill="hsl(var(--background))"
-          >
-            <path
-              d="M0,40 C150,-20 350,120 500,60 L500,100 L0,100 Z"
-              fill="currentColor"
-            />
+
+        {/* Gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/40 to-transparent" />
+        <div
+          className="absolute inset-0 opacity-35"
+          style={{
+            background: `radial-gradient(ellipse 60% 80% at 80% 20%, ${corDestaque}44 0%, transparent 70%)`,
+          }}
+        />
+        {/* Bloco accent tint */}
+        <div
+          className="absolute inset-0 opacity-20"
+          style={{
+            background: `radial-gradient(ellipse 50% 70% at 10% 80%, ${accent}55 0%, transparent 65%)`,
+          }}
+        />
+
+        {/* Wave transition */}
+        <div className="absolute bottom-0 left-0 w-full pointer-events-none z-10">
+          <svg viewBox="0 0 500 80" preserveAspectRatio="none" className="w-full h-[50px] -mb-px" fill="var(--background)">
+            <path d="M0,30 C120,-20 370,80 500,40 L500,80 L0,80 Z" />
           </svg>
         </div>
 
-        {/* Botão voltar */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute top-4 left-4 bg-background/20 backdrop-blur-sm text-white z-20 hover:bg-background/40"
+        {/* Glass back button */}
+        <button
           onClick={() => router.push(`/dashboard/nucleos/${nucleoId}`)}
+          className="absolute top-4 left-4 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium text-white transition-all duration-[var(--duration-fast)]"
+          style={{
+            background: "rgba(0,0,0,0.22)",
+            backdropFilter: "blur(12px) saturate(160%)",
+            WebkitBackdropFilter: "blur(12px) saturate(160%)",
+            border: "1px solid rgba(255,255,255,0.18)",
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 2px 8px rgba(0,0,0,0.15)",
+          }}
+          onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(0,0,0,0.32)")}
+          onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(0,0,0,0.22)")}
         >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
+          <ArrowLeft className="h-4 w-4" />
+          {nucleo.nome}
+        </button>
 
-        {/* Badge do tipo de bloco */}
-        <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/20 z-20">
-          <IconComponentBloco className="h-4 w-4 text-white" />
-          <span className="text-sm font-medium text-white">{blocoTitle}</span>
+        {/* Glass bloco type badge */}
+        <div
+          className="absolute top-4 right-4 z-20 px-2.5 py-1 rounded-full text-xs font-medium text-white capitalize"
+          style={{
+            background: `${accent}55`,
+            backdropFilter: "blur(10px) saturate(140%)",
+            WebkitBackdropFilter: "blur(10px) saturate(140%)",
+            border: `1px solid ${accent}66`,
+            boxShadow: `inset 0 1px 0 rgba(255,255,255,0.15), 0 2px 6px rgba(0,0,0,0.12)`,
+          }}
+        >
+          {blocoLabels[bloco.tipo] || bloco.tipo}
         </div>
       </div>
 
-      {/* Header — alinhado ao mesmo grid do canvas */}
-      <div className="max-w-5xl mx-auto px-6 md:px-8">
-        <div className="relative z-30 -mt-22 mb-4 pb-5">
-          <div
-            className="w-14 h-14 md:w-16 md:h-16 rounded-xl flex items-center justify-center text-white shadow-xl border-4 border-background"
-            style={{ backgroundColor: corDestaque }}
-          >
-            <IconComponentBloco className="w-7 h-7 md:w-8 md:h-8" />
+      <div className="max-w-5xl mx-auto px-6 md:px-8 pb-16">
+        {/* Floating liquid glass icon */}
+        <div className="relative z-30 -mt-7 mb-5">
+          <div className="relative inline-flex">
+            {/* Glow */}
+            <div
+              className="absolute inset-0 rounded-xl blur-lg opacity-50"
+              style={{ background: accent }}
+            />
+            {/* Glass icon container */}
+            <div
+              className="relative flex h-12 w-12 items-center justify-center rounded-xl"
+              style={{
+                background: `linear-gradient(145deg, ${accent}ee, ${accent}bb)`,
+                border: "1.5px solid rgba(255,255,255,0.28)",
+                boxShadow: "inset 0 1.5px 0 rgba(255,255,255,0.40), 0 6px 18px rgba(0,0,0,0.20)",
+              }}
+            >
+              <BlocoIcon className="h-6 w-6 text-white" />
+            </div>
           </div>
         </div>
 
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-1.5 text-sm text-muted-foreground mb-3">
-          <button
-            onClick={() => router.push("/dashboard")}
-            className="hover:text-foreground transition-colors"
-          >
-            Dashboard
-          </button>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <button
-            onClick={() => router.push(`/dashboard/nucleos/${nucleoId}`)}
-            className="hover:text-foreground transition-colors"
-          >
-            {nucleo.nome}
-          </button>
-          <ChevronRight className="h-3.5 w-3.5" />
-          <span className="text-foreground font-medium">{blocoTitle}</span>
-        </nav>
-
+        {/* Title */}
         <div className="mb-2">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-            {blocoTitle}
-          </h1>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{blocoTitle}</h1>
+          <p className="text-xs text-muted-foreground mt-0.5 capitalize">{bloco.tipo}</p>
         </div>
       </div>
 

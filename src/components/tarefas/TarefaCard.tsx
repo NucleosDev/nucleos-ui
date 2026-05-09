@@ -1,99 +1,34 @@
 // src/components/tarefas/TarefaCard.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Calendar,
-  Flag,
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-  Loader2,
-  Repeat,
-  GripVertical,
+  Calendar, MoreHorizontal, Pencil, Trash2,
+  Loader2, Repeat, GripVertical, Check, X,
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import type { Tarefa, TarefaPrioridade, TarefaStatus } from "@/types/tarefas";
 
-const prioridadeConfig: Record<
-  TarefaPrioridade,
-  { label: string; color: string; icon: string }
-> = {
-  baixa: {
-    label: "Baixa",
-    color: "bg-green-500/10 text-green-600 dark:text-green-400",
-    icon: "🟢",
-  },
-  media: {
-    label: "Média",
-    color: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
-    icon: "🟡",
-  },
-  alta: {
-    label: "Alta",
-    color: "bg-red-500/10 text-red-600 dark:text-red-400",
-    icon: "🔴",
-  },
+const PRIORIDADE_CONFIG: Record<TarefaPrioridade, { label: string; color: string; dot: string }> = {
+  baixa: { label: "Baixa", color: "text-emerald-500", dot: "bg-emerald-500" },
+  media: { label: "Média", color: "text-amber-500",   dot: "bg-amber-500" },
+  alta:  { label: "Alta",  color: "text-red-500",     dot: "bg-red-500" },
 };
 
-const statusConfig: Record<
-  TarefaStatus,
-  { label: string; color: string; bgColor: string }
-> = {
-  pendente: {
-    label: "Pendente",
-    color: "text-yellow-700 dark:text-yellow-400",
-    bgColor: "bg-yellow-50 dark:bg-yellow-950/20",
-  },
-  atrasada: {
-    label: "Atrasada",
-    color: "text-red-700 dark:text-red-400",
-    bgColor: "bg-red-50 dark:bg-red-950/20",
-  },
-  fazendo: {
-    label: "Fazendo",
-    color: "text-blue-700 dark:text-blue-400",
-    bgColor: "bg-blue-50 dark:bg-blue-950/20",
-  },
-  concluida: {
-    label: "Concluída",
-    color: "text-green-700 dark:text-green-400",
-    bgColor: "bg-green-50 dark:bg-green-950/20",
-  },
+const STATUS_CONFIG: Record<TarefaStatus, { label: string; bg: string; text: string }> = {
+  pendente:  { label: "Pendente",  bg: "bg-blue-500/12",    text: "text-blue-500" },
+  atrasada:  { label: "Atrasada",  bg: "bg-red-500/12",     text: "text-red-500" },
+  fazendo:   { label: "Fazendo",   bg: "bg-violet-500/12",  text: "text-violet-500" },
+  concluida: { label: "Concluída", bg: "bg-emerald-500/12", text: "text-emerald-500" },
 };
 
 interface TarefaCardProps {
   tarefa: Tarefa;
   onToggle: (id: string, status: TarefaStatus) => Promise<void>;
-  onUpdate: (
-    id: string,
-    titulo: string,
-    prioridade?: TarefaPrioridade,
-  ) => Promise<void>;
+  onUpdate: (id: string, titulo: string, prioridade?: TarefaPrioridade) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
-  onDragStart?: (
-    e: React.DragEvent,
-    taskId: string,
-    status: TarefaStatus,
-  ) => void;
+  onDragStart?: (e: React.DragEvent, taskId: string, status: TarefaStatus) => void;
   onDragEnd?: (e: React.DragEvent) => void;
   isUpdating?: boolean;
   showStatus?: boolean;
@@ -115,336 +50,268 @@ export function TarefaCard({
 }: TarefaCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(tarefa.titulo);
-  const [editPrioridade, setEditPrioridade] = useState<TarefaPrioridade>(
-    tarefa.prioridade,
-  );
+  const [editPrioridade, setEditPrioridade] = useState<TarefaPrioridade>(tarefa.prioridade);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  const isConcluida = tarefa.status === "concluida";
+  const isAtrasada  = tarefa.status === "atrasada";
+  const isRecorrente    = tarefa.metadata?.isRecorrente;
+  const recorrenciaTipo = tarefa.metadata?.recorrenciaTipo;
+
+  const isVencendoHoje = tarefa.dataVencimento && !isConcluida && (() => {
+    const d = new Date(tarefa.dataVencimento); const today = new Date();
+    d.setHours(0,0,0,0); today.setHours(0,0,0,0);
+    return d.getTime() === today.getTime();
+  })();
 
   const handleSave = async () => {
     if (!editTitle.trim()) return;
-    if (editTitle === tarefa.titulo && editPrioridade === tarefa.prioridade) {
-      setIsEditing(false);
-      return;
-    }
+    if (editTitle === tarefa.titulo && editPrioridade === tarefa.prioridade) { setIsEditing(false); return; }
     setIsSubmitting(true);
     try {
       await onUpdate(tarefa.id, editTitle.trim(), editPrioridade);
       setIsEditing(false);
-    } catch (error) {
-      console.error("Erro ao salvar tarefa:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
+    } catch {}
+    finally { setIsSubmitting(false); }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSave();
-    } else if (e.key === "Escape") {
-      setIsEditing(false);
-      setEditTitle(tarefa.titulo);
-      setEditPrioridade(tarefa.prioridade);
-    }
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSave(); }
+    else if (e.key === "Escape") { setIsEditing(false); setEditTitle(tarefa.titulo); setEditPrioridade(tarefa.prioridade); }
   };
 
   const handleToggle = async () => {
     if (isUpdating) return;
-
-    let newStatus: TarefaStatus;
-    if (tarefa.status === "concluida") {
-      newStatus = "pendente";
-    } else if (tarefa.status === "atrasada") {
-      newStatus = "fazendo";
-    } else if (tarefa.status === "fazendo") {
-      newStatus = "concluida";
-    } else {
-      newStatus = "concluida";
-    }
-
+    const newStatus: TarefaStatus =
+      tarefa.status === "concluida" ? "pendente"
+      : tarefa.status === "atrasada" ? "fazendo"
+      : "concluida";
     await onToggle(tarefa.id, newStatus);
   };
 
-  const isConcluida = tarefa.status === "concluida";
-  const isRecorrente = tarefa.metadata?.isRecorrente;
-  const recorrenciaTipo = tarefa.metadata?.recorrenciaTipo;
-  const isAtrasada = tarefa.status === "atrasada";
-
   const getRecorrenciaLabel = () => {
     switch (recorrenciaTipo) {
-      case "diaria":
-        return "Todo dia";
-      case "semanal":
-        return "Toda semana";
-      case "mensal":
-        return "Todo mês";
-      default:
-        return "Recorrente";
+      case "diaria": return "Todo dia";
+      case "semanal": return "Toda semana";
+      case "mensal": return "Todo mês";
+      default: return "Recorrente";
     }
   };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const today = new Date();
-    const tomorrow = new Date(today);
+    const date = new Date(dateString); const today = new Date(); const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
-
-    date.setHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
-    tomorrow.setHours(0, 0, 0, 0);
-
+    date.setHours(0,0,0,0); today.setHours(0,0,0,0); tomorrow.setHours(0,0,0,0);
     if (date.getTime() === today.getTime()) return "Hoje";
     if (date.getTime() === tomorrow.getTime()) return "Amanhã";
-
-    return date.toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "short",
-    });
+    return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
   };
 
-  const isVencendoHoje =
-    tarefa.dataVencimento &&
-    !isConcluida &&
-    (() => {
-      const date = new Date(tarefa.dataVencimento);
-      const today = new Date();
-      date.setHours(0, 0, 0, 0);
-      today.setHours(0, 0, 0, 0);
-      return date.getTime() === today.getTime();
-    })();
+  const pConfig = PRIORIDADE_CONFIG[tarefa.prioridade];
+  const sConfig = STATUS_CONFIG[tarefa.status];
 
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{
-        opacity: isDragging ? 0.5 : 1,
-        y: 0,
-        scale: isDragging ? 1.02 : 1,
-      }}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: isDragging ? 0.5 : isConcluida ? 0.6 : 1, y: 0, scale: isDragging ? 1.02 : 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.2 }}
+      transition={{ duration: 0.18 }}
       className={cn(
-        "group relative flex items-start gap-3 p-3 rounded-lg border transition-all duration-200",
-        "bg-card hover:bg-card/80",
+        "group relative flex items-start gap-2.5 px-3 py-2.5 rounded-xl border transition-all",
+        "bg-card/60 backdrop-blur-sm",
+        isAtrasada    ? "border-red-500/25 bg-red-500/5" : "",
+        isVencendoHoje && !isAtrasada ? "border-blue-500/25 bg-blue-500/5" : "",
+        !isAtrasada && !isVencendoHoje ? "border-border/50 hover:border-border/80" : "",
+        isDragging && "shadow-lg ring-2 ring-blue-500/30",
+        isEditing && "ring-2 ring-blue-500/30",
         draggable && !isConcluida && "cursor-grab active:cursor-grabbing",
-        isConcluida && "opacity-60",
-        isAtrasada && "border-destructive/30 bg-destructive/5",
-        isVencendoHoje && "border-primary/30 bg-primary/5",
-        isDragging && "shadow-lg ring-2 ring-primary/50",
-        !isEditing && !isDragging && "hover:border-border/80 hover:shadow-sm",
-        isEditing && "ring-2 ring-primary/50",
       )}
     >
-      {/* Wrapper div para o drag nativo do HTML5 */}
+      {/* Accent strip */}
+      <div className={cn(
+        "absolute left-0 top-2.5 bottom-2.5 w-[3px] rounded-full",
+        isConcluida ? "bg-emerald-500/60" : isAtrasada ? "bg-red-500" : "bg-border/40",
+      )} />
+
       <div
         draggable={draggable && !isConcluida}
         onDragStart={(e) => {
-          if (!draggable || isConcluida) {
-            e.preventDefault();
-            return;
-          }
-
+          if (!draggable || isConcluida) { e.preventDefault(); return; }
           e.dataTransfer.setData("text/plain", tarefa.id);
           e.dataTransfer.effectAllowed = "move";
-
-          if (onDragStart) {
-            onDragStart(e, tarefa.id, tarefa.status);
-          }
+          onDragStart?.(e, tarefa.id, tarefa.status);
         }}
-        onDragEnd={(e) => {
-          if (onDragEnd) {
-            onDragEnd(e);
-          }
-        }}
+        onDragEnd={(e) => onDragEnd?.(e)}
         className="contents"
       >
         {/* Drag handle */}
         {draggable && !isConcluida && (
-          <div className="cursor-grab active:cursor-grabbing mt-1">
-            <GripVertical className="h-4 w-4 text-muted-foreground/50 group-hover:text-muted-foreground transition-colors" />
+          <div className="mt-0.5 shrink-0">
+            <GripVertical className="h-4 w-4 text-muted-foreground/30 group-hover:text-muted-foreground/60 transition-colors" />
           </div>
         )}
 
         {/* Checkbox */}
-        <Checkbox
-          checked={isConcluida}
-          onCheckedChange={handleToggle}
+        <button
+          onClick={handleToggle}
           disabled={isUpdating}
-          className="mt-1 shrink-0 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-        />
+          className={cn(
+            "mt-0.5 shrink-0 flex h-4 w-4 items-center justify-center rounded border-2 transition-all",
+            isConcluida
+              ? "border-emerald-500 bg-emerald-500"
+              : "border-border/60 hover:border-border",
+          )}
+        >
+          {isConcluida && <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />}
+        </button>
 
         {/* Content */}
-        <div className="flex-1 space-y-2 min-w-0">
+        <div className="flex-1 min-w-0 space-y-1.5">
           {isEditing ? (
             <div className="space-y-2">
-              <Input
+              <input
                 value={editTitle}
                 onChange={(e) => setEditTitle(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Título da tarefa"
-                className="h-9 text-sm"
                 autoFocus
                 disabled={isSubmitting}
+                className={cn(
+                  "w-full px-2 py-1 text-sm rounded-lg bg-muted/40 border border-border/50",
+                  "focus:outline-none focus:ring-1 focus:ring-blue-500/40",
+                )}
               />
-              <Select
-                value={editPrioridade}
-                onValueChange={(v) => setEditPrioridade(v as TarefaPrioridade)}
-                disabled={isSubmitting}
-              >
-                <SelectTrigger className="h-9 w-[140px] text-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="baixa">🟢 Baixa</SelectItem>
-                  <SelectItem value="media">🟡 Média</SelectItem>
-                  <SelectItem value="alta">🔴 Alta</SelectItem>
-                </SelectContent>
-              </Select>
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
+              <div className="flex items-center gap-2">
+                <select
+                  value={editPrioridade}
+                  onChange={(e) => setEditPrioridade(e.target.value as TarefaPrioridade)}
+                  disabled={isSubmitting}
+                  className="flex-1 px-2 py-1 text-xs rounded-lg bg-muted/40 border border-border/50 focus:outline-none"
+                >
+                  <option value="baixa">Baixa</option>
+                  <option value="media">Média</option>
+                  <option value="alta">Alta</option>
+                </select>
+                <button
                   onClick={handleSave}
                   disabled={isSubmitting || !editTitle.trim()}
-                  className="text-xs"
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-blue-500/12 text-blue-500 hover:bg-blue-500/20 transition-colors disabled:opacity-50"
                 >
-                  {isSubmitting && (
-                    <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-                  )}
+                  {isSubmitting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
                   Salvar
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => {
-                    setIsEditing(false);
-                    setEditTitle(tarefa.titulo);
-                    setEditPrioridade(tarefa.prioridade);
-                  }}
+                </button>
+                <button
+                  onClick={() => { setIsEditing(false); setEditTitle(tarefa.titulo); setEditPrioridade(tarefa.prioridade); }}
                   disabled={isSubmitting}
-                  className="text-xs"
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium text-muted-foreground hover:bg-accent transition-colors"
                 >
+                  <X className="h-3 w-3" />
                   Cancelar
-                </Button>
+                </button>
               </div>
             </div>
           ) : (
             <>
-              {/* Título e badges */}
               <div className="flex items-start gap-2">
-                <div className="flex-1 min-w-0">
-                  <p
-                    className={cn(
-                      "text-sm font-medium leading-tight break-words",
-                      isConcluida && "line-through text-muted-foreground",
-                      isAtrasada && "text-destructive",
-                      !isConcluida &&
-                        "cursor-pointer hover:text-primary transition-colors",
-                    )}
-                    onDoubleClick={() => !isConcluida && setIsEditing(true)}
-                    title="Duplo clique para editar"
-                  >
-                    {tarefa.titulo}
-                  </p>
-                </div>
-
-                {/* Badge de recorrência */}
+                <p
+                  className={cn(
+                    "text-sm font-medium leading-tight flex-1 break-words",
+                    isConcluida && "line-through text-muted-foreground/60",
+                    isAtrasada && !isConcluida && "text-red-500",
+                    !isConcluida && "cursor-pointer",
+                  )}
+                  onDoubleClick={() => !isConcluida && setIsEditing(true)}
+                >
+                  {tarefa.titulo}
+                </p>
                 {isRecorrente && (
-                  <Badge
-                    variant="outline"
-                    className="text-xs gap-1 shrink-0 border-primary/20 text-primary"
-                  >
-                    <Repeat className="h-3 w-3" />
-                    <span className="hidden sm:inline">
-                      {getRecorrenciaLabel()}
-                    </span>
-                  </Badge>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-blue-500/10 text-blue-500 shrink-0">
+                    <Repeat className="h-2.5 w-2.5" />
+                    {getRecorrenciaLabel()}
+                  </span>
                 )}
               </div>
 
-              {/* Metadados */}
-              <div className="flex items-center gap-2 flex-wrap">
-                {/* Prioridade */}
-                <Badge
-                  className={cn(
-                    "text-xs font-normal",
-                    prioridadeConfig[tarefa.prioridade].color,
-                  )}
-                >
-                  <Flag className="h-3 w-3 mr-1" />
-                  {prioridadeConfig[tarefa.prioridade].label}
-                </Badge>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {/* Priority */}
+                <span className={cn("inline-flex items-center gap-1 text-[10px] font-medium", pConfig.color)}>
+                  <span className={cn("h-1.5 w-1.5 rounded-full", pConfig.dot)} />
+                  {pConfig.label}
+                </span>
 
-                {/* Data de vencimento */}
+                {/* Due date */}
                 {tarefa.dataVencimento && (
-                  <Badge
-                    variant="outline"
-                    className={cn(
-                      "text-xs font-normal",
-                      isVencendoHoje && "border-primary/50 text-primary",
-                    )}
-                  >
-                    <Calendar className="mr-1 h-3 w-3" />
+                  <span className={cn(
+                    "inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md",
+                    isVencendoHoje ? "bg-blue-500/10 text-blue-500" : "bg-muted/60 text-muted-foreground/60",
+                  )}>
+                    <Calendar className="h-2.5 w-2.5" />
                     {formatDate(tarefa.dataVencimento)}
-                  </Badge>
+                  </span>
                 )}
 
-                {/* Status (se showStatus for true) */}
+                {/* Status */}
                 {showStatus && (
-                  <Badge
-                    className={cn(
-                      "text-xs font-normal",
-                      statusConfig[tarefa.status].bgColor,
-                      statusConfig[tarefa.status].color,
-                    )}
-                  >
-                    {statusConfig[tarefa.status].label}
-                  </Badge>
+                  <span className={cn("text-[10px] font-medium px-1.5 py-0.5 rounded-md", sConfig.bg, sConfig.text)}>
+                    {sConfig.label}
+                  </span>
                 )}
               </div>
             </>
           )}
         </div>
 
-        {/* Menu de ações */}
+        {/* Menu */}
         {!isEditing && (
-          <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  "h-8 w-8 shrink-0 transition-all",
-                  menuOpen
-                    ? "opacity-100"
-                    : "opacity-0 group-hover:opacity-100",
-                  "hover:bg-muted",
-                )}
-                disabled={isUpdating}
-                // Prevenir que o clique no menu inicie o drag
-                onPointerDown={(e) => e.stopPropagation()}
-              >
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-40">
-              <DropdownMenuItem
-                onClick={() => setIsEditing(true)}
-                disabled={isConcluida}
-              >
-                <Pencil className="mr-2 h-4 w-4" />
-                Editar
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => onDelete(tarefa.id)}
-                className="text-destructive focus:text-destructive"
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Excluir
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="relative shrink-0" ref={menuRef}>
+            <button
+              onClick={() => setMenuOpen((o) => !o)}
+              onPointerDown={(e) => e.stopPropagation()}
+              disabled={isUpdating}
+              className={cn(
+                "flex h-7 w-7 items-center justify-center rounded-lg transition-all",
+                "text-muted-foreground/40 hover:text-muted-foreground hover:bg-accent",
+                menuOpen ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+              )}
+            >
+              <MoreHorizontal className="h-4 w-4" />
+            </button>
+
+            {menuOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
+                <div
+                  className="absolute right-0 top-full mt-1 z-50 w-36 overflow-hidden rounded-xl"
+                  style={{
+                    background: "var(--popover)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    boxShadow: "0 8px 24px -4px oklch(0.18 0.02 250 / 0.18), inset 0 1px 0 rgba(255,255,255,0.06)",
+                    backdropFilter: "blur(16px) saturate(160%)",
+                  }}
+                >
+                  <div className="p-1">
+                    <button
+                      onClick={() => { setIsEditing(true); setMenuOpen(false); }}
+                      disabled={isConcluida}
+                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-sm hover:bg-accent/70 transition-colors text-left disabled:opacity-40"
+                    >
+                      <Pencil className="h-3.5 w-3.5 text-muted-foreground/60" />
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => { onDelete(tarefa.id); setMenuOpen(false); }}
+                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-sm hover:bg-destructive/10 text-destructive transition-colors text-left"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      Excluir
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
         )}
       </div>
     </motion.div>

@@ -35,8 +35,9 @@ export function useCanvasBlocks(nucleoId: string) {
   const saveMutation = useMutation({
     mutationFn: (newItems: CanvasItem[]) =>
       canvasService.saveCanvas(nucleoId, JSON.stringify(newItems)),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["canvas-blocks", nucleoId] }),
+    onMutate: (newItems: CanvasItem[]) => {
+      queryClient.setQueryData(["canvas-blocks", nucleoId], newItems);
+    },
   });
 
   const updateItems = (newItems: CanvasItem[]) => {
