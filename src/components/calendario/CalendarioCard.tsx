@@ -35,6 +35,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -122,6 +132,7 @@ export function CalendarioCard({
 
   // Modais
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [editingEvento, setEditingEvento] = useState<CalendarioEvento | null>(
     null,
   );
@@ -260,15 +271,21 @@ export function CalendarioCard({
     });
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!editingEvento) return;
-    if (!confirm("Tem certeza que deseja excluir este evento?")) return;
+    setDeleteTargetId(editingEvento.id);
+    setCreateDialogOpen(false);
+  };
+
+  const confirmDeleteEvento = async () => {
+    if (!deleteTargetId) return;
+    const id = deleteTargetId;
+    setDeleteTargetId(null);
     try {
-      await onDeleteEvento(editingEvento.id);
-      setCreateDialogOpen(false);
+      await onDeleteEvento(id);
       resetForm();
-    } catch (error) {
-      // Erro já tratado no componente pai
+    } catch {
+      // tratado no pai
     }
   };
 
@@ -429,7 +446,7 @@ export function CalendarioCard({
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={(e) => {
+                      onClick={(e: React.MouseEvent) => {
                         e.stopPropagation();
                         handleViewEvento(evento);
                       }}
@@ -441,7 +458,7 @@ export function CalendarioCard({
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={(e) => {
+                      onClick={(e: React.MouseEvent) => {
                         e.stopPropagation();
                         handleEditEvento(evento);
                       }}
@@ -453,7 +470,7 @@ export function CalendarioCard({
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity text-destructive"
-                      onClick={(e) => {
+                      onClick={(e: React.MouseEvent) => {
                         e.stopPropagation();
                         onDeleteEvento(evento.id);
                       }}
@@ -721,10 +738,8 @@ export function CalendarioCard({
                 <Button
                   variant="destructive"
                   onClick={() => {
-                    if (confirm("Excluir este evento?")) {
-                      onDeleteEvento(viewingEvento.id);
-                      setViewDialogOpen(false);
-                    }
+                    setDeleteTargetId(viewingEvento.id);
+                    setViewDialogOpen(false);
                   }}
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
@@ -741,6 +756,31 @@ export function CalendarioCard({
           )}
         </DialogContent>
       </Dialog>
+
+      <AlertDialog
+        open={!!deleteTargetId}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTargetId(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir evento?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDeleteEvento}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

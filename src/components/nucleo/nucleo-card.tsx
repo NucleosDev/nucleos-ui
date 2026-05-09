@@ -93,8 +93,7 @@ export function NucleoCard({
   const typeStyles = getTypeStyles(tipo);
   const IconComponent = tipoIcons[tipo] || Layers;
 
-  const randomImageUrl = `https://picsum.photos/seed/${id}/400/200`;
-  const capaUrl = imagemCapa || (nucleo as any).imagem_capa || randomImageUrl;
+  const capaUrl = imagemCapa || (nucleo as any).imagem_capa || null;
 
   const getLevelColor = () => {
     if (level >= 100) return "from-purple-500 to-pink-500";
@@ -171,14 +170,39 @@ export function NucleoCard({
           )}
           onClick={onClick}
         >
-          {/* Image Section - Altura fixa e consistente em todas as telas */}
+          {/* Image / Gradient Section */}
           <div className="relative w-full overflow-hidden h-[200px]">
-            <Image
-              src={capaUrl}
-              alt={nome}
-              fill
-              className="z-0 object-cover transition-transform duration-700 group-hover:scale-105 will-change-transform"
-            />
+            {capaUrl ? (
+              <Image
+                src={capaUrl}
+                alt={nome}
+                fill
+                className="z-0 object-cover transition-transform duration-700 group-hover:scale-105 will-change-transform"
+              />
+            ) : (
+              /* Gradient aura when no real image */
+              <div
+                className="absolute inset-0 z-0 transition-transform duration-700 group-hover:scale-105"
+                style={{
+                  background: `linear-gradient(135deg, ${corDestaque}30 0%, ${corDestaque}18 40%, oklch(0.115 0.018 245 / 0.4) 100%)`,
+                }}
+              >
+                {/* Radial glow */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: `radial-gradient(ellipse 70% 70% at 30% 40%, ${corDestaque}25 0%, transparent 70%)`,
+                  }}
+                />
+                {/* Faint grid texture */}
+                <div
+                  className="absolute inset-0 opacity-[0.04]"
+                  style={{
+                    backgroundImage: `repeating-linear-gradient(0deg, oklch(1 0 0) 0px, oklch(1 0 0) 1px, transparent 1px, transparent 28px), repeating-linear-gradient(90deg, oklch(1 0 0) 0px, oklch(1 0 0) 1px, transparent 1px, transparent 28px)`,
+                  }}
+                />
+              </div>
+            )}
 
             {/* Multi-layer gradient overlay */}
             <div className="absolute inset-0 z-10 bg-gradient-to-t from-card/95 via-card/50 to-transparent" />

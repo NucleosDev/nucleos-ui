@@ -443,19 +443,18 @@ export function BlocoCard({
             </div>
           </div>
         ) : (
-          /* ── Non-compact document-native section - IMPROVED SPACING ── */
+          /* ── Non-compact: document-native section card ── */
           <div className="relative">
-            {/* Accent left rail — document section marker - more visible */}
+            {/* Accent left rail */}
             <div
-              className="absolute left-0 top-0 bottom-0 w-1 rounded-full transition-all duration-200"
+              className="absolute left-0 top-0 bottom-0 w-0.5 rounded-full transition-all duration-[var(--duration-base)]"
               style={{
-                background: `linear-gradient(to bottom, ${meta.accent}, ${meta.accent}44)`,
-                opacity: isHovered ? 0.8 : 0.4,
-                boxShadow: isHovered ? `0 0 8px ${meta.accent}44` : "none",
+                background: `linear-gradient(to bottom, ${meta.accent}, ${meta.accent}33)`,
+                opacity: isHovered ? 0.9 : 0.45,
               }}
             />
 
-            {/* Hover actions - positioned absolutely */}
+            {/* Hover actions */}
             <BlocoHoverActions
               bloco={bloco}
               nucleoId={nucleoId}
@@ -473,31 +472,28 @@ export function BlocoCard({
               isDeleting={isDeleting}
             />
 
-            {/* Section header — document heading style - IMPROVED */}
+            {/* Section header — glass, dark-mode safe */}
             <div
-              className="flex items-center gap-3 pl-6 pr-3 py-3 rounded-t-xl border border-border/50 transition-all duration-200"
+              className={cn(
+                "flex items-center gap-2.5 pl-4 pr-2 py-2.5",
+                "rounded-t-[var(--radius-lg)] border border-border/50",
+                "backdrop-blur-sm transition-all duration-[var(--duration-base)]",
+                isHovered && "border-border/80",
+              )}
               style={{
-                background: `linear-gradient(135deg, ${meta.accentBg} 0%, var(--card) 100%)`,
-                borderColor: isHovered ? `${meta.accent}44` : undefined,
+                background: `linear-gradient(135deg, ${meta.accent}0d 0%, var(--surface-raised) 100%)`,
               }}
             >
-              {/* Drag handle for reordering */}
-              <div className="flex items-center justify-center h-5 w-5 text-muted-foreground/30 hover:text-muted-foreground/60 cursor-grab active:cursor-grabbing transition-colors">
-                <GripVertical className="h-4 w-4" />
+              {/* Drag handle */}
+              <div className="flex items-center justify-center h-4 w-4 text-muted-foreground/25 hover:text-muted-foreground/60 cursor-grab active:cursor-grabbing transition-colors shrink-0">
+                <GripVertical className="h-3.5 w-3.5" />
               </div>
 
               <div
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg shadow-sm transition-all duration-200"
-                style={{
-                  background: isHovered
-                    ? `${meta.accent}20`
-                    : `${meta.accent}10`,
-                }}
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors duration-[var(--duration-fast)]"
+                style={{ background: `${meta.accent}15` }}
               >
-                <IconComponent
-                  className="h-4 w-4"
-                  style={{ color: meta.accent }}
-                />
+                <IconComponent className="h-3.5 w-3.5" style={{ color: meta.accent }} />
               </div>
 
               <div className="flex-1 min-w-0">
@@ -509,15 +505,14 @@ export function BlocoCard({
                     onChange={(e) => setTitleValue(e.target.value)}
                     onBlur={saveTitle}
                     onKeyDown={handleKeyDown}
-                    className="text-lg font-semibold bg-white/50 rounded-md px-2 py-1 outline-none ring-1 ring-border w-full"
+                    className="text-sm font-semibold bg-transparent rounded-md px-1 py-0.5 outline-none ring-1 ring-primary/30 w-full"
                     placeholder={meta.label}
                   />
                 ) : (
                   <p
                     className={cn(
-                      "text-lg font-semibold text-foreground truncate",
-                      onEditTitle &&
-                        "cursor-text hover:text-primary/80 transition-colors",
+                      "text-sm font-semibold text-foreground/90 truncate",
+                      onEditTitle && "cursor-text hover:text-primary transition-colors duration-[var(--duration-fast)]",
                     )}
                     onClick={() => onEditTitle && setIsEditing(true)}
                     title={titulo}
@@ -525,49 +520,37 @@ export function BlocoCard({
                     {titulo}
                   </p>
                 )}
-                {/* Block type badge */}
-                <span
-                  className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium mt-1"
-                  style={{
-                    background: `${meta.accent}15`,
-                    color: meta.accent,
-                  }}
-                >
-                  {meta.label}
-                </span>
               </div>
 
-              {/* Collapse toggle — always visible but subtle */}
-              <motion.button
+              {/* Collapse toggle */}
+              <button
                 onClick={() => setIsCollapsed(!isCollapsed)}
                 className={cn(
-                  "relative z-10 flex h-8 w-8 items-center justify-center rounded-lg",
-                  "text-muted-foreground/50 hover:text-foreground hover:bg-accent/50",
-                  "transition-all duration-150",
+                  "flex h-6 w-6 items-center justify-center rounded-md shrink-0",
+                  "text-muted-foreground/40 hover:text-muted-foreground hover:bg-accent",
+                  "transition-all duration-[var(--duration-fast)]",
                 )}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
               >
-                <motion.div
-                  animate={{ rotate: isCollapsed ? -90 : 0 }}
-                  transition={{ duration: 0.2, ease: "easeInOut" }}
-                >
-                  <ChevronDown className="h-4 w-4" />
-                </motion.div>
-              </motion.button>
+                <ChevronDown
+                  className={cn(
+                    "h-3.5 w-3.5 transition-transform duration-[var(--duration-fast)]",
+                    isCollapsed && "-rotate-90",
+                  )}
+                />
+              </button>
             </div>
 
-            {/* Content — with proper padding and spacing */}
+            {/* Content */}
             <AnimatePresence initial={false}>
               {!isCollapsed && (
                 <motion.div
-                  initial={{ height: 0, opacity: 0, marginTop: 0 }}
-                  animate={{ height: "auto", opacity: 1, marginTop: 0 }}
-                  exit={{ height: 0, opacity: 0, marginTop: 0 }}
-                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
                   className="overflow-hidden"
                 >
-                  <div className="border-x border-b border-border/50 rounded-b-xl bg-card/50 p-6">
+                  <div className="border-x border-b border-border/50 rounded-b-[var(--radius-lg)] bg-card/40 backdrop-blur-sm p-4">
                     {renderContent(bloco, nucleoId, () => onDelete?.())}
                   </div>
                 </motion.div>

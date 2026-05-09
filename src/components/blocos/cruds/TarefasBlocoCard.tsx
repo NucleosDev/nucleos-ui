@@ -3,6 +3,16 @@
 
 import { useState } from "react";
 import { Plus, LayoutGrid, List, Flame, Loader2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useTarefas } from "@/hooks/useTarefas";
@@ -26,6 +36,7 @@ export function TarefasBlocoCard({ bloco }: TarefasBlocoCardProps) {
   const [viewMode, setViewMode]             = useState<"kanban" | "list">("kanban");
   const [dailyTrackerOpen, setDailyTrackerOpen] = useState(false);
   const [addTaskOpen, setAddTaskOpen]       = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const {
     tarefas = [],
@@ -73,8 +84,14 @@ export function TarefasBlocoCard({ bloco }: TarefasBlocoCardProps) {
     }
   };
 
-  const handleDeleteTask = async (id: string) => {
-    if (!confirm("Excluir esta tarefa?")) return;
+  const handleDeleteTask = (id: string) => {
+    setDeleteTargetId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTargetId) return;
+    const id = deleteTargetId;
+    setDeleteTargetId(null);
     try {
       await excluir(id);
     } catch {
@@ -195,6 +212,29 @@ export function TarefasBlocoCard({ bloco }: TarefasBlocoCardProps) {
         onTaskToggle={handleToggleStatus}
         onAddTask={handleAddTask}
       />
+
+      <AlertDialog
+        open={!!deleteTargetId}
+        onOpenChange={(open) => { if (!open) setDeleteTargetId(null); }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir tarefa?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

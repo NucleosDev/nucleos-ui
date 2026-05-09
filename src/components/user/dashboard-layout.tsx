@@ -1,5 +1,6 @@
 "use client";
 
+import { LiquidGlassCard } from "@/components/ui/liquid-glass";
 import { useGamification } from "@/hooks/useGamification";
 import {
   Flame,
@@ -12,7 +13,7 @@ import {
   Grid2x2,
   MessageSquare,
   Aperture,
-  ChevronRight,
+  Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCurrentUser } from "@/hooks/useDashboard";
@@ -41,6 +42,8 @@ interface DashboardSidebarProps {
     currentXp?: number;
     nextLevelXp?: number;
     streak?: number;
+    energy?: number;
+    maxEnergy?: number;
   };
   nucleosCount: number;
   blocosCount: number;
@@ -55,28 +58,63 @@ interface DashboardSidebarProps {
 }
 
 const NAV_MAIN = [
-  { id: "dashboard",     label: "Início",        icon: Grid2x2,     href: "/dashboard" },
-  { id: "nucleos",       label: "Núcleos",        icon: Aperture,    href: "/dashboard/nucleos" },
-  { id: "calendario",   label: "Calendário",     icon: CalendarDays,href: "/dashboard/calendario" },
-  { id: "insights",     label: "Insights",        icon: BarChart3,   href: "/dashboard/insights" },
+  { id: "dashboard", label: "Início", icon: Grid2x2, href: "/dashboard" },
+  {
+    id: "nucleos",
+    label: "Núcleos",
+    icon: Aperture,
+    href: "/dashboard/nucleos",
+  },
+  {
+    id: "calendario",
+    label: "Calendário",
+    icon: CalendarDays,
+    href: "/dashboard/calendario",
+  },
+  {
+    id: "insights",
+    label: "Insights",
+    icon: BarChart3,
+    href: "/dashboard/insights",
+  },
 ];
 
 const NAV_SECONDARY = [
-  { id: "conquistas",   label: "Conquistas",     icon: Trophy,      href: "/dashboard/conquistas" },
-  { id: "chatbot",      label: "Assistente",      icon: MessageSquare, href: "/dashboard/chatbot" },
-  { id: "notificacoes", label: "Notificações",   icon: Bell,        href: "/dashboard/notificacoes" },
+  {
+    id: "conquistas",
+    label: "Conquistas",
+    icon: Trophy,
+    href: "/dashboard/conquistas",
+  },
+  {
+    id: "chatbot",
+    label: "Assistente",
+    icon: MessageSquare,
+    href: "/dashboard/chatbot",
+  },
+  {
+    id: "notificacoes",
+    label: "Notificações",
+    icon: Bell,
+    href: "/dashboard/notificacoes",
+  },
 ];
 
 const NAV_BOTTOM = [
-  { id: "perfil",          label: "Perfil",         icon: User,     href: "/dashboard/perfil" },
-  { id: "configuracoes",   label: "Configurações",  icon: Settings, href: "/dashboard/configuracoes" },
+  { id: "perfil", label: "Perfil", icon: User, href: "/dashboard/perfil" },
+  {
+    id: "configuracoes",
+    label: "Configurações",
+    icon: Settings,
+    href: "/dashboard/configuracoes",
+  },
 ];
 
 const COLLAPSED_LINKS = [
-  { icon: Grid2x2,     href: "/dashboard",           label: "Início" },
-  { icon: Aperture,    href: "/dashboard/nucleos",   label: "Núcleos" },
-  { icon: CalendarDays,href: "/dashboard/calendario",label: "Calendário" },
-  { icon: BarChart3,   href: "/dashboard/insights",  label: "Insights" },
+  { icon: Grid2x2, href: "/dashboard", label: "Início" },
+  { icon: Aperture, href: "/dashboard/nucleos", label: "Núcleos" },
+  { icon: CalendarDays, href: "/dashboard/calendario", label: "Calendário" },
+  { icon: BarChart3, href: "/dashboard/insights", label: "Insights" },
 ];
 
 function NavLink({
@@ -85,35 +123,27 @@ function NavLink({
   label,
   isActive,
   onClick,
-  className,
 }: {
   href: string;
   icon: React.ElementType;
   label: string;
   isActive: boolean;
   onClick?: () => void;
-  className?: string;
 }) {
   return (
     <Link
       href={href}
       onClick={onClick}
       className={cn(
-        "nav-item group",
-        isActive && "active",
-        className,
+        "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 relative z-30",
+        isActive
+          ? "bg-primary/15 text-primary shadow-sm"
+          : "text-muted-foreground hover:text-foreground hover:bg-white/10",
       )}
     >
-      <Icon
-        className={cn(
-          "h-4 w-4 shrink-0 transition-colors duration-[var(--duration-fast)]",
-          isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground",
-        )}
-      />
-      <span>{label}</span>
-      {isActive && (
-        <span className="ml-auto h-1.5 w-1.5 rounded-full bg-primary/70" />
-      )}
+      <Icon className={cn("h-4 w-4 shrink-0", isActive && "text-primary")} />
+      <span className="flex-1">{label}</span>
+      {isActive && <span className="h-1.5 w-1.5 rounded-full bg-primary/70" />}
     </Link>
   );
 }
@@ -121,10 +151,18 @@ function NavLink({
 function SidebarContent({ userData, onClose }: DashboardSidebarProps) {
   const pathname = usePathname();
 
+  const energyPct =
+    userData.energy != null && userData.maxEnergy
+      ? Math.round((userData.energy / userData.maxEnergy) * 100)
+      : null;
+
   return (
-    <div className="flex flex-col flex-1 overflow-y-auto py-3">
+    <div className="flex flex-col flex-1 overflow-y-auto py-4 px-3 relative z-30">
       {/* Main nav */}
-      <div className="px-2 space-y-0.5">
+      <div className="space-y-1">
+        <span className="px-3 text-[10px] font-semibold text-muted-foreground/60 uppercase tracking-wider">
+          Principal
+        </span>
         {NAV_MAIN.map((link) => (
           <NavLink
             key={link.id}
@@ -134,7 +172,8 @@ function SidebarContent({ userData, onClose }: DashboardSidebarProps) {
             isActive={
               link.href === "/dashboard"
                 ? pathname === link.href
-                : pathname === link.href || pathname?.startsWith(link.href + "/")
+                : pathname === link.href ||
+                  pathname?.startsWith(link.href + "/")
             }
             onClick={onClose}
           />
@@ -142,120 +181,170 @@ function SidebarContent({ userData, onClose }: DashboardSidebarProps) {
       </div>
 
       {/* Divider */}
-      <div className="mx-3 my-3 h-px bg-border/50" />
+      <div className="mx-3 my-4 h-px bg-white/10" />
 
       {/* Secondary nav */}
-      <div className="px-2 space-y-0.5">
+      <div className="space-y-1">
+        <span className="px-3 text-[10px] font-semibold text-muted-foreground/60 uppercase tracking-wider">
+          Recursos
+        </span>
         {NAV_SECONDARY.map((link) => (
           <NavLink
             key={link.id}
             href={link.href}
             icon={link.icon}
             label={link.label}
-            isActive={pathname === link.href || pathname?.startsWith(link.href + "/")}
+            isActive={
+              pathname === link.href || pathname?.startsWith(link.href + "/")
+            }
             onClick={onClose}
           />
         ))}
       </div>
 
-      {/* Streak indicator */}
-      {userData.streak !== undefined && userData.streak > 0 && (
-        <div className="mx-3 mt-4">
-          <div className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-orange-500/8 border border-orange-500/15">
+      {/* Gamification widgets */}
+      <div className="mx-1 mt-5 space-y-2">
+        {userData?.streak != null && userData.streak > 0 && (
+          <div className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-orange-500/10 border border-orange-500/20">
             <Flame className="h-3.5 w-3.5 text-orange-500 shrink-0" />
-            <span className="text-xs font-medium text-orange-600 dark:text-orange-400">
+            <span className="text-xs font-semibold text-orange-500 flex-1">
               {userData.streak} dias seguidos
             </span>
           </div>
-        </div>
-      )}
+        )}
+
+        {energyPct != null && (
+          <div className="px-3 py-2 rounded-lg bg-amber-500/8 border border-amber-500/15">
+            <div className="flex items-center justify-between mb-1.5">
+              <div className="flex items-center gap-1.5">
+                <Zap className="h-3 w-3 text-amber-500" />
+                <span className="text-[11px] font-semibold text-amber-500">
+                  Energia
+                </span>
+              </div>
+              <span className="text-[10px] tabular-nums text-amber-500/70">
+                {userData.energy}/{userData.maxEnergy}
+              </span>
+            </div>
+            <div className="h-1 rounded-full bg-amber-500/15 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-amber-500 to-yellow-400 transition-all duration-700"
+                style={{ width: `${energyPct}%` }}
+              />
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Bottom nav */}
-      <div className="mt-auto pt-3 border-t border-border/50 mx-2 space-y-0.5">
-        {NAV_BOTTOM.map((link) => (
-          <NavLink
-            key={link.id}
-            href={link.href}
-            icon={link.icon}
-            label={link.label}
-            isActive={pathname === link.href}
-            onClick={onClose}
-          />
-        ))}
+      <div className="mt-auto pt-4">
+        <div className="space-y-1">
+          {NAV_BOTTOM.map((link) => (
+            <NavLink
+              key={link.id}
+              href={link.href}
+              icon={link.icon}
+              label={link.label}
+              isActive={pathname === link.href}
+              onClick={onClose}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
 }
 
-function SidebarDesktop({ collapsed, userData, nucleosCount, blocosCount, recentNucleos }: DashboardSidebarProps) {
+function SidebarDesktop({
+  collapsed,
+  userData,
+  nucleosCount,
+  blocosCount,
+  recentNucleos,
+  onClose,
+}: DashboardSidebarProps) {
   const pathname = usePathname();
 
   if (collapsed) {
     return (
-      <aside className="hidden md:flex w-14 flex-col items-center border-r border-border/40 sticky top-0 h-screen py-4 bg-sidebar z-30">
-        {/* Logo */}
-        <Link href="/dashboard" className="mb-6 hover:opacity-75 transition-opacity">
-          <Image src="/icon.svg" height={24} width={24} alt="logo" />
-        </Link>
-
-        {/* Collapsed nav icons */}
-        <div className="flex flex-col items-center gap-1 w-full px-2">
-          {COLLAPSED_LINKS.map((item) => {
-            const Icon = item.icon;
-            const isActive =
-              item.href === "/dashboard"
-                ? pathname === item.href
-                : pathname === item.href || pathname?.startsWith(item.href + "/");
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                title={item.label}
-                className={cn(
-                  "flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-[var(--duration-fast)]",
-                  isActive
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground",
-                )}
-              >
-                <Icon className="h-4 w-4" />
-              </Link>
-            );
-          })}
-        </div>
-
-        {/* Bottom icon */}
-        <div className="mt-auto px-2">
+      <LiquidGlassCard
+        glowIntensity="sm"
+        shadowIntensity="xs"
+        borderRadius="0px"
+        blurIntensity="md"
+        className="hidden md:flex w-14 flex-col items-center sticky top-0 h-screen z-30 rounded-none"
+      >
+        <div className="flex flex-col items-center py-4 gap-6">
           <Link
-            href="/dashboard/configuracoes"
-            title="Configurações"
-            className="flex items-center justify-center w-9 h-9 rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground transition-all duration-[var(--duration-fast)]"
+            href="/dashboard"
+            className="hover:opacity-75 transition-opacity relative z-30"
           >
-            <Settings className="h-4 w-4" />
+            <Image src="/icon.svg" height={28} width={28} alt="logo" />
           </Link>
+
+          <div className="flex flex-col items-center gap-2">
+            {COLLAPSED_LINKS.map((item) => {
+              const Icon = item.icon;
+              const isActive =
+                item.href === "/dashboard"
+                  ? pathname === item.href
+                  : pathname === item.href ||
+                    pathname?.startsWith(item.href + "/");
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  title={item.label}
+                  className={cn(
+                    "flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-200 relative z-30",
+                    isActive
+                      ? "bg-primary/15 text-primary"
+                      : "text-muted-foreground hover:bg-white/10 hover:text-foreground",
+                  )}
+                >
+                  <Icon className="h-4 w-4" />
+                </Link>
+              );
+            })}
+          </div>
+
+          <div className="mt-auto pt-6">
+            <Link
+              href="/dashboard/configuracoes"
+              title="Configurações"
+              className="flex items-center justify-center w-9 h-9 rounded-lg text-muted-foreground hover:bg-white/10 hover:text-foreground transition-all duration-200 relative z-30"
+            >
+              <Settings className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
-      </aside>
+      </LiquidGlassCard>
     );
   }
 
   return (
-    <aside className="hidden md:flex w-[220px] flex-col border-r border-border/40 sticky top-0 h-screen bg-sidebar z-30 transition-all duration-[var(--duration-base)]">
-      {/* Header / Logo */}
-      <div className="px-4 py-4 border-b border-border/40">
+    <LiquidGlassCard
+      glowIntensity="sm"
+      shadowIntensity="xs"
+      borderRadius="0px"
+      blurIntensity="md"
+      className="hidden md:flex w-[260px] flex-col sticky top-0 h-screen z-30 transition-all duration-300 rounded-none"
+    >
+      <div className="px-4 py-5 border-b border-white/10 relative z-30">
         <Link href="/dashboard" className="block">
           <NucleosLogo size="md" />
         </Link>
       </div>
 
-      {/* Nav content */}
       <SidebarContent
         collapsed={collapsed}
         userData={userData}
         nucleosCount={nucleosCount}
         blocosCount={blocosCount}
         recentNucleos={recentNucleos}
+        onClose={onClose}
       />
-    </aside>
+    </LiquidGlassCard>
   );
 }
 
@@ -266,19 +355,24 @@ export function DashboardLayout({
   isMobileMenuOpen = false,
   onMobileMenuClose = () => {},
 }: DashboardLayoutProps) {
-  const { data: user } = useCurrentUser();
-  const { data: nucleos } = useNucleos();
+  const { data: user, isLoading: userLoading } = useCurrentUser();
+  const { data: nucleos, isLoading: nucleosLoading } = useNucleos();
   const { data: totalBlocos = 0 } = useTotalBlocosCount(nucleos || []);
   const gamification = useGamification();
-  const { data: stats } = gamification.useStats();
+  const { data: stats, isLoading: statsLoading } = gamification.useStats();
+  const { data: energyData } = gamification.useEnergy();
+
+  const isLoading = userLoading || nucleosLoading || statsLoading;
 
   const userData = {
     fullName: user?.fullName || user?.email?.split("@")[0] || "Usuário",
     avatarUrl: user?.avatarUrl || "",
-    level: stats?.level,
-    currentXp: stats?.currentXp,
-    nextLevelXp: stats?.nextLevelXp,
-    streak: stats?.currentStreak,
+    level: stats?.level ?? 0,
+    currentXp: stats?.currentXp ?? 0,
+    nextLevelXp: stats?.nextLevelXp ?? 100,
+    streak: stats?.currentStreak ?? 0,
+    energy: energyData?.energy,
+    maxEnergy: energyData?.maxEnergy,
   };
 
   const nucleosCount = nucleos?.length ?? 0;
@@ -298,27 +392,48 @@ export function DashboardLayout({
     recentNucleos,
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4" />
+          <p className="text-white/70">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (isMobile) {
     return (
-      <div className="flex">
+      <div className="flex min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         <Sheet open={isMobileMenuOpen} onOpenChange={onMobileMenuClose}>
-          <SheetContent side="left" className="w-[220px] p-0 bg-sidebar border-r border-border/40">
-            <div className="px-4 py-4 border-b border-border/40">
-              <NucleosLogo size="md" />
-            </div>
-            <SidebarContent
-              {...sidebarProps}
-              onClose={onMobileMenuClose}
-            />
+          <SheetContent
+            side="left"
+            className="w-[280px] p-0 border-r border-white/10 bg-transparent"
+          >
+            <LiquidGlassCard
+              glowIntensity="sm"
+              shadowIntensity="sm"
+              borderRadius="0px"
+              blurIntensity="lg"
+              className="w-full h-full rounded-none"
+            >
+              <div className="px-4 py-5 border-b border-white/10 relative z-30">
+                <NucleosLogo size="md" />
+              </div>
+              <SidebarContent {...sidebarProps} onClose={onMobileMenuClose} />
+            </LiquidGlassCard>
           </SheetContent>
         </Sheet>
-        <main className="flex-1 overflow-auto pb-16">{children}</main>
+        <main className="flex-1 overflow-auto pb-16">
+          <div className="container mx-auto p-4">{children}</div>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden">
       <SidebarDesktop {...sidebarProps} />
       <main className="flex-1 overflow-y-auto min-w-0">{children}</main>
     </div>

@@ -4,31 +4,60 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import {
-  Calendar, MoreHorizontal, Pencil, Trash2,
-  Loader2, Repeat, GripVertical, Check, X,
+  Calendar,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  Loader2,
+  Repeat,
+  GripVertical,
+  Check,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Tarefa, TarefaPrioridade, TarefaStatus } from "@/types/tarefas";
 
-const PRIORIDADE_CONFIG: Record<TarefaPrioridade, { label: string; color: string; dot: string }> = {
+const PRIORIDADE_CONFIG: Record<
+  TarefaPrioridade,
+  { label: string; color: string; dot: string }
+> = {
   baixa: { label: "Baixa", color: "text-emerald-500", dot: "bg-emerald-500" },
-  media: { label: "Média", color: "text-amber-500",   dot: "bg-amber-500" },
-  alta:  { label: "Alta",  color: "text-red-500",     dot: "bg-red-500" },
+  media: { label: "Média", color: "text-amber-500", dot: "bg-amber-500" },
+  alta: { label: "Alta", color: "text-red-500", dot: "bg-red-500" },
 };
 
-const STATUS_CONFIG: Record<TarefaStatus, { label: string; bg: string; text: string }> = {
-  pendente:  { label: "Pendente",  bg: "bg-blue-500/12",    text: "text-blue-500" },
-  atrasada:  { label: "Atrasada",  bg: "bg-red-500/12",     text: "text-red-500" },
-  fazendo:   { label: "Fazendo",   bg: "bg-violet-500/12",  text: "text-violet-500" },
-  concluida: { label: "Concluída", bg: "bg-emerald-500/12", text: "text-emerald-500" },
+const STATUS_CONFIG: Record<
+  TarefaStatus,
+  { label: string; bg: string; text: string }
+> = {
+  pendente: { label: "Pendente", bg: "bg-blue-500/12", text: "text-blue-500" },
+  atrasada: { label: "Atrasada", bg: "bg-red-500/12", text: "text-red-500" },
+  fazendo: {
+    label: "Fazendo",
+    bg: "bg-violet-500/12",
+    text: "text-violet-500",
+  },
+  concluida: {
+    label: "Concluída",
+    bg: "bg-emerald-500/12",
+    text: "text-emerald-500",
+  },
 };
 
 interface TarefaCardProps {
   tarefa: Tarefa;
   onToggle: (id: string, status: TarefaStatus) => Promise<void>;
-  onUpdate: (id: string, titulo: string, prioridade?: TarefaPrioridade) => Promise<void>;
-  onDelete: (id: string) => Promise<void>;
-  onDragStart?: (e: React.DragEvent, taskId: string, status: TarefaStatus) => void;
+  onUpdate: (
+    id: string,
+    titulo: string,
+    prioridade?: TarefaPrioridade,
+  ) => Promise<void>;
+  onDelete: (id: string) => void | Promise<void>;
+  onDragStart?: (
+    e: React.DragEvent,
+    taskId: string,
+    status: TarefaStatus,
+  ) => void;
   onDragEnd?: (e: React.DragEvent) => void;
   isUpdating?: boolean;
   showStatus?: boolean;
@@ -50,60 +79,88 @@ export function TarefaCard({
 }: TarefaCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(tarefa.titulo);
-  const [editPrioridade, setEditPrioridade] = useState<TarefaPrioridade>(tarefa.prioridade);
+  const [editPrioridade, setEditPrioridade] = useState<TarefaPrioridade>(
+    tarefa.prioridade,
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const isConcluida = tarefa.status === "concluida";
-  const isAtrasada  = tarefa.status === "atrasada";
-  const isRecorrente    = tarefa.metadata?.isRecorrente;
+  const isAtrasada = tarefa.status === "atrasada";
+  const isRecorrente = tarefa.metadata?.isRecorrente;
   const recorrenciaTipo = tarefa.metadata?.recorrenciaTipo;
 
-  const isVencendoHoje = tarefa.dataVencimento && !isConcluida && (() => {
-    const d = new Date(tarefa.dataVencimento); const today = new Date();
-    d.setHours(0,0,0,0); today.setHours(0,0,0,0);
-    return d.getTime() === today.getTime();
-  })();
+  const isVencendoHoje =
+    tarefa.dataVencimento &&
+    !isConcluida &&
+    (() => {
+      const d = new Date(tarefa.dataVencimento);
+      const today = new Date();
+      d.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0);
+      return d.getTime() === today.getTime();
+    })();
 
   const handleSave = async () => {
     if (!editTitle.trim()) return;
-    if (editTitle === tarefa.titulo && editPrioridade === tarefa.prioridade) { setIsEditing(false); return; }
+    if (editTitle === tarefa.titulo && editPrioridade === tarefa.prioridade) {
+      setIsEditing(false);
+      return;
+    }
     setIsSubmitting(true);
     try {
       await onUpdate(tarefa.id, editTitle.trim(), editPrioridade);
       setIsEditing(false);
-    } catch {}
-    finally { setIsSubmitting(false); }
+    } catch {
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSave(); }
-    else if (e.key === "Escape") { setIsEditing(false); setEditTitle(tarefa.titulo); setEditPrioridade(tarefa.prioridade); }
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSave();
+    } else if (e.key === "Escape") {
+      setIsEditing(false);
+      setEditTitle(tarefa.titulo);
+      setEditPrioridade(tarefa.prioridade);
+    }
   };
 
   const handleToggle = async () => {
     if (isUpdating) return;
     const newStatus: TarefaStatus =
-      tarefa.status === "concluida" ? "pendente"
-      : tarefa.status === "atrasada" ? "fazendo"
-      : "concluida";
+      tarefa.status === "concluida"
+        ? "pendente"
+        : tarefa.status === "atrasada"
+          ? "fazendo"
+          : "concluida";
     await onToggle(tarefa.id, newStatus);
   };
 
   const getRecorrenciaLabel = () => {
     switch (recorrenciaTipo) {
-      case "diaria": return "Todo dia";
-      case "semanal": return "Toda semana";
-      case "mensal": return "Todo mês";
-      default: return "Recorrente";
+      case "diaria":
+        return "Todo dia";
+      case "semanal":
+        return "Toda semana";
+      case "mensal":
+        return "Todo mês";
+      default:
+        return "Recorrente";
     }
   };
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString); const today = new Date(); const tomorrow = new Date(today);
+    const date = new Date(dateString);
+    const today = new Date();
+    const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
-    date.setHours(0,0,0,0); today.setHours(0,0,0,0); tomorrow.setHours(0,0,0,0);
+    date.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+    tomorrow.setHours(0, 0, 0, 0);
     if (date.getTime() === today.getTime()) return "Hoje";
     if (date.getTime() === tomorrow.getTime()) return "Amanhã";
     return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
@@ -116,30 +173,41 @@ export function TarefaCard({
     <motion.div
       layout
       initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: isDragging ? 0.5 : isConcluida ? 0.6 : 1, y: 0, scale: isDragging ? 1.02 : 1 }}
+      animate={{
+        opacity: isDragging ? 0.5 : isConcluida ? 0.6 : 1,
+        y: 0,
+        scale: isDragging ? 1.02 : 1,
+      }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.18 }}
       className={cn(
-        "group relative flex items-start gap-2.5 px-3 py-2.5 rounded-xl border transition-all",
+        "group relative flex items-start gap-2.5 px-3 py-2.5 rounded-xl transition-all",
         "bg-card/60 backdrop-blur-sm",
-        isAtrasada    ? "border-red-500/25 bg-red-500/5" : "",
+        isAtrasada ? "border-red-500/25 bg-red-500/5" : "",
         isVencendoHoje && !isAtrasada ? "border-blue-500/25 bg-blue-500/5" : "",
-        !isAtrasada && !isVencendoHoje ? "border-border/50 hover:border-border/80" : "",
+        !isAtrasada && !isVencendoHoje
+          ? "border-border/50 hover:border-border/80"
+          : "",
         isDragging && "shadow-lg ring-2 ring-blue-500/30",
         isEditing && "ring-2 ring-blue-500/30",
         draggable && !isConcluida && "cursor-grab active:cursor-grabbing",
       )}
     >
       {/* Accent strip */}
-      <div className={cn(
-        "absolute left-0 top-2.5 bottom-2.5 w-[3px] rounded-full",
-        isConcluida ? "bg-emerald-500/60" : isAtrasada ? "bg-red-500" : "bg-border/40",
-      )} />
+      <div
+        className={cn(
+          "absolute left-0 top-2.5 bottom-2.5 w-[3px] rounded-full",
+          isConcluida ? "bg-emerald-500/60" : isAtrasada ? "bg-red-500" : "",
+        )}
+      />
 
       <div
         draggable={draggable && !isConcluida}
         onDragStart={(e) => {
-          if (!draggable || isConcluida) { e.preventDefault(); return; }
+          if (!draggable || isConcluida) {
+            e.preventDefault();
+            return;
+          }
           e.dataTransfer.setData("text/plain", tarefa.id);
           e.dataTransfer.effectAllowed = "move";
           onDragStart?.(e, tarefa.id, tarefa.status);
@@ -165,7 +233,9 @@ export function TarefaCard({
               : "border-border/60 hover:border-border",
           )}
         >
-          {isConcluida && <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />}
+          {isConcluida && (
+            <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />
+          )}
         </button>
 
         {/* Content */}
@@ -186,7 +256,9 @@ export function TarefaCard({
               <div className="flex items-center gap-2">
                 <select
                   value={editPrioridade}
-                  onChange={(e) => setEditPrioridade(e.target.value as TarefaPrioridade)}
+                  onChange={(e) =>
+                    setEditPrioridade(e.target.value as TarefaPrioridade)
+                  }
                   disabled={isSubmitting}
                   className="flex-1 px-2 py-1 text-xs rounded-lg bg-muted/40 border border-border/50 focus:outline-none"
                 >
@@ -199,11 +271,19 @@ export function TarefaCard({
                   disabled={isSubmitting || !editTitle.trim()}
                   className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-blue-500/12 text-blue-500 hover:bg-blue-500/20 transition-colors disabled:opacity-50"
                 >
-                  {isSubmitting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
+                  {isSubmitting ? (
+                    <Loader2 className="h-3 w-3 animate-spin" />
+                  ) : (
+                    <Check className="h-3 w-3" />
+                  )}
                   Salvar
                 </button>
                 <button
-                  onClick={() => { setIsEditing(false); setEditTitle(tarefa.titulo); setEditPrioridade(tarefa.prioridade); }}
+                  onClick={() => {
+                    setIsEditing(false);
+                    setEditTitle(tarefa.titulo);
+                    setEditPrioridade(tarefa.prioridade);
+                  }}
                   disabled={isSubmitting}
                   className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium text-muted-foreground hover:bg-accent transition-colors"
                 >
@@ -236,17 +316,28 @@ export function TarefaCard({
 
               <div className="flex items-center gap-1.5 flex-wrap">
                 {/* Priority */}
-                <span className={cn("inline-flex items-center gap-1 text-[10px] font-medium", pConfig.color)}>
-                  <span className={cn("h-1.5 w-1.5 rounded-full", pConfig.dot)} />
+                <span
+                  className={cn(
+                    "inline-flex items-center gap-1 text-[10px] font-medium",
+                    pConfig.color,
+                  )}
+                >
+                  <span
+                    className={cn("h-1.5 w-1.5 rounded-full", pConfig.dot)}
+                  />
                   {pConfig.label}
                 </span>
 
                 {/* Due date */}
                 {tarefa.dataVencimento && (
-                  <span className={cn(
-                    "inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md",
-                    isVencendoHoje ? "bg-blue-500/10 text-blue-500" : "bg-muted/60 text-muted-foreground/60",
-                  )}>
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md",
+                      isVencendoHoje
+                        ? "bg-blue-500/10 text-blue-500"
+                        : "bg-muted/60 text-muted-foreground/60",
+                    )}
+                  >
                     <Calendar className="h-2.5 w-2.5" />
                     {formatDate(tarefa.dataVencimento)}
                   </span>
@@ -254,7 +345,13 @@ export function TarefaCard({
 
                 {/* Status */}
                 {showStatus && (
-                  <span className={cn("text-[10px] font-medium px-1.5 py-0.5 rounded-md", sConfig.bg, sConfig.text)}>
+                  <span
+                    className={cn(
+                      "text-[10px] font-medium px-1.5 py-0.5 rounded-md",
+                      sConfig.bg,
+                      sConfig.text,
+                    )}
+                  >
                     {sConfig.label}
                   </span>
                 )}
@@ -281,19 +378,26 @@ export function TarefaCard({
 
             {menuOpen && (
               <>
-                <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setMenuOpen(false)}
+                />
                 <div
                   className="absolute right-0 top-full mt-1 z-50 w-36 overflow-hidden rounded-xl"
                   style={{
                     background: "var(--popover)",
                     border: "1px solid rgba(255,255,255,0.08)",
-                    boxShadow: "0 8px 24px -4px oklch(0.18 0.02 250 / 0.18), inset 0 1px 0 rgba(255,255,255,0.06)",
+                    boxShadow:
+                      "0 8px 24px -4px oklch(0.18 0.02 250 / 0.18), inset 0 1px 0 rgba(255,255,255,0.06)",
                     backdropFilter: "blur(16px) saturate(160%)",
                   }}
                 >
                   <div className="p-1">
                     <button
-                      onClick={() => { setIsEditing(true); setMenuOpen(false); }}
+                      onClick={() => {
+                        setIsEditing(true);
+                        setMenuOpen(false);
+                      }}
                       disabled={isConcluida}
                       className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-sm hover:bg-accent/70 transition-colors text-left disabled:opacity-40"
                     >
@@ -301,7 +405,10 @@ export function TarefaCard({
                       Editar
                     </button>
                     <button
-                      onClick={() => { onDelete(tarefa.id); setMenuOpen(false); }}
+                      onClick={() => {
+                        onDelete(tarefa.id);
+                        setMenuOpen(false);
+                      }}
                       className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-sm hover:bg-destructive/10 text-destructive transition-colors text-left"
                     >
                       <Trash2 className="h-3.5 w-3.5" />

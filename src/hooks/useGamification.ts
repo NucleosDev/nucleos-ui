@@ -9,6 +9,7 @@ export const GAMIFICATION_KEYS = {
   achievements: ["gamification", "achievements"] as const,
   history: ["gamification", "history"] as const,
   streak: ["gamification", "streak"] as const,
+  energy: ["gamification", "energy"] as const,
 };
 
 export function useGamification() {
@@ -71,6 +72,16 @@ export function useGamification() {
     });
   };
 
+  // Energia do usuário
+  const useEnergy = () => {
+    return useQuery({
+      queryKey: GAMIFICATION_KEYS.energy,
+      queryFn: () => gamificacaoService.getEnergy(),
+      staleTime: 1000 * 60,
+      refetchInterval: 1000 * 60 * 5,
+    });
+  };
+
   // Invalidar cache
   const invalidateStats = () => {
     queryClient.invalidateQueries({ queryKey: GAMIFICATION_KEYS.stats });
@@ -86,6 +97,7 @@ export function useGamification() {
     useAchievements,
     useXpHistory,
     useStreak,
+    useEnergy,
     invalidateStats,
   };
 }
