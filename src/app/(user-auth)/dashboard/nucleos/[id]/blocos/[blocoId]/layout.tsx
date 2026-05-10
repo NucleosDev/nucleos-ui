@@ -7,53 +7,71 @@ import { useNucleo } from "@/hooks/useNucleo";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import {
-  ArrowLeft, Layers, BookOpen, CheckSquare, ListTodo,
-  CalendarDays, Timer, Activity, GripVertical, Calculator,
+  ArrowLeft,
+  Layers,
+  BookOpen,
+  CheckSquare,
+  ListTodo,
+  CalendarDays,
+  Timer,
+  Activity,
+  GripVertical,
+  Calculator,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 const blocoIconMap: Record<string, LucideIcon> = {
-  tarefas:   CheckSquare,
-  habitos:   Activity,
-  habito:    Activity,
-  timer:     Timer,
-  timers:    Timer,
-  notas:     BookOpen,
-  lista:     ListTodo,
+  tarefas: CheckSquare,
+  habitos: Activity,
+  habito: Activity,
+  timer: Timer,
+  timers: Timer,
+  notas: BookOpen,
+  lista: ListTodo,
   calendario: CalendarDays,
-  calculo:   Calculator,
-  colecoes:  Layers,
+  calculo: Calculator,
+  colecoes: Layers,
 };
 
 const blocoAccent: Record<string, string> = {
-  tarefas:   "#3b82f6",
-  habitos:   "#22c55e",
-  habito:    "#22c55e",
-  timer:     "#f97316",
-  timers:    "#f97316",
-  notas:     "#a855f7",
-  lista:     "#06b6d4",
+  tarefas: "#3b82f6",
+  habitos: "#22c55e",
+  habito: "#22c55e",
+  timer: "#f97316",
+  timers: "#f97316",
+  notas: "#a855f7",
+  lista: "#06b6d4",
   calendario: "#6366f1",
-  calculo:   "#ec4899",
-  colecoes:  "#10b981",
+  calculo: "#ec4899",
+  colecoes: "#10b981",
 };
 
 const blocoLabels: Record<string, string> = {
-  tarefas: "Tarefas", habitos: "Hábitos", habito: "Hábito",
-  timer: "Timer", timers: "Timers", notas: "Notas",
-  lista: "Lista", calendario: "Calendário",
-  calculo: "Calculadora", colecoes: "Coleções",
+  tarefas: "Tarefas",
+  habitos: "Hábitos",
+  habito: "Hábito",
+  timer: "Timer",
+  timers: "Timers",
+  notas: "Notas",
+  lista: "Lista",
+  calendario: "Calendário",
+  calculo: "Calculadora",
+  colecoes: "Coleções",
 };
 
 export default function BlocoLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const params   = useParams();
-  const router   = useRouter();
+  const params = useParams();
+  const router = useRouter();
   const nucleoId = params.id as string;
-  const blocoId  = params.blocoId as string;
+  const blocoId = params.blocoId as string;
 
-  const { bloco, isLoading: blocoLoading, error: blocoError } = useBloco(blocoId, nucleoId);
+  const {
+    bloco,
+    isLoading: blocoLoading,
+    error: blocoError,
+  } = useBloco(blocoId, nucleoId);
   const { data: nucleo, isLoading: nucleoLoading } = useNucleo(nucleoId);
 
   if (blocoLoading || nucleoLoading) {
@@ -73,7 +91,9 @@ export default function BlocoLayout({
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-base font-semibold mb-2">Bloco não encontrado</p>
-          <p className="text-sm text-muted-foreground mb-5">O bloco foi removido ou não existe.</p>
+          <p className="text-sm text-muted-foreground mb-5">
+            O bloco foi removido ou não existe.
+          </p>
           <button
             onClick={() => router.back()}
             className="px-4 py-2 rounded-[var(--radius-md)] bg-primary text-primary-foreground text-sm font-medium hover:opacity-90"
@@ -101,11 +121,12 @@ export default function BlocoLayout({
     );
   }
 
-  const accent     = blocoAccent[bloco.tipo] ?? nucleo.corDestaque ?? "#6366f1";
+  const accent = blocoAccent[bloco.tipo] ?? nucleo.corDestaque ?? "#6366f1";
   const corDestaque = nucleo.corDestaque || "#6366f1";
-  const BlocoIcon  = blocoIconMap[bloco.tipo] ?? GripVertical;
+  const BlocoIcon = blocoIconMap[bloco.tipo] ?? GripVertical;
   const blocoTitle = bloco.titulo || blocoLabels[bloco.tipo] || bloco.tipo;
-  const capaUrl    = nucleo.imagemCapa || `https://picsum.photos/seed/${nucleo.id}/1200/400`;
+  const capaUrl =
+    nucleo.imagemCapa || `https://picsum.photos/seed/${nucleo.id}/1200/400`;
 
   return (
     <div className="min-h-screen bg-background">
@@ -137,7 +158,12 @@ export default function BlocoLayout({
 
         {/* Wave transition */}
         <div className="absolute bottom-0 left-0 w-full pointer-events-none z-10">
-          <svg viewBox="0 0 500 80" preserveAspectRatio="none" className="w-full h-[50px] -mb-px" fill="var(--background)">
+          <svg
+            viewBox="0 0 500 80"
+            preserveAspectRatio="none"
+            className="w-full h-[50px] -mb-px"
+            fill="var(--background)"
+          >
             <path d="M0,30 C120,-20 370,80 500,40 L500,80 L0,80 Z" />
           </svg>
         </div>
@@ -151,10 +177,15 @@ export default function BlocoLayout({
             backdropFilter: "blur(12px) saturate(160%)",
             WebkitBackdropFilter: "blur(12px) saturate(160%)",
             border: "1px solid rgba(255,255,255,0.18)",
-            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2), 0 2px 8px rgba(0,0,0,0.15)",
+            boxShadow:
+              "inset 0 1px 0 rgba(255,255,255,0.2), 0 2px 8px rgba(0,0,0,0.15)",
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(0,0,0,0.32)")}
-          onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(0,0,0,0.22)")}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.background = "rgba(0,0,0,0.32)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.background = "rgba(0,0,0,0.22)")
+          }
         >
           <ArrowLeft className="h-4 w-4" />
           {nucleo.nome}
@@ -175,9 +206,12 @@ export default function BlocoLayout({
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 md:px-8 pb-16">
+      <div className="max-w-4xl mx-auto px-8 md:px-4 pb-4">
         {/* Floating liquid glass icon */}
-        <div className="relative z-30 -mt-7 mb-5">
+        <div
+          className="relative z-30 -mt-8 mb-5 "
+          style={{ top: "-25px", left: "18px" }}
+        >
           <div className="relative inline-flex">
             {/* Glow */}
             <div
@@ -190,7 +224,8 @@ export default function BlocoLayout({
               style={{
                 background: `linear-gradient(145deg, ${accent}ee, ${accent}bb)`,
                 border: "1.5px solid rgba(255,255,255,0.28)",
-                boxShadow: "inset 0 1.5px 0 rgba(255,255,255,0.40), 0 6px 18px rgba(0,0,0,0.20)",
+                boxShadow:
+                  "inset 0 1.5px 0 rgba(255,255,255,0.40), 0 6px 18px rgba(0,0,0,0.20)",
               }}
             >
               <BlocoIcon className="h-6 w-6 text-white" />
@@ -200,8 +235,12 @@ export default function BlocoLayout({
 
         {/* Title */}
         <div className="mb-2">
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{blocoTitle}</h1>
-          <p className="text-xs text-muted-foreground mt-0.5 capitalize">{bloco.tipo}</p>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+            {blocoTitle}
+          </h1>
+          <p className="text-xs text-muted-foreground mt-0.5 capitalize">
+            {bloco.tipo}
+          </p>
         </div>
       </div>
 

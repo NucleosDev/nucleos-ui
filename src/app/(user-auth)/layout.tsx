@@ -53,7 +53,7 @@ export default function UserAuthLayout({
 
   return (
     <ProtectedRoute>
-      <div className="relative min-h-screen bg-background flex flex-col">
+      <div className="">
         {/* Header condicional */}
 
         {/* Layout principal com sidebar e conteúdo */}

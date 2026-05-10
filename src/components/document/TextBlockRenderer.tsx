@@ -197,7 +197,7 @@ export function TextBlockRenderer({
           }}
         >
           {localCompleted && (
-            <svg viewBox="0 0 10 8" fill="none" className="text">
+            <svg viewBox="0 0 10 8" fill="none" className="text-white">
               <path
                 d="M1 4l3 3 5-6"
                 stroke="currentColor"

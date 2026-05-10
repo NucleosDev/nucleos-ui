@@ -32,6 +32,7 @@ import {
 import { CriarBlocoModal } from "@/components/blocos/CriarBlocoModal";
 import { BlocoHoverActions } from "@/components/blocos/BlocoHoverActions";
 import { cn } from "@/lib/utils";
+import { LiquidGlass } from "@/components/ui/liquid-glass";
 import type { Bloco, CreateBlocoPayload } from "@/types/bloco";
 
 import { ColecoesBlocoCard } from "@/components/blocos/cruds/ColecoesBlocoCard";
@@ -278,32 +279,38 @@ export function BlocoCard({
         )}
 
         {compact ? (
-          /* ── Compact card (grid/list view) - IMPROVED SPACING ── */
-          <div
+          /* ── Compact card (grid/list view) ── */
+          <LiquidGlass
+            variant="subtle"
+            radius="12px"
+            interactive={false}
             className={cn(
-              "relative overflow-hidden",
-              "rounded-xl border border-border/60 bg-card",
+              "overflow-hidden min-h-[120px]",
               "transition-all duration-200 ease-out",
-              isHovered && "shadow-md border-border ring-1 ring-border/10",
+              isHovered && "shadow-md",
               isDeleting && "opacity-50 pointer-events-none",
             )}
-            style={{
-              minHeight: "120px",
-              background: `linear-gradient(135deg, ${meta.accentBg} 0%, var(--card) 100%)`,
-            }}
           >
-            {/* Accent left rail - more subtle */}
-            <div
-              className="absolute left-0 top-0 bottom-0 w-1 opacity-50 transition-opacity duration-200"
-              style={{
-                background: `linear-gradient(to bottom, ${meta.accent}, ${meta.accent}88)`,
-              }}
-            />
+            {/* Accent decorations */}
+            <div className="absolute inset-0 overflow-hidden rounded-xl pointer-events-none">
+              <div
+                className="absolute left-0 top-0 bottom-0 w-1 opacity-50 transition-opacity duration-200"
+                style={{
+                  background: `linear-gradient(to bottom, ${meta.accent}, ${meta.accent}88)`,
+                }}
+              />
+              <div
+                className="absolute inset-0 opacity-20"
+                style={{
+                  background: `linear-gradient(135deg, ${meta.accentBg}, transparent 60%)`,
+                }}
+              />
+            </div>
 
             {/* Clickable link overlay */}
             <Link
               href={`/dashboard/nucleos/${nucleoId}/blocos/${bloco.id}`}
-              className="absolute inset-0 z-0 rounded-xl"
+              className="absolute inset-0 rounded-xl"
               aria-label={`Abrir ${titulo}`}
             />
 
@@ -441,7 +448,7 @@ export function BlocoCard({
                   : `Clique para abrir o bloco de ${meta.label.toLowerCase()}`}
               </div>
             </div>
-          </div>
+          </LiquidGlass>
         ) : (
           /* ── Non-compact: document-native section card ── */
           <div className="relative">
@@ -566,31 +573,36 @@ export function BlocoCard({
                   exit={{ opacity: 0, y: -8 }}
                   className="absolute -bottom-4 left-1/2 -translate-x-1/2 z-20"
                 >
-                  <div className="flex items-center gap-1 bg-background border border-border rounded-full shadow-lg px-2 py-1.5">
+                  <LiquidGlass
+                    variant="floating"
+                    radius="999px"
+                    interactive={false}
+                    className="flex items-center gap-1 px-2 py-1.5"
+                  >
                     <button
                       onClick={() => {
                         setModalTipo("abaixo");
                         setModalCriarAberto(true);
                       }}
-                      className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-all"
+                      className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-all"
                       title="Adicionar bloco abaixo"
                     >
                       <Plus className="h-3.5 w-3.5" />
                       Adicionar abaixo
                     </button>
-                    <div className="w-px h-4 bg-border" />
+                    <div className="w-px h-4 bg-border/60" />
                     <button
                       onClick={() => {
                         setModalTipo("sub");
                         setModalCriarAberto(true);
                       }}
-                      className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-all"
+                      className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-all"
                       title="Adicionar sub-bloco"
                     >
                       <Layers className="h-3.5 w-3.5" />
                       Sub-bloco
                     </button>
-                  </div>
+                  </LiquidGlass>
                 </motion.div>
               )}
             </AnimatePresence>

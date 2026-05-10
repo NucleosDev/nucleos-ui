@@ -13,7 +13,7 @@ import {
   Snail,
   Orbit,
   Bolt,
-  Github,
+  Cat,
   SendHorizontal,
   TrendingUp,
   Target,
@@ -453,7 +453,7 @@ function ImportButtons({ onImport }: { onImport?: (source: string) => void }) {
             name: "Figma",
             icon: <FigmaIcon className="size-4" />,
           },
-          { id: "github", name: "GitHub", icon: <Github className="size-4" /> },
+          { id: "github", name: "GitHub", icon: <Cat className="size-4" /> },
         ].map((option) => (
           <button
             key={option.id}

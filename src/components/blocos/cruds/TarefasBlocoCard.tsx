@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { useTarefas } from "@/hooks/useTarefas";
 import { toast } from "@/hooks/use-toast";
 import type { Bloco } from "@/types/bloco";
@@ -118,9 +119,11 @@ export function TarefasBlocoCard({ bloco }: TarefasBlocoCardProps) {
         {/* Toolbar */}
         <div className="flex items-center justify-between gap-2">
           {/* View toggle — glass segment */}
-          <div
-            className="flex items-center rounded-lg border border-border/50 bg-muted/30 p-0.5"
-            style={{ backdropFilter: "blur(8px)" }}
+          <LiquidGlass
+            variant="subtle"
+            radius="10px"
+            interactive={false}
+            className="flex items-center p-0.5"
           >
             {(["kanban", "list"] as const).map((mode) => {
               const Icon = mode === "kanban" ? LayoutGrid : List;
@@ -139,7 +142,7 @@ export function TarefasBlocoCard({ bloco }: TarefasBlocoCardProps) {
                 </button>
               );
             })}
-          </div>
+          </LiquidGlass>
 
           {/* Progress */}
           {total > 0 && (

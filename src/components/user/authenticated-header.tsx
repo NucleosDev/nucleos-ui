@@ -24,6 +24,7 @@ import { useBlocos } from "@/hooks/useBlocos";
 import { useColecoes } from "@/hooks/useColecoes";
 import { useTimers } from "@/hooks/useTimers";
 import { NotificationBell } from "@/components/gamification/NotificationBell";
+import { LiquidGlass } from "@/components/ui/liquid-glass";
 
 interface AuthenticatedHeaderProps {
   onToggleSidebar?: () => void;
@@ -31,9 +32,9 @@ interface AuthenticatedHeaderProps {
 }
 
 const USER_MENU = [
-  { icon: User,       label: "Perfil",         href: ROUTES.DASHBOARD_PROFILE,  },
-  { icon: CreditCard, label: "Planos",          href: ROUTES.PLANOS,             },
-  { icon: Settings,   label: "Configurações",   href: ROUTES.DASHBOARD_SETTINGS, },
+  { icon: User, label: "Perfil", href: ROUTES.DASHBOARD_PROFILE },
+  { icon: CreditCard, label: "Planos", href: ROUTES.PLANOS },
+  { icon: Settings, label: "Configurações", href: ROUTES.DASHBOARD_SETTINGS },
 ];
 
 export function AuthenticatedHeader({
@@ -73,23 +74,32 @@ export function AuthenticatedHeader({
     return name.charAt(0).toUpperCase() + name.slice(1);
   };
 
-  const openMenu  = () => { if (menuTimeout.current) clearTimeout(menuTimeout.current); setMenuOpen(true); };
-  const closeMenu = () => { menuTimeout.current = setTimeout(() => setMenuOpen(false), 180); };
+  const openMenu = () => {
+    if (menuTimeout.current) clearTimeout(menuTimeout.current);
+    setMenuOpen(true);
+  };
+  const closeMenu = () => {
+    menuTimeout.current = setTimeout(() => setMenuOpen(false), 180);
+  };
 
   return (
     <header className="sticky top-0 z-40 h-13 bg-background/85 backdrop-blur-[var(--glass-blur-sm)] border-b border-border/40">
       <div className="flex h-full items-center px-4 sm:px-6 gap-3">
-
         {/* Sidebar toggle */}
         <button
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors duration-[var(--duration-fast)]"
           onClick={onToggleSidebar}
-          aria-label={isSidebarCollapsed ? "Expandir barra lateral" : "Recolher barra lateral"}
-        >
-          {isSidebarCollapsed
-            ? <PanelLeftOpen  className="h-4 w-4" />
-            : <PanelLeftClose className="h-4 w-4" />
+          aria-label={
+            isSidebarCollapsed
+              ? "Expandir barra lateral"
+              : "Recolher barra lateral"
           }
+        >
+          {isSidebarCollapsed ? (
+            <PanelLeftOpen className="h-4 w-4" />
+          ) : (
+            <PanelLeftClose className="h-4 w-4" />
+          )}
         </button>
 
         {/* Search — grows to fill */}
@@ -141,15 +151,17 @@ export function AuthenticatedHeader({
               {menuOpen && (
                 <motion.div
                   initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                  animate={{ opacity: 1, y: 0,  scale: 1    }}
-                  exit ={{ opacity: 0, y: 6,  scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 6, scale: 0.96 }}
                   transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
                   className="absolute top-full right-0 mt-2 z-50 w-64"
                   onMouseEnter={openMenu}
                   onMouseLeave={closeMenu}
                 >
-                  <div
-                    className="rounded-xl border border-border bg-popover shadow-[var(--shadow-lg)] overflow-hidden"
+                  <LiquidGlass
+                    variant="floating"
+                    radius="16px"
+                    interactive={false}
                     role="menu"
                   >
                     {/* User info */}
@@ -165,7 +177,9 @@ export function AuthenticatedHeader({
                           <p className="text-sm font-semibold truncate text-foreground">
                             {user?.fullName || "Usuário"}
                           </p>
-                          <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                          <p className="text-xs text-muted-foreground truncate">
+                            {user?.email}
+                          </p>
                           {planLoading ? (
                             <Skeleton className="h-3.5 w-16 mt-0.5" />
                           ) : getPlanLabel() ? (
@@ -197,14 +211,17 @@ export function AuthenticatedHeader({
                     <div className="py-1.5 px-1.5 border-t border-border/60">
                       <button
                         role="menuitem"
-                        onClick={() => { logout(); setMenuOpen(false); }}
+                        onClick={() => {
+                          logout();
+                          setMenuOpen(false);
+                        }}
                         className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/8 transition-colors duration-[var(--duration-fast)]"
                       >
                         <LogOut className="h-4 w-4 shrink-0" />
                         Sair
                       </button>
                     </div>
-                  </div>
+                  </LiquidGlass>
                 </motion.div>
               )}
             </AnimatePresence>

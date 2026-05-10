@@ -21,11 +21,11 @@ interface SortableDocumentBlockProps {
 
 // Headings get structural breathing room above them
 const BLOCK_TOP_SPACING: Partial<Record<string, string>> = {
-  h1:      "mt-10 first:mt-0",
-  h2:      "mt-7  first:mt-0",
-  h3:      "mt-5  first:mt-0",
+  h1: "mt-10 first:mt-0",
+  h2: "mt-7  first:mt-0",
+  h3: "mt-5  first:mt-0",
   divider: "my-6",
-  header:  "",
+  header: "",
 };
 
 export function SortableDocumentBlock({
@@ -55,19 +55,29 @@ export function SortableDocumentBlock({
   };
 
   const showGutter = !readOnly && (isHovered || isActive) && !isDragging;
-  const topSpacing  = BLOCK_TOP_SPACING[block.tipo] ?? "";
-  const isFunctional = block.tipo !== "header" &&
-    !["paragraph","h1","h2","h3","bullet","numbered","quote","callout","code","divider","todo","column-layout"].includes(block.tipo);
+  const topSpacing = BLOCK_TOP_SPACING[block.tipo] ?? "";
+  const isFunctional =
+    block.tipo !== "header" &&
+    ![
+      "paragraph",
+      "h1",
+      "h2",
+      "h3",
+      "bullet",
+      "numbered",
+      "quote",
+      "callout",
+      "code",
+      "divider",
+      "todo",
+      "column-layout",
+    ].includes(block.tipo);
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={cn(
-        "group relative",
-        topSpacing,
-        isDragging && "z-50",
-      )}
+      className={cn("group relative", topSpacing, isDragging && "z-50")}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -89,7 +99,10 @@ export function SortableDocumentBlock({
           {/* Add below */}
           {onAddBelow && !isFunctional && (
             <button
-              onClick={(e) => { e.stopPropagation(); onAddBelow(); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onAddBelow();
+              }}
               title="Adicionar bloco"
               className={cn(
                 "flex h-5 w-5 items-center justify-center rounded-md",
@@ -125,7 +138,11 @@ export function SortableDocumentBlock({
         )}
         onClick={(e) => {
           const target = e.target as HTMLElement;
-          if (target.closest("[contenteditable]") || target.closest(".ProseMirror")) return;
+          if (
+            target.closest("[contenteditable]") ||
+            target.closest(".ProseMirror")
+          )
+            return;
           onSelect(block.id, e);
         }}
       >

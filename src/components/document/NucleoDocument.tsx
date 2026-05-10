@@ -16,6 +16,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { LayoutGrid, List } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -30,13 +31,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import { SortableDocumentBlock } from "./SortableDocumentBlock";
 import { SelectionToolbar } from "./SelectionToolbar";
-import { TiptapBlockEditor } from "./TiptapBlockEditor";
+import { TextBlockRenderer } from "./TextBlockRenderer";
 import { FunctionalBlockCard } from "./FunctionalBlockCard";
 import { LayoutRowRenderer } from "./LayoutRowRenderer";
 import { HeaderBlock } from "./HeaderBlock";
 import { AddBlockTrigger } from "./AddBlockTrigger";
 import { SlashMenu } from "./SlashMenu";
-import { useDocumentBlocks } from "@/hooks/useDocumentBlocks";
+import { useCanvasBlocks } from "@/hooks/useCanvas";
 import { useBlocos } from "@/hooks/useBlocos";
 import { useNucleo } from "@/hooks/useNucleo";
 import { useRouter } from "next/navigation";
@@ -44,6 +45,7 @@ import { toast } from "@/hooks/use-toast";
 import { BLOCO_INITIALIZERS } from "@/lib/bloco-initializers";
 import {
   isFunctional,
+  isTextType,
   type DocumentBlock,
   type DocumentBlockType,
   type LayoutColumn,
@@ -52,6 +54,20 @@ import {
 import type { CreateBlocoPayload, Bloco } from "@/types/bloco";
 
 const genId = () => crypto.randomUUID();
+
+function toCanvasItems(blocks: DocumentBlock[]) {
+  return blocks
+    .filter((b) => b.tipo !== "header" && !isFunctional(b.tipo))
+    .map((b) => ({
+      id: b.id,
+      type: b.tipo,
+      content: b.conteudo || "",
+      completed: b.completed,
+      ...(b.tipo === "column-layout" && b.configuracoes
+        ? { configuracoes: b.configuracoes }
+        : {}),
+    }));
+}
 
 interface NucleoDocumentProps {
   nucleoId: string;
@@ -66,6 +82,10 @@ export function NucleoDocument({
 }: NucleoDocumentProps) {
   const router = useRouter();
 
+  // ═══════════════════════════════════════════════════════════════════════
+  // HOOKS — TODOS os hooks devem ficar nesta seção, ANTES de qualquer return
+  // ═══════════════════════════════════════════════════════════════════════
+
   // ── Hooks de dados ─────────────────────────────────────────────────────
   const { data: nucleo, isLoading: nucleoLoading } = useNucleo(nucleoId);
   const {
@@ -78,40 +98,15 @@ export function NucleoDocument({
     isDeleting,
   } = useBlocos(nucleoId);
   const {
-    blocks: docBlocks,
-    isLoading: docLoading,
+    items: savedCanvas,
+    isLoading: canvasLoading,
+    updateItems,
     isSaving,
-    addBlock: addDocBlock,
-    deleteBlock: deleteDocBlock,
-    updateContent,
-    updateConfiguracoes,
-    reorder,
-  } = useDocumentBlocks(nucleoId);
+  } = useCanvasBlocks(nucleoId);
 
-  // ── Blocos computados para render ──────────────────────────────────────
-  const blocks = useMemo(() => {
-    const headerBlock: DocumentBlock = {
-      id: "header-block",
-      nucleoId,
-      tipo: "header",
-      posicao: -1,
-      isDeletable: false,
-    };
-    const funcDocBlocks: DocumentBlock[] = funcBlocos
-      .filter((b: Bloco) => b.tipo !== "canvas")
-      .map((b: Bloco, i: number): DocumentBlock => ({
-        id: b.id,
-        nucleoId,
-        tipo: b.tipo as DocumentBlockType,
-        titulo: b.titulo ?? undefined,
-        posicao: docBlocks.length + i + 1,
-        isDeletable: true,
-        blocoRef: b,
-      }));
-    return [headerBlock, ...docBlocks, ...funcDocBlocks];
-  }, [docBlocks, funcBlocos, nucleoId]);
-
-  // ── Estado interno ─────────────────────────────────────────────────────
+  // ── Estado ─────────────────────────────────────────────────────────────
+  const [blocks, setBlocks] = useState<DocumentBlock[]>([]);
+  const [initialized, setInitialized] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [activeBlockId, setActiveBlockId] = useState<string | null>(null);
   const [draggingBlock, setDraggingBlock] = useState<DocumentBlock | null>(
@@ -122,8 +117,15 @@ export function NucleoDocument({
   const [savedIndicator, setSavedIndicator] = useState<
     "saving" | "saved" | "idle"
   >("idle");
-  const containerRef = useRef<HTMLDivElement>(null);
-  const savedIndicatorTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const [viewMode, setViewMode] = useState<"list" | "grid">(() => {
+    if (typeof window !== "undefined") {
+      return (
+        (localStorage.getItem("nucleo-view-mode") as "list" | "grid") || "list"
+      );
+    }
+    return "list";
+  });
 
   const [slashMenu, setSlashMenu] = useState<{
     open: boolean;
@@ -133,9 +135,20 @@ export function NucleoDocument({
     columnId?: string;
   }>({ open: false, blockId: "", pos: { top: 0, left: 0 } });
 
+  // ── Refs ───────────────────────────────────────────────────────────────
+  const containerRef = useRef<HTMLDivElement>(null);
+  const savedIndicatorTimer = useRef<NodeJS.Timeout | null>(null);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // ── Sensores DnD ──────────────────────────────────────────────────────
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
+
+  // ── Efeitos ────────────────────────────────────────────────────────────
+  useEffect(() => {
+    localStorage.setItem("nucleo-view-mode", viewMode);
+  }, [viewMode]);
 
   useEffect(() => {
     if (isSaving) {
@@ -149,84 +162,280 @@ export function NucleoDocument({
         2000,
       );
     }
-  }, [isSaving]);
+  }, [isSaving, savedIndicator]);
 
-  // ── Handlers de bloco ─────────────────────────────────────────────────
+  // Inicialização com garantia de IDs únicos
+  useEffect(() => {
+    if (initialized || canvasLoading || blocosLoading || nucleoLoading) return;
+
+    const usedIds = new Set<string>();
+    const headerBlock: DocumentBlock = {
+      id: "header-block",
+      nucleoId,
+      tipo: "header",
+      posicao: -1,
+      isDeletable: false,
+    };
+    usedIds.add("header-block");
+
+    let textBlocks: DocumentBlock[] = [];
+    if (savedCanvas.length > 0) {
+      textBlocks = savedCanvas
+        .filter(
+          (item: any) => isTextType(item.type) || item.type === "column-layout",
+        )
+        .map((item: any, i: number) => {
+          let id = item.id;
+          if (!id || usedIds.has(id)) id = genId();
+          usedIds.add(id);
+
+          if (item.type === "column-layout") {
+            const columns = ((item.configuracoes?.columns ?? []) as any[]).map(
+              (col: any) => ({
+                id: col.id ?? genId(),
+                width: col.width ?? 50,
+                blocks: ((col.blocks ?? []) as any[]).map(
+                  (cb: any, j: number): DocumentBlock => {
+                    let cbId = cb.id;
+                    if (!cbId || usedIds.has(cbId)) cbId = genId();
+                    usedIds.add(cbId);
+                    return {
+                      id: cbId,
+                      nucleoId,
+                      tipo: cb.type as DocumentBlockType,
+                      conteudo: cb.content || "",
+                      posicao: j,
+                      completed: cb.completed,
+                    };
+                  },
+                ),
+              }),
+            );
+            return {
+              id,
+              nucleoId,
+              tipo: "column-layout" as DocumentBlockType,
+              posicao: i,
+              configuracoes: { columns },
+            };
+          }
+
+          return {
+            id,
+            nucleoId,
+            tipo: item.type as DocumentBlockType,
+            conteudo: item.content || "",
+            posicao: i,
+            completed: item.completed,
+          };
+        });
+    } else {
+      const newId = genId();
+      usedIds.add(newId);
+      textBlocks = [
+        { id: newId, nucleoId, tipo: "paragraph", conteudo: "", posicao: 0 },
+      ];
+    }
+
+    const funcDocBlocks: DocumentBlock[] = funcBlocos
+      .filter((b: Bloco) => {
+        if (b.tipo === "canvas") return false;
+        if (usedIds.has(b.id)) return false;
+        return true;
+      })
+      .map((b: Bloco, i: number) => {
+        usedIds.add(b.id);
+        return {
+          id: b.id,
+          nucleoId,
+          tipo: b.tipo as DocumentBlockType,
+          titulo: b.titulo ?? undefined,
+          posicao: textBlocks.length + i + 1,
+          isDeletable: true,
+          blocoRef: b,
+        };
+      });
+
+    const combined = [headerBlock, ...textBlocks, ...funcDocBlocks];
+    const seen = new Set<string>();
+    const unique = combined.filter((block) => {
+      if (seen.has(block.id)) {
+        console.warn(
+          `[NucleoDocument] ⚠️ Bloco duplicado removido: ${block.id}`,
+        );
+        return false;
+      }
+      seen.add(block.id);
+      return true;
+    });
+
+    setBlocks(unique);
+    setInitialized(true);
+  }, [
+    canvasLoading,
+    blocosLoading,
+    nucleoLoading,
+    initialized,
+    savedCanvas,
+    funcBlocos,
+    nucleoId,
+  ]);
+
+  // ── Persistência ───────────────────────────────────────────────────────
+  const save = useCallback(
+    (newBlocks: DocumentBlock[]) => {
+      updateItems(toCanvasItems(newBlocks) as any);
+    },
+    [updateItems],
+  );
+
+  const debouncedSave = useCallback(
+    (newBlocks: DocumentBlock[]) => {
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+      setSavedIndicator("saving");
+      debounceTimerRef.current = setTimeout(() => save(newBlocks), 500);
+    },
+    [save],
+  );
+
+  useEffect(() => {
+    if (!initialized) return;
+    debouncedSave(blocks);
+  }, [blocks, initialized, debouncedSave]);
+
+  // ── Índice de numbered-list ────────────────────────────────────────────
+  const listIndexMap = useMemo(() => {
+    const map = new Map<string, number>();
+    let count = 0;
+    let lastType = "";
+    for (const b of blocks) {
+      if (b.tipo === "numbered-list") {
+        count = lastType === "numbered-list" ? count + 1 : 1;
+        map.set(b.id, count);
+      } else {
+        count = 0;
+      }
+      lastType = b.tipo;
+    }
+    return map;
+  }, [blocks]);
+
+  // ── Handlers de bloco ──────────────────────────────────────────────────
   const handleUpdateBlock = useCallback(
     (id: string, updates: Partial<DocumentBlock>) => {
-      if (updates.conteudo !== undefined) {
-        updateContent(id, updates.conteudo, updates.tipo);
-      } else if (updates.tipo !== undefined) {
-        updateContent(id, "", updates.tipo);
-      }
+      setBlocks((prev) =>
+        prev.map((b) => (b.id === id ? { ...b, ...updates } : b)),
+      );
     },
-    [updateContent],
+    [],
   );
 
-  const handleDeleteBlock = useCallback(
-    (id: string) => {
-      const block = blocks.find((b) => b.id === id);
-      if ((block as DocumentBlock | undefined)?.isDeletable === false) return;
-      deleteDocBlock(id);
-      setActiveBlockId(null);
-    },
-    [blocks, deleteDocBlock],
-  );
+  const handleDeleteBlock = useCallback((id: string) => {
+    setBlocks((prev) => {
+      const block = prev.find((b) => b.id === id);
+      if (block?.isDeletable === false) return prev;
+      return prev.filter((b) => b.id !== id);
+    });
+    setActiveBlockId(null);
+  }, []);
 
   const handleAddBlock = useCallback(
     (tipo: DocumentBlockType, afterId?: string) => {
-      addDocBlock(tipo, afterId);
-      setTimeout(() => {
-        // Focus handled by the hook's optimistic insert — find the new block by type
-      }, 80);
+      const newBlock: DocumentBlock = {
+        id: genId(),
+        nucleoId,
+        tipo,
+        conteudo: tipo === "column-layout" ? undefined : "",
+        posicao: 0,
+        configuracoes:
+          tipo === "column-layout"
+            ? {
+                columns: [
+                  { id: genId(), width: 50, blocks: [] },
+                  { id: genId(), width: 50, blocks: [] },
+                ],
+              }
+            : undefined,
+      };
+      setBlocks((prev) => {
+        let next: DocumentBlock[];
+        if (afterId) {
+          const idx = prev.findIndex((b) => b.id === afterId);
+          if (idx === -1) return prev;
+          next = [...prev];
+          next.splice(idx + 1, 0, newBlock);
+        } else {
+          const lastTextIdx = [...prev]
+            .reverse()
+            .findIndex((b) => !isFunctional(b.tipo) && b.tipo !== "header");
+          const insertAt =
+            lastTextIdx === -1 ? prev.length : prev.length - lastTextIdx;
+          next = [...prev];
+          next.splice(insertAt, 0, newBlock);
+        }
+        return next.map((b, i) => ({ ...b, posicao: i }));
+      });
+      setActiveBlockId(newBlock.id);
+      if (tipo !== "column-layout") {
+        setTimeout(
+          () => document.getElementById(`block-${newBlock.id}`)?.focus(),
+          50,
+        );
+      }
     },
-    [addDocBlock],
+    [nucleoId],
   );
 
-  // ── Helpers para column-layout: recalcular configuracoes e persistir ──
-  const getUpdatedColumnConfig = useCallback(
+  // ── Handlers column-layout ─────────────────────────────────────────────
+  const handleUpdateBlockInColumn = useCallback(
     (
       columnLayoutId: string,
-      updater: (cols: LayoutColumn[]) => LayoutColumn[],
+      blockId: string,
+      updates: Partial<DocumentBlock>,
     ) => {
-      const block = blocks.find((b) => b.id === columnLayoutId);
-      if (!block?.configuracoes?.columns) return null;
-      return updater(block.configuracoes.columns as LayoutColumn[]);
-    },
-    [blocks],
-  );
-
-  // ── Handlers para blocos dentro de column-layout ──────────────────────
-  const handleUpdateBlockInColumn = useCallback(
-    (columnLayoutId: string, blockId: string, updates: Partial<DocumentBlock>) => {
-      const columns = getUpdatedColumnConfig(columnLayoutId, (cols) =>
-        cols.map((col) => ({
-          ...col,
-          blocks: col.blocks.map((cb) =>
-            cb.id === blockId ? { ...cb, ...updates } : cb,
-          ),
-        })),
+      setBlocks((prev) =>
+        prev.map((b) => {
+          if (b.id !== columnLayoutId || !b.configuracoes?.columns) return b;
+          const columns = (b.configuracoes.columns as LayoutColumn[]).map(
+            (col) => ({
+              ...col,
+              blocks: col.blocks.map((cb) =>
+                cb.id === blockId ? { ...cb, ...updates } : cb,
+              ),
+            }),
+          );
+          return { ...b, configuracoes: { ...b.configuracoes, columns } };
+        }),
       );
-      if (columns) updateConfiguracoes(columnLayoutId, { columns });
     },
-    [getUpdatedColumnConfig, updateConfiguracoes],
+    [],
   );
 
   const handleDeleteBlockInColumn = useCallback(
     (columnLayoutId: string, blockId: string) => {
-      const columns = getUpdatedColumnConfig(columnLayoutId, (cols) =>
-        cols.map((col) => ({
-          ...col,
-          blocks: col.blocks.filter((cb) => cb.id !== blockId),
-        })),
+      setBlocks((prev) =>
+        prev.map((b) => {
+          if (b.id !== columnLayoutId || !b.configuracoes?.columns) return b;
+          const columns = (b.configuracoes.columns as LayoutColumn[]).map(
+            (col) => ({
+              ...col,
+              blocks: col.blocks.filter((cb) => cb.id !== blockId),
+            }),
+          );
+          return { ...b, configuracoes: { ...b.configuracoes, columns } };
+        }),
       );
-      if (columns) updateConfiguracoes(columnLayoutId, { columns });
     },
-    [getUpdatedColumnConfig, updateConfiguracoes],
+    [],
   );
 
   const handleAddBlockInColumn = useCallback(
-    (columnLayoutId: string, tipo: DocumentBlockType, afterId: string, columnId?: string) => {
+    (
+      columnLayoutId: string,
+      tipo: DocumentBlockType,
+      afterId: string,
+      columnId?: string,
+    ) => {
       const newBlock: DocumentBlock = {
         id: genId(),
         nucleoId,
@@ -234,22 +443,28 @@ export function NucleoDocument({
         conteudo: "",
         posicao: 0,
       };
-      const columns = getUpdatedColumnConfig(columnLayoutId, (cols) =>
-        cols.map((col) => {
-          if (columnId && col.id !== columnId) return col;
-          const idx = col.blocks.findIndex((cb) => cb.id === afterId);
-          const next = [...col.blocks];
-          next.splice(idx + 1, 0, newBlock);
-          return { ...col, blocks: next };
+      setBlocks((prev) =>
+        prev.map((b) => {
+          if (b.id !== columnLayoutId || !b.configuracoes?.columns) return b;
+          const columns = (b.configuracoes.columns as LayoutColumn[]).map(
+            (col) => {
+              if (columnId && col.id !== columnId) return col;
+              const idx = col.blocks.findIndex((cb) => cb.id === afterId);
+              if (idx === -1) return col;
+              const newColBlocks = [...col.blocks];
+              newColBlocks.splice(idx + 1, 0, newBlock);
+              return { ...col, blocks: newColBlocks };
+            },
+          );
+          return { ...b, configuracoes: { ...b.configuracoes, columns } };
         }),
       );
-      if (columns) updateConfiguracoes(columnLayoutId, { columns });
       setActiveBlockId(newBlock.id);
     },
-    [nucleoId, getUpdatedColumnConfig, updateConfiguracoes],
+    [nucleoId],
   );
 
-  // ── Blocos funcionais ─────────────────────────────────────────────────
+  // ── Blocos funcionais ──────────────────────────────────────────────────
   const handleAddFunctional = useCallback(
     async (tipo: string, titulo?: string) => {
       try {
@@ -270,10 +485,10 @@ export function NucleoDocument({
     [nucleoId, createBloco],
   );
 
-  // Substituiu confirm() nativo — usa AlertDialog via deleteTarget
-  const handleDeleteFunctional = useCallback((id: string) => {
-    setDeleteTarget(id);
-  }, []);
+  const handleDeleteFunctional = useCallback(
+    (id: string) => setDeleteTarget(id),
+    [],
+  );
 
   const confirmDeleteFunctional = useCallback(async () => {
     if (!deleteTarget) return;
@@ -289,6 +504,17 @@ export function NucleoDocument({
 
   const handleEditTitle = useCallback(
     async (blockId: string, titulo: string) => {
+      setBlocks((prev) =>
+        prev.map((b) =>
+          b.id === blockId
+            ? {
+                ...b,
+                titulo,
+                blocoRef: b.blocoRef ? { ...b.blocoRef, titulo } : undefined,
+              }
+            : b,
+        ),
+      );
       try {
         await updateBloco({ id: blockId, payload: { titulo, nucleoId } });
       } catch {
@@ -298,7 +524,7 @@ export function NucleoDocument({
     [updateBloco, nucleoId],
   );
 
-  // ── Multi-seleção ─────────────────────────────────────────────────────
+  // ── Multi-seleção ──────────────────────────────────────────────────────
   const handleBlockClick = useCallback(
     (blockId: string, e: React.MouseEvent) => {
       e.stopPropagation();
@@ -311,10 +537,10 @@ export function NucleoDocument({
       } else if (e.shiftKey && lastSelectedId) {
         const startIdx = blocks.findIndex((b) => b.id === lastSelectedId);
         const endIdx = blocks.findIndex((b) => b.id === blockId);
+        if (startIdx === -1 || endIdx === -1) return;
         const [min, max] =
           startIdx < endIdx ? [startIdx, endIdx] : [endIdx, startIdx];
-        const rangeIds = blocks.slice(min, max + 1).map((b) => b.id);
-        setSelectedIds(new Set(rangeIds));
+        setSelectedIds(new Set(blocks.slice(min, max + 1).map((b) => b.id)));
       } else {
         setSelectedIds(new Set([blockId]));
       }
@@ -327,33 +553,26 @@ export function NucleoDocument({
   const handleDeleteSelected = useCallback(() => {
     selectedIds.forEach((id) => {
       const block = blocks.find((b) => b.id === id);
-      if (block && isFunctional(block.tipo)) {
-        handleDeleteFunctional(id);
-      } else {
-        handleDeleteBlock(id);
-      }
+      if (block && isFunctional(block.tipo)) handleDeleteFunctional(id);
+      else handleDeleteBlock(id);
     });
     setSelectedIds(new Set());
   }, [selectedIds, blocks, handleDeleteBlock, handleDeleteFunctional]);
 
   const handleContainerClick = useCallback(() => setSelectedIds(new Set()), []);
 
-  // Atalhos de teclado
+  // ── Atalhos de teclado ─────────────────────────────────────────────────
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setSelectedIds(new Set());
-
       if ((e.ctrlKey || e.metaKey) && e.key === "a") {
-        // Não rouba seleção de texto dentro de contentEditable
         const active = document.activeElement as HTMLElement | null;
         if (active?.contentEditable === "true") return;
         e.preventDefault();
-        const allBlockIds = blocks
-          .filter((b) => b.tipo !== "header")
-          .map((b) => b.id);
-        setSelectedIds(new Set(allBlockIds));
+        setSelectedIds(
+          new Set(blocks.filter((b) => b.tipo !== "header").map((b) => b.id)),
+        );
       }
-
       if (e.key === "Delete" && selectedIds.size > 0) {
         e.preventDefault();
         handleDeleteSelected();
@@ -363,7 +582,7 @@ export function NucleoDocument({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [blocks, selectedIds, handleDeleteSelected]);
 
-  // ── Drag & Drop ───────────────────────────────────────────────────────
+  // ── Drag & Drop ────────────────────────────────────────────────────────
   const handleDragStart = useCallback(
     ({ active }: DragStartEvent) => {
       const block = blocks.find((b) => b.id === active.id);
@@ -372,22 +591,21 @@ export function NucleoDocument({
     [blocks],
   );
 
-  const handleDragEnd = useCallback(
-    ({ active, over }: DragEndEvent) => {
-      setDraggingBlock(null);
-      if (!over || active.id === over.id) return;
-      const fromIdx = docBlocks.findIndex((b) => b.id === active.id);
-      const toIdx = docBlocks.findIndex((b) => b.id === over.id);
-      if (fromIdx === -1 || toIdx === -1) return;
-      const next = [...docBlocks];
+  const handleDragEnd = useCallback(({ active, over }: DragEndEvent) => {
+    setDraggingBlock(null);
+    if (!over || active.id === over.id) return;
+    setBlocks((prev) => {
+      const fromIdx = prev.findIndex((b) => b.id === active.id);
+      const toIdx = prev.findIndex((b) => b.id === over.id);
+      if (fromIdx === -1 || toIdx === -1) return prev;
+      const next = [...prev];
       const [moved] = next.splice(fromIdx, 1);
       next.splice(toIdx, 0, moved);
-      reorder(next.map((b, i) => ({ ...b, posicao: i })));
-    },
-    [docBlocks, reorder],
-  );
+      return next.map((b, i) => ({ ...b, posicao: i }));
+    });
+  }, []);
 
-  // ── Slash menu ────────────────────────────────────────────────────────
+  // ── Slash menu ─────────────────────────────────────────────────────────
   const handleSlashMenu = useCallback(
     (
       blockId: string,
@@ -400,13 +618,10 @@ export function NucleoDocument({
     [],
   );
 
-  // ── Renderização de conteúdo ──────────────────────────────────────────
+  // ── Renderização de conteúdo (arrow function, não é hook) ──────────────
   const renderBlockContent = (block: DocumentBlock) => {
-    if (block.tipo === "header") {
-      return <HeaderBlock />;
-    }
+    if (block.tipo === "header") return <HeaderBlock />;
 
-    // Column-layout: renderizado via LayoutRowRenderer
     if (block.tipo === "column-layout" && nucleo) {
       const row: LayoutRow = {
         id: block.id,
@@ -459,86 +674,72 @@ export function NucleoDocument({
       );
     }
 
-    const textBlocks = blocks.filter(
-      (b) => !isFunctional(b.tipo) && b.tipo !== "header" && b.tipo !== "column-layout",
-    );
-    const idx = textBlocks.findIndex((b) => b.id === block.id);
-
-    const focusBlock = (targetId: string) => {
-      setActiveBlockId(targetId);
-      setTimeout(() => document.getElementById(`block-${targetId}`)?.focus(), 30);
-    };
-
     return (
-      <TiptapBlockEditor
-        blockId={block.id}
-        tipo={block.tipo}
-        content={block.conteudo ?? ""}
+      <TextBlockRenderer
+        block={block}
         isActive={activeBlockId === block.id}
-        readOnly={readOnly}
-
         onActivate={() => setActiveBlockId(block.id)}
-        onUpdate={(html) => handleUpdateBlock(block.id, { conteudo: html })}
-        onDelete={() => handleDeleteBlock(block.id)}
+        onUpdate={handleUpdateBlock}
+        onDelete={handleDeleteBlock}
         onAddBelow={(tipo: DocumentBlockType) => handleAddBlock(tipo, block.id)}
-        onTypeChange={(tipo: DocumentBlockType) =>
-          handleUpdateBlock(block.id, { tipo, conteudo: "" })
+        onTypeChange={(id: string, tipo: DocumentBlockType) =>
+          handleUpdateBlock(id, { tipo, conteudo: "" })
         }
-        onSlashMenu={(pos) => handleSlashMenu(block.id, pos)}
-        onArrowUp={idx > 0 ? () => focusBlock(textBlocks[idx - 1].id) : undefined}
-        onArrowDown={idx < textBlocks.length - 1 ? () => focusBlock(textBlocks[idx + 1].id) : undefined}
+        onSlashMenu={(pos: { top: number; left: number }) =>
+          handleSlashMenu(block.id, pos)
+        }
+        readOnly={readOnly}
+        listIndex={listIndexMap.get(block.id)}
       />
     );
   };
 
-  // ── Loading ───────────────────────────────────────────────────────────
-  if (nucleoLoading || docLoading || blocosLoading) {
+  // ── Memos de unicidade (ANTES do return condicional) ───────────────────
+  const uniqueBlocks = useMemo(() => {
+    const seen = new Set<string>();
+    return blocks.filter((block) => {
+      if (seen.has(block.id)) {
+        console.error(`[NucleoDocument] 🔴 Bloco duplicado: ${block.id}`);
+        return false;
+      }
+      seen.add(block.id);
+      return true;
+    });
+  }, [blocks]);
+
+  const gridBlocks = useMemo(
+    () => uniqueBlocks.filter((b) => b.tipo !== "header"),
+    [uniqueBlocks],
+  );
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // RETURN CONDICIONAL (Loading) — DEPOIS de todos os hooks
+  // ═══════════════════════════════════════════════════════════════════════
+  if (nucleoLoading || canvasLoading || blocosLoading || !initialized) {
     return (
       <div
         className={cn(
-          "mx-auto px-6 pt-10 pb-8 space-y-4",
-          fullWidth ? "max-w-full" : "max-w-[720px]",
+          "mx-auto px-4 py-8 space-y-3",
+          fullWidth ? "max-w-full" : "max-w-3xl",
         )}
       >
-        <Skeleton className="h-12 w-1/2 rounded-lg" />
+        <Skeleton className="h-48 w-full rounded-xl" />
+        <Skeleton className="h-8 w-2/3 rounded-lg" />
         <Skeleton className="h-5 w-full rounded" />
         <Skeleton className="h-5 w-4/5 rounded" />
-        <Skeleton className="h-5 w-3/5 rounded" />
-        <div className="pt-4 space-y-3">
-          <Skeleton className="h-[120px] w-full rounded-xl" />
-          <Skeleton className="h-[80px]  w-full rounded-xl" />
-        </div>
+        <Skeleton className="h-32 w-full rounded-xl mt-6" />
       </div>
     );
   }
 
-  // ── Render ────────────────────────────────────────────────────────────
+  // ═══════════════════════════════════════════════════════════════════════
+  // RENDER PRINCIPAL
+  // ═══════════════════════════════════════════════════════════════════════
   return (
     <div className="min-h-screen relative">
-      {/* Save indicator — ultra-minimal, bottom-right corner */}
-      <div
-        aria-live="polite"
-        className={cn(
-          "fixed bottom-5 right-5 z-50 flex items-center gap-1.5",
-          "text-[11px] font-medium text-muted-foreground/50",
-          "transition-[opacity,transform] duration-[var(--duration-slow)]",
-          savedIndicator === "idle"
-            ? "opacity-0 translate-y-1 pointer-events-none"
-            : "opacity-100 translate-y-0",
-        )}
-      >
-        <span
-          className={cn(
-            "h-1 w-1 rounded-full",
-            savedIndicator === "saving"
-              ? "bg-primary/50 animate-pulse"
-              : "bg-muted-foreground/30",
-          )}
-        />
-        {savedIndicator === "saving" ? "Salvando" : "Salvo"}
-      </div>
+      {/* Indicador de salvamento */}
 
-      {/* Multi-select toolbar */}
+      {/* Toolbar de seleção múltipla */}
       {selectedIds.size > 0 && (
         <SelectionToolbar
           selectedCount={selectedIds.size}
@@ -547,13 +748,55 @@ export function NucleoDocument({
         />
       )}
 
-      {/* Writing surface */}
+      {/* Toggle Grid/Lista */}
+      {!readOnly && (
+        <div
+          className={cn(
+            "mx-auto flex items-center justify-end gap-2 pb-2",
+            fullWidth ? "max-w-full" : "max-w-4xl xl:max-w-5xl 2xl:max-w-6xl",
+            "px-6 md:pl-20 md:pr-8",
+          )}
+        >
+          <span className="text-xs text-muted-foreground/60 mr-1">
+            {viewMode === "list" ? "Lista" : "Grade"}
+          </span>
+          <div className="flex items-center bg-muted/50 rounded-lg p-0.5">
+            <button
+              onClick={() => setViewMode("list")}
+              className={cn(
+                "p-1.5 rounded-md transition-all",
+                viewMode === "list"
+                  ? "bg-background shadow-sm text-foreground"
+                  : "text-muted-foreground/60 hover:text-foreground",
+              )}
+              title="Visualização em lista"
+            >
+              <List className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setViewMode("grid")}
+              className={cn(
+                "p-1.5 rounded-md transition-all",
+                viewMode === "grid"
+                  ? "bg-background shadow-sm text-foreground"
+                  : "text-muted-foreground/60 hover:text-foreground",
+              )}
+              title="Visualização em grade"
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
       <div
         className={cn(
-          "mx-auto pb-48",
+          "mx-auto pb-32",
           fullWidth
-            ? "max-w-full px-6 md:px-10"
-            : "max-w-[720px] px-6 md:px-10",
+            ? "max-w-full px-6"
+            : viewMode === "grid"
+              ? "max-w-[95%] px-6 md:px-10"
+              : "max-w-[90%] px-6 md:pl-20 md:pr-8",
         )}
         onClick={handleContainerClick}
         ref={containerRef}
@@ -565,49 +808,83 @@ export function NucleoDocument({
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={blocks.map((b) => b.id)}
+            items={uniqueBlocks.map((b) => b.id)}
             strategy={verticalListSortingStrategy}
           >
-            <div className="flex flex-col">
-              {blocks.map((block) => (
-                <SortableDocumentBlock
-                  key={block.id}
-                  block={block}
-                  isSelected={selectedIds.has(block.id)}
-                  isActive={activeBlockId === block.id}
-                  onSelect={handleBlockClick}
-                  onUpdate={(updates) => handleUpdateBlock(block.id, updates)}
-                  onDelete={() => {
-                    if (isFunctional(block.tipo)) {
-                      handleDeleteFunctional(block.id);
-                    } else {
-                      handleDeleteBlock(block.id);
+            {viewMode === "grid" ? (
+              <div
+                className={cn(
+                  "grid gap-4",
+                  "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
+                )}
+              >
+                {gridBlocks.map((block) => (
+                  <div key={block.id} className="h-full">
+                    <SortableDocumentBlock
+                      block={block}
+                      isSelected={selectedIds.has(block.id)}
+                      isActive={activeBlockId === block.id}
+                      onSelect={handleBlockClick}
+                      onUpdate={(updates) =>
+                        handleUpdateBlock(block.id, updates)
+                      }
+                      onDelete={() =>
+                        isFunctional(block.tipo)
+                          ? handleDeleteFunctional(block.id)
+                          : handleDeleteBlock(block.id)
+                      }
+                      onAddBelow={
+                        block.tipo !== "header" && !readOnly
+                          ? () => handleAddBlock("paragraph", block.id)
+                          : undefined
+                      }
+                      readOnly={readOnly}
+                    >
+                      {renderBlockContent(block)}
+                    </SortableDocumentBlock>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-0.5">
+                {uniqueBlocks.map((block) => (
+                  <SortableDocumentBlock
+                    key={block.id}
+                    block={block}
+                    isSelected={selectedIds.has(block.id)}
+                    isActive={activeBlockId === block.id}
+                    onSelect={handleBlockClick}
+                    onUpdate={(updates) => handleUpdateBlock(block.id, updates)}
+                    onDelete={() =>
+                      isFunctional(block.tipo)
+                        ? handleDeleteFunctional(block.id)
+                        : handleDeleteBlock(block.id)
                     }
-                  }}
-                  onAddBelow={
-                    block.tipo !== "header" && !readOnly
-                      ? () => handleAddBlock("paragraph", block.id)
-                      : undefined
-                  }
-                  readOnly={readOnly}
-                >
-                  {renderBlockContent(block)}
-                </SortableDocumentBlock>
-              ))}
-            </div>
+                    onAddBelow={
+                      block.tipo !== "header" && !readOnly
+                        ? () => handleAddBlock("paragraph", block.id)
+                        : undefined
+                    }
+                    readOnly={readOnly}
+                  >
+                    {renderBlockContent(block)}
+                  </SortableDocumentBlock>
+                ))}
+              </div>
+            )}
           </SortableContext>
-
-          <DragOverlay dropAnimation={{ duration: 180, easing: "cubic-bezier(0.16,1,0.3,1)" }}>
+          <DragOverlay>
             {draggingBlock && (
-              <div className="rounded-[var(--radius-lg)] border border-primary/20 bg-card/90 backdrop-blur-[var(--glass-blur-sm)] px-4 py-2.5 shadow-[var(--shadow-lg)] opacity-95">
+              <div className="rounded-lg border border-primary/30 bg-card/80 backdrop-blur px-4 py-2 shadow-xl opacity-90">
                 <span className="text-sm text-muted-foreground">
-                  {draggingBlock.titulo || draggingBlock.conteudo?.slice(0, 40) || draggingBlock.tipo}
+                  {draggingBlock.titulo ||
+                    draggingBlock.conteudo ||
+                    draggingBlock.tipo}
                 </span>
               </div>
             )}
           </DragOverlay>
         </DndContext>
-
         {!readOnly && (
           <AddBlockTrigger
             onAddText={(tipo: DocumentBlockType) => handleAddBlock(tipo)}
@@ -622,26 +899,24 @@ export function NucleoDocument({
         position={slashMenu.pos}
         onSelect={(tipo: string) => {
           setSlashMenu((s) => ({ ...s, open: false }));
-          if (isFunctional(tipo)) {
-            handleAddFunctional(tipo);
-          } else if (slashMenu.columnLayoutId) {
+          if (isFunctional(tipo)) handleAddFunctional(tipo);
+          else if (slashMenu.columnLayoutId)
             handleAddBlockInColumn(
               slashMenu.columnLayoutId,
               tipo as DocumentBlockType,
               slashMenu.blockId,
               slashMenu.columnId,
             );
-          } else {
-            handleAddBlock(tipo as DocumentBlockType, slashMenu.blockId);
-          }
+          else handleAddBlock(tipo as DocumentBlockType, slashMenu.blockId);
         }}
         onClose={() => setSlashMenu((s) => ({ ...s, open: false }))}
       />
 
-      {/* Delete confirmation dialog */}
       <AlertDialog
         open={!!deleteTarget}
-        onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
