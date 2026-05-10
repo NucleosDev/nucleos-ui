@@ -446,7 +446,7 @@ export function CalendarioCard({
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={(e: React.MouseEvent) => {
+                      onClick={(e) => {
                         e.stopPropagation();
                         handleViewEvento(evento);
                       }}
@@ -458,7 +458,7 @@ export function CalendarioCard({
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={(e: React.MouseEvent) => {
+                      onClick={(e) => {
                         e.stopPropagation();
                         handleEditEvento(evento);
                       }}

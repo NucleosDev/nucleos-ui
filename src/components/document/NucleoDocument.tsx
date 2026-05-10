@@ -793,10 +793,10 @@ export function NucleoDocument({
         className={cn(
           "mx-auto pb-32",
           fullWidth
-            ? "max-w-full px-6"
+            ? "max-w-full px-4"
             : viewMode === "grid"
-              ? "max-w-[95%] px-6 md:px-10"
-              : "max-w-[90%] px-6 md:pl-20 md:pr-8",
+              ? "max-w-full px-6 md:px-10"
+              : "max-w-full px-6 md:pl-20 md:pr-8",
         )}
         onClick={handleContainerClick}
         ref={containerRef}

@@ -24,7 +24,6 @@ import { useBlocos } from "@/hooks/useBlocos";
 import { useColecoes } from "@/hooks/useColecoes";
 import { useTimers } from "@/hooks/useTimers";
 import { NotificationBell } from "@/components/gamification/NotificationBell";
-import { LiquidGlass } from "@/components/ui/liquid-glass";
 
 interface AuthenticatedHeaderProps {
   onToggleSidebar?: () => void;
@@ -51,7 +50,7 @@ export function AuthenticatedHeader({
   const { colecoes: colecoesData = [] } = useColecoes();
   const { timers: timersData = [] } = useTimers();
 
-  const recentNucleos = (nucleos || []).slice(0, 5).map((n) => ({
+  const recentNucleos = (nucleos || []).slice(0, 5).map((n: any) => ({
     id: n.id,
     nome: n.nome,
     tipo: n.tipo,
@@ -158,10 +157,8 @@ export function AuthenticatedHeader({
                   onMouseEnter={openMenu}
                   onMouseLeave={closeMenu}
                 >
-                  <LiquidGlass
-                    variant="floating"
-                    radius="16px"
-                    interactive={false}
+                  <div
+                    className="rounded-xl border border-border bg-popover shadow-[var(--shadow-lg)] overflow-hidden"
                     role="menu"
                   >
                     {/* User info */}
@@ -221,7 +218,7 @@ export function AuthenticatedHeader({
                         Sair
                       </button>
                     </div>
-                  </LiquidGlass>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

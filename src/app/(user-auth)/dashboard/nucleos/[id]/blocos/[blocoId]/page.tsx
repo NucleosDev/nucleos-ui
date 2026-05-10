@@ -21,7 +21,11 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { GlassModal, GlassModalFooter, GlassButton } from "@/components/ui/glass-modal";
+import {
+  GlassModal,
+  GlassModalFooter,
+  GlassButton,
+} from "@/components/ui/glass-modal";
 import { toast } from "@/hooks/use-toast";
 import { CriarBlocoModal } from "@/components/blocos/CriarBlocoModal";
 import { ColecoesBlocoCard } from "@/components/blocos/cruds/ColecoesBlocoCard";
@@ -226,7 +230,7 @@ export default function BlocoDetalhesPage() {
             </div>
 
             <div className="space-y-3">
-              {subBlocos.map((sub) => {
+              {subBlocos.map((sub: any) => {
                 const SubIcon = BLOCO_ICONS[sub.tipo] ?? GripVertical;
                 const subCor = BLOCO_COLORS[sub.tipo] ?? "#6366f1";
                 return (
@@ -265,7 +269,11 @@ export default function BlocoDetalhesPage() {
                           )}
                         >
                           <button
-                            onClick={() => router.push(`/dashboard/nucleos/${nucleoId}/blocos/${sub.id}`)}
+                            onClick={() =>
+                              router.push(
+                                `/dashboard/nucleos/${nucleoId}/blocos/${sub.id}`,
+                              )
+                            }
                             title="Abrir em tela cheia"
                             className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-accent transition-colors duration-[var(--duration-fast)]"
                           >
@@ -308,7 +316,9 @@ export default function BlocoDetalhesPage() {
       >
         <div className="px-5 pt-5 pb-2 space-y-3">
           <h3 className="text-sm font-semibold">Excluir sub-bloco?</h3>
-          <p className="text-xs text-muted-foreground/70">Esta ação não pode ser desfeita.</p>
+          <p className="text-xs text-muted-foreground/70">
+            Esta ação não pode ser desfeita.
+          </p>
         </div>
         <GlassModalFooter>
           <GlassButton variant="outline" onClick={() => setDeleteTarget(null)}>

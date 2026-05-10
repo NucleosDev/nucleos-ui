@@ -6,14 +6,7 @@ import { useAuth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+
 import { Eye, EyeOff } from "lucide-react";
 
 export function LoginForm() {
@@ -61,16 +54,13 @@ export function LoginForm() {
   };
 
   return (
-    <Card className="w-full py-5 shadow-lg border-0 bg-background/90 backdrop-blur-lg">
-      <CardHeader className="space-y-1 text-center">
-        <CardTitle className="text-2xl font-bold">Entrar</CardTitle>
-        <CardDescription>
-          Digite suas credenciais para acessar sua conta
-        </CardDescription>
-      </CardHeader>
+    <div>
+      <div className="space-y-1 text-center">
+        <div className="text-2xl font-bold">Entrar</div>
+      </div>
 
       <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
+        <div className="space-y-4">
           {error && (
             <div className="p-3 text-sm text-red-500 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-800">
               {error}
@@ -118,9 +108,9 @@ export function LoginForm() {
               </button>
             </div>
           </div>
-        </CardContent>
+        </div>
 
-        <CardFooter className="flex flex-col space-y-4 pt-4 pb-2">
+        <div className="flex flex-col space-y-4 pt-4 pb-2">
           <Button
             type="submit"
             className="w-full bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90 transition-opacity"
@@ -140,8 +130,8 @@ export function LoginForm() {
               Criar conta
             </a>
           </div>
-        </CardFooter>
+        </div>
       </form>
-    </Card>
+    </div>
   );
 }

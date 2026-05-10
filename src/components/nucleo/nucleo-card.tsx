@@ -165,7 +165,7 @@ export function NucleoCard({
       >
         <div
           className={cn(
-            "group relative isolate overflow-hidden rounded-2xl border border-border/50 bg-card transition-all duration-300 hover:shadow-[var(--shadow-lg)]",
+            "group relative isolate overflow-hidden rounded-2xl transition-all duration-300 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.2),0_8px_10px_-6px_rgba(0,0,0,0.1)]",
             className,
           )}
           onClick={onClick}

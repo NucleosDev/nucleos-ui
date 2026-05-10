@@ -8,14 +8,22 @@ import { useState } from "react";
 // ── Variant presets ────────────────────────────────────────────────────────────
 
 const VARIANT_PRESETS = {
-  minimal:     { blurIntensity: "sm",  glowIntensity: "none", shadowIntensity: "xs" },
-  subtle:      { blurIntensity: "sm",  glowIntensity: "xs",   shadowIntensity: "sm" },
-  default:     { blurIntensity: "md",  glowIntensity: "sm",   shadowIntensity: "sm" },
-  strong:      { blurIntensity: "lg",  glowIntensity: "md",   shadowIntensity: "md" },
-  floating:    { blurIntensity: "lg",  glowIntensity: "md",   shadowIntensity: "sm" },
-  dark:        { blurIntensity: "xl",  glowIntensity: "sm",   shadowIntensity: "xs" },
-  visionOS:    { blurIntensity: "xl",  glowIntensity: "lg",   shadowIntensity: "sm" },
-  interactive: { blurIntensity: "sm",  glowIntensity: "xs",   shadowIntensity: "sm" },
+  minimal: {
+    blurIntensity: "sm",
+    glowIntensity: "none",
+    shadowIntensity: "xs",
+  },
+  subtle: { blurIntensity: "sm", glowIntensity: "xs", shadowIntensity: "sm" },
+  default: { blurIntensity: "md", glowIntensity: "sm", shadowIntensity: "sm" },
+  strong: { blurIntensity: "lg", glowIntensity: "md", shadowIntensity: "md" },
+  floating: { blurIntensity: "lg", glowIntensity: "md", shadowIntensity: "sm" },
+  dark: { blurIntensity: "xl", glowIntensity: "sm", shadowIntensity: "xs" },
+  visionOS: { blurIntensity: "xl", glowIntensity: "lg", shadowIntensity: "sm" },
+  interactive: {
+    blurIntensity: "sm",
+    glowIntensity: "xs",
+    shadowIntensity: "sm",
+  },
 };
 
 interface LiquidGlassProps {
@@ -62,14 +70,18 @@ export const LiquidGlass = ({
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Resolve props: variant presets override individual props
-  const preset = variant ? (VARIANT_PRESETS[variant] ?? VARIANT_PRESETS.default) : null;
+  const preset = variant
+    ? (VARIANT_PRESETS[variant] ?? VARIANT_PRESETS.default)
+    : null;
   const blurIntensity = preset?.blurIntensity ?? blurProp ?? "xl";
   const glowIntensity = preset?.glowIntensity ?? glowProp ?? "sm";
   const shadowIntensity = preset?.shadowIntensity ?? shadowProp ?? "md";
   const borderRadius = radius ?? borderRadiusProp ?? "32px";
 
   // interactive controls hover/tap animations independently of draggable
-  const hasHoverTap = interactive === true || (interactive !== false && (draggable || expandable));
+  const hasHoverTap =
+    interactive === true ||
+    (interactive !== false && (draggable || expandable));
   const hasMotion = draggable || expandable || hasHoverTap;
 
   const handleToggleExpansion = (e: {
@@ -94,7 +106,8 @@ export const LiquidGlass = ({
     md: "inset 3px 3px 3px 0 rgba(255, 255, 255, 0.45), inset -3px -3px 3px 0 rgba(255, 255, 255, 0.45)",
     lg: "inset 4px 4px 4px 0 rgba(255, 255, 255, 0.5), inset -4px -4px 4px 0 rgba(255, 255, 255, 0.5)",
     xl: "inset 6px 6px 6px 0 rgba(255, 255, 255, 0.55), inset -6px -6px 6px 0 rgba(255, 255, 255, 0.55)",
-    "2xl": "inset 8px 8px 8px 0 rgba(255, 255, 255, 0.6), inset -8px -8px 8px 0 rgba(255, 255, 255, 0.6)",
+    "2xl":
+      "inset 8px 8px 8px 0 rgba(255, 255, 255, 0.6), inset -8px -8px 8px 0 rgba(255, 255, 255, 0.6)",
   };
 
   const glowStyles = {
@@ -104,7 +117,8 @@ export const LiquidGlass = ({
     md: "0 4px 4px rgba(0, 0, 0, 0.15), 0 0 12px rgba(0, 0, 0, 0.08), 0 0 32px rgba(255, 255, 255, 0.15)",
     lg: "0 4px 4px rgba(0, 0, 0, 0.15), 0 0 12px rgba(0, 0, 0, 0.08), 0 0 40px rgba(255, 255, 255, 0.2)",
     xl: "0 4px 4px rgba(0, 0, 0, 0.15), 0 0 12px rgba(0, 0, 0, 0.08), 0 0 48px rgba(255, 255, 255, 0.25)",
-    "2xl": "0 4px 4px rgba(0, 0, 0, 0.15), 0 0 12px rgba(0, 0, 0, 0.08), 0 0 60px rgba(255, 255, 255, 0.3)",
+    "2xl":
+      "0 4px 4px rgba(0, 0, 0, 0.15), 0 0 12px rgba(0, 0, 0, 0.08), 0 0 60px rgba(255, 255, 255, 0.3)",
   };
 
   const containerVariants = expandable
@@ -127,10 +141,16 @@ export const LiquidGlass = ({
   const motionProps = hasMotion
     ? {
         variants: expandable ? containerVariants : undefined,
-        animate: expandable ? (isExpanded ? "expanded" : "collapsed") : undefined,
+        animate: expandable
+          ? isExpanded
+            ? "expanded"
+            : "collapsed"
+          : undefined,
         onClick: expandable ? handleToggleExpansion : undefined,
         drag: draggable,
-        dragConstraints: draggable ? { left: 0, right: 0, top: 0, bottom: 0 } : undefined,
+        dragConstraints: draggable
+          ? { left: 0, right: 0, top: 0, bottom: 0 }
+          : undefined,
         dragElastic: draggable ? 0.3 : undefined,
         dragTransition: draggable
           ? { bounceStiffness: 300, bounceDamping: 10, power: 0.3 }
@@ -211,9 +231,7 @@ export const LiquidGlass = ({
         />
 
         {/* Content — must be above decorative layers */}
-        <div className="relative z-30 h-full">
-          {children}
-        </div>
+        <div className="relative z-30 h-full">{children}</div>
       </MotionComponent>
     </>
   );

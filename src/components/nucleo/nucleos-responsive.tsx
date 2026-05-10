@@ -12,7 +12,7 @@ import { NucleoCoreCard } from "./nucleo-core-card";
 import { CreateNucleoModal } from "./nucleo-create-modal";
 import { EditNucleoModal } from "./edit-nucleo-modal";
 import { useNucleos } from "@/hooks/useNucleo";
-import type { NucleoComStats } from "@/types/nucleo";
+import type { Nucleo, NucleoComStats } from "@/types/nucleo";
 
 type LayoutMode = "grid" | "list";
 
@@ -132,7 +132,7 @@ export function NucleosResponsive() {
 
       {/* MOBILE: sempre lista compacta */}
       <div className="block sm:hidden space-y-2">
-        {nucleos.map((nucleo) => (
+        {nucleos.map((nucleo: Nucleo) => (
           <NucleoCardMobile
             key={nucleo.id}
             nucleo={adaptNucleo(nucleo)}
@@ -148,7 +148,7 @@ export function NucleosResponsive() {
       <div className="hidden sm:block">
         {layoutMode === "grid" ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {nucleos.map((nucleo) => (
+            {nucleos.map((nucleo: Nucleo) => (
               <NucleoCard
                 key={nucleo.id}
                 nucleo={adaptNucleo(nucleo)}
@@ -161,7 +161,7 @@ export function NucleosResponsive() {
           </div>
         ) : (
           <div className="space-y-2">
-            {nucleos.map((nucleo) => (
+            {nucleos.map((nucleo: Nucleo) => (
               <NucleoCoreCard
                 key={nucleo.id}
                 nucleo={adaptNucleo(nucleo)}

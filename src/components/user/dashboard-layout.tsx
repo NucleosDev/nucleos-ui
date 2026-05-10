@@ -18,6 +18,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useCurrentUser } from "@/hooks/useDashboard";
 import { useNucleos } from "@/hooks/useNucleo";
+import type { Nucleo } from "@/types/nucleo";
 import { useTotalBlocosCount } from "@/hooks/useBlocos";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import NucleosLogo from "@/components/nucleo/NucleosLogo";
@@ -329,7 +330,7 @@ export function DashboardLayout({
   };
 
   const nucleosCount = nucleos?.length ?? 0;
-  const recentNucleos = (nucleos ?? []).slice(0, 5).map((n) => ({
+  const recentNucleos = (nucleos ?? []).slice(0, 5).map((n: Nucleo) => ({
     id: n.id,
     nome: n.nome,
     tipo: n.tipo,

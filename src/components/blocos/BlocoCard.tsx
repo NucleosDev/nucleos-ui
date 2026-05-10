@@ -1,10 +1,10 @@
-// src/components/blocos/BlocoCard.tsx
 "use client";
 
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
+  GripVertical,
   MoreHorizontal,
   ExternalLink,
   Copy,
@@ -20,7 +20,7 @@ import {
   FileText,
   BookOpen,
   ChevronDown,
-  GripVertical,
+  ChevronRight,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -31,8 +31,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { CriarBlocoModal } from "@/components/blocos/CriarBlocoModal";
 import { BlocoHoverActions } from "@/components/blocos/BlocoHoverActions";
-import { cn } from "@/lib/utils";
 import { LiquidGlass } from "@/components/ui/liquid-glass";
+import { cn } from "@/lib/utils";
 import type { Bloco, CreateBlocoPayload } from "@/types/bloco";
 
 import { ColecoesBlocoCard } from "@/components/blocos/cruds/ColecoesBlocoCard";
@@ -63,73 +63,93 @@ const BLOCK_META: Record<
   {
     label: string;
     icon: React.ElementType;
+    color: string;
+    bg: string;
     accent: string;
-    accentBg: string;
-    accentLight: string;
+    tint: string;
+    descricao: string;
   }
 > = {
   tarefas: {
     label: "Tarefas",
     icon: CheckSquare,
-    accent: "#3b82f6",
-    accentBg: "#eff6ff",
-    accentLight: "#dbeafe",
+    color: "text-blue-400",
+    bg: "bg-blue-500/10",
+    accent: "bg-blue-500",
+    tint: "bg-blue-500/[0.04]",
+    descricao: "Gerencie suas tarefas e projetos",
   },
   calendario: {
     label: "Calendário",
     icon: CalendarDays,
-    accent: "#6366f1",
-    accentBg: "#eef2ff",
-    accentLight: "#e0e7ff",
+    color: "text-indigo-400",
+    bg: "bg-indigo-500/10",
+    accent: "bg-indigo-500",
+    tint: "bg-indigo-500/[0.04]",
+    descricao: "Visualize e organize eventos",
   },
   habitos: {
     label: "Hábitos",
     icon: Activity,
-    accent: "#22c55e",
-    accentBg: "#f0fdf4",
-    accentLight: "#dcfce7",
+    color: "text-green-400",
+    bg: "bg-green-500/10",
+    accent: "bg-green-500",
+    tint: "bg-green-500/[0.04]",
+    descricao: "Acompanhe seus hábitos diários",
   },
   habito: {
     label: "Hábito",
     icon: Activity,
-    accent: "#22c55e",
-    accentBg: "#f0fdf4",
-    accentLight: "#dcfce7",
+    color: "text-green-400",
+    bg: "bg-green-500/10",
+    accent: "bg-green-500",
+    tint: "bg-green-500/[0.04]",
+    descricao: "Monitore um hábito específico",
   },
   lista: {
     label: "Lista",
     icon: ListTodo,
-    accent: "#06b6d4",
-    accentBg: "#ecfeff",
-    accentLight: "#cffafe",
+    color: "text-cyan-400",
+    bg: "bg-cyan-500/10",
+    accent: "bg-cyan-500",
+    tint: "bg-cyan-500/[0.04]",
+    descricao: "Crie listas organizadas",
   },
   timer: {
     label: "Timer",
     icon: Timer,
-    accent: "#f97316",
-    accentBg: "#fff7ed",
-    accentLight: "#ffedd5",
+    color: "text-orange-400",
+    bg: "bg-orange-500/10",
+    accent: "bg-orange-500",
+    tint: "bg-orange-500/[0.04]",
+    descricao: "Gerencie seu tempo com timers",
   },
   timers: {
     label: "Timers",
     icon: Timer,
-    accent: "#f97316",
-    accentBg: "#fff7ed",
-    accentLight: "#ffedd5",
+    color: "text-orange-400",
+    bg: "bg-orange-500/10",
+    accent: "bg-orange-500",
+    tint: "bg-orange-500/[0.04]",
+    descricao: "Múltiplos timers para produtividade",
   },
   colecoes: {
     label: "Base de Dados",
     icon: Layers,
-    accent: "#10b981",
-    accentBg: "#ecfdf5",
-    accentLight: "#d1fae5",
+    color: "text-emerald-400",
+    bg: "bg-emerald-500/10",
+    accent: "bg-emerald-500",
+    tint: "bg-emerald-500/[0.04]",
+    descricao: "Crie bases de dados flexíveis",
   },
   notas: {
     label: "Notas",
     icon: BookOpen,
-    accent: "#a855f7",
-    accentBg: "#faf5ff",
-    accentLight: "#f3e8ff",
+    color: "text-purple-400",
+    bg: "bg-purple-500/10",
+    accent: "bg-purple-500",
+    tint: "bg-purple-500/[0.04]",
+    descricao: "Anotações e lembretes",
   },
 };
 
@@ -142,35 +162,44 @@ function renderContent(bloco: Bloco, nucleoId: string, onDelete: () => void) {
     isDeleting: false,
   };
 
+  let content;
   switch (bloco.tipo) {
     case "tarefas":
-      return <TarefasBlocoCard {...common} />;
+      content = <TarefasBlocoCard {...common} />;
+      break;
     case "calendario":
-      return <CalendarioBlocoCard {...common} />;
+      content = <CalendarioBlocoCard {...common} />;
+      break;
     case "habitos":
     case "habito":
-      return <HabitosBlocoCard {...common} />;
+      content = <HabitosBlocoCard {...common} />;
+      break;
     case "lista":
-      return <ListasBlocoCard {...common} />;
+      content = <ListasBlocoCard {...common} />;
+      break;
     case "timer":
     case "timers":
-      return <TimersBlocoCard {...common} />;
+      content = <TimersBlocoCard {...common} />;
+      break;
     case "colecoes":
-      return <ColecoesBlocoCard {...common} />;
+      content = <ColecoesBlocoCard {...common} />;
+      break;
     case "notas":
-      return (
+      content = (
         <BlocoDeNotas bloco={bloco} nucleoId={nucleoId} onDelete={onDelete} />
       );
+      break;
     default:
-      return (
-        <div className="py-12 px-6 text-center">
-          <FileText className="h-10 w-10 mx-auto mb-3 text-muted-foreground/20" />
-          <p className="text-sm text-muted-foreground/50">
-            Tipo de bloco não reconhecido: {bloco.tipo}
-          </p>
+      content = (
+        <div className="py-10 text-center">
+          <FileText className="h-8 w-8 mx-auto mb-2 opacity-30 text-muted-foreground" />
+          <p className="text-sm text-muted-foreground">{bloco.tipo}</p>
         </div>
       );
   }
+
+  // 👈 Padding aplicado aqui - ajuste conforme necessário
+  return <div className="px-5 pb-5 pt-2">{content}</div>;
 }
 
 export function BlocoCard({
@@ -182,41 +211,45 @@ export function BlocoCard({
   onCreateBloco,
   isDeleting = false,
   isCreating = false,
-  compact = false, // Changed default to false for better UX
+  compact = true,
   depth = 0,
   onEditTitle,
   onAddBelow,
 }: BlocoCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [titleValue, setTitleValue] = useState(bloco.titulo || "");
   const [modalCriarAberto, setModalCriarAberto] = useState(false);
-  const [modalTipo, setModalTipo] = useState<"sub" | "abaixo">("abaixo");
+  const [modalTipo, setModalTipo] = useState<"sub" | "abaixo">("sub");
   const inputRef = useRef<HTMLInputElement>(null);
 
   const meta = BLOCK_META[bloco.tipo] ?? {
     label: bloco.tipo || "Bloco",
     icon: FileText,
-    accent: "#6b7280",
-    accentBg: "#f9fafb",
-    accentLight: "#f3f4f6",
+    color: "text-muted-foreground",
+    bg: "bg-white/5",
+    accent: "bg-muted-foreground/40",
+    tint: "",
+    descricao: "",
   };
+
   const IconComponent = meta.icon;
-  const titulo = titleValue || meta.label;
+  const tituloExibicao = titleValue || meta.label;
 
   useEffect(() => {
     setTitleValue(bloco.titulo || "");
   }, [bloco.titulo]);
 
   useEffect(() => {
-    if (isEditing) {
-      inputRef.current?.focus();
-      inputRef.current?.select();
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
     }
   }, [isEditing]);
 
-  const saveTitle = () => {
+  const handleSaveTitle = () => {
     setIsEditing(false);
     if (titleValue !== bloco.titulo && titleValue.trim() && onEditTitle) {
       onEditTitle(titleValue.trim());
@@ -224,16 +257,33 @@ export function BlocoCard({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      saveTitle();
-    }
-    if (e.key === "Escape") {
+    if (e.key === "Enter") handleSaveTitle();
+    else if (e.key === "Escape") {
       setTitleValue(bloco.titulo || "");
       setIsEditing(false);
     }
   };
 
-  const handleCriar = async (payload: CreateBlocoPayload) => {
+  const handleDragStart = (e: React.DragEvent) => {
+    e.dataTransfer.setData("text/plain", bloco.id);
+    e.dataTransfer.effectAllowed = "move";
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragEnd = () => setIsDragging(false);
+
+  const handleOpenSubBlocoModal = () => {
+    setModalTipo("sub");
+    setModalCriarAberto(true);
+  };
+
+  const handleOpenAbaixoModal = () => {
+    setModalTipo("abaixo");
+    setModalCriarAberto(true);
+  };
+
+  const handleCriarBloco = async (payload: CreateBlocoPayload) => {
     if (onCreateBloco) {
       if (modalTipo === "sub") {
         await onCreateBloco({ ...payload, parentId: bloco.id });
@@ -248,261 +298,101 @@ export function BlocoCard({
     setModalCriarAberto(false);
   };
 
-  // Determine max-width based on depth to prevent horizontal overflow
-  const getMaxWidth = () => {
-    const baseWidth = 100;
-    const depthReduction = depth * 2;
-    return `${baseWidth - depthReduction}%`;
+  const handleDelete = () => {
+    if (onDelete) onDelete();
   };
 
   return (
-    <div className="w-full" style={{ maxWidth: getMaxWidth() }}>
+    <>
       <motion.div
         layout
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.97 }}
-        transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-        className="group relative mb-4"
-        style={{
-          marginLeft: depth > 0 ? `${Math.min(depth * 24, 120)}px` : undefined,
-        }}
+        exit={{ opacity: 0, scale: 0.96 }}
+        transition={{ duration: 0.18 }}
+        className="group relative my-2"
+        style={{ marginLeft: depth > 0 ? `${depth * 24}px` : undefined }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Depth connector line - improved visibility */}
-        {depth > 0 && (
-          <div className="absolute left-[-20px] top-0 bottom-0 flex items-stretch">
-            <span className="w-px bg-gradient-to-b from-border/60 via-border/40 to-transparent" />
-            <span className="absolute left-[-6px] top-6 h-3 w-3 rounded-full border border-border/60 bg-background" />
-          </div>
-        )}
-
-        {compact ? (
-          /* ── Compact card (grid/list view) ── */
-          <LiquidGlass
-            variant="subtle"
-            radius="12px"
-            interactive={false}
-            className={cn(
-              "overflow-hidden min-h-[120px]",
-              "transition-all duration-200 ease-out",
-              isHovered && "shadow-md",
-              isDeleting && "opacity-50 pointer-events-none",
-            )}
+        {/* Drag handle — floats left of the card */}
+        <div
+          className={cn(
+            "absolute -left-8 top-1/2 -translate-y-1/2 z-20 transition-all duration-200",
+            isHovered && !compact
+              ? "opacity-100 translate-x-0"
+              : "opacity-0 -translate-x-2",
+          )}
+        >
+          <div
+            className="cursor-grab active:cursor-grabbing p-1.5 rounded-lg hover:bg-white/10 backdrop-blur-sm transition-colors"
+            draggable
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+            title="Arraste para reordenar"
           >
-            {/* Accent decorations */}
-            <div className="absolute inset-0 overflow-hidden rounded-xl pointer-events-none">
-              <div
-                className="absolute left-0 top-0 bottom-0 w-1 opacity-50 transition-opacity duration-200"
-                style={{
-                  background: `linear-gradient(to bottom, ${meta.accent}, ${meta.accent}88)`,
-                }}
-              />
-              <div
-                className="absolute inset-0 opacity-20"
-                style={{
-                  background: `linear-gradient(135deg, ${meta.accentBg}, transparent 60%)`,
-                }}
-              />
-            </div>
+            <GripVertical className="h-4 w-4 text-muted-foreground/60" />
+          </div>
+        </div>
 
-            {/* Clickable link overlay */}
-            <Link
-              href={`/dashboard/nucleos/${nucleoId}/blocos/${bloco.id}`}
-              className="absolute inset-0 rounded-xl"
-              aria-label={`Abrir ${titulo}`}
-            />
-
-            {/* Header - IMPROVED with more padding */}
-            <div className="flex items-center gap-3 px-5 py-4 pl-6 relative z-10">
-              <div
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg shadow-sm"
-                style={{ background: `${meta.accent}15` }}
-              >
-                <IconComponent
-                  className="h-4.5 w-4.5"
-                  style={{ color: meta.accent }}
-                />
-              </div>
-
-              <div className="flex-1 min-w-0">
-                {isEditing ? (
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    value={titleValue}
-                    onChange={(e) => setTitleValue(e.target.value)}
-                    onBlur={saveTitle}
-                    onKeyDown={handleKeyDown}
-                    className="text-base font-semibold bg-white/50 rounded-md px-2 py-1 outline-none ring-1 ring-border w-full"
-                    placeholder={meta.label}
-                  />
-                ) : (
-                  <p
-                    className={cn(
-                      "text-base font-semibold text-foreground truncate",
-                      onEditTitle &&
-                        "cursor-text hover:text-primary/80 transition-colors",
-                    )}
-                    onClick={() => onEditTitle && setIsEditing(true)}
-                    title={titulo}
-                  >
-                    {titulo}
-                  </p>
-                )}
-                {/* Subtitle with block type */}
-                <p className="text-xs text-muted-foreground/60 mt-0.5">
-                  {meta.label}
-                </p>
-              </div>
-
-              {/* Actions - always visible on compact */}
-              <div className="relative z-10 flex items-center gap-1">
-                {onAddBelow || onCreateBloco ? (
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      if (onAddBelow) onAddBelow();
-                      else {
-                        setModalTipo("abaixo");
-                        setModalCriarAberto(true);
-                      }
-                    }}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/60 hover:text-foreground hover:bg-accent/50 transition-all"
-                    title="Adicionar abaixo"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </button>
-                ) : null}
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button
-                      className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/60 hover:text-foreground hover:bg-accent/50 transition-all"
-                      disabled={isDeleting}
-                    >
-                      <MoreHorizontal className="h-4 w-4" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
-                    {onEdit && (
-                      <DropdownMenuItem
-                        onClick={onEdit}
-                        className="gap-2.5 py-2"
-                      >
-                        <ExternalLink className="h-4 w-4" /> Abrir em página
-                        completa
-                      </DropdownMenuItem>
-                    )}
-                    {onEditTitle && (
-                      <DropdownMenuItem
-                        onClick={() => setIsEditing(true)}
-                        className="gap-2.5 py-2"
-                      >
-                        <Pencil className="h-4 w-4" /> Renomear
-                      </DropdownMenuItem>
-                    )}
-                    {onDuplicate && (
-                      <DropdownMenuItem
-                        onClick={onDuplicate}
-                        className="gap-2.5 py-2"
-                      >
-                        <Copy className="h-4 w-4" /> Duplicar
-                      </DropdownMenuItem>
-                    )}
-                    {onCreateBloco && (
-                      <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setModalTipo("sub");
-                            setModalCriarAberto(true);
-                          }}
-                          className="gap-2.5 py-2"
-                        >
-                          <Plus className="h-4 w-4" /> Adicionar sub-bloco
-                        </DropdownMenuItem>
-                      </>
-                    )}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() => onDelete?.()}
-                      className="gap-2.5 py-2 text-destructive focus:text-destructive"
-                      disabled={isDeleting}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      {isDeleting ? "Excluindo…" : "Excluir"}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </div>
-
-            {/* Content preview - shows a mini version of the content */}
-            <div className="px-6 pb-4 relative z-10 opacity-70">
-              <div className="text-sm text-muted-foreground/60 line-clamp-2">
-                {/* This would ideally show a preview of the block's content */}
-                {bloco.tipo === "notas" && bloco.conteudo
-                  ? bloco.conteudo.substring(0, 100) + "..."
-                  : `Clique para abrir o bloco de ${meta.label.toLowerCase()}`}
-              </div>
-            </div>
-          </LiquidGlass>
-        ) : (
-          /* ── Non-compact: document-native section card ── */
-          <div className="relative">
-            {/* Accent left rail */}
-            <div
-              className="absolute left-0 top-0 bottom-0 w-0.5 rounded-full transition-all duration-[var(--duration-base)]"
-              style={{
-                background: `linear-gradient(to bottom, ${meta.accent}, ${meta.accent}33)`,
-                opacity: isHovered ? 0.9 : 0.45,
-              }}
-            />
-
-            {/* Hover actions */}
-            <BlocoHoverActions
-              bloco={bloco}
-              nucleoId={nucleoId}
-              onOpenFullPage={onEdit}
-              onDelete={onDelete}
-              onDuplicate={onDuplicate}
-              onAddBelow={
-                onAddBelow ||
-                (() => {
-                  setModalTipo("abaixo");
-                  setModalCriarAberto(true);
-                })
-              }
-              onEdit={() => setIsEditing(true)}
-              isDeleting={isDeleting}
-            />
-
-            {/* Section header — glass, dark-mode safe */}
+        {/* Glass card */}
+        <LiquidGlass
+          variant={compact ? "interactive" : "subtle"}
+          radius="16px"
+          className={cn(
+            "overflow-hidden transition-all duration-200",
+            isDragging && "opacity-50 scale-[1.02] ring-2 ring-primary/50",
+          )}
+        >
+          {/* Inner wrapper */}
+          <div className={cn("relative", meta.tint)}>
+            {/* Left accent strip */}
             <div
               className={cn(
-                "flex items-center gap-2.5 pl-4 pr-2 py-2.5",
-                "rounded-t-[var(--radius-lg)] border border-border/50",
-                "backdrop-blur-sm transition-all duration-[var(--duration-base)]",
-                isHovered && "border-border/80",
+                "absolute inset-y-0 left-0 w-[3px] rounded-r-full",
+                meta.accent,
               )}
-              style={{
-                background: `linear-gradient(135deg, ${meta.accent}0d 0%, var(--surface-raised) 100%)`,
-              }}
-            >
-              {/* Drag handle */}
-              <div className="flex items-center justify-center h-4 w-4 text-muted-foreground/25 hover:text-muted-foreground/60 cursor-grab active:cursor-grabbing transition-colors shrink-0">
-                <GripVertical className="h-3.5 w-3.5" />
-              </div>
+            />
 
+            {/* Full-card link overlay (compact) */}
+            {compact && (
+              <Link
+                href={`/dashboard/nucleos/${nucleoId}/blocos/${bloco.id}`}
+                className="absolute inset-0 z-[1] rounded-[16px]"
+                aria-label={`Abrir bloco ${tituloExibicao}`}
+              />
+            )}
+
+            {/* Floating action bar (non-compact) */}
+            {!compact && (
+              <BlocoHoverActions
+                bloco={bloco}
+                nucleoId={nucleoId}
+                onOpenFullPage={onEdit}
+                onDelete={onDelete}
+                onDuplicate={onDuplicate}
+                onAddBelow={onAddBelow || handleOpenAbaixoModal}
+                onEdit={() => setIsEditing(true)}
+                isDeleting={isDeleting}
+              />
+            )}
+
+            {/* Header row */}
+            <div className="flex items-center gap-3 pl-6 pr-3 py-3.5">
+              {/* Icon */}
               <div
-                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors duration-[var(--duration-fast)]"
-                style={{ background: `${meta.accent}15` }}
+                className={cn(
+                  "flex items-center justify-center shrink-0 rounded-xl",
+                  compact ? "w-8 h-8" : "w-10 h-10",
+                  meta.bg,
+                )}
               >
-                <IconComponent className="h-3.5 w-3.5" style={{ color: meta.accent }} />
+                <IconComponent
+                  className={cn(compact ? "h-4 w-4" : "h-5 w-5", meta.color)}
+                />
               </div>
 
+              {/* Title + description */}
               <div className="flex-1 min-w-0">
                 {isEditing ? (
                   <input
@@ -510,116 +400,190 @@ export function BlocoCard({
                     type="text"
                     value={titleValue}
                     onChange={(e) => setTitleValue(e.target.value)}
-                    onBlur={saveTitle}
+                    onBlur={handleSaveTitle}
                     onKeyDown={handleKeyDown}
-                    className="text-sm font-semibold bg-transparent rounded-md px-1 py-0.5 outline-none ring-1 ring-primary/30 w-full"
+                    className="font-semibold text-sm bg-white/5 border-b border-primary/50 outline-none w-full max-w-xs px-0 py-0.5 rounded"
                     placeholder={meta.label}
                   />
                 ) : (
-                  <p
+                  <h3
                     className={cn(
-                      "text-sm font-semibold text-foreground/90 truncate",
-                      onEditTitle && "cursor-text hover:text-primary transition-colors duration-[var(--duration-fast)]",
+                      "font-semibold truncate leading-snug",
+                      compact ? "text-sm" : "text-[15px]",
+                      onEditTitle &&
+                        "cursor-pointer hover:text-primary transition-colors",
                     )}
                     onClick={() => onEditTitle && setIsEditing(true)}
-                    title={titulo}
+                    title={onEditTitle ? "Clique para editar" : undefined}
                   >
-                    {titulo}
+                    {tituloExibicao}
+                  </h3>
+                )}
+                {!compact && meta.descricao && (
+                  <p className="text-xs text-muted-foreground/60 truncate mt-0.5">
+                    {meta.descricao}
                   </p>
                 )}
               </div>
 
-              {/* Collapse toggle */}
-              <button
-                onClick={() => setIsCollapsed(!isCollapsed)}
-                className={cn(
-                  "flex h-6 w-6 items-center justify-center rounded-md shrink-0",
-                  "text-muted-foreground/40 hover:text-muted-foreground hover:bg-accent",
-                  "transition-all duration-[var(--duration-fast)]",
+              {/* Right-side controls */}
+              <div className="flex items-center gap-0.5 shrink-0 relative z-10">
+                {/* Collapse toggle (non-compact) */}
+                {!compact && (
+                  <button
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    className="p-1.5 rounded-lg text-muted-foreground/50 hover:text-foreground hover:bg-white/10 transition-all"
+                  >
+                    {isCollapsed ? (
+                      <ChevronRight className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    )}
+                  </button>
                 )}
-              >
-                <ChevronDown
-                  className={cn(
-                    "h-3.5 w-3.5 transition-transform duration-[var(--duration-fast)]",
-                    isCollapsed && "-rotate-90",
-                  )}
-                />
-              </button>
+
+                {/* Dropdown menu (compact) */}
+                {compact && (
+                  <div data-no-nav="true">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button
+                          className={cn(
+                            "p-1.5 rounded-lg hover:bg-white/10 transition-all duration-200",
+                            isHovered ? "opacity-100" : "opacity-0",
+                          )}
+                          disabled={isDeleting}
+                        >
+                          <MoreHorizontal className="h-4 w-4 text-muted-foreground/60" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48">
+                        {onEdit && (
+                          <DropdownMenuItem onClick={onEdit} className="gap-2">
+                            <ExternalLink className="h-4 w-4" />
+                            Abrir em tela cheia
+                          </DropdownMenuItem>
+                        )}
+                        {onEditTitle && (
+                          <DropdownMenuItem
+                            onClick={() => setIsEditing(true)}
+                            className="gap-2"
+                          >
+                            <Pencil className="h-4 w-4" />
+                            Editar título
+                          </DropdownMenuItem>
+                        )}
+                        {onDuplicate && (
+                          <DropdownMenuItem
+                            onClick={onDuplicate}
+                            className="gap-2"
+                          >
+                            <Copy className="h-4 w-4" />
+                            Duplicar
+                          </DropdownMenuItem>
+                        )}
+                        {onCreateBloco && (
+                          <>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={handleOpenSubBlocoModal}
+                              className="gap-2"
+                            >
+                              <Plus className="h-4 w-4" />
+                              Adicionar sub-bloco
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={handleOpenAbaixoModal}
+                              className="gap-2"
+                            >
+                              <Plus className="h-4 w-4" />
+                              Adicionar abaixo
+                            </DropdownMenuItem>
+                          </>
+                        )}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={handleDelete}
+                          className="gap-2 text-destructive focus:text-destructive"
+                          disabled={isDeleting}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          {isDeleting ? "Excluindo..." : "Excluir"}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                )}
+
+                {/* Navigation chevron hint (compact) */}
+                {compact && (
+                  <ChevronRight
+                    className={cn(
+                      "h-4 w-4 transition-all duration-200",
+                      isHovered
+                        ? "text-muted-foreground/50 translate-x-0 opacity-100"
+                        : "text-muted-foreground/20 -translate-x-1 opacity-0",
+                    )}
+                  />
+                )}
+              </div>
             </div>
 
-            {/* Content */}
-            <AnimatePresence initial={false}>
-              {!isCollapsed && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
-                  className="overflow-hidden"
-                >
-                  <div className="border-x border-b border-border/50 rounded-b-[var(--radius-lg)] bg-card/40 backdrop-blur-sm p-4">
-                    {renderContent(bloco, nucleoId, () => onDelete?.())}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Bottom action bar - appears on hover */}
-            <AnimatePresence>
-              {isHovered && !isCollapsed && (
-                <motion.div
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  className="absolute -bottom-4 left-1/2 -translate-x-1/2 z-20"
-                >
-                  <LiquidGlass
-                    variant="floating"
-                    radius="999px"
-                    interactive={false}
-                    className="flex items-center gap-1 px-2 py-1.5"
+            {/* Expandable content (non-compact) */}
+            {!compact && (
+              <AnimatePresence initial={false}>
+                {!isCollapsed && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
                   >
-                    <button
-                      onClick={() => {
-                        setModalTipo("abaixo");
-                        setModalCriarAberto(true);
-                      }}
-                      className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-all"
-                      title="Adicionar bloco abaixo"
-                    >
-                      <Plus className="h-3.5 w-3.5" />
-                      Adicionar abaixo
-                    </button>
-                    <div className="w-px h-4 bg-border/60" />
-                    <button
-                      onClick={() => {
-                        setModalTipo("sub");
-                        setModalCriarAberto(true);
-                      }}
-                      className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-all"
-                      title="Adicionar sub-bloco"
-                    >
-                      <Layers className="h-3.5 w-3.5" />
-                      Sub-bloco
-                    </button>
-                  </LiquidGlass>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                    <div className="h-px bg-white/10 mx-5" />
+                    {renderContent(bloco, nucleoId, handleDelete)}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
           </div>
-        )}
+        </LiquidGlass>
+
+        {/* Floating "add below" button (compact mode) */}
+        <AnimatePresence>
+          {isHovered && compact && (onAddBelow || onCreateBloco) && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: 8 }}
+              transition={{ duration: 0.15 }}
+              onClick={onAddBelow || handleOpenAbaixoModal}
+              className="absolute -bottom-3 left-1/2 -translate-x-1/2 z-30"
+            >
+              <LiquidGlass
+                variant="floating"
+                radius="999px"
+                interactive={false}
+                className="p-1 shadow-md hover:shadow-lg transition-shadow"
+              >
+                <Plus className="h-3 w-3 text-muted-foreground/70" />
+              </LiquidGlass>
+            </motion.button>
+          )}
+        </AnimatePresence>
       </motion.div>
 
+      {/* Modal de criação de bloco */}
       {onCreateBloco && (
         <CriarBlocoModal
           open={modalCriarAberto}
           onClose={() => setModalCriarAberto(false)}
-          onConfirm={handleCriar}
+          onConfirm={handleCriarBloco}
           nucleoId={nucleoId}
           isCreating={isCreating}
           parentId={modalTipo === "sub" ? bloco.id : null}
         />
       )}
-    </div>
+    </>
   );
 }

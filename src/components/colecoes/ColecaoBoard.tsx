@@ -1,3 +1,4 @@
+// src/components/colecoes/ColecaoBoard.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -10,36 +11,28 @@ import {
   ChevronDown,
   ChevronRight,
   Settings,
-  Check,
+  Copy,
   X,
+  Check,
+  GripVertical,
   Table2,
   LayoutGrid,
-  Loader2,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { useCampos, useItensColecao, useColecoes } from "@/hooks/useColecoes";
+import { useBlocos } from "@/hooks/useBlocos";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
-import type { Colecao, Campo } from "@/types/colecao";
+import type { Colecao, Campo, Item } from "@/types/colecao";
 import { GerenciarCamposModal } from "./GerenciarCamposModal";
-import { EditableTableCell } from "./EditableTableCell";
-
-const ACCENT = "#10b981";
-
-const TIPO_SYMBOL: Record<string, string> = {
-  texto:    "Aa",
-  numero:   "#",
-  data:     "📅",
-  booleano: "✓",
-  arquivo:  "📎",
-  select:   "▾",
-  relacao:  "↗",
-};
 
 interface ColecaoBoardProps {
   colecao: Colecao;
@@ -47,48 +40,78 @@ interface ColecaoBoardProps {
   onRefresh?: () => void;
 }
 
-function getCampoValue(item: any, campo: Campo): string {
-  const valor = item.valores?.[campo.id];
-  if (valor === undefined || valor === null) return "—";
-  if (campo.tipoCampo === "booleano") return valor ? "✓" : "✗";
-  if (campo.tipoCampo === "data") return new Date(valor).toLocaleDateString("pt-BR");
-  return String(valor);
-}
+// ── Ícones de tipo (movido para fora do componente) ──────────────────────
+const TIPO_ICONS: Record<string, React.ReactElement> = {
+  texto: <span className="text-xs font-semibold text-blue-600">Aa</span>,
+  numero: <span className="text-xs font-semibold text-green-600">#</span>,
+  data: <span className="text-xs font-semibold text-purple-600">📅</span>,
+  booleano: <span className="text-xs font-semibold text-orange-600">✓</span>,
+};
 
-export function ColecaoBoard({ colecao, blocoId, onRefresh }: ColecaoBoardProps) {
+export function ColecaoBoard({
+  colecao,
+  blocoId,
+  onRefresh,
+}: ColecaoBoardProps) {
+  const { update: updateBloco } = useBlocos();
   const { atualizarColecao, excluirColecao } = useColecoes(blocoId);
-  const [isExpanded,        setIsExpanded]        = useState(true);
-  const [isEditing,         setIsEditing]         = useState(false);
-  const [editNome,          setEditNome]          = useState(colecao.nome);
-  const [showAddForm,       setShowAddForm]       = useState(false);
-  const [novoItem,          setNovoItem]          = useState<Record<string, any>>({});
-  const [viewMode,          setViewMode]          = useState<"board" | "table">("board");
-  const [gerenciarOpen,     setGerenciarOpen]     = useState(false);
-  const [isSavingNome,      setIsSavingNome]      = useState(false);
-  const [isAddingItem,      setIsAddingItem]      = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editNome, setEditNome] = useState(colecao.nome);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [novoItem, setNovoItem] = useState<Record<string, any>>({});
+  const [viewMode, setViewMode] = useState<"board" | "table">("board");
+  const [gerenciarCamposOpen, setGerenciarCamposOpen] = useState(false);
 
   const { campos, isLoading: loadingCampos } = useCampos(colecao.id);
-  const { itens, criarItem, atualizarItem, excluirItem } = useItensColecao(colecao.id);
+  const { itens, criarItem, excluirItem, atualizarItem } = useItensColecao(
+    colecao.id,
+  );
 
   useEffect(() => {
     if (campos.length > 0 && Object.keys(novoItem).length === 0) {
-      const init: Record<string, any> = {};
-      campos.forEach((c) => { init[c.id] = c.tipoCampo === "booleano" ? false : ""; });
-      setNovoItem(init);
+      const initialValues: Record<string, any> = {};
+      campos.forEach((campo: Campo) => {
+        if (campo.tipoCampo === "booleano") initialValues[campo.id] = false;
+        else initialValues[campo.id] = "";
+      });
+      setNovoItem(initialValues);
     }
   }, [campos]);
 
+  const handleAddItem = async () => {
+    const valuesToSend: Record<string, any> = {};
+    campos.forEach((campo: Campo) => {
+      const val = novoItem[campo.id];
+      if (val !== undefined && val !== "") {
+        valuesToSend[campo.id] = val;
+      }
+    });
+    if (Object.keys(valuesToSend).length === 0) return;
+    try {
+      await criarItem(valuesToSend);
+      const resetValues: Record<string, any> = {};
+      campos.forEach((campo: Campo) => {
+        if (campo.tipoCampo === "booleano") resetValues[campo.id] = false;
+        else resetValues[campo.id] = "";
+      });
+      setNovoItem(resetValues);
+      setShowAddForm(false);
+      toast({ title: "Item adicionado" });
+    } catch {
+      toast({ title: "Erro ao adicionar", variant: "destructive" });
+    }
+  };
+
   const handleUpdateNome = async () => {
     if (!editNome.trim()) return;
-    setIsSavingNome(true);
     try {
       await atualizarColecao({ id: colecao.id, nome: editNome });
       setIsEditing(false);
+      toast({ title: "Nome atualizado" });
       onRefresh?.();
     } catch {
       toast({ title: "Erro ao atualizar", variant: "destructive" });
-    } finally {
-      setIsSavingNome(false);
     }
   };
 
@@ -103,34 +126,26 @@ export function ColecaoBoard({ colecao, blocoId, onRefresh }: ColecaoBoardProps)
     }
   };
 
-  const handleAddItem = async () => {
-    const payload: Record<string, any> = {};
-    campos.forEach((c) => {
-      const val = novoItem[c.id];
-      if (val !== undefined && val !== "") payload[c.id] = val;
-    });
-    if (Object.keys(payload).length === 0) return;
-    setIsAddingItem(true);
-    try {
-      await criarItem(payload);
-      const reset: Record<string, any> = {};
-      campos.forEach((c) => { reset[c.id] = c.tipoCampo === "booleano" ? false : ""; });
-      setNovoItem(reset);
-      setShowAddForm(false);
-    } catch {
-      toast({ title: "Erro ao adicionar", variant: "destructive" });
-    } finally {
-      setIsAddingItem(false);
-    }
+  const getCampoValue = (item: any, campo: Campo) => {
+    const valor = item.valores?.[campo.id];
+    if (valor === undefined || valor === null) return "-";
+    if (campo.tipoCampo === "booleano") return valor ? "✓" : "✗";
+    if (campo.tipoCampo === "data")
+      return new Date(valor).toLocaleDateString("pt-BR");
+    return String(valor);
+  };
+
+  const getTipoIcon = (tipo: string): React.ReactElement => {
+    return TIPO_ICONS[tipo] || <span className="text-xs">•</span>;
   };
 
   if (loadingCampos) {
     return (
-      <div className="rounded-xl border border-border/50 bg-card/60 animate-pulse overflow-hidden">
-        <div className="h-12 bg-muted/40 rounded-t-xl" />
+      <div className="bg-card rounded-xl border animate-pulse">
+        <div className="h-12 bg-muted/50 rounded-t-xl" />
         <div className="p-4 space-y-2">
-          <div className="h-16 bg-muted/20 rounded-lg" />
-          <div className="h-16 bg-muted/20 rounded-lg" />
+          <div className="h-16 bg-muted/30 rounded" />
+          <div className="h-16 bg-muted/30 rounded" />
         </div>
       </div>
     );
@@ -139,411 +154,439 @@ export function ColecaoBoard({ colecao, blocoId, onRefresh }: ColecaoBoardProps)
   return (
     <>
       <motion.div
-        initial={{ opacity: 0, y: 8 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-xl border border-border/50 bg-card/60 backdrop-blur-sm overflow-hidden"
+        className="bg-card rounded-xl border overflow-hidden"
       >
-        {/* ── Header ── */}
+        {/* Header */}
         <div
-          className="relative flex items-center justify-between px-4 py-2.5 cursor-pointer select-none"
-          style={{ background: `${ACCENT}08` }}
-          onClick={() => !isEditing && setIsExpanded(!isExpanded)}
+          className="px-6 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b flex items-center justify-between cursor-pointer hover:bg-gradient-to-r hover:from-blue-100 hover:to-indigo-100 transition-colors"
+          onClick={() => setIsExpanded(!isExpanded)}
         >
-          {/* Accent left rail */}
-          <div
-            className="absolute left-0 top-2 bottom-2 w-[3px] rounded-full"
-            style={{ background: ACCENT, opacity: 0.7 }}
-          />
-
-          <div className="flex items-center gap-2.5 pl-2">
-            {/* Collapse indicator */}
-            <span className="text-muted-foreground/50">
-              {isExpanded ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
-            </span>
-
-            {/* Icon */}
-            {!isEditing && (
-              <div
-                className="flex h-6 w-6 items-center justify-center rounded-md"
-                style={{ background: `${ACCENT}18` }}
-              >
-                <Table2 className="h-3.5 w-3.5" style={{ color: ACCENT }} />
-              </div>
-            )}
-
-            {/* Name — editable */}
+          <div className="flex items-center gap-2">
+            <div className="text-muted-foreground">
+              {isExpanded ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )}
+            </div>
             {isEditing ? (
-              <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                <input
+              <div
+                className="flex items-center gap-2"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Input
                   value={editNome}
                   onChange={(e) => setEditNome(e.target.value)}
+                  className="h-7 w-48 text-sm"
                   autoFocus
                   onKeyDown={(e) => {
                     if (e.key === "Enter") handleUpdateNome();
-                    if (e.key === "Escape") { setEditNome(colecao.nome); setIsEditing(false); }
+                    if (e.key === "Escape") setIsEditing(false);
                   }}
-                  className="h-7 w-44 px-2 text-sm font-semibold bg-background border border-border/60 rounded-lg focus:outline-none focus:ring-2 focus:border-transparent"
-                  style={{ "--tw-ring-color": `${ACCENT}40` } as any}
                 />
-                <button
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-6 w-6"
                   onClick={handleUpdateNome}
-                  disabled={isSavingNome}
-                  className="flex h-6 w-6 items-center justify-center rounded-md hover:bg-accent text-muted-foreground transition-colors disabled:opacity-50"
                 >
-                  {isSavingNome ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
-                </button>
-                <button
-                  onClick={() => { setEditNome(colecao.nome); setIsEditing(false); }}
-                  className="flex h-6 w-6 items-center justify-center rounded-md hover:bg-accent text-muted-foreground transition-colors"
+                  <Check className="h-3 w-3" />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-6 w-6"
+                  onClick={() => setIsEditing(false)}
                 >
                   <X className="h-3 w-3" />
-                </button>
+                </Button>
               </div>
             ) : (
-              <span className="text-sm font-semibold text-foreground">{colecao.nome}</span>
-            )}
-
-            {/* Counts */}
-            {!isEditing && (
-              <div className="flex items-center gap-1">
-                <span
-                  className="px-1.5 py-0.5 rounded-md text-[10px] font-semibold"
-                  style={{ background: `${ACCENT}18`, color: ACCENT }}
-                >
-                  {itens.length} {itens.length === 1 ? "item" : "itens"}
-                </span>
-                {campos.length > 0 && (
-                  <span className="px-1.5 py-0.5 rounded-md text-[10px] font-semibold bg-muted/60 text-muted-foreground/70">
-                    {campos.length} campos
-                  </span>
-                )}
+              <div className="flex items-center gap-2">
+                <div className="p-2 rounded-lg bg-blue-100">
+                  <Table2 className="h-4 w-4 text-blue-600" />
+                </div>
+                <h4 className="font-semibold text-base text-slate-900">
+                  {colecao.nome}
+                </h4>
               </div>
             )}
+            <Badge variant="outline" className="text-xs">
+              {itens.length} {itens.length === 1 ? "item" : "itens"}
+            </Badge>
+            {campos.length > 0 && (
+              <Badge variant="secondary" className="text-xs">
+                {campos.length} campos
+              </Badge>
+            )}
           </div>
-
-          {/* Right controls */}
-          <div className="flex items-center gap-0.5" onClick={(e) => e.stopPropagation()}>
-            {/* View toggle */}
-            <div className="flex items-center gap-px bg-muted/50 rounded-md p-0.5 mr-1">
+          <div className="flex items-center gap-1">
+            {/* View Toggle */}
+            <div className="flex items-center gap-0.5 bg-muted/50 rounded-md p-0.5 mr-1">
               <button
-                onClick={() => setViewMode("board")}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setViewMode("board");
+                }}
                 className={cn(
                   "p-1 rounded-md transition-colors",
-                  viewMode === "board" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground/50 hover:text-muted-foreground",
+                  viewMode === "board" && "bg-background shadow-sm",
                 )}
               >
                 <LayoutGrid className="h-3.5 w-3.5" />
               </button>
               <button
-                onClick={() => setViewMode("table")}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setViewMode("table");
+                }}
                 className={cn(
                   "p-1 rounded-md transition-colors",
-                  viewMode === "table" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground/50 hover:text-muted-foreground",
+                  viewMode === "table" && "bg-background shadow-sm",
                 )}
               >
                 <Table2 className="h-3.5 w-3.5" />
               </button>
             </div>
-
-            <button
-              onClick={() => setShowAddForm(!showAddForm)}
-              className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground/50 hover:text-muted-foreground hover:bg-accent transition-colors"
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowAddForm(!showAddForm);
+              }}
             >
               <Plus className="h-3.5 w-3.5" />
-            </button>
-
+            </Button>
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground/50 hover:text-muted-foreground hover:bg-accent transition-colors">
+              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                <Button variant="ghost" size="icon" className="h-7 w-7">
                   <MoreVertical className="h-3.5 w-3.5" />
-                </button>
+                </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-44 text-sm">
-                <DropdownMenuItem onClick={() => setGerenciarOpen(true)} className="gap-2">
-                  <Settings className="h-3.5 w-3.5" /> Gerenciar campos
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setGerenciarCamposOpen(true)}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  Gerenciar campos
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => { setIsEditing(true); setIsExpanded(true); }} className="gap-2">
-                  <Pencil className="h-3.5 w-3.5" /> Renomear
+                <DropdownMenuItem onClick={() => setIsEditing(true)}>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Renomear
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleDeleteColecao} className="gap-2 text-destructive focus:text-destructive">
-                  <Trash2 className="h-3.5 w-3.5" /> Excluir coleção
+                <DropdownMenuItem
+                  className="text-destructive"
+                  onClick={handleDeleteColecao}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Excluir coleção
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </div>
 
-        {/* ── Collapsible body ── */}
-        <AnimatePresence initial={false}>
+        <AnimatePresence>
           {isExpanded && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-              className="overflow-hidden"
+              transition={{ duration: 0.2 }}
             >
               {campos.length === 0 ? (
-                /* Empty state — no fields yet */
-                <div className="py-10 text-center">
-                  <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-muted/30">
-                    <Settings className="h-5 w-5 text-muted-foreground/40" />
+                <div className="p-8 text-center">
+                  <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-muted/30 flex items-center justify-center">
+                    <Settings className="h-6 w-6 text-muted-foreground/50" />
                   </div>
-                  <p className="text-sm text-muted-foreground/60 mb-3">Adicione campos para começar</p>
-                  <button
-                    onClick={() => setGerenciarOpen(true)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border/60 text-xs font-medium text-muted-foreground hover:bg-accent transition-colors"
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Adicione campos para começar
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setGerenciarCamposOpen(true)}
                   >
-                    <Plus className="h-3 w-3" />
+                    <Plus className="h-3 w-3 mr-1" />
                     Adicionar campo
-                  </button>
+                  </Button>
                 </div>
               ) : viewMode === "board" ? (
-                /* ── Board view ── */
-                <div className="p-4 space-y-3">
-                  {itens.length === 0 && !showAddForm ? (
-                    <div className="flex flex-col items-center justify-center py-10">
-                      <div
-                        className="mb-3 flex h-10 w-10 items-center justify-center rounded-full"
-                        style={{ background: `${ACCENT}12` }}
-                      >
-                        <LayoutGrid className="h-5 w-5" style={{ color: ACCENT }} />
+                /* ═══════════════ MODO BOARD ═══════════════ */
+                <div className="p-6">
+                  {itens.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-12">
+                      <div className="p-4 rounded-full bg-slate-100 mb-4">
+                        <LayoutGrid className="h-6 w-6 text-slate-400" />
                       </div>
-                      <p className="text-sm text-muted-foreground/60 mb-3">Nenhum item ainda</p>
-                      <button
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Nenhum item ainda
+                      </p>
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => setShowAddForm(true)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-white transition-opacity hover:opacity-90"
-                        style={{ background: ACCENT }}
+                        className="border-blue-300 text-blue-600 hover:bg-blue-50"
                       >
-                        <Plus className="h-3 w-3" />
+                        <Plus className="h-3.5 w-3.5 mr-1.5" />
                         Adicionar primeiro item
-                      </button>
+                      </Button>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                      {itens.map((item) => (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                      {itens.map((item: Item) => (
                         <div
                           key={item.id}
-                          className="group relative rounded-xl border border-border/40 bg-background/60 p-3.5 hover:border-border/80 hover:shadow-sm transition-all"
+                          className="group bg-white rounded-lg border border-slate-200 p-4 hover:shadow-lg hover:border-blue-300 transition-all"
                         >
-                          <div className="space-y-2.5">
-                            {campos.slice(0, 3).map((campo) => (
+                          <div className="space-y-3">
+                            {campos.slice(0, 3).map((campo: Campo) => (
                               <div key={campo.id} className="text-sm">
-                                <p className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-wider mb-0.5">
+                                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
                                   {campo.nome ?? "Sem nome"}
-                                </p>
-                                <p className="font-medium text-foreground truncate">
+                                </span>
+                                <p className="font-semibold text-slate-900 truncate mt-0.5">
                                   {getCampoValue(item, campo)}
                                 </p>
                               </div>
                             ))}
                             {campos.length > 3 && (
-                              <p className="text-[10px] text-muted-foreground/40">
-                                +{campos.length - 3} {campos.length - 3 === 1 ? "campo" : "campos"}
+                              <p className="text-xs text-slate-500 font-medium pt-1">
+                                +{campos.length - 3} mais{" "}
+                                {campos.length - 3 === 1 ? "campo" : "campos"}
                               </p>
                             )}
                           </div>
-                          <button
-                            onClick={() => excluirItem(item.id)}
-                            className="absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded-md opacity-0 group-hover:opacity-100 text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-all"
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </button>
+                          <div className="mt-4 flex items-center justify-end">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7 opacity-0 group-hover:opacity-100 text-destructive hover:text-destructive hover:bg-destructive/10 transition-opacity"
+                              onClick={() => excluirItem(item.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       ))}
                     </div>
                   )}
 
-                  {/* Add item form */}
-                  {showAddForm && (
+                  {(showAddForm || itens.length === 0) && (
                     <motion.div
-                      initial={{ opacity: 0, y: 6 }}
+                      initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="rounded-xl border border-border/50 bg-background/80 p-4 space-y-3"
+                      className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-200"
                     >
-                      <p className="text-xs font-semibold text-foreground/70">Novo item</p>
-                      <div className="space-y-2.5">
-                        {campos.slice(0, 4).map((campo) => (
+                      <h4 className="text-sm font-semibold text-slate-900 mb-4">
+                        Novo Item
+                      </h4>
+                      <div className="space-y-3">
+                        {campos.slice(0, 4).map((campo: Campo) => (
                           <div key={campo.id}>
-                            <label className="block text-[10px] font-semibold text-muted-foreground/60 uppercase tracking-wider mb-1">
+                            <label className="text-xs font-semibold text-slate-700 block mb-1.5 uppercase tracking-wide">
                               {campo.nome ?? "Sem nome"}
                             </label>
                             {campo.tipoCampo === "booleano" ? (
                               <button
-                                onClick={() => setNovoItem((p) => ({ ...p, [campo.id]: !p[campo.id] }))}
+                                onClick={() =>
+                                  setNovoItem((prev) => ({
+                                    ...prev,
+                                    [campo.id]: !prev[campo.id],
+                                  }))
+                                }
                                 className={cn(
-                                  "w-full px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
+                                  "px-3 py-2 rounded-md text-sm font-medium transition-colors w-full text-center",
                                   novoItem[campo.id]
-                                    ? "text-white"
-                                    : "bg-muted/50 text-muted-foreground border border-border/50",
+                                    ? "bg-blue-600 text-white"
+                                    : "bg-white text-slate-700 border border-slate-300",
                                 )}
-                                style={novoItem[campo.id] ? { background: ACCENT } : {}}
                               >
                                 {novoItem[campo.id] ? "Ativado" : "Desativado"}
                               </button>
                             ) : (
-                              <input
+                              <Input
                                 value={novoItem[campo.id] || ""}
-                                onChange={(e) => setNovoItem((p) => ({ ...p, [campo.id]: e.target.value }))}
+                                onChange={(e) =>
+                                  setNovoItem((prev) => ({
+                                    ...prev,
+                                    [campo.id]: e.target.value,
+                                  }))
+                                }
                                 placeholder={`Digite ${(campo.nome ?? "").toLowerCase()}`}
-                                className="w-full px-3 py-1.5 text-sm rounded-lg bg-background border border-border/50 focus:outline-none focus:ring-2 focus:border-transparent placeholder:text-muted-foreground/40"
-                                style={{ "--tw-ring-color": `${ACCENT}40` } as any}
+                                className="h-9 text-sm bg-white border-blue-300 focus:border-blue-500"
                               />
                             )}
                           </div>
                         ))}
                         {campos.length > 4 && (
-                          <p className="text-[10px] text-muted-foreground/40">
-                            +{campos.length - 4} {campos.length - 4 === 1 ? "campo" : "campos"} não exibidos
+                          <p className="text-xs text-slate-600">
+                            +{campos.length - 4} mais{" "}
+                            {campos.length - 4 === 1 ? "campo" : "campos"}
                           </p>
                         )}
-                      </div>
-                      <div className="flex gap-2 pt-1">
-                        <button
-                          onClick={handleAddItem}
-                          disabled={isAddingItem}
-                          className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-xs font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-50"
-                          style={{ background: ACCENT }}
-                        >
-                          {isAddingItem ? <Loader2 className="h-3 w-3 animate-spin" /> : <Plus className="h-3 w-3" />}
-                          Adicionar
-                        </button>
-                        <button
-                          onClick={() => setShowAddForm(false)}
-                          className="px-3 py-1.5 rounded-lg border border-border/50 text-xs font-medium text-muted-foreground hover:bg-accent transition-colors"
-                        >
-                          Cancelar
-                        </button>
+                        <div className="flex gap-2 pt-3 border-t border-blue-200">
+                          <Button
+                            size="sm"
+                            onClick={handleAddItem}
+                            className="bg-blue-600 hover:bg-blue-700 flex-1"
+                          >
+                            <Plus className="h-3.5 w-3.5 mr-1.5" />
+                            Adicionar Item
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setShowAddForm(false)}
+                            className="border-blue-300 text-blue-600 hover:bg-blue-50"
+                          >
+                            Cancelar
+                          </Button>
+                        </div>
                       </div>
                     </motion.div>
                   )}
 
                   {!showAddForm && itens.length > 0 && (
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full mt-3 text-muted-foreground"
                       onClick={() => setShowAddForm(true)}
-                      className="flex w-full items-center justify-center gap-1.5 py-2 rounded-lg border border-dashed border-border/40 text-xs text-muted-foreground/50 hover:text-muted-foreground hover:border-border/60 transition-colors"
                     >
-                      <Plus className="h-3 w-3" />
+                      <Plus className="h-3 w-3 mr-1" />
                       Adicionar item
-                    </button>
+                    </Button>
                   )}
                 </div>
               ) : (
-                /* ── Table view ── */
+                /* ═══════════════ MODO TABELA ═══════════════ */
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-border/40 bg-muted/20">
-                        <th className="px-4 py-2.5 text-left w-10">
-                          <span className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">#</span>
+                    <thead className="sticky top-0 bg-slate-50 border-b border-slate-200 z-10">
+                      <tr>
+                        <th className="px-4 py-3 text-left w-12">
+                          <div className="text-xs text-muted-foreground">#</div>
                         </th>
-                        {campos.map((campo) => (
-                          <th key={campo.id} className="px-4 py-2.5 text-left">
-                            <div className="flex items-center gap-1.5">
-                              <span
-                                className="text-[10px] font-bold w-4 text-center"
-                                style={{ color: ACCENT }}
-                              >
-                                {TIPO_SYMBOL[campo.tipoCampo] ?? "•"}
-                              </span>
-                              <span className="text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-wider whitespace-nowrap">
-                                {campo.nome ?? "Sem nome"}
-                              </span>
+                        {campos.map((campo: Campo) => (
+                          <th
+                            key={campo.id}
+                            className="px-4 py-3 text-left font-medium text-slate-700 whitespace-nowrap"
+                          >
+                            <div className="flex items-center gap-2">
+                              <div className="flex h-5 w-5 items-center justify-center rounded bg-slate-100">
+                                {getTipoIcon(campo.tipoCampo)}
+                              </div>
+                              <span>{campo.nome ?? "Sem nome"}</span>
                             </div>
                           </th>
                         ))}
-                        <th className="px-4 py-2.5 w-10" />
+                        <th className="px-4 py-3 w-12"></th>
                       </tr>
                     </thead>
-                    <tbody>
-                      {itens.map((item, idx) => (
+                    <tbody className="divide-y divide-slate-200">
+                      {itens.map((item: Item, idx: number) => (
                         <tr
                           key={item.id}
-                          className="group border-b border-border/30 hover:bg-muted/20 transition-colors"
+                          className="hover:bg-blue-50 transition-colors group"
                         >
-                          <td className="px-4 py-2.5 text-xs text-muted-foreground/40 tabular-nums">
+                          <td className="px-4 py-3 text-xs text-muted-foreground">
                             {idx + 1}
                           </td>
-                          {campos.map((campo) => (
-                            <td key={campo.id} className="px-2 py-1">
-                              <EditableTableCell
-                                valor={item.valores?.[campo.id]}
-                                campo={campo}
-                                onSave={async (novoValor) => {
-                                  await atualizarItem({ id: item.id, valores: { [campo.id]: novoValor } });
-                                }}
-                              />
+                          {campos.map((campo: Campo) => (
+                            <td
+                              key={campo.id}
+                              className="px-4 py-3 text-slate-700 font-medium"
+                            >
+                              {getCampoValue(item, campo)}
                             </td>
                           ))}
-                          <td className="px-4 py-2.5">
-                            <button
+                          <td className="px-4 py-3">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6 opacity-0 group-hover:opacity-100 text-destructive hover:text-destructive hover:bg-destructive/10"
                               onClick={() => excluirItem(item.id)}
-                              className="flex h-5 w-5 items-center justify-center rounded-md opacity-0 group-hover:opacity-100 text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-all"
                             >
-                              <Trash2 className="h-3 w-3" />
-                            </button>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </td>
                         </tr>
                       ))}
-
                       {showAddForm && (
-                        <tr className="border-b border-border/30 bg-muted/10">
-                          <td className="px-4 py-2 text-xs text-muted-foreground/40">+</td>
-                          {campos.map((campo) => (
-                            <td key={campo.id} className="px-2 py-2">
+                        <tr className="bg-gradient-to-r from-blue-50 to-indigo-50 border-t-2 border-blue-200">
+                          <td className="px-4 py-3 text-xs text-muted-foreground">
+                            +
+                          </td>
+                          {campos.map((campo: Campo) => (
+                            <td key={campo.id} className="px-4 py-3">
                               {campo.tipoCampo === "booleano" ? (
                                 <button
-                                  onClick={() => setNovoItem((p) => ({ ...p, [campo.id]: !p[campo.id] }))}
+                                  onClick={() =>
+                                    setNovoItem((prev) => ({
+                                      ...prev,
+                                      [campo.id]: !prev[campo.id],
+                                    }))
+                                  }
                                   className={cn(
-                                    "px-2 py-1 rounded-md text-xs font-medium transition-colors",
-                                    novoItem[campo.id] ? "text-white" : "bg-muted/50 text-muted-foreground",
+                                    "px-3 py-1.5 rounded-md text-xs font-medium transition-colors",
+                                    novoItem[campo.id]
+                                      ? "bg-blue-600 text-white"
+                                      : "bg-slate-200 text-slate-700",
                                   )}
-                                  style={novoItem[campo.id] ? { background: ACCENT } : {}}
                                 >
                                   {novoItem[campo.id] ? "Sim" : "Não"}
                                 </button>
                               ) : (
-                                <input
+                                <Input
                                   value={novoItem[campo.id] || ""}
-                                  onChange={(e) => setNovoItem((p) => ({ ...p, [campo.id]: e.target.value }))}
+                                  onChange={(e) =>
+                                    setNovoItem((prev) => ({
+                                      ...prev,
+                                      [campo.id]: e.target.value,
+                                    }))
+                                  }
                                   placeholder={campo.nome ?? ""}
-                                  className="w-full px-2 py-1 text-sm rounded-lg bg-background border border-border/50 focus:outline-none focus:ring-1 placeholder:text-muted-foreground/30"
+                                  className="h-8 text-sm bg-white border-blue-300 focus:border-blue-500"
                                 />
                               )}
                             </td>
                           ))}
-                          <td className="px-2 py-2">
+                          <td className="px-4 py-3">
                             <div className="flex gap-1">
-                              <button
+                              <Button
+                                size="sm"
                                 onClick={handleAddItem}
-                                disabled={isAddingItem}
-                                className="flex h-6 w-6 items-center justify-center rounded-md text-white transition-opacity hover:opacity-90 disabled:opacity-50"
-                                style={{ background: ACCENT }}
+                                className="bg-blue-600 hover:bg-blue-700"
                               >
-                                {isAddingItem ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
-                              </button>
-                              <button
+                                Salvar
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
                                 onClick={() => setShowAddForm(false)}
-                                className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground hover:bg-accent transition-colors"
                               >
-                                <X className="h-3 w-3" />
-                              </button>
+                                Cancelar
+                              </Button>
                             </div>
                           </td>
                         </tr>
                       )}
                     </tbody>
                   </table>
-
                   {!showAddForm && (
-                    <div className="border-t border-border/30">
-                      <button
+                    <div className="p-2 border-t">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-full text-muted-foreground"
                         onClick={() => setShowAddForm(true)}
-                        className="flex w-full items-center gap-1.5 px-4 py-2 text-xs text-muted-foreground/50 hover:text-muted-foreground hover:bg-muted/20 transition-colors"
                       >
-                        <Plus className="h-3 w-3" />
+                        <Plus className="h-3 w-3 mr-1" />
                         Adicionar item
-                      </button>
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -554,8 +597,8 @@ export function ColecaoBoard({ colecao, blocoId, onRefresh }: ColecaoBoardProps)
       </motion.div>
 
       <GerenciarCamposModal
-        open={gerenciarOpen}
-        onClose={() => setGerenciarOpen(false)}
+        open={gerenciarCamposOpen}
+        onClose={() => setGerenciarCamposOpen(false)}
         colecaoId={colecao.id}
         colecaoNome={colecao.nome}
         onRefresh={onRefresh}
