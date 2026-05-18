@@ -2,31 +2,41 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Moon, Sun, Bell, Globe, Shield, Palette, Monitor } from "lucide-react";
+import {
+  ArrowLeft,
+  Moon,
+  Sun,
+  Bell,
+  Globe,
+  Shield,
+  Palette,
+  Monitor,
+} from "lucide-react";
 import { useTheme } from "next-themes";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { LiquidGlass } from "@/components/ui/liquid-glass";
 
 const THEME_OPTIONS = [
-  { value: "light",  label: "Claro",   icon: Sun     },
-  { value: "dark",   label: "Escuro",  icon: Moon    },
+  { value: "light", label: "Claro", icon: Sun },
+  { value: "dark", label: "Escuro", icon: Moon },
   { value: "system", label: "Sistema", icon: Monitor },
 ] as const;
 
 const LANG_OPTIONS = [
   { value: "pt-BR", label: "Português (Brasil)" },
-  { value: "en-US", label: "English (US)"       },
-  { value: "es",    label: "Español"             },
+  { value: "en-US", label: "English (US)" },
+  { value: "es", label: "Español" },
 ];
 
 export default function ConfiguracoesPage() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
-  const [notifPush,    setNotifPush]    = useState(true);
-  const [notifEmail,   setNotifEmail]   = useState(true);
-  const [notifStreaks, setNotifStreaks]  = useState(true);
-  const [idioma,       setIdioma]       = useState("pt-BR");
+  const [notifPush, setNotifPush] = useState(true);
+  const [notifEmail, setNotifEmail] = useState(true);
+  const [notifStreaks, setNotifStreaks] = useState(true);
+  const [idioma, setIdioma] = useState("pt-BR");
 
   const salvar = () => toast({ title: "Configurações salvas!" });
 
@@ -45,7 +55,6 @@ export default function ConfiguracoesPage() {
       </div>
 
       <div className="px-5 md:px-7 py-6 max-w-2xl mx-auto space-y-4">
-
         {/* Appearance */}
         <section className="rounded-[var(--radius-lg)] border border-border/50 bg-card/60 backdrop-blur-sm overflow-hidden">
           <div className="px-4 py-3 border-b border-border/30 flex items-center gap-2">
@@ -56,22 +65,32 @@ export default function ConfiguracoesPage() {
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-sm font-medium">Tema</p>
-                <p className="text-xs text-muted-foreground/60">Claro, escuro ou seguir o sistema</p>
+                <p className="text-xs text-muted-foreground/60">
+                  Claro, escuro ou seguir o sistema
+                </p>
               </div>
               <div className="flex items-center gap-0.5 p-1 rounded-lg bg-muted/40 border border-border/30 shrink-0">
                 {THEME_OPTIONS.map((opt) => {
                   const Icon = opt.icon;
                   const active = (theme || "system") === opt.value;
-                  return (
+                  return active ? (
+                    <LiquidGlass
+                      key={opt.value}
+                      variant="button"
+                      radius="6px"
+                      onClick={() => setTheme(opt.value)}
+                      className="text-xs font-medium text-"
+                    >
+                      <span className="flex items-center gap-1.5 px-2.5 py-1.5">
+                        <Icon className="h-3 w-3" />
+                        <span className="hidden sm:inline">{opt.label}</span>
+                      </span>
+                    </LiquidGlass>
+                  ) : (
                     <button
                       key={opt.value}
                       onClick={() => setTheme(opt.value)}
-                      className={cn(
-                        "flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-[var(--duration-fast)]",
-                        active
-                          ? "bg-background text-foreground shadow-[var(--shadow-xs)]"
-                          : "text-muted-foreground hover:text-foreground",
-                      )}
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-muted-foreground hover:text-foreground transition-all duration-[var(--duration-fast)]"
                     >
                       <Icon className="h-3 w-3" />
                       <span className="hidden sm:inline">{opt.label}</span>
@@ -86,7 +105,7 @@ export default function ConfiguracoesPage() {
         {/* Language */}
         <section className="rounded-[var(--radius-lg)] border border-border/50 bg-card/60 backdrop-blur-sm overflow-hidden">
           <div className="px-4 py-3 border-b border-border/30 flex items-center gap-2">
-            <Globe className="h-4 w-4 text-blue-500" />
+            <Globe className="h-4 w-4 text-primary-500" />
             <p className="text-sm font-semibold">Idioma</p>
           </div>
           <div className="p-4">
@@ -96,7 +115,9 @@ export default function ConfiguracoesPage() {
               className="w-full h-9 px-3 rounded-lg border border-border/50 bg-background/60 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary/40 transition-colors"
             >
               {LANG_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
               ))}
             </select>
           </div>
@@ -110,14 +131,34 @@ export default function ConfiguracoesPage() {
           </div>
           <div className="px-4 divide-y divide-border/25">
             {[
-              { label: "Notificações push",    desc: "Receba alertas no navegador",              value: notifPush,    set: setNotifPush    },
-              { label: "Notificações por email",desc: "Resumo semanal por email",                value: notifEmail,   set: setNotifEmail   },
-              { label: "Alertas de streak",    desc: "Aviso quando seu streak estiver em risco", value: notifStreaks,  set: setNotifStreaks },
+              {
+                label: "Notificações push",
+                desc: "Receba alertas no navegador",
+                value: notifPush,
+                set: setNotifPush,
+              },
+              {
+                label: "Notificações por email",
+                desc: "Resumo semanal por email",
+                value: notifEmail,
+                set: setNotifEmail,
+              },
+              {
+                label: "Alertas de streak",
+                desc: "Aviso quando seu streak estiver em risco",
+                value: notifStreaks,
+                set: setNotifStreaks,
+              },
             ].map((item) => (
-              <div key={item.label} className="flex items-center justify-between py-3.5">
+              <div
+                key={item.label}
+                className="flex items-center justify-between py-3.5"
+              >
                 <div>
                   <p className="text-sm font-medium">{item.label}</p>
-                  <p className="text-xs text-muted-foreground/60 mt-0.5">{item.desc}</p>
+                  <p className="text-xs text-muted-foreground/60 mt-0.5">
+                    {item.desc}
+                  </p>
                 </div>
                 <Switch checked={item.value} onCheckedChange={item.set} />
               </div>
@@ -132,31 +173,45 @@ export default function ConfiguracoesPage() {
             <p className="text-sm font-semibold">Privacidade</p>
           </div>
           <div className="p-4 space-y-2.5">
-            <button
+            <LiquidGlass
+              variant="button"
+              radius="8px"
               onClick={() => router.push("/dashboard/perfil")}
-              className="w-full flex items-center justify-center px-4 py-2.5 rounded-lg border border-border/50 bg-background/40 text-sm font-medium text-foreground hover:bg-accent transition-colors duration-[var(--duration-fast)]"
+              className="w-full text-sm font-medium text-/80"
             >
-              Alterar senha
-            </button>
-            <button
+              <span className="flex items-center justify-center px-4 py-2.5">
+                Alterar senha
+              </span>
+            </LiquidGlass>
+            <LiquidGlass
+              variant="button"
+              radius="8px"
               onClick={() =>
-                toast({ title: "Solicitação enviada. Entraremos em contato.", variant: "destructive" })
+                toast({
+                  title: "Solicitação enviada. Entraremos em contato.",
+                  variant: "destructive",
+                })
               }
-              className="w-full flex items-center justify-center px-4 py-2.5 rounded-lg border border-destructive/30 text-sm font-medium text-destructive hover:bg-destructive/8 transition-colors duration-[var(--duration-fast)]"
+              className="w-full text-sm font-medium text-red-400"
             >
-              Excluir minha conta
-            </button>
+              <span className="flex items-center justify-center px-4 py-2.5">
+                Excluir minha conta
+              </span>
+            </LiquidGlass>
           </div>
         </section>
 
         {/* Save */}
-        <button
+        <LiquidGlass
+          variant="button"
+          radius="var(--radius-md)"
           onClick={salvar}
-          className="w-full flex items-center justify-center px-4 py-2.5 rounded-[var(--radius-md)] bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity shadow-[var(--shadow-xs)]"
+          className="w-full text-sm font-semibold text-"
         >
-          Salvar configurações
-        </button>
-
+          <span className="flex items-center justify-center px-4 py-2.5">
+            Salvar configurações
+          </span>
+        </LiquidGlass>
       </div>
     </div>
   );

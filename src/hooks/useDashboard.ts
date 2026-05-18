@@ -52,8 +52,7 @@ export function useUserPlan() {
         }
 
         return response as UserPlanResponse;
-      } catch (error) {
-        console.error("Erro ao buscar plano do usuário:", error);
+      } catch {
         return {
           plan: {
             id: "free",
@@ -67,6 +66,6 @@ export function useUserPlan() {
       }
     },
     staleTime: 1000 * 60 * 5,
-    retry: 1,
+    retry: 0,
   });
 }

@@ -14,6 +14,7 @@ import { GlassModal, GlassInput, GlassModalFooter, GlassButton } from "@/compone
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useGamification } from "@/hooks/useGamification";
+import { LiquidGlass } from "@/components/ui/liquid-glass";
 
 export default function PerfilPage() {
   const router = useRouter();
@@ -227,20 +228,25 @@ export default function PerfilPage() {
                   <p className="text-[10px] text-muted-foreground/40">O email não pode ser alterado</p>
                 </div>
                 <div className="flex gap-2 pt-1">
-                  <button
+                  <LiquidGlass
+                    variant="button"
+                    radius="8px"
                     onClick={salvar}
-                    disabled={salvando}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-60"
+                    className={cn("text-sm font-medium text-white", salvando && "opacity-60 pointer-events-none")}
                   >
-                    {salvando && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                    {salvando ? "Salvando..." : "Salvar"}
-                  </button>
-                  <button
+                    <span className="flex items-center gap-1.5 px-4 py-2">
+                      {salvando && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                      {salvando ? "Salvando..." : "Salvar"}
+                    </span>
+                  </LiquidGlass>
+                  <LiquidGlass
+                    variant="button"
+                    radius="8px"
                     onClick={() => { setEditando(false); setNome(user?.fullName || ""); setTelefone(user?.phone || ""); }}
-                    className="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors duration-[var(--duration-fast)]"
+                    className="text-sm font-medium text-white/70"
                   >
-                    Cancelar
-                  </button>
+                    <span className="px-4 py-2 block">Cancelar</span>
+                  </LiquidGlass>
                 </div>
               </div>
             ) : (
@@ -270,12 +276,16 @@ export default function PerfilPage() {
                     </div>
                   );
                 })}
-                <button
+                <LiquidGlass
+                  variant="button"
+                  radius="8px"
                   onClick={() => setEditando(true)}
-                  className="mt-3 flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border/50 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors duration-[var(--duration-fast)]"
+                  className="mt-3 text-xs font-medium text-white/70"
                 >
-                  Editar informações
-                </button>
+                  <span className="flex items-center gap-1.5 px-3 py-1.5">
+                    Editar informações
+                  </span>
+                </LiquidGlass>
               </div>
             )}
           </div>
@@ -326,13 +336,17 @@ export default function PerfilPage() {
             <p className="text-sm font-semibold text-destructive">Área de Risco</p>
           </div>
           <div className="p-4 space-y-2.5">
-            <button
+            <LiquidGlass
+              variant="button"
+              radius="8px"
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-border/50 bg-background/40 text-sm font-medium text-foreground hover:bg-accent transition-colors duration-[var(--duration-fast)]"
+              className="w-full text-sm font-medium text-white/80"
             >
-              <LogOut className="h-4 w-4" />
-              Sair da conta
-            </button>
+              <span className="flex items-center justify-center gap-2 px-4 py-2.5">
+                <LogOut className="h-4 w-4" />
+                Sair da conta
+              </span>
+            </LiquidGlass>
             <button
               onClick={() => setShowDeleteModal(true)}
               className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium text-white hover:opacity-90 transition-opacity"
@@ -367,15 +381,17 @@ export default function PerfilPage() {
           <GlassButton variant="outline" onClick={() => setShowAvatarModal(false)} disabled={salvando}>
             Cancelar
           </GlassButton>
-          <button
+          <LiquidGlass
+            variant="button"
+            radius="12px"
             onClick={handleSaveAvatar}
-            disabled={salvando}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium text-white hover:opacity-90 disabled:opacity-50 min-w-[90px] justify-center transition-opacity"
-            style={{ background: "#6366f1", boxShadow: "0 4px 12px #6366f135" }}
+            className={cn("text-sm font-medium text-white min-w-[90px]", salvando && "opacity-50 pointer-events-none")}
           >
-            {salvando ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
-            {salvando ? "Salvando..." : "Salvar"}
-          </button>
+            <span className="flex items-center justify-center gap-1.5 px-4 py-2">
+              {salvando ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+              {salvando ? "Salvando..." : "Salvar"}
+            </span>
+          </LiquidGlass>
         </GlassModalFooter>
       </GlassModal>
 
@@ -398,15 +414,17 @@ export default function PerfilPage() {
           <GlassButton variant="outline" onClick={() => setShowDeleteModal(false)} disabled={deletando}>
             Cancelar
           </GlassButton>
-          <button
+          <LiquidGlass
+            variant="button"
+            radius="12px"
             onClick={handleDeleteAccount}
-            disabled={deletando}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium text-white hover:opacity-90 disabled:opacity-50 min-w-[90px] justify-center transition-opacity"
-            style={{ background: "hsl(var(--destructive))", boxShadow: "0 4px 12px hsl(var(--destructive) / 0.35)" }}
+            className={cn("text-sm font-medium text-red-300 min-w-[90px]", deletando && "opacity-50 pointer-events-none")}
           >
-            {deletando ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
-            {deletando ? "Deletando..." : "Sim, deletar"}
-          </button>
+            <span className="flex items-center justify-center gap-1.5 px-4 py-2">
+              {deletando ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+              {deletando ? "Deletando..." : "Sim, deletar"}
+            </span>
+          </LiquidGlass>
         </GlassModalFooter>
       </GlassModal>
     </div>

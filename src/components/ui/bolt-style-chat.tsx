@@ -77,7 +77,7 @@ export default function OrbitIcon({
         height={16}
         className="w-full h-full object-contain"
         style={{
-          filter: color === "white" ? "brightness(0) invert(1)" : "none",
+          filter: color === "" ? "brightness(0) invert(1)" : "none",
         }}
       />
     </div>
@@ -90,7 +90,7 @@ const models: Model[] = [
     id: "orbit-pro",
     name: "Orbit Pro",
     description: "IA mais poderosa e completa",
-    icon: <OrbitIcon className="size-4" color="white" />,
+    icon: <OrbitIcon className="size-4" color="" />,
     badge: "Pro",
   },
   {
@@ -358,7 +358,7 @@ function ChatInput({
               <button
                 onClick={handleSubmit}
                 disabled={!message.trim()}
-                className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 shadow-lg shadow-primary/20"
+                className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text- hover:opacity-90 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 shadow-lg shadow-primary/20"
               >
                 <span className="hidden sm:inline">Conversar com Orbit</span>
                 <SendHorizontal className="size-4" />

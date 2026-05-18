@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "standalone",
+
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -9,7 +11,7 @@ const nextConfig = {
   },
 
   turbopack: {
-    root: "/Users/andrewpimenta/Documents/Repository/nucleos-ui",
+    root: process.env.TURBOPACK_ROOT || process.cwd(),
   },
 
   //  Remove console.log automaticamente em produção

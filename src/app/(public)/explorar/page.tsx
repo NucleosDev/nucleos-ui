@@ -1,6 +1,8 @@
 // /app/explorar/page.tsx
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import React from "react";
 import { useState } from "react";
 import { motion } from "framer-motion";

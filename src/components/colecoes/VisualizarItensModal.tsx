@@ -1,4 +1,3 @@
-// src/components/colecoes/VisualizarItensModal.tsx
 "use client";
 
 import {
@@ -69,27 +68,27 @@ export function VisualizarItensModal({
               {itens.length} {itens.length === 1 ? "item" : "itens"}
             </p>
           </DialogHeader>
-          <div className="max-h-[500px] overflow-auto rounded-lg border border-slate-200">
+          <div className="max-h-[500px] overflow-auto rounded-lg border border-border">
             {itens.length === 0 ? (
               <div className="flex items-center justify-center py-12 text-muted-foreground">
                 <p className="text-sm">Nenhum item ainda na coleção.</p>
               </div>
             ) : (
               <Table>
-                <TableHeader className="sticky top-0 bg-slate-50">
-                  <TableRow className="border-b border-slate-200 hover:bg-slate-50">
-                    <TableHead className="font-semibold text-slate-700 w-12">
+                <TableHeader className="sticky top-0 bg-muted/50">
+                  <TableRow className="border-b border-border hover:bg-muted/30">
+                    <TableHead className="font-semibold text-foreground/80 w-12">
                       #
                     </TableHead>
                     {campos.map((c) => (
                       <TableHead
                         key={c.id}
-                        className="font-semibold text-slate-700"
+                        className="font-semibold text-foreground/80"
                       >
                         {c.nome}
                       </TableHead>
                     ))}
-                    <TableHead className="w-24 font-semibold text-slate-700 text-right pr-4">
+                    <TableHead className="w-24 font-semibold text-foreground/80 text-right pr-4">
                       Ações
                     </TableHead>
                   </TableRow>
@@ -98,7 +97,7 @@ export function VisualizarItensModal({
                   {itens.map((item, idx) => (
                     <TableRow
                       key={item.id}
-                      className="border-b border-slate-100 hover:bg-blue-50 transition-colors group"
+                      className="border-b border-border/50 hover:bg-primary/5 transition-colors group"
                     >
                       <TableCell className="text-xs text-muted-foreground font-medium">
                         {idx + 1}
@@ -106,7 +105,7 @@ export function VisualizarItensModal({
                       {campos.map((c) => (
                         <TableCell
                           key={c.id}
-                          className="text-slate-700 font-medium"
+                          className="text-foreground/80 font-medium"
                         >
                           {formatValor(item.valores[c.id], c.tipoCampo)}
                         </TableCell>
@@ -116,7 +115,7 @@ export function VisualizarItensModal({
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-blue-600 hover:bg-blue-100"
+                            className="h-7 w-7 text-primary hover:bg-primary/10"
                             onClick={() => setItemEditando(item)}
                           >
                             <Pencil className="h-3.5 w-3.5" />

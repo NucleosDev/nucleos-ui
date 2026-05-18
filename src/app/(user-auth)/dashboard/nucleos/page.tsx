@@ -11,6 +11,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus } from "lucide-react";
 import type { NucleoComStats } from "@/types/nucleo";
+import { LiquidGlass } from "@/components/ui/liquid-glass";
 
 export default function Nucleos() {
   const { user } = useAuth();
@@ -31,7 +32,9 @@ export default function Nucleos() {
 
   const handleDelete = async (nucleo: NucleoComStats) => {
     if (confirm(`Excluir "${nucleo.nome}"? Esta ação não pode ser desfeita.`)) {
-      try { await remove(nucleo.id); } catch {}
+      try {
+        await remove(nucleo.id);
+      } catch {}
     }
   };
 
@@ -50,13 +53,17 @@ export default function Nucleos() {
           </h1>
         </div>
 
-        <button
+        <LiquidGlass
+          variant="button"
+          radius="var(--radius-md)"
           onClick={() => setIsCreateModalOpen(true)}
-          className="hidden sm:flex items-center gap-2 px-3.5 py-2 rounded-[var(--radius-md)] bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity shadow-[var(--shadow-xs)]"
+          className="hidden sm:inline-flex text-sm font-medium text-"
         >
-          <Plus className="h-3.5 w-3.5" />
-          Novo Núcleo
-        </button>
+          <span className="flex items-center gap-2 px-3.5 py-2">
+            <Plus className="h-3.5 w-3.5" />
+            Novo Núcleo
+          </span>
+        </LiquidGlass>
       </div>
 
       {/* Grid */}
@@ -74,17 +81,17 @@ export default function Nucleos() {
       {/* Mobile FAB */}
       <AnimatePresence>
         {isMobile && (
-          <motion.button
+          <LiquidGlass
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ type: "spring", stiffness: 300, damping: 24 }}
             onClick={() => setIsCreateModalOpen(true)}
-            className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-full bg-primary text-primary-foreground shadow-[var(--shadow-lg)] text-sm font-medium active:scale-95 transition-transform"
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-5 py-3 rounded-full text-foreground shadow-[var(--shadow-lg)] text-sm font-medium active:scale-95 transition-transform"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-4 w-4 shrink-0" />
             Novo
-          </motion.button>
+          </LiquidGlass>
         )}
       </AnimatePresence>
 

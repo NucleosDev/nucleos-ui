@@ -22,10 +22,12 @@ interface ColecoesBlocoCardProps {
 }
 
 export function ColecoesBlocoCard({ bloco }: ColecoesBlocoCardProps) {
-  const [createOpen, setCreateOpen]         = useState(false);
+  const [createOpen, setCreateOpen] = useState(false);
   const [quickTableOpen, setQuickTableOpen] = useState(false);
 
-  const { colecoes, isLoading, criarColecao, isCreating } = useColecoes(bloco.id);
+  const { colecoes, isLoading, criarColecao, isCreating } = useColecoes(
+    bloco.id,
+  );
 
   const handleCreate = async (nome: string) => {
     try {
@@ -37,14 +39,20 @@ export function ColecoesBlocoCard({ bloco }: ColecoesBlocoCardProps) {
     }
   };
 
-  const handleQuickTable = async (nome: string, campos: { nome: string; tipoCampo: string }[]) => {
+  const handleQuickTable = async (
+    nome: string,
+    campos: { nome: string; tipoCampo: string }[],
+  ) => {
     try {
       const nova = await criarColecao({ nome });
       for (const campo of campos) {
         await colecoesService.createCampo(nova.id, campo.nome, campo.tipoCampo);
       }
       setQuickTableOpen(false);
-      toast({ title: "Tabela criada!", description: `${campos.length} campo${campos.length !== 1 ? "s" : ""} adicionado${campos.length !== 1 ? "s" : ""}` });
+      toast({
+        title: "Tabela criada!",
+        description: `${campos.length} campo${campos.length !== 1 ? "s" : ""} adicionado${campos.length !== 1 ? "s" : ""}`,
+      });
     } catch {
       toast({ title: "Erro ao criar tabela", variant: "destructive" });
     }
@@ -73,9 +81,12 @@ export function ColecoesBlocoCard({ bloco }: ColecoesBlocoCardProps) {
           >
             <Layers className="h-6 w-6 text-emerald-500/70" />
           </div>
-          <p className="text-sm font-medium text-foreground/70 mb-1">Nenhuma coleção ainda</p>
+          <p className="text-sm font-medium text-foreground/70 mb-1">
+            Nenhuma coleção ainda
+          </p>
           <p className="text-xs text-muted-foreground/60 max-w-xs mb-5">
-            Organize dados em tabelas flexíveis — como um banco de dados pessoal.
+            Organize dados em tabelas flexíveis — como um banco de dados
+            pessoal.
           </p>
           <div className="flex items-center gap-2">
             <button
@@ -83,7 +94,7 @@ export function ColecoesBlocoCard({ bloco }: ColecoesBlocoCardProps) {
               disabled={isCreating}
               className={cn(
                 "flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold",
-                "bg-emerald-500 text-white hover:opacity-90 transition-opacity",
+                "bg-emerald-500 text- hover:opacity-90 transition-opacity",
                 "shadow-[0_4px_12px_rgba(16,185,129,0.25)]",
               )}
             >
@@ -101,8 +112,18 @@ export function ColecoesBlocoCard({ bloco }: ColecoesBlocoCardProps) {
           </div>
         </div>
 
-        <CriarColecaoModal open={createOpen} onClose={() => setCreateOpen(false)} onConfirm={handleCreate} isSubmitting={isCreating} />
-        <CriarTabelaRapidaModal open={quickTableOpen} onClose={() => setQuickTableOpen(false)} onConfirm={handleQuickTable} isSubmitting={isCreating} />
+        <CriarColecaoModal
+          open={createOpen}
+          onClose={() => setCreateOpen(false)}
+          onConfirm={handleCreate}
+          isSubmitting={isCreating}
+        />
+        <CriarTabelaRapidaModal
+          open={quickTableOpen}
+          onClose={() => setQuickTableOpen(false)}
+          onConfirm={handleQuickTable}
+          isSubmitting={isCreating}
+        />
       </>
     );
   }
@@ -117,7 +138,11 @@ export function ColecoesBlocoCard({ bloco }: ColecoesBlocoCardProps) {
           disabled={isCreating}
           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-emerald-600 hover:bg-emerald-500/8 border border-emerald-500/25 transition-colors"
         >
-          {isCreating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5" />}
+          {isCreating ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <Zap className="h-3.5 w-3.5" />
+          )}
           Nova Tabela
         </button>
         <button
@@ -137,8 +162,18 @@ export function ColecoesBlocoCard({ bloco }: ColecoesBlocoCardProps) {
         ))}
       </div>
 
-      <CriarColecaoModal open={createOpen} onClose={() => setCreateOpen(false)} onConfirm={handleCreate} isSubmitting={isCreating} />
-      <CriarTabelaRapidaModal open={quickTableOpen} onClose={() => setQuickTableOpen(false)} onConfirm={handleQuickTable} isSubmitting={isCreating} />
+      <CriarColecaoModal
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onConfirm={handleCreate}
+        isSubmitting={isCreating}
+      />
+      <CriarTabelaRapidaModal
+        open={quickTableOpen}
+        onClose={() => setQuickTableOpen(false)}
+        onConfirm={handleQuickTable}
+        isSubmitting={isCreating}
+      />
     </div>
   );
 }

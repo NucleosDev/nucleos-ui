@@ -3,7 +3,13 @@
 
 import { useState, useEffect } from "react";
 import { Activity, Check, Loader2 } from "lucide-react";
-import { GlassModal, GlassModalHeader, GlassInput, GlassModalFooter, GlassButton } from "@/components/ui/glass-modal";
+import {
+  GlassModal,
+  GlassModalHeader,
+  GlassInput,
+  GlassModalFooter,
+  GlassButton,
+} from "@/components/ui/glass-modal";
 import { cn } from "@/lib/utils";
 import type { FrequenciaHabito } from "@/types/habitos";
 
@@ -37,17 +43,21 @@ export function CriarHabitoModal({
   isSubmitting = false,
   titulo = "Novo hábito",
 }: CriarHabitoModalProps) {
-  const [nome,       setNome]       = useState("");
+  const [nome, setNome] = useState("");
   const [frequencia, setFrequencia] = useState<FrequenciaHabito>("diaria");
   const [diasSemana, setDiasSemana] = useState<number[]>([]);
-  const [metaVezes,  setMetaVezes]  = useState<number>(1);
+  const [metaVezes, setMetaVezes] = useState<number>(1);
 
   useEffect(() => {
     if (open) {
       if (initialData) {
         setNome(initialData.nome);
         setFrequencia(initialData.frequencia);
-        setDiasSemana(Array.isArray(initialData.diasSemana) ? initialData.diasSemana.map(Number) : []);
+        setDiasSemana(
+          Array.isArray(initialData.diasSemana)
+            ? initialData.diasSemana.map(Number)
+            : [],
+        );
         setMetaVezes(initialData.metaVezes || 1);
       } else {
         setNome("");
@@ -97,30 +107,40 @@ export function CriarHabitoModal({
         />
 
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-muted-foreground/70">Frequência</label>
+          <label className="text-xs font-medium text-muted-foreground/70">
+            Frequência
+          </label>
           <div className="flex rounded-xl border border-border/50 bg-muted/30 p-0.5 gap-0.5">
-            {(["diaria", "semanal", "personalizada"] as FrequenciaHabito[]).map((f) => (
-              <button
-                key={f}
-                type="button"
-                onClick={() => setFrequencia(f)}
-                disabled={isSubmitting}
-                className={cn(
-                  "flex-1 py-1.5 rounded-lg text-xs font-medium transition-all",
-                  frequencia === f
-                    ? "bg-background shadow-[var(--shadow-xs)] text-foreground"
-                    : "text-muted-foreground/60 hover:text-muted-foreground",
-                )}
-              >
-                {f === "diaria" ? "Diária" : f === "semanal" ? "Semanal" : "Personalizada"}
-              </button>
-            ))}
+            {(["diaria", "semanal", "personalizada"] as FrequenciaHabito[]).map(
+              (f) => (
+                <button
+                  key={f}
+                  type="button"
+                  onClick={() => setFrequencia(f)}
+                  disabled={isSubmitting}
+                  className={cn(
+                    "flex-1 py-1.5 rounded-lg text-xs font-medium transition-all",
+                    frequencia === f
+                      ? "bg-background shadow-[var(--shadow-xs)] text-foreground"
+                      : "text-muted-foreground/60 hover:text-muted-foreground",
+                  )}
+                >
+                  {f === "diaria"
+                    ? "Diária"
+                    : f === "semanal"
+                      ? "Semanal"
+                      : "Personalizada"}
+                </button>
+              ),
+            )}
           </div>
         </div>
 
         {frequencia === "semanal" && (
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-muted-foreground/70">Dias da semana</label>
+            <label className="text-xs font-medium text-muted-foreground/70">
+              Dias da semana
+            </label>
             <div className="grid grid-cols-7 gap-1">
               {diasSemanaLabels.map((label, idx) => {
                 const active = diasSemana.includes(idx);
@@ -132,10 +152,17 @@ export function CriarHabitoModal({
                     className={cn(
                       "py-1.5 rounded-lg text-[11px] font-medium border transition-all",
                       active
-                        ? "text-white border-transparent"
+                        ? "text- border-transparent"
                         : "border-border/40 text-muted-foreground hover:border-border",
                     )}
-                    style={active ? { background: ACCENT, boxShadow: `0 2px 8px ${ACCENT}30` } : {}}
+                    style={
+                      active
+                        ? {
+                            background: ACCENT,
+                            boxShadow: `0 2px 8px ${ACCENT}30`,
+                          }
+                        : {}
+                    }
                   >
                     {label}
                   </button>
@@ -146,7 +173,9 @@ export function CriarHabitoModal({
         )}
 
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-muted-foreground/70">Meta diária (vezes)</label>
+          <label className="text-xs font-medium text-muted-foreground/70">
+            Meta diária (vezes)
+          </label>
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -156,7 +185,9 @@ export function CriarHabitoModal({
             >
               −
             </button>
-            <span className="w-8 text-center text-sm font-semibold tabular-nums">{metaVezes}</span>
+            <span className="w-8 text-center text-sm font-semibold tabular-nums">
+              {metaVezes}
+            </span>
             <button
               type="button"
               onClick={() => setMetaVezes(Math.min(99, metaVezes + 1))}
@@ -168,16 +199,25 @@ export function CriarHabitoModal({
           </div>
         </div>
         <GlassModalFooter>
-          <GlassButton variant="outline" type="button" onClick={onClose} disabled={isSubmitting}>
+          <GlassButton
+            variant="outline"
+            type="button"
+            onClick={onClose}
+            disabled={isSubmitting}
+          >
             Cancelar
           </GlassButton>
           <GlassButton
             type="submit"
             disabled={isSubmitting || !nome.trim()}
             style={{ background: ACCENT, boxShadow: `0 4px 12px ${ACCENT}35` }}
-            className="text-white hover:opacity-90 bg-transparent"
+            className="text- hover:opacity-90 bg-transparent"
           >
-            {isSubmitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
+            {isSubmitting ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Check className="h-3.5 w-3.5" />
+            )}
             Salvar
           </GlassButton>
         </GlassModalFooter>

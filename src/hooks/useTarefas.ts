@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { tarefasService } from "@/services/tarefas.service";
 import type { CreateTarefaPayload, UpdateTarefaPayload, Tarefa } from "@/types/tarefas";
+import { GAMIFICATION_KEYS } from "./useGamification";
 
 export function useTarefas(blocoId?: string) {
   const queryClient = useQueryClient();
@@ -71,7 +72,11 @@ export function useTarefas(blocoId?: string) {
         queryClient.setQueryData(queryKey, ctx.previous);
       }
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey }),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey });
+      queryClient.invalidateQueries({ queryKey: GAMIFICATION_KEYS.stats });
+      queryClient.invalidateQueries({ queryKey: GAMIFICATION_KEYS.fullStats });
+    },
   });
 
   return {

@@ -197,7 +197,7 @@ export function TextBlockRenderer({
           }}
         >
           {localCompleted && (
-            <svg viewBox="0 0 10 8" fill="none" className="text-white">
+            <svg viewBox="0 0 10 8" fill="none" className="text-">
               <path
                 d="M1 4l3 3 5-6"
                 stroke="currentColor"
@@ -214,7 +214,7 @@ export function TextBlockRenderer({
           contentEditable={!readOnly}
           suppressContentEditableWarning
           className={cn(
-            "outline-none flex-1 min-w-0 whitespace-pre-wrap",
+            "outline-none flex-1 min-w-0 space-pre-wrap",
             "empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40",
             TYPE_CLASSES.todo,
             localCompleted && "line-through text-muted-foreground",
@@ -239,7 +239,7 @@ export function TextBlockRenderer({
           contentEditable={!readOnly}
           suppressContentEditableWarning
           className={cn(
-            "outline-none flex-1 min-w-0 whitespace-pre-wrap",
+            "outline-none flex-1 min-w-0 space-pre-wrap",
             "empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40",
             TYPE_CLASSES["bullet-list"],
           )}
@@ -265,7 +265,7 @@ export function TextBlockRenderer({
           contentEditable={!readOnly}
           suppressContentEditableWarning
           className={cn(
-            "outline-none flex-1 min-w-0 whitespace-pre-wrap",
+            "outline-none flex-1 min-w-0 space-pre-wrap",
             "empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40",
             TYPE_CLASSES["numbered-list"],
           )}
@@ -287,7 +287,7 @@ export function TextBlockRenderer({
           ref={contentRef}
           contentEditable={!readOnly}
           suppressContentEditableWarning
-          className="outline-none whitespace-pre-wrap empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40"
+          className="outline-none space-pre-wrap empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40"
           data-placeholder={PLACEHOLDER_MAP.quote}
           onInput={handleInput}
           onKeyDown={handleKeyDown}
@@ -311,7 +311,7 @@ export function TextBlockRenderer({
           ref={contentRef}
           contentEditable={!readOnly}
           suppressContentEditableWarning
-          className="outline-none font-mono text-sm px-3 py-2 leading-relaxed whitespace-pre-wrap empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40"
+          className="outline-none font-mono text-sm px-3 py-2 leading-relaxed space-pre-wrap empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40"
           data-placeholder="// Seu código aqui..."
           onInput={handleInput}
           onKeyDown={handleKeyDown}
@@ -329,7 +329,7 @@ export function TextBlockRenderer({
       contentEditable={!readOnly}
       suppressContentEditableWarning
       className={cn(
-        "outline-none py-0.5 whitespace-pre-wrap",
+        "outline-none py-0.5 space-pre-wrap",
         "empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40",
         TYPE_CLASSES[block.tipo] ?? TYPE_CLASSES.paragraph,
       )}

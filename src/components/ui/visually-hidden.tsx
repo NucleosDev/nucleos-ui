@@ -18,7 +18,7 @@ export function VisuallyHidden({ children, ...props }: VisuallyHiddenProps) {
         margin: "-1px",
         overflow: "hidden",
         clip: "rect(0, 0, 0, 0)",
-        whiteSpace: "nowrap",
+        Space: "nowrap",
         border: 0,
       }}
       {...props}

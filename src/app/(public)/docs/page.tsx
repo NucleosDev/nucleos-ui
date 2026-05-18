@@ -26,7 +26,7 @@ import {
   Cloud,
   Lock,
   Users,
-  Github,
+  Code2,
   ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -375,7 +375,7 @@ export default function DocsPage() {
             <section className="grid gap-4 md:grid-cols-3">
               <Card className="bg-gradient-to-br from-[#4D7CFF]/10 to-transparent">
                 <CardContent className="p-5">
-                  <Github className="size-8 mb-3 text-[#4D7CFF]" />
+                  <Code2 className="size-8 mb-3 text-[#4D7CFF]" />
                   <h3 className="font-semibold mb-1">GitHub</h3>
                   <p className="text-xs text-muted-foreground mb-3">
                     Código aberto e contribuições

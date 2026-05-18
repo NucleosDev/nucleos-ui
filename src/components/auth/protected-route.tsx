@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/auth";
 import { isPublicRoute, getLoginUrlWithCallback } from "@/constants/routes";
@@ -14,6 +14,11 @@ export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   useEffect(() => {
     // Aguarda carregar para não tomar decisão precipitada
@@ -35,15 +40,14 @@ export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
     }
   }, [isAuthenticated, isLoading, pathname, router]);
 
+  // Garante render idêntico entre server e client na primeira passagem
+  if (!hasMounted) return null;
+
   // Não mostra nada enquanto carrega - o GlobalLoader cuida disso
-  if (isLoading) {
-    return null;
-  }
+  if (isLoading) return null;
 
   // Não autenticado: não renderiza o conteúdo (o redirecionamento já foi disparado)
-  if (!isAuthenticated) {
-    return null;
-  }
+  if (!isAuthenticated) return null;
 
   // Autenticado: renderiza os filhos
   return <>{children}</>;

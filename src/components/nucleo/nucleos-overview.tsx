@@ -10,7 +10,8 @@ import { ROUTES } from "@/constants/routes";
 import { useNucleos } from "@/hooks/useNucleo";
 import type { NucleoComStats } from "@/types/nucleo";
 import { ArrowRight } from "lucide-react";
-
+import { LiquidGlass } from "../ui/liquid-glass";
+import { motion } from "framer-motion";
 type Props = {
   limit?: number;
   variant?: "all" | "recent";
@@ -60,13 +61,17 @@ export function NucleosOverview({ limit }: Props) {
             Nucleos Recentes
           </h2>
         </div>
-        <button
+        <LiquidGlass
+          variant="button"
+          radius="var(--radius-md)"
           onClick={() => router.push("/dashboard/nucleos")}
-          className="group flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors duration-[var(--duration-fast)]"
+          className="hidden sm:inline-flex text-sm p-1.2 font-medium text-"
         >
-          <span>Ver todos</span>
-          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-        </button>
+          <span className="flex items-center gap-2 px-3.5 py-2">
+            <ArrowRight className="h-3.5 w-3.5" />
+            Ver todos
+          </span>
+        </LiquidGlass>
       </div>
 
       {nucleos.length === 0 ? (
@@ -97,7 +102,7 @@ export function NucleosOverview({ limit }: Props) {
               />
             );
           })}
-          <AddNucleoCard onClick={() => setCreateModalOpen(true)} />
+          <CreateNucleoCard onClick={() => setCreateModalOpen(true)} />
         </div>
       )}
 
@@ -109,18 +114,135 @@ export function NucleosOverview({ limit }: Props) {
   );
 }
 
-function AddNucleoCard({ onClick }: { onClick: () => void }) {
+function CreateNucleoCard({ onClick }: { onClick: () => void }) {
   return (
-    <button
+    <LiquidGlass
+      radius="26px"
+      variant="default"
+      className="w-full rounded-2xl cursor-pointer"
       onClick={onClick}
-      className="group h-full min-h-[200px] w-full cursor-pointer rounded-[var(--radius-lg)] border-2 border-dashed border-border/40 bg-muted/10 hover:border-primary/40 hover:bg-muted/20 transition-all duration-[var(--duration-base)] flex flex-col items-center justify-center p-6 text-center"
     >
-      <div className="rounded-full bg-primary/10 p-4 transition-transform duration-[var(--duration-base)] group-hover:scale-110">
-        <Plus className="h-7 w-7 text-primary" />
+      <div className="group relative isolate overflow-hidden rounded-2xl transition-all duration-300 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.2),0_8px_10px_-6px_rgba(0,0,0,0.1)]">
+        <svg
+          width="0"
+          height="0"
+          className="absolute pointer-events-none"
+          aria-hidden="true"
+        >
+          <defs>
+            <clipPath
+              id="nucleo-wave-clip-create"
+              clipPathUnits="objectBoundingBox"
+            >
+              <path d="M 0 0 L 1 0 L 1 0.85 C 0.68 1, 0.30 0.55, 0 0.775 Z" />
+            </clipPath>
+          </defs>
+        </svg>
+
+        {/* Image area */}
+        <div
+          className="relative w-full overflow-hidden h-[200px]"
+          style={{
+            clipPath: "url(#nucleo-wave-clip-create)",
+            WebkitClipPath: "url(#nucleo-wave-clip-create)",
+          }}
+        >
+          <div
+            className="absolute inset-0 z-0 transition-transform duration-700 group-hover:scale-105"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(107,114,128,0.22) 0%, rgba(75,85,99,0.15) 40%, rgba(31,41,55,0.30) 100%)",
+            }}
+          >
+            <div
+              className="absolute inset-0 opacity-[0.04]"
+              style={{
+                backgroundImage: `repeating-linear-gradient(0deg, oklch(1 0 0) 0px, oklch(1 0 0) 1px, transparent 1px, transparent 28px), repeating-linear-gradient(90deg, oklch(1 0 0) 0px, oklch(1 0 0) 1px, transparent 1px, transparent 28px)`,
+              }}
+            />
+          </div>
+
+          {/* Overlay gradiente — igual ao NucleoCard */}
+          <div className="absolute inset-0 z-10 bg-gradient-to-t from-card/95 via-card/50 to-transparent" />
+
+          {/* Hover overlay — IDÊNTICO ao NucleoCard */}
+          <div
+            className="absolute inset-0 z-20 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            style={{
+              background: "rgba(0,0,0,0.28)",
+              backdropFilter: "blur(4px) saturate(120%)",
+              WebkitBackdropFilter: "blur(4px) saturate(120%)",
+            }}
+          >
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium"
+              style={{
+                background: "rgba(255,255,255,0.18)",
+                backdropFilter: "blur(14px) saturate(160%)",
+                WebkitBackdropFilter: "blur(14px) saturate(160%)",
+                border: "1px solid rgba(255,255,255,0.30)",
+                boxShadow:
+                  "inset 0 1px 0 rgba(255,255,255,0.30), 0 4px 16px rgba(0,0,0,0.18)",
+              }}
+            >
+              <Plus className="h-4 w-4" />
+              Criar novo Núcleo
+            </motion.button>
+          </div>
+        </div>
+
+        {/* Floating "?" icon — mesma posição do NucleoCard */}
+        <div className="absolute z-30 left-12" style={{ top: "122px" }}>
+          <div className="relative inline-flex">
+            <div
+              className="absolute inset-0 rounded-2xl blur-xl opacity-55"
+              style={{ background: "rgba(107,114,128,0.5)" }}
+            />
+            <div
+              className="relative flex h-14 w-14 items-center justify-center rounded-2xl"
+              style={{
+                background:
+                  "linear-gradient(145deg, rgba(107,114,128,0.55), rgba(75,85,99,0.40))",
+                border: "1.5px solid rgba(255,255,255,0.12)",
+                boxShadow:
+                  "inset 0 1.5px 0 rgba(255,255,255,0.18), 0 8px 20px rgba(0,0,0,0.14)",
+              }}
+            >
+              <span className="text-2xl font-bold text-foreground/35 select-none">
+                ?
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="relative p-5">
+          <div className="mb-3 flex items-start justify-between gap-2">
+            <h3 className="text-lg font-bold leading-tight tracking-tight text-foreground/25 line-clamp-1 blur-[3px] select-none pointer-events-none">
+              Novo Núcleo
+            </h3>
+          </div>
+
+          <div className="mb-4 flex flex-wrap items-center gap-2 blur-sm opacity-20 select-none pointer-events-none">
+            <div className="flex items-center gap-1 rounded-full bg-muted/40 px-2.5 py-0.5">
+              <span className="text-xs font-medium">● ● ●</span>
+            </div>
+            <div className="flex items-center gap-1 rounded-full bg-muted/40 px-2.5 py-0.5">
+              <span className="text-xs font-medium">● ●</span>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-3">
+            <div className="flex items-center gap-2.5">
+              <Plus className="h-4 w-4 text-foreground/40 group-hover:text-primary transition-colors duration-300" />
+              <span className="text-sm font-semibold text-foreground/40 group-hover:text-primary transition-colors duration-300"></span>
+            </div>
+          </div>
+        </div>
       </div>
-      <p className="mt-4 text-sm font-medium text-foreground/70">Criar novo Nucleo</p>
-      <p className="mt-1 text-xs text-muted-foreground/50">Organize sua vida em áreas específicas</p>
-    </button>
+    </LiquidGlass>
   );
 }
 
@@ -134,13 +256,15 @@ function EmptyState({ onCreateClick }: { onCreateClick: () => void }) {
       <p className="mt-2 text-sm text-muted-foreground/60">
         Crie seu primeiro Nucleo para começar a organizar suas atividades
       </p>
-      <button
-        onClick={onCreateClick}
-        className="mt-6 flex items-center gap-2 px-4 py-2.5 rounded-[var(--radius-md)] bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity shadow-[var(--shadow-xs)]"
-      >
-        <Plus className="h-4 w-4" />
-        Criar primeiro Nucleo
-      </button>
+      <div className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2s">
+        <button
+          onClick={onCreateClick}
+          className="mt-6 flex items-center gap-2 px-4 py-2.5 rounded-[var(--radius-md)] bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity shadow-[var(--shadow-xs)]"
+        >
+          <Plus className="h-4 w-4" />
+          Criar primeiro Nucleo
+        </button>
+      </div>
     </div>
   );
 }
@@ -149,7 +273,10 @@ function NucleosGridSkeleton() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {[1, 2, 3, 4].map((i) => (
-        <div key={i} className="h-[200px] rounded-[var(--radius-lg)] overflow-hidden border border-border/40">
+        <div
+          key={i}
+          className="h-[200px] rounded-[var(--radius-lg)] overflow-hidden border border-border/40"
+        >
           <div className="h-1.5 w-full bg-muted" />
           <div className="p-5 space-y-4">
             <div className="flex items-start gap-3">

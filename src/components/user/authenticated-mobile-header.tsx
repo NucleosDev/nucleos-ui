@@ -11,7 +11,7 @@ import { useAuth } from "@/auth";
 import { useUserPlan } from "@/hooks/useDashboard";
 import { ROUTES } from "@/constants/routes";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -137,6 +137,7 @@ export function AuthenticatedMobileHeader({
               side="left"
               className="w-[280px] p-0 sm:w-[300px] bg-background/60 backdrop-blur-xl border-r border-border/40"
             >
+              <SheetTitle className="sr-only">Menu de navegação</SheetTitle>
               <div className="flex flex-col h-full">
                 {/* Logo */}
                 <div className="px-5 py-4 border-b border-border/40">

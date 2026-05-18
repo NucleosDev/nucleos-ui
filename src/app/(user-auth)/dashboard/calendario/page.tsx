@@ -10,6 +10,7 @@ import { CalendarDays, ChevronDown, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Nucleo } from "@/types/nucleo";
+import { LiquidGlass } from "@/components/ui/liquid-glass";
 
 export default function CalendarioPage() {
   const { data: nucleos = [], isLoading: nucleosLoading } = useNucleos();
@@ -101,36 +102,35 @@ export default function CalendarioPage() {
 
         {/* Nucleo selector */}
         <div className="relative">
-          <button
+          <LiquidGlass
+            variant="button"
+            radius="12px"
             onClick={() => setSelectorOpen((v) => !v)}
-            className={cn(
-              "flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium",
-              "border border-border/50 bg-card/60 backdrop-blur-sm",
-              "hover:bg-accent transition-colors duration-[var(--duration-fast)]",
-              selectorOpen && "bg-accent border-border/80",
-            )}
+            className="text-sm font-medium text-white"
           >
-            {activeNucleo ? (
-              <>
-                <span
-                  className="h-2 w-2 rounded-full shrink-0"
-                  style={{ background: activeNucleo.corDestaque || "var(--primary)" }}
-                />
-                <span className="max-w-[140px] truncate">{activeNucleo.nome}</span>
-              </>
-            ) : (
-              <>
-                <Layers className="h-3.5 w-3.5 text-muted-foreground" />
-                <span className="text-muted-foreground">Selecionar Núcleo</span>
-              </>
-            )}
-            <ChevronDown
-              className={cn(
-                "h-3.5 w-3.5 text-muted-foreground/60 transition-transform duration-[var(--duration-fast)]",
-                selectorOpen && "rotate-180",
+            <span className="flex items-center gap-2 px-3 py-2">
+              {activeNucleo ? (
+                <>
+                  <span
+                    className="h-2 w-2 rounded-full shrink-0"
+                    style={{ background: activeNucleo.corDestaque || "var(--primary)" }}
+                  />
+                  <span className="max-w-[140px] truncate">{activeNucleo.nome}</span>
+                </>
+              ) : (
+                <>
+                  <Layers className="h-3.5 w-3.5 text-white/60" />
+                  <span className="text-white/60">Selecionar Núcleo</span>
+                </>
               )}
-            />
-          </button>
+              <ChevronDown
+                className={cn(
+                  "h-3.5 w-3.5 text-white/40 transition-transform duration-[var(--duration-fast)]",
+                  selectorOpen && "rotate-180",
+                )}
+              />
+            </span>
+          </LiquidGlass>
 
           <AnimatePresence>
             {selectorOpen && (
@@ -253,14 +253,17 @@ function EmptyCalendarState({
           : "Crie um Núcleo primeiro para começar a usar o calendário."}
       </p>
       {nucleosCount > 0 && (
-        <button
+        <LiquidGlass
+          variant="button"
+          radius="12px"
           onClick={onSelect}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-primary-foreground bg-primary hover:opacity-90 transition-opacity"
-          style={{ boxShadow: "0 4px 14px oklch(0.58 0.19 245 / 0.35)" }}
+          className="text-sm font-medium text-white"
         >
-          <Layers className="h-3.5 w-3.5" />
-          Escolher Núcleo
-        </button>
+          <span className="flex items-center gap-2 px-4 py-2.5">
+            <Layers className="h-3.5 w-3.5" />
+            Escolher Núcleo
+          </span>
+        </LiquidGlass>
       )}
     </motion.div>
   );

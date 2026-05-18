@@ -24,6 +24,21 @@ const VARIANT_PRESETS = {
     glowIntensity: "xs",
     shadowIntensity: "sm",
   },
+  button: {
+    blurIntensity: "md",
+    glowIntensity: "sm",
+    shadowIntensity: "sm",
+  },
+  panel: {
+    blurIntensity: "xl",
+    glowIntensity: "none",
+    shadowIntensity: "none",
+  },
+  inline: {
+    blurIntensity: "none",
+    glowIntensity: "none",
+    shadowIntensity: "none",
+  },
 };
 
 interface LiquidGlassProps {
@@ -40,7 +55,7 @@ interface LiquidGlassProps {
   height?: string;
   expandedWidth?: string;
   expandedHeight?: string;
-  blurIntensity?: "sm" | "md" | "lg" | "xl";
+  blurIntensity?: "sm" | "md" | "lg" | "xl" | "none";
   shadowIntensity?: "none" | "xs" | "sm" | "md" | "lg" | "xl";
   borderRadius?: string;
   glowIntensity?: "none" | "xs" | "sm" | "md" | "lg" | "xl";
@@ -78,11 +93,26 @@ export const LiquidGlass = ({
   const shadowIntensity = preset?.shadowIntensity ?? shadowProp ?? "md";
   const borderRadius = radius ?? borderRadiusProp ?? "32px";
 
-  // interactive controls hover/tap animations independently of draggable
+  // Button variant sempre tem hover/tap e cursor pointer
+  const isButton = variant === "button";
+
+  // Panel variant: sem bordas, apenas vidro puro
+  const isPanel = variant === "panel";
+
+  // Floating variant: animação de flutuação automática
+  const isFloating = variant === "floating";
+
+  // Interactive variant: hover/tap ativado por padrão
+  const isInteractive = variant === "interactive";
+
+  // Determina se deve ter animações de interação
   const hasHoverTap =
+    isButton ||
+    isInteractive ||
     interactive === true ||
     (interactive !== false && (draggable || expandable));
-  const hasMotion = draggable || expandable || hasHoverTap;
+
+  const hasMotion = draggable || expandable || hasHoverTap || isFloating;
 
   const handleToggleExpansion = (e: {
     target: { closest: (arg0: string) => any };
@@ -111,7 +141,7 @@ export const LiquidGlass = ({
   };
 
   const glowStyles = {
-    none: "0 4px 4px rgba(0, 0, 0, 0.05), 0 0 12px rgba(0, 0, 0, 0.05)",
+    none: "0 0 0 0 rgba(0, 0, 0, 0)",
     xs: "0 4px 4px rgba(0, 0, 0, 0.15), 0 0 12px rgba(0, 0, 0, 0.08), 0 0 16px rgba(255, 255, 255, 0.05)",
     sm: "0 4px 4px rgba(0, 0, 0, 0.15), 0 0 12px rgba(0, 0, 0, 0.08), 0 0 24px rgba(255, 255, 255, 0.1)",
     md: "0 4px 4px rgba(0, 0, 0, 0.15), 0 0 12px rgba(0, 0, 0, 0.08), 0 0 32px rgba(255, 255, 255, 0.15)",
@@ -136,17 +166,38 @@ export const LiquidGlass = ({
       }
     : {};
 
+  // Animação de flutuação para a variante floating
+  const floatingVariants = {
+    animate: {
+      y: [0, -8, 0],
+      transition: {
+        duration: 4,
+        repeat: Infinity,
+        ease: "easeInOut",
+      },
+    },
+  };
+
   const MotionComponent = hasMotion ? motion.div : "div";
 
   const motionProps = hasMotion
     ? {
-        variants: expandable ? containerVariants : undefined,
+        // Variants para expandable
+        variants: expandable
+          ? containerVariants
+          : isFloating
+            ? floatingVariants
+            : undefined,
         animate: expandable
           ? isExpanded
             ? "expanded"
             : "collapsed"
-          : undefined,
+          : isFloating
+            ? "animate"
+            : undefined,
+        // Click para expandable
         onClick: expandable ? handleToggleExpansion : undefined,
+        // Drag
         drag: draggable,
         dragConstraints: draggable
           ? { left: 0, right: 0, top: 0, bottom: 0 }
@@ -155,9 +206,10 @@ export const LiquidGlass = ({
         dragTransition: draggable
           ? { bounceStiffness: 300, bounceDamping: 10, power: 0.3 }
           : undefined,
-        whileDrag: draggable ? { scale: 1.02 } : undefined,
-        whileHover: hasHoverTap ? { scale: 1.01 } : undefined,
-        whileTap: hasHoverTap ? { scale: 0.98 } : undefined,
+        whileDrag: draggable ? { scale: 1.02, cursor: "grabbing" } : undefined,
+        // Hover e Tap (apenas para não-botões, botão usa CSS)
+        whileHover: hasHoverTap && !isButton ? { scale: 1.01 } : undefined,
+        whileTap: hasHoverTap && !isButton ? { scale: 0.98 } : undefined,
       }
     : {};
 
@@ -168,10 +220,10 @@ export const LiquidGlass = ({
         <defs>
           <filter
             id="glass-blur"
-            x="0"
-            y="0"
-            width="100%"
-            height="100%"
+            x="-20%"
+            y="-20%"
+            width="140%"
+            height="140%"
             filterUnits="objectBoundingBox"
           >
             <feTurbulence
@@ -190,9 +242,23 @@ export const LiquidGlass = ({
           </filter>
         </defs>
       </svg>
+
       <MotionComponent
         className={cn(
-          `relative ${draggable ? "cursor-grab active:cursor-grabbing" : ""} ${expandable ? "cursor-pointer" : ""}`,
+          "relative",
+          // Cursor styles
+          draggable && "cursor-grab active:cursor-grabbing",
+          (expandable || isButton) && "cursor-pointer",
+          // Button specific styles
+          isButton && [
+            "inline-flex items-center justify-center gap-2 whitespace-nowrap flex-nowrap",
+            "active:scale-95 transition-transform duration-150",
+            "hover:brightness-110",
+          ],
+          // Panel specific styles
+          isPanel && "border-none",
+          // Floating specific styles
+          isFloating && "will-change-transform",
           className,
         )}
         style={{
@@ -205,30 +271,37 @@ export const LiquidGlass = ({
       >
         {/* Bend Layer (Backdrop blur with distortion) */}
         <div
-          className={`absolute inset-0 ${blurClasses[blurIntensity]} z-0`}
+          className={cn(
+            "absolute inset-0 z-0",
+            blurIntensity !== "none" && blurClasses[blurIntensity],
+          )}
           style={{
             borderRadius,
-            filter: "url(#glass-blur)",
+            filter: blurIntensity !== "none" ? "url(#glass-blur)" : undefined,
           }}
         />
 
         {/* Face Layer (Main shadow and glow) */}
-        <div
-          className="absolute inset-0 z-10"
-          style={{
-            borderRadius,
-            boxShadow: glowStyles[glowIntensity],
-          }}
-        />
+        {glowIntensity !== "none" && (
+          <div
+            className="absolute inset-0 z-10"
+            style={{
+              borderRadius,
+              boxShadow: glowStyles[glowIntensity],
+            }}
+          />
+        )}
 
         {/* Edge Layer (Inner highlights) */}
-        <div
-          className="absolute inset-0 z-20"
-          style={{
-            borderRadius,
-            boxShadow: shadowStyles[shadowIntensity],
-          }}
-        />
+        {shadowIntensity !== "none" && (
+          <div
+            className="absolute inset-0 z-20 pointer-events-none"
+            style={{
+              borderRadius,
+              boxShadow: shadowStyles[shadowIntensity],
+            }}
+          />
+        )}
 
         {/* Content — must be above decorative layers */}
         <div className="relative z-30 h-full">{children}</div>

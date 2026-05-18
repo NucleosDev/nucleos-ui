@@ -1,7 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Settings, Plus, Trash2, Pencil, X, Check, Loader2 } from "lucide-react";
+import {
+  Settings,
+  Plus,
+  Trash2,
+  Pencil,
+  X,
+  Check,
+  Loader2,
+} from "lucide-react";
 import {
   GlassModal,
   GlassModalHeader,
@@ -16,13 +24,13 @@ import type { TipoCampo } from "@/types/colecao";
 const ACCENT = "#10b981";
 
 const TIPO_OPTS: { value: TipoCampo; label: string; symbol: string }[] = [
-  { value: "texto",    label: "Texto",    symbol: "Aa" },
-  { value: "numero",   label: "Número",   symbol: "#"  },
-  { value: "data",     label: "Data",     symbol: "📅" },
-  { value: "booleano", label: "Sim/Não",  symbol: "✓"  },
-  { value: "arquivo",  label: "Arquivo",  symbol: "📎" },
-  { value: "select",   label: "Seleção",  symbol: "▾"  },
-  { value: "relacao",  label: "Relação",  symbol: "↗"  },
+  { value: "texto", label: "Texto", symbol: "Aa" },
+  { value: "numero", label: "Número", symbol: "#" },
+  { value: "data", label: "Data", symbol: "📅" },
+  { value: "booleano", label: "Sim/Não", symbol: "✓" },
+  { value: "arquivo", label: "Arquivo", symbol: "📎" },
+  { value: "select", label: "Seleção", symbol: "▾" },
+  { value: "relacao", label: "Relação", symbol: "↗" },
 ];
 
 interface GerenciarCamposModalProps {
@@ -34,13 +42,18 @@ interface GerenciarCamposModalProps {
 }
 
 export function GerenciarCamposModal({
-  open, onClose, colecaoId, colecaoNome, onRefresh,
+  open,
+  onClose,
+  colecaoId,
+  colecaoNome,
+  onRefresh,
 }: GerenciarCamposModalProps) {
-  const { campos, criarCampo, atualizarCampo, excluirCampo } = useCampos(colecaoId);
-  const [novoNome,    setNovoNome]    = useState("");
-  const [novoTipo,    setNovoTipo]    = useState<TipoCampo>("texto");
-  const [editandoId,  setEditandoId]  = useState<string | null>(null);
-  const [editNome,    setEditNome]    = useState("");
+  const { campos, criarCampo, atualizarCampo, excluirCampo } =
+    useCampos(colecaoId);
+  const [novoNome, setNovoNome] = useState("");
+  const [novoTipo, setNovoTipo] = useState<TipoCampo>("texto");
+  const [editandoId, setEditandoId] = useState<string | null>(null);
+  const [editNome, setEditNome] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAdd = async () => {
@@ -72,7 +85,10 @@ export function GerenciarCamposModal({
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Remover este campo? Todos os dados associados serão perdidos.")) return;
+    if (
+      !confirm("Remover este campo? Todos os dados associados serão perdidos.")
+    )
+      return;
     setIsSubmitting(true);
     try {
       await excluirCampo(id);
@@ -90,7 +106,11 @@ export function GerenciarCamposModal({
     <GlassModal open={open} onClose={onClose} size="max-w-lg">
       <GlassModalHeader
         title="Gerenciar Campos"
-        description={colecaoNome ? `Coleção: ${colecaoNome}` : "Adicione e edite os campos desta coleção."}
+        description={
+          colecaoNome
+            ? `Coleção: ${colecaoNome}`
+            : "Adicione e edite os campos desta coleção."
+        }
         icon={Settings}
         accent={ACCENT}
         onClose={onClose}
@@ -105,7 +125,12 @@ export function GerenciarCamposModal({
               placeholder="Nome do campo..."
               value={novoNome}
               onChange={(e) => setNovoNome(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleAdd(); } }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleAdd();
+                }
+              }}
               disabled={isSubmitting}
               className="flex-1 px-3 py-2 text-sm rounded-xl bg-background border border-border/50 focus:outline-none focus:ring-2 focus:border-transparent placeholder:text-muted-foreground/40 transition-[border-color,box-shadow]"
               style={{ "--tw-ring-color": `${ACCENT}40` } as any}
@@ -117,17 +142,23 @@ export function GerenciarCamposModal({
               className="w-28 px-2 py-2 text-xs rounded-xl bg-background border border-border/50 focus:outline-none focus:ring-2"
             >
               {TIPO_OPTS.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
+                <option key={t.value} value={t.value}>
+                  {t.label}
+                </option>
               ))}
             </select>
             <button
               type="button"
               onClick={handleAdd}
               disabled={isSubmitting || !novoNome.trim()}
-              className="flex h-9 w-9 items-center justify-center rounded-xl text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+              className="flex h-9 w-9 items-center justify-center rounded-xl text- transition-opacity hover:opacity-90 disabled:opacity-40"
               style={{ background: ACCENT, boxShadow: `0 2px 8px ${ACCENT}30` }}
             >
-              {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+              {isSubmitting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Plus className="h-4 w-4" />
+              )}
             </button>
           </div>
         </div>
@@ -146,8 +177,12 @@ export function GerenciarCamposModal({
               >
                 <Plus className="h-4 w-4" style={{ color: ACCENT }} />
               </div>
-              <p className="text-sm text-muted-foreground/60">Nenhum campo ainda.</p>
-              <p className="text-xs text-muted-foreground/40">Adicione seu primeiro campo acima.</p>
+              <p className="text-sm text-muted-foreground/60">
+                Nenhum campo ainda.
+              </p>
+              <p className="text-xs text-muted-foreground/40">
+                Adicione seu primeiro campo acima.
+              </p>
             </div>
           ) : (
             campos.map((campo) => {
@@ -164,7 +199,7 @@ export function GerenciarCamposModal({
                         onChange={(e) => setEditNome(e.target.value)}
                         autoFocus
                         onKeyDown={(e) => {
-                          if (e.key === "Enter")  handleUpdate(campo.id);
+                          if (e.key === "Enter") handleUpdate(campo.id);
                           if (e.key === "Escape") setEditandoId(null);
                         }}
                         className="flex-1 px-2.5 py-1 text-sm rounded-lg bg-background border border-border/60 focus:outline-none focus:ring-2"
@@ -173,10 +208,14 @@ export function GerenciarCamposModal({
                       <button
                         onClick={() => handleUpdate(campo.id)}
                         disabled={isSubmitting}
-                        className="flex h-7 w-7 items-center justify-center rounded-lg text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg text- transition-opacity hover:opacity-90 disabled:opacity-50"
                         style={{ background: ACCENT }}
                       >
-                        {isSubmitting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
+                        {isSubmitting ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : (
+                          <Check className="h-3 w-3" />
+                        )}
                       </button>
                       <button
                         onClick={() => setEditandoId(null)}
@@ -194,12 +233,19 @@ export function GerenciarCamposModal({
                         {opt?.symbol ?? "•"}
                       </span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground truncate">{campo.nome}</p>
-                        <p className="text-[10px] text-muted-foreground/50">{opt?.label}</p>
+                        <p className="text-sm font-medium text-foreground truncate">
+                          {campo.nome}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground/50">
+                          {opt?.label}
+                        </p>
                       </div>
                       <div className="flex items-center gap-0.5 shrink-0">
                         <button
-                          onClick={() => { setEditandoId(campo.id); setEditNome(campo.nome || ""); }}
+                          onClick={() => {
+                            setEditandoId(campo.id);
+                            setEditNome(campo.nome || "");
+                          }}
                           className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground/40 hover:text-muted-foreground hover:bg-accent transition-colors"
                         >
                           <Pencil className="h-3 w-3" />

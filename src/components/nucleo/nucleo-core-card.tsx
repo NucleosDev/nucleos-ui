@@ -136,7 +136,7 @@ export function NucleoCoreCard({
           <div className="flex items-start gap-3">
             {/* Icon */}
             <div
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-md)] shadow-[var(--shadow-sm)] border border-white/20"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-md)] shadow-[var(--shadow-sm)] border border-/20"
               style={{
                 background: `linear-gradient(135deg, ${accent}, ${accent}cc)`,
               }}
@@ -150,7 +150,7 @@ export function NucleoCoreCard({
                   className="object-contain brightness-0 invert"
                 />
               ) : (
-                <IconComponent className="h-5 w-5 text-white" />
+                <IconComponent className="h-5 w-5 text-" />
               )}
             </div>
 

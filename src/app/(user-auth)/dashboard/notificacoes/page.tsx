@@ -11,6 +11,7 @@ import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { GamificationNotification } from "@/types/notifications";
 import { motion } from "framer-motion";
+import { LiquidGlass } from "@/components/ui/liquid-glass";
 
 interface Notificacao {
   id: string;
@@ -99,13 +100,17 @@ export default function NotificacoesPage() {
           </span>
         )}
         {naoLidas > 0 && (
-          <button
+          <LiquidGlass
+            variant="button"
+            radius="8px"
             onClick={marcarTodas}
-            className="ml-auto flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors duration-[var(--duration-fast)]"
+            className="ml-auto text-xs font-medium text-white/70"
           >
-            <CheckCheck className="h-3.5 w-3.5" />
-            Marcar todas
-          </button>
+            <span className="flex items-center gap-1.5 px-2.5 py-1.5">
+              <CheckCheck className="h-3.5 w-3.5" />
+              Marcar todas
+            </span>
+          </LiquidGlass>
         )}
       </div>
 

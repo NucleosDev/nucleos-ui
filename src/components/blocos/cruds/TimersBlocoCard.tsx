@@ -2,8 +2,14 @@
 
 import { useState, useEffect, useRef } from "react";
 import {
-  Play, Loader2, TrendingUp, TrendingDown,
-  Volume2, VolumeX, Clock, Timer as TimerIcon,
+  Play,
+  Loader2,
+  TrendingUp,
+  TrendingDown,
+  Volume2,
+  VolumeX,
+  Clock,
+  Timer as TimerIcon,
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
@@ -40,16 +46,18 @@ export function TimersBlocoCard({ nucleoId }: TimersBlocoCardProps) {
     isUpdating,
   } = useTimers(nucleoId);
 
-  const [descricao, setDescricao]     = useState("");
-  const [minutos, setMinutos]         = useState(25);
-  const [modo, setModo]               = useState<"crescente" | "decrescente">("decrescente");
-  const [som, setSom]                 = useState(true);
-  const [isStarting, setIsStarting]   = useState(false);
+  const [descricao, setDescricao] = useState("");
+  const [minutos, setMinutos] = useState(25);
+  const [modo, setModo] = useState<"crescente" | "decrescente">("decrescente");
+  const [som, setSom] = useState(true);
+  const [isStarting, setIsStarting] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const activeTimer = timers.find((t) => !t.fim && t.inicio);
 
-  useEffect(() => { audioRef.current = new Audio("/sounds/timer-complete.mp3"); }, []);
+  useEffect(() => {
+    audioRef.current = new Audio("/sounds/timer-complete.mp3");
+  }, []);
 
   const handleStart = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,7 +76,11 @@ export function TimersBlocoCard({ nucleoId }: TimersBlocoCardProps) {
       setDescricao("");
       toast({ title: "Timer iniciado!" });
     } catch (e: any) {
-      toast({ title: "Erro ao iniciar timer", description: e?.message, variant: "destructive" });
+      toast({
+        title: "Erro ao iniciar timer",
+        description: e?.message,
+        variant: "destructive",
+      });
     } finally {
       setIsStarting(false);
     }
@@ -80,7 +92,11 @@ export function TimersBlocoCard({ nucleoId }: TimersBlocoCardProps) {
       toast({ title: "Timer finalizado!" });
       if (som && audioRef.current) audioRef.current.play().catch(() => {});
     } catch (e: any) {
-      toast({ title: "Erro ao parar timer", description: e?.message, variant: "destructive" });
+      toast({
+        title: "Erro ao parar timer",
+        description: e?.message,
+        variant: "destructive",
+      });
     }
   };
 
@@ -89,7 +105,11 @@ export function TimersBlocoCard({ nucleoId }: TimersBlocoCardProps) {
     try {
       await deletar(id);
     } catch (e: any) {
-      toast({ title: "Erro ao excluir", description: e?.message, variant: "destructive" });
+      toast({
+        title: "Erro ao excluir",
+        description: e?.message,
+        variant: "destructive",
+      });
     }
   };
 
@@ -97,7 +117,11 @@ export function TimersBlocoCard({ nucleoId }: TimersBlocoCardProps) {
     try {
       await atualizar({ id, titulo });
     } catch (e: any) {
-      toast({ title: "Erro ao atualizar", description: e?.message, variant: "destructive" });
+      toast({
+        title: "Erro ao atualizar",
+        description: e?.message,
+        variant: "destructive",
+      });
     }
   };
 
@@ -143,7 +167,10 @@ export function TimersBlocoCard({ nucleoId }: TimersBlocoCardProps) {
             <button
               key={p.label}
               type="button"
-              onClick={() => { setMinutos(p.min); setModo("decrescente"); }}
+              onClick={() => {
+                setMinutos(p.min);
+                setModo("decrescente");
+              }}
               className={cn(
                 "py-1.5 rounded-lg text-xs font-medium border transition-all duration-[var(--duration-fast)]",
                 minutos === p.min && modo === "decrescente"
@@ -203,7 +230,11 @@ export function TimersBlocoCard({ nucleoId }: TimersBlocoCardProps) {
             onClick={() => setSom((s) => !s)}
             className="ml-auto flex items-center justify-center h-7 w-7 rounded-lg text-muted-foreground/50 hover:text-muted-foreground hover:bg-accent transition-colors"
           >
-            {som ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
+            {som ? (
+              <Volume2 className="h-3.5 w-3.5" />
+            ) : (
+              <VolumeX className="h-3.5 w-3.5" />
+            )}
           </button>
         </div>
 
@@ -213,16 +244,24 @@ export function TimersBlocoCard({ nucleoId }: TimersBlocoCardProps) {
           disabled={isStarting || !descricao.trim()}
           className={cn(
             "w-full flex items-center justify-center gap-2 py-2.5 rounded-xl",
-            "text-sm font-semibold text-white",
+            "text-sm font-semibold text-",
             "bg-gradient-to-r from-orange-500 to-amber-500",
             "hover:opacity-90 disabled:opacity-40 transition-opacity",
             "shadow-[0_4px_14px_rgba(249,115,22,0.30)]",
           )}
         >
-          {isStarting
-            ? <><Loader2 className="h-4 w-4 animate-spin" /> Iniciando...</>
-            : <><Play className="h-4 w-4" /> {modo === "decrescente" ? `Iniciar ${minutos}min` : "Iniciar stopwatch"}</>
-          }
+          {isStarting ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" /> Iniciando...
+            </>
+          ) : (
+            <>
+              <Play className="h-4 w-4" />{" "}
+              {modo === "decrescente"
+                ? `Iniciar ${minutos}min`
+                : "Iniciar stopwatch"}
+            </>
+          )}
         </button>
       </form>
 
@@ -231,7 +270,9 @@ export function TimersBlocoCard({ nucleoId }: TimersBlocoCardProps) {
         <div className="space-y-2">
           <div className="flex items-center gap-1.5 pt-1">
             <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
-            <p className="text-xs font-medium text-muted-foreground/60">Recente</p>
+            <p className="text-xs font-medium text-muted-foreground/60">
+              Recente
+            </p>
           </div>
           <div className="space-y-1.5 max-h-52 overflow-y-auto">
             {timers.slice(0, 5).map((timer) => (

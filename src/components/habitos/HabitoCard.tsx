@@ -1,7 +1,14 @@
 // components/habitos/HabitoCard.tsx
 "use client";
 
-import { Check, MoreVertical, Pencil, Trash2, Flame, Trophy } from "lucide-react";
+import {
+  Check,
+  MoreVertical,
+  Pencil,
+  Trash2,
+  Flame,
+  Trophy,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,10 +36,10 @@ export function HabitoCard({
   onDelete,
   isRegistering = false,
 }: HabitoCardProps) {
-  const streak      = habito.streakAtual    ?? 0;
-  const recorde     = habito.streakMaximo   ?? 0;
-  const done        = habito.completoHoje   ?? false;
-  const diasSemana  = Array.isArray(habito.diasSemana) ? habito.diasSemana : [];
+  const streak = habito.streakAtual ?? 0;
+  const recorde = habito.streakMaximo ?? 0;
+  const done = habito.completoHoje ?? false;
+  const diasSemana = Array.isArray(habito.diasSemana) ? habito.diasSemana : [];
 
   return (
     <div
@@ -102,7 +109,9 @@ export function HabitoCard({
           <span
             className={cn(
               "text-xs",
-              done ? "text-emerald-600 dark:text-emerald-500" : "text-muted-foreground/50",
+              done
+                ? "text-emerald-600 dark:text-emerald-500"
+                : "text-muted-foreground/50",
             )}
           >
             {done ? "Feito hoje" : "Pendente"}

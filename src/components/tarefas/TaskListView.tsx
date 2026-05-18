@@ -7,28 +7,42 @@ import { Check, Pencil, Trash2, Calendar, Flame, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Tarefa, TarefaPrioridade, TarefaStatus } from "@/types/tarefas";
 
-const PRIORIDADE_CONFIG: Record<TarefaPrioridade, { label: string; dot: string }> = {
+const PRIORIDADE_CONFIG: Record<
+  TarefaPrioridade,
+  { label: string; dot: string }
+> = {
   baixa: { label: "Baixa", dot: "bg-emerald-500" },
   media: { label: "Média", dot: "bg-amber-500" },
-  alta:  { label: "Alta",  dot: "bg-red-500" },
+  alta: { label: "Alta", dot: "bg-red-500" },
 };
 
 interface TaskListViewProps {
   tasks: Tarefa[];
   onTaskToggle: (taskId: string, status: TarefaStatus) => void;
-  onTaskEdit: (taskId: string, titulo: string, prioridade?: TarefaPrioridade) => void;
+  onTaskEdit: (
+    taskId: string,
+    titulo: string,
+    prioridade?: TarefaPrioridade,
+  ) => void;
   onTaskDelete: (taskId: string) => void;
   isUpdating?: boolean;
 }
 
-export function TaskListView({ tasks, onTaskToggle, onTaskEdit, onTaskDelete, isUpdating }: TaskListViewProps) {
-  const [editingId,      setEditingId]      = useState<string | null>(null);
-  const [editTitle,      setEditTitle]      = useState("");
-  const [editPrioridade, setEditPrioridade] = useState<TarefaPrioridade>("media");
+export function TaskListView({
+  tasks,
+  onTaskToggle,
+  onTaskEdit,
+  onTaskDelete,
+  isUpdating,
+}: TaskListViewProps) {
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editPrioridade, setEditPrioridade] =
+    useState<TarefaPrioridade>("media");
 
-  const done  = tasks.filter((t) => t.status === "concluida").length;
+  const done = tasks.filter((t) => t.status === "concluida").length;
   const total = tasks.length;
-  const pct   = total > 0 ? (done / total) * 100 : 0;
+  const pct = total > 0 ? (done / total) * 100 : 0;
 
   const handleEditStart = (task: Tarefa) => {
     setEditingId(task.id);
@@ -43,8 +57,14 @@ export function TaskListView({ tasks, onTaskToggle, onTaskEdit, onTaskDelete, is
 
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return null;
-    try { return new Date(dateStr).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }); }
-    catch { return dateStr; }
+    try {
+      return new Date(dateStr).toLocaleDateString("pt-BR", {
+        day: "2-digit",
+        month: "short",
+      });
+    } catch {
+      return dateStr;
+    }
   };
 
   return (
@@ -54,7 +74,7 @@ export function TaskListView({ tasks, onTaskToggle, onTaskEdit, onTaskDelete, is
         <Flame className="h-3.5 w-3.5 text-orange-500 shrink-0" />
         <div className="flex-1 h-1.5 rounded-full bg-muted/60 overflow-hidden">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-blue-500 to-emerald-500 transition-all duration-500"
+            className="h-full rounded-full bg-gradient-to-r from-primary-500 to-emerald-500 transition-all duration-500"
             style={{ width: `${pct}%` }}
           />
         </div>
@@ -68,8 +88,12 @@ export function TaskListView({ tasks, onTaskToggle, onTaskEdit, onTaskDelete, is
         <AnimatePresence mode="popLayout">
           {tasks.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 text-center">
-              <p className="text-sm text-muted-foreground/50">Nenhuma tarefa ainda.</p>
-              <p className="text-xs text-muted-foreground/40 mt-1">Clique em "Nova tarefa" para começar.</p>
+              <p className="text-sm text-muted-foreground/50">
+                Nenhuma tarefa ainda.
+              </p>
+              <p className="text-xs text-muted-foreground/40 mt-1">
+                Clique em "Nova tarefa" para começar.
+              </p>
             </div>
           ) : (
             tasks.map((task, idx) => {
@@ -91,14 +115,17 @@ export function TaskListView({ tasks, onTaskToggle, onTaskEdit, onTaskDelete, is
                     isConcluida
                       ? "border-border/30 opacity-60"
                       : "border-border/50 hover:border-border/80",
-                    isEditing && "ring-2 ring-blue-500/30 border-blue-500/30",
+                    isEditing &&
+                      "ring-2 ring-primary-500/30 border-primary-500/30",
                   )}
                 >
                   {/* Left strip */}
-                  <div className={cn(
-                    "absolute left-0 top-2.5 bottom-2.5 w-[3px] rounded-full",
-                    isConcluida ? "bg-emerald-500/60" : "bg-border/40",
-                  )} />
+                  <div
+                    className={cn(
+                      "absolute left-0 top-2.5 bottom-2.5 w-[3px] rounded-full",
+                      isConcluida ? "bg-emerald-500/60" : "bg-border/40",
+                    )}
+                  />
 
                   {/* Index */}
                   <span className="text-[11px] tabular-nums text-muted-foreground/30 mt-0.5 w-4 shrink-0 text-center">
@@ -107,7 +134,12 @@ export function TaskListView({ tasks, onTaskToggle, onTaskEdit, onTaskDelete, is
 
                   {/* Checkbox */}
                   <button
-                    onClick={() => onTaskToggle(task.id, isConcluida ? "pendente" : "concluida")}
+                    onClick={() =>
+                      onTaskToggle(
+                        task.id,
+                        isConcluida ? "pendente" : "concluida",
+                      )
+                    }
                     disabled={isUpdating}
                     className={cn(
                       "mt-0.5 shrink-0 flex h-4 w-4 items-center justify-center rounded border-2 transition-all",
@@ -116,7 +148,9 @@ export function TaskListView({ tasks, onTaskToggle, onTaskEdit, onTaskDelete, is
                         : "border-border/60 hover:border-border",
                     )}
                   >
-                    {isConcluida && <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />}
+                    {isConcluida && (
+                      <Check className="h-2.5 w-2.5 text-" strokeWidth={3} />
+                    )}
                   </button>
 
                   {/* Content */}
@@ -132,12 +166,14 @@ export function TaskListView({ tasks, onTaskToggle, onTaskEdit, onTaskDelete, is
                         autoFocus
                         className={cn(
                           "flex-1 px-2 py-1 text-sm rounded-lg bg-muted/40 border border-border/50",
-                          "focus:outline-none focus:ring-1 focus:ring-blue-500/40",
+                          "focus:outline-none focus:ring-1 focus:ring-primary-500/40",
                         )}
                       />
                       <select
                         value={editPrioridade}
-                        onChange={(e) => setEditPrioridade(e.target.value as TarefaPrioridade)}
+                        onChange={(e) =>
+                          setEditPrioridade(e.target.value as TarefaPrioridade)
+                        }
                         className="px-2 py-1 text-xs rounded-lg bg-muted/40 border border-border/50 focus:outline-none"
                       >
                         <option value="baixa">Baixa</option>
@@ -159,15 +195,27 @@ export function TaskListView({ tasks, onTaskToggle, onTaskEdit, onTaskDelete, is
                     </div>
                   ) : (
                     <div className="flex-1 min-w-0">
-                      <span className={cn(
-                        "text-sm font-medium break-words",
-                        isConcluida && "line-through text-muted-foreground/60",
-                      )}>
+                      <span
+                        className={cn(
+                          "text-sm font-medium break-words",
+                          isConcluida &&
+                            "line-through text-muted-foreground/60",
+                        )}
+                      >
                         {task.titulo}
                       </span>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className={cn("inline-flex items-center gap-1 text-[10px] font-medium text-muted-foreground/60")}>
-                          <span className={cn("h-1.5 w-1.5 rounded-full", pConfig.dot)} />
+                        <span
+                          className={cn(
+                            "inline-flex items-center gap-1 text-[10px] font-medium text-muted-foreground/60",
+                          )}
+                        >
+                          <span
+                            className={cn(
+                              "h-1.5 w-1.5 rounded-full",
+                              pConfig.dot,
+                            )}
+                          />
                           {pConfig.label}
                         </span>
                         {task.dataVencimento && (

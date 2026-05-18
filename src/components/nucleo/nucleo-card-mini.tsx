@@ -135,7 +135,7 @@ export function NucleoCardMobile({
                 className="object-contain brightness-0 invert"
               />
             ) : (
-              <IconComponent className="h-4 w-4 text-white" />
+              <IconComponent className="h-4 w-4 text-" />
             )}
           </div>
 

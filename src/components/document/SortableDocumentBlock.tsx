@@ -60,7 +60,7 @@ export function SortableDocumentBlock({
       <div
         className={cn(
           "absolute left-0 inset-y-0 w-0.5 rounded-full transition-all duration-150",
-          isSelected ? "bg-blue-500 opacity-100" : "opacity-0",
+          isSelected ? "bg-primary-500 opacity-100" : "opacity-0",
         )}
       />
 
@@ -103,7 +103,7 @@ export function SortableDocumentBlock({
         className={cn(
           "rounded-md px-1 py-0.5 transition-colors duration-100 cursor-text",
           isSelected
-            ? "bg-blue-50/70 dark:bg-blue-950/30"
+            ? "bg-primary-50/70 dark:bg-primary-950/30"
             : isActive
               ? "bg-accent/20"
               : "hover:bg-accent/10",

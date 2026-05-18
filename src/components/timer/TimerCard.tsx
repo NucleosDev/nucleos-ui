@@ -3,8 +3,16 @@
 
 import { useState, useEffect, useRef } from "react";
 import {
-  Square, Trash2, Clock, Hourglass,
-  TrendingUp, TrendingDown, Pencil, Check, X, Loader2,
+  Square,
+  Trash2,
+  Clock,
+  Hourglass,
+  TrendingUp,
+  TrendingDown,
+  Pencil,
+  Check,
+  X,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Timer } from "@/types/timer";
@@ -79,7 +87,8 @@ export function TimerCard({
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = seconds % 60;
-    if (h > 0) return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+    if (h > 0)
+      return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
     return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
@@ -114,12 +123,18 @@ export function TimerCard({
       {/* Icon */}
       <div
         className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-        style={{ background: isRunning ? "#f9731620" : "hsl(var(--muted) / 0.6)" }}
+        style={{
+          background: isRunning ? "#f9731620" : "hsl(var(--muted) / 0.6)",
+        }}
       >
-        {isRunning
-          ? <Hourglass className="h-4 w-4 animate-pulse" style={{ color: accent }} />
-          : <Clock className="h-4 w-4 text-muted-foreground/60" />
-        }
+        {isRunning ? (
+          <Hourglass
+            className="h-4 w-4 animate-pulse"
+            style={{ color: accent }}
+          />
+        ) : (
+          <Clock className="h-4 w-4 text-muted-foreground/60" />
+        )}
       </div>
 
       {/* Content */}
@@ -142,7 +157,11 @@ export function TimerCard({
               disabled={isUpdating}
               className="flex h-6 w-6 items-center justify-center rounded-md text-emerald-500 hover:bg-emerald-500/10 transition-colors"
             >
-              {isUpdating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
+              {isUpdating ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Check className="h-3.5 w-3.5" />
+              )}
             </button>
             <button
               onClick={handleCancel}
@@ -160,10 +179,11 @@ export function TimerCard({
             >
               {timer.titulo || "Timer sem título"}
             </p>
-            {modo === "crescente"
-              ? <TrendingUp className="h-3 w-3 shrink-0 text-emerald-500/70" />
-              : <TrendingDown className="h-3 w-3 shrink-0 text-blue-500/70" />
-            }
+            {modo === "crescente" ? (
+              <TrendingUp className="h-3 w-3 shrink-0 text-emerald-500/70" />
+            ) : (
+              <TrendingDown className="h-3 w-3 shrink-0 text-primary-500/70" />
+            )}
           </div>
         )}
 
@@ -198,7 +218,11 @@ export function TimerCard({
               "disabled:opacity-50",
             )}
           >
-            {isStopping ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Square className="h-3.5 w-3.5" />}
+            {isStopping ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Square className="h-3.5 w-3.5" />
+            )}
             Parar
           </button>
         ) : (
@@ -216,7 +240,11 @@ export function TimerCard({
               disabled={isDeleting}
               className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground/40 opacity-0 group-hover:opacity-100 hover:text-destructive hover:bg-destructive/10 transition-all disabled:opacity-50"
             >
-              {isDeleting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+              {isDeleting ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Trash2 className="h-3.5 w-3.5" />
+              )}
             </button>
           </>
         )}

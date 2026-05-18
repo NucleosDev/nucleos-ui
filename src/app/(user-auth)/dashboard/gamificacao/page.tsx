@@ -7,6 +7,7 @@ import { StreaksList } from "@/components/gamification/StreaksList";
 import { ConquistasList } from "@/components/gamification/ConquistasList";
 import { Leaderboard } from "@/components/gamification/Leaderboard";
 import { XPHistoryList } from "@/components/gamification/XPHistoryList";
+import { MyRankWidget } from "@/components/gamification/MyRankWidget";
 
 export default function GamificacaoPage() {
   return (
@@ -20,7 +21,8 @@ export default function GamificacaoPage() {
       </div>
 
       {/* Grid Principal */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <MyRankWidget delay={0.1} />
         <LevelCard />
         <StreaksList />
       </div>

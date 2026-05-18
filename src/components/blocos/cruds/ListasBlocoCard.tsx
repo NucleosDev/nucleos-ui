@@ -29,8 +29,8 @@ const TIPO_LABEL: Record<string, string> = {
 
 export function ListasBlocoCard({ bloco }: ListasBlocoCardProps) {
   const { listas, isLoading, criar, isCreating } = useListas(bloco.id);
-  const [modalAberta, setModalAberta]             = useState(false);
-  const [colapsadas, setColapsadas]               = useState<Set<string>>(new Set());
+  const [modalAberta, setModalAberta] = useState(false);
+  const [colapsadas, setColapsadas] = useState<Set<string>>(new Set());
 
   const toggleLista = (id: string) =>
     setColapsadas((prev) => {
@@ -45,7 +45,11 @@ export function ListasBlocoCard({ bloco }: ListasBlocoCardProps) {
       toast({ title: "Lista criada!" });
       setModalAberta(false);
     } catch (e: any) {
-      toast({ title: "Erro ao criar lista", description: e?.message, variant: "destructive" });
+      toast({
+        title: "Erro ao criar lista",
+        description: e?.message,
+        variant: "destructive",
+      });
     }
   };
 
@@ -68,18 +72,28 @@ export function ListasBlocoCard({ bloco }: ListasBlocoCardProps) {
           >
             <ListTodo className="h-5 w-5" style={{ color: "#06b6d4" }} />
           </div>
-          <p className="text-sm text-muted-foreground/60 mb-4">Nenhuma lista ainda</p>
+          <p className="text-sm text-muted-foreground/60 mb-4">
+            Nenhuma lista ainda
+          </p>
           <button
             onClick={() => setModalAberta(true)}
             disabled={isCreating}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-white transition-opacity hover:opacity-90"
-            style={{ background: "#06b6d4", boxShadow: "0 4px 12px rgba(6,182,212,0.25)" }}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text- transition-opacity hover:opacity-90"
+            style={{
+              background: "#06b6d4",
+              boxShadow: "0 4px 12px rgba(6,182,212,0.25)",
+            }}
           >
             <Plus className="h-3.5 w-3.5" />
             Criar primeira lista
           </button>
         </div>
-        <CriarListaModal open={modalAberta} onClose={() => setModalAberta(false)} onConfirm={handleCriar} isSubmitting={isCreating} />
+        <CriarListaModal
+          open={modalAberta}
+          onClose={() => setModalAberta(false)}
+          onConfirm={handleCriar}
+          isSubmitting={isCreating}
+        />
       </>
     );
   }
@@ -104,14 +118,28 @@ export function ListasBlocoCard({ bloco }: ListasBlocoCardProps) {
         Nova lista
       </button>
 
-      <CriarListaModal open={modalAberta} onClose={() => setModalAberta(false)} onConfirm={handleCriar} isSubmitting={isCreating} />
+      <CriarListaModal
+        open={modalAberta}
+        onClose={() => setModalAberta(false)}
+        onConfirm={handleCriar}
+        isSubmitting={isCreating}
+      />
     </div>
   );
 }
 
-function ListaExpandivel({ lista, isExpanded, onToggle }: { lista: any; isExpanded: boolean; onToggle: () => void }) {
-  const { itens, criarItem, atualizarItem, excluirItem, toggleItem } = useItensLista(lista.id);
-  const done  = itens.filter((i: any) => i.concluido).length;
+function ListaExpandivel({
+  lista,
+  isExpanded,
+  onToggle,
+}: {
+  lista: any;
+  isExpanded: boolean;
+  onToggle: () => void;
+}) {
+  const { itens, criarItem, atualizarItem, excluirItem, toggleItem } =
+    useItensLista(lista.id);
+  const done = itens.filter((i: any) => i.concluido).length;
   const total = itens.length;
 
   return (
@@ -133,7 +161,9 @@ function ListaExpandivel({ lista, isExpanded, onToggle }: { lista: any; isExpand
         >
           <Check className="h-3.5 w-3.5" style={{ color: "#06b6d4" }} />
         </div>
-        <span className="text-sm font-medium flex-1 truncate">{lista.nome}</span>
+        <span className="text-sm font-medium flex-1 truncate">
+          {lista.nome}
+        </span>
         <div className="flex items-center gap-2 shrink-0">
           {total > 0 && (
             <span className="text-[11px] tabular-nums text-muted-foreground/60">
@@ -166,10 +196,18 @@ function ListaExpandivel({ lista, isExpanded, onToggle }: { lista: any; isExpand
               <ListaFinanceiraInteligente
                 lista={lista}
                 itens={itens}
-                onAddItem={async (p) => { await criarItem(p as any); }}
-                onUpdateItem={async (id, p) => { await atualizarItem({ id, payload: p }); }}
-                onDeleteItem={async (id) => { await excluirItem(id); }}
-                onToggleItem={async (id) => { await toggleItem(id); }}
+                onAddItem={async (p) => {
+                  await criarItem(p as any);
+                }}
+                onUpdateItem={async (id, p) => {
+                  await atualizarItem({ id, payload: p });
+                }}
+                onDeleteItem={async (id) => {
+                  await excluirItem(id);
+                }}
+                onToggleItem={async (id) => {
+                  await toggleItem(id);
+                }}
               />
             </div>
           </motion.div>

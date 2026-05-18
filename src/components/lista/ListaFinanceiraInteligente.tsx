@@ -82,7 +82,7 @@ export function ListaFinanceiraInteligente({
         <motion.div
           initial={{ opacity: 0, y: -5 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg p-3 border border-cyan-100"
+          className="bg-gradient-to-r from-cyan-50 to-primary-50 rounded-lg p-3 border border-cyan-100"
         >
           <div className="flex items-center justify-between mb-1">
             <span className="text-xs text-muted-foreground">Total</span>

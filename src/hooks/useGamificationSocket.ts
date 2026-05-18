@@ -3,7 +3,9 @@
 
 import { useEffect, useRef } from "react";
 import type { Socket } from "socket.io-client";
+import { useQueryClient } from "@tanstack/react-query";
 import { useNotifications } from "./useNotifications";
+import { GAMIFICATION_KEYS } from "./useGamification";
 
 interface XpEventData {
   xp: number;
@@ -33,7 +35,15 @@ interface DailyRewardEventData {
 
 export function useGamificationSocket() {
   const { addRealtimeNotification } = useNotifications();
+  const queryClient = useQueryClient();
   const socketRef = useRef<Socket | null>(null);
+
+  function invalidateGamification() {
+    queryClient.invalidateQueries({ queryKey: GAMIFICATION_KEYS.stats });
+    queryClient.invalidateQueries({ queryKey: GAMIFICATION_KEYS.fullStats });
+    queryClient.invalidateQueries({ queryKey: GAMIFICATION_KEYS.streak });
+    queryClient.invalidateQueries({ queryKey: GAMIFICATION_KEYS.history });
+  }
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -54,6 +64,7 @@ export function useGamificationSocket() {
       socketRef.current = socket;
 
       socket.on("gamification:xp", (data: XpEventData) => {
+        invalidateGamification();
         addRealtimeNotification({
           id: Date.now().toString(),
           type: "XP",
@@ -66,6 +77,7 @@ export function useGamificationSocket() {
       });
 
       socket.on("gamification:levelUp", (data: LevelUpEventData) => {
+        invalidateGamification();
         addRealtimeNotification({
           id: Date.now().toString(),
           type: "LEVEL_UP",
@@ -78,6 +90,7 @@ export function useGamificationSocket() {
       });
 
       socket.on("gamification:achievement", (data: AchievementEventData) => {
+        invalidateGamification();
         addRealtimeNotification({
           id: Date.now().toString(),
           type: "ACHIEVEMENT",
@@ -90,6 +103,7 @@ export function useGamificationSocket() {
       });
 
       socket.on("gamification:streak", (data: StreakEventData) => {
+        invalidateGamification();
         addRealtimeNotification({
           id: Date.now().toString(),
           type: "STREAK",
@@ -103,6 +117,7 @@ export function useGamificationSocket() {
       });
 
       socket.on("gamification:dailyReward", (data: DailyRewardEventData) => {
+        invalidateGamification();
         addRealtimeNotification({
           id: Date.now().toString(),
           type: "DAILY_REWARD",

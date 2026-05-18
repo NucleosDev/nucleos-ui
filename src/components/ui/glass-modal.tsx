@@ -4,6 +4,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LiquidGlass } from "@/components/ui/liquid-glass";
 
 interface GlassModalProps {
   open: boolean;
@@ -36,18 +37,11 @@ export function GlassModal({ open, onClose, children, className, size = "max-w-m
               transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div
-                className="overflow-hidden rounded-2xl max-h-[90vh] overflow-y-auto"
-                style={{
-                  background: "var(--popover)",
-                  border: "1px solid rgba(255,255,255,0.10)",
-                  boxShadow:
-                    "0 24px 48px -8px oklch(0.18 0.02 250 / 0.28), 0 8px 20px -4px oklch(0.18 0.02 250 / 0.14), inset 0 1px 0 rgba(255,255,255,0.08)",
-                  backdropFilter: "blur(24px) saturate(180%)",
-                }}
-              >
-                {children}
-              </div>
+              <LiquidGlass variant="strong" radius="16px" interactive={false}>
+                <div className="max-h-[90vh] overflow-y-auto">
+                  {children}
+                </div>
+              </LiquidGlass>
             </motion.div>
           </div>
         </>
@@ -132,20 +126,26 @@ export function GlassButton({
   variant = "default",
   children,
   className,
+  disabled,
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "default" | "outline" | "destructive" }) {
   return (
-    <button
-      {...props}
+    <LiquidGlass
+      variant="button"
+      radius="12px"
       className={cn(
-        "flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all disabled:opacity-50",
-        variant === "default" && "bg-primary text-primary-foreground hover:opacity-90",
-        variant === "outline" && "border border-border/50 text-muted-foreground hover:text-foreground hover:bg-accent",
-        variant === "destructive" && "border border-destructive/30 text-destructive hover:bg-destructive/10",
+        "text-xs font-semibold",
+        variant === "default" && "text-white",
+        variant === "outline" && "text-white/60",
+        variant === "destructive" && "text-red-400",
+        disabled && "opacity-50 pointer-events-none",
         className,
       )}
+      onClick={props.onClick}
     >
-      {children}
-    </button>
+      <span className="flex items-center gap-1.5 px-3.5 py-2">
+        {children}
+      </span>
+    </LiquidGlass>
   );
 }

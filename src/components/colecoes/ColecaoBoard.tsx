@@ -33,6 +33,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import type { Colecao, Campo, Item } from "@/types/colecao";
 import { GerenciarCamposModal } from "./GerenciarCamposModal";
+import { EditableTableCell } from "./EditableTableCell";
 
 interface ColecaoBoardProps {
   colecao: Colecao;
@@ -42,7 +43,7 @@ interface ColecaoBoardProps {
 
 // ── Ícones de tipo (movido para fora do componente) ──────────────────────
 const TIPO_ICONS: Record<string, React.ReactElement> = {
-  texto: <span className="text-xs font-semibold text-blue-600">Aa</span>,
+  texto: <span className="text-xs font-semibold text-primary">Aa</span>,
   numero: <span className="text-xs font-semibold text-green-600">#</span>,
   data: <span className="text-xs font-semibold text-purple-600">📅</span>,
   booleano: <span className="text-xs font-semibold text-orange-600">✓</span>,
@@ -160,7 +161,7 @@ export function ColecaoBoard({
       >
         {/* Header */}
         <div
-          className="px-6 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b flex items-center justify-between cursor-pointer hover:bg-gradient-to-r hover:from-blue-100 hover:to-indigo-100 transition-colors"
+          className="px-6 py-3 bg-primary/5 border-b flex items-center justify-between cursor-pointer hover:bg-primary/10 transition-colors"
           onClick={() => setIsExpanded(!isExpanded)}
         >
           <div className="flex items-center gap-2">
@@ -205,10 +206,10 @@ export function ColecaoBoard({
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <div className="p-2 rounded-lg bg-blue-100">
-                  <Table2 className="h-4 w-4 text-blue-600" />
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Table2 className="h-4 w-4 text-primary" />
                 </div>
-                <h4 className="font-semibold text-base text-slate-900">
+                <h4 className="font-semibold text-base text-foreground">
                   {colecao.nome}
                 </h4>
               </div>
@@ -318,8 +319,8 @@ export function ColecaoBoard({
                 <div className="p-6">
                   {itens.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-12">
-                      <div className="p-4 rounded-full bg-slate-100 mb-4">
-                        <LayoutGrid className="h-6 w-6 text-slate-400" />
+                      <div className="p-4 rounded-full bg-muted mb-4">
+                        <LayoutGrid className="h-6 w-6 text-muted-foreground" />
                       </div>
                       <p className="text-sm text-muted-foreground mb-4">
                         Nenhum item ainda
@@ -328,7 +329,7 @@ export function ColecaoBoard({
                         variant="outline"
                         size="sm"
                         onClick={() => setShowAddForm(true)}
-                        className="border-blue-300 text-blue-600 hover:bg-blue-50"
+                        className="border-primary/30 text-primary hover:bg-primary/5"
                       >
                         <Plus className="h-3.5 w-3.5 mr-1.5" />
                         Adicionar primeiro item
@@ -339,21 +340,21 @@ export function ColecaoBoard({
                       {itens.map((item: Item) => (
                         <div
                           key={item.id}
-                          className="group bg-white rounded-lg border border-slate-200 p-4 hover:shadow-lg hover:border-blue-300 transition-all"
+                          className="group bg-card rounded-lg border border-border p-4 hover:shadow-lg hover:border-primary/40 transition-all"
                         >
                           <div className="space-y-3">
                             {campos.slice(0, 3).map((campo: Campo) => (
                               <div key={campo.id} className="text-sm">
-                                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
                                   {campo.nome ?? "Sem nome"}
                                 </span>
-                                <p className="font-semibold text-slate-900 truncate mt-0.5">
+                                <p className="font-semibold text-foreground truncate mt-0.5">
                                   {getCampoValue(item, campo)}
                                 </p>
                               </div>
                             ))}
                             {campos.length > 3 && (
-                              <p className="text-xs text-slate-500 font-medium pt-1">
+                              <p className="text-xs text-muted-foreground font-medium pt-1">
                                 +{campos.length - 3} mais{" "}
                                 {campos.length - 3 === 1 ? "campo" : "campos"}
                               </p>
@@ -378,15 +379,15 @@ export function ColecaoBoard({
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-200"
+                      className="mt-4 p-4 bg-primary/5 rounded-lg border-2 border-primary/20"
                     >
-                      <h4 className="text-sm font-semibold text-slate-900 mb-4">
+                      <h4 className="text-sm font-semibold text-foreground mb-4">
                         Novo Item
                       </h4>
                       <div className="space-y-3">
                         {campos.slice(0, 4).map((campo: Campo) => (
                           <div key={campo.id}>
-                            <label className="text-xs font-semibold text-slate-700 block mb-1.5 uppercase tracking-wide">
+                            <label className="text-xs font-semibold text-foreground/80 block mb-1.5 uppercase tracking-wide">
                               {campo.nome ?? "Sem nome"}
                             </label>
                             {campo.tipoCampo === "booleano" ? (
@@ -400,8 +401,8 @@ export function ColecaoBoard({
                                 className={cn(
                                   "px-3 py-2 rounded-md text-sm font-medium transition-colors w-full text-center",
                                   novoItem[campo.id]
-                                    ? "bg-blue-600 text-white"
-                                    : "bg-white text-slate-700 border border-slate-300",
+                                    ? "bg-primary text-primary-foreground"
+                                    : "text-foreground/80 border border-border",
                                 )}
                               >
                                 {novoItem[campo.id] ? "Ativado" : "Desativado"}
@@ -416,22 +417,22 @@ export function ColecaoBoard({
                                   }))
                                 }
                                 placeholder={`Digite ${(campo.nome ?? "").toLowerCase()}`}
-                                className="h-9 text-sm bg-white border-blue-300 focus:border-blue-500"
+                                className="h-9 text-sm  border-primary/30 focus:border-primary"
                               />
                             )}
                           </div>
                         ))}
                         {campos.length > 4 && (
-                          <p className="text-xs text-slate-600">
+                          <p className="text-xs text-muted-foreground">
                             +{campos.length - 4} mais{" "}
                             {campos.length - 4 === 1 ? "campo" : "campos"}
                           </p>
                         )}
-                        <div className="flex gap-2 pt-3 border-t border-blue-200">
+                        <div className="flex gap-2 pt-3 border-t border-primary/20">
                           <Button
                             size="sm"
                             onClick={handleAddItem}
-                            className="bg-blue-600 hover:bg-blue-700 flex-1"
+                            className="bg-primary hover:bg-primary/90 flex-1"
                           >
                             <Plus className="h-3.5 w-3.5 mr-1.5" />
                             Adicionar Item
@@ -440,7 +441,7 @@ export function ColecaoBoard({
                             size="sm"
                             variant="outline"
                             onClick={() => setShowAddForm(false)}
-                            className="border-blue-300 text-blue-600 hover:bg-blue-50"
+                            className="border-primary/30 text-primary hover:bg-primary/5"
                           >
                             Cancelar
                           </Button>
@@ -465,7 +466,7 @@ export function ColecaoBoard({
                 /* ═══════════════ MODO TABELA ═══════════════ */
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
-                    <thead className="sticky top-0 bg-slate-50 border-b border-slate-200 z-10">
+                    <thead className="sticky top-0 bg-muted/30 border-b border-border z-10">
                       <tr>
                         <th className="px-4 py-3 text-left w-12">
                           <div className="text-xs text-muted-foreground">#</div>
@@ -473,10 +474,10 @@ export function ColecaoBoard({
                         {campos.map((campo: Campo) => (
                           <th
                             key={campo.id}
-                            className="px-4 py-3 text-left font-medium text-slate-700 whitespace-nowrap"
+                            className="px-4 py-3 text-left font-medium text-foreground/80 space-nowrap"
                           >
                             <div className="flex items-center gap-2">
-                              <div className="flex h-5 w-5 items-center justify-center rounded bg-slate-100">
+                              <div className="flex h-5 w-5 items-center justify-center rounded bg-muted">
                                 {getTipoIcon(campo.tipoCampo)}
                               </div>
                               <span>{campo.nome ?? "Sem nome"}</span>
@@ -486,21 +487,27 @@ export function ColecaoBoard({
                         <th className="px-4 py-3 w-12"></th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-200">
+                    <tbody className="divide-y divide-border">
                       {itens.map((item: Item, idx: number) => (
                         <tr
                           key={item.id}
-                          className="hover:bg-blue-50 transition-colors group"
+                          className="hover:bg-primary/5 transition-colors group"
                         >
                           <td className="px-4 py-3 text-xs text-muted-foreground">
                             {idx + 1}
                           </td>
                           {campos.map((campo: Campo) => (
-                            <td
-                              key={campo.id}
-                              className="px-4 py-3 text-slate-700 font-medium"
-                            >
-                              {getCampoValue(item, campo)}
+                            <td key={campo.id} className="px-1 py-1">
+                              <EditableTableCell
+                                valor={item.valores?.[campo.id]}
+                                campo={campo}
+                                onSave={async (novoValor) => {
+                                  await atualizarItem({
+                                    id: item.id,
+                                    valores: { [campo.id]: novoValor },
+                                  });
+                                }}
+                              />
                             </td>
                           ))}
                           <td className="px-4 py-3">
@@ -516,7 +523,7 @@ export function ColecaoBoard({
                         </tr>
                       ))}
                       {showAddForm && (
-                        <tr className="bg-gradient-to-r from-blue-50 to-indigo-50 border-t-2 border-blue-200">
+                        <tr className="bg-primary/5 border-t-2 border-primary/20">
                           <td className="px-4 py-3 text-xs text-muted-foreground">
                             +
                           </td>
@@ -533,8 +540,8 @@ export function ColecaoBoard({
                                   className={cn(
                                     "px-3 py-1.5 rounded-md text-xs font-medium transition-colors",
                                     novoItem[campo.id]
-                                      ? "bg-blue-600 text-white"
-                                      : "bg-slate-200 text-slate-700",
+                                      ? "bg-primary text-primary-foreground"
+                                      : "bg-muted text-foreground/80",
                                   )}
                                 >
                                   {novoItem[campo.id] ? "Sim" : "Não"}
@@ -549,7 +556,7 @@ export function ColecaoBoard({
                                     }))
                                   }
                                   placeholder={campo.nome ?? ""}
-                                  className="h-8 text-sm bg-white border-blue-300 focus:border-blue-500"
+                                  className="h-8 text-sm  border-primary/30 focus:border-primary"
                                 />
                               )}
                             </td>
@@ -559,7 +566,7 @@ export function ColecaoBoard({
                               <Button
                                 size="sm"
                                 onClick={handleAddItem}
-                                className="bg-blue-600 hover:bg-blue-700"
+                                className="bg-primary hover:bg-primary/90"
                               >
                                 Salvar
                               </Button>

@@ -6,11 +6,11 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
-  Github,
+  Globe2,
+  MessageCircle,
+  Camera,
+  Briefcase,
+  Code2,
   Heart,
   Mail,
   Globe,
@@ -75,19 +75,19 @@ export function AuthenticatedFooter({ className }: AuthenticatedFooterProps) {
               </p>
               <div className="flex gap-1">
                 <Button variant="ghost" size="icon" className="h-7 w-7">
-                  <Facebook className="h-3.5 w-3.5" />
+                  <Globe2 className="h-3.5 w-3.5" />
                 </Button>
                 <Button variant="ghost" size="icon" className="h-7 w-7">
-                  <Twitter className="h-3.5 w-3.5" />
+                  <MessageCircle className="h-3.5 w-3.5" />
                 </Button>
                 <Button variant="ghost" size="icon" className="h-7 w-7">
-                  <Instagram className="h-3.5 w-3.5" />
+                  <Camera className="h-3.5 w-3.5" />
                 </Button>
                 <Button variant="ghost" size="icon" className="h-7 w-7">
-                  <Linkedin className="h-3.5 w-3.5" />
+                  <Briefcase className="h-3.5 w-3.5" />
                 </Button>
                 <Button variant="ghost" size="icon" className="h-7 w-7">
-                  <Github className="h-3.5 w-3.5" />
+                  <Code2 className="h-3.5 w-3.5" />
                 </Button>
               </div>
             </div>

@@ -32,6 +32,7 @@ import {
   Wallet,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { LiquidGlass } from "@/components/ui/liquid-glass";
 
 const tipoIcons: Record<string, LucideIcon> = {
   estudo: BookOpen,
@@ -112,12 +113,14 @@ export default function NucleoLayout({
           <p className="text-sm text-muted-foreground mb-5">
             O núcleo que você procura não existe ou foi removido.
           </p>
-          <button
+          <LiquidGlass
+            variant="button"
+            radius="var(--radius-md)"
             onClick={() => router.push("/dashboard")}
-            className="px-4 py-2 rounded-[var(--radius-md)] bg-primary text-primary-foreground text-sm font-medium hover:opacity-90"
+            className="text-sm font-medium text-"
           >
-            Voltar ao Dashboard
-          </button>
+            <span className="px-4 py-2 block">Voltar ao Dashboard</span>
+          </LiquidGlass>
         </div>
       </div>
     );
@@ -162,27 +165,17 @@ export default function NucleoLayout({
         </div>
 
         {/* Glass back button */}
-        <button
+        <LiquidGlass
+          variant="button"
+          radius="999px"
           onClick={() => router.push("/dashboard/nucleos")}
-          className="absolute top-4 left-4 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium text-white transition-all duration-[var(--duration-fast)]"
-          style={{
-            background: "rgba(0,0,0,0.22)",
-            backdropFilter: "blur(12px) saturate(160%)",
-            WebkitBackdropFilter: "blur(12px) saturate(160%)",
-            border: "1px solid rgba(255,255,255,0.18)",
-            boxShadow:
-              "inset 0 1px 0 rgba(255,255,255,0.2), 0 2px 8px rgba(0,0,0,0.15)",
-          }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.background = "rgba(0,0,0,0.32)")
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.background = "rgba(0,0,0,0.22)")
-          }
+          className="absolute top-4 left-4 z-20 text-sm font-medium text-"
         >
-          <ArrowLeft className="h-4 w-4" />
-          Nucleos
-        </button>
+          <span className="flex items-center gap-2 px-3 py-1.5">
+            <ArrowLeft className="h-4 w-4" />
+            Nucleos
+          </span>
+        </LiquidGlass>
       </div>
 
       <div className="max-w-4xl mx-auto px-8 md:px-4 pb-4">
@@ -211,7 +204,7 @@ export default function NucleoLayout({
                   className="object-contain brightness-0 invert"
                 />
               ) : (
-                <IconComponent className="w-8 h-8 text-white" />
+                <IconComponent className="w-8 h-8 text-" />
               )}
             </div>
           </div>

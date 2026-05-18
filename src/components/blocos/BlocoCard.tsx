@@ -73,10 +73,10 @@ const BLOCK_META: Record<
   tarefas: {
     label: "Tarefas",
     icon: CheckSquare,
-    color: "text-blue-400",
-    bg: "bg-blue-500/10",
-    accent: "bg-blue-500",
-    tint: "bg-blue-500/[0.04]",
+    color: "text-primary-400",
+    bg: "bg-primary-500/10",
+    accent: "bg-primary-500",
+    tint: "bg-primary-500/[0.04]",
     descricao: "Gerencie suas tarefas e projetos",
   },
   calendario: {
@@ -92,18 +92,18 @@ const BLOCK_META: Record<
     label: "Hábitos",
     icon: Activity,
     color: "text-green-400",
-    bg: "bg-green-500/10",
-    accent: "bg-green-500",
-    tint: "bg-green-500/[0.04]",
+    bg: "bg-teal-500/10",
+    accent: "bg-teal-500",
+    tint: "bg-teal-500/[0.04]",
     descricao: "Acompanhe seus hábitos diários",
   },
   habito: {
     label: "Hábito",
     icon: Activity,
     color: "text-green-400",
-    bg: "bg-green-500/10",
-    accent: "bg-green-500",
-    tint: "bg-green-500/[0.04]",
+    bg: "bg-teal-500/10",
+    accent: "bg-teal-500",
+    tint: "bg-teal-500/[0.04]",
     descricao: "Monitore um hábito específico",
   },
   lista: {
@@ -229,7 +229,7 @@ export function BlocoCard({
     label: bloco.tipo || "Bloco",
     icon: FileText,
     color: "text-muted-foreground",
-    bg: "bg-white/5",
+    bg: "/5",
     accent: "bg-muted-foreground/40",
     tint: "",
     descricao: "",
@@ -315,26 +315,6 @@ export function BlocoCard({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Drag handle — floats left of the card */}
-        <div
-          className={cn(
-            "absolute -left-8 top-1/2 -translate-y-1/2 z-20 transition-all duration-200",
-            isHovered && !compact
-              ? "opacity-100 translate-x-0"
-              : "opacity-0 -translate-x-2",
-          )}
-        >
-          <div
-            className="cursor-grab active:cursor-grabbing p-1.5 rounded-lg hover:bg-white/10 backdrop-blur-sm transition-colors"
-            draggable
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            title="Arraste para reordenar"
-          >
-            <GripVertical className="h-4 w-4 text-muted-foreground/60" />
-          </div>
-        </div>
-
         {/* Glass card */}
         <LiquidGlass
           variant={compact ? "interactive" : "subtle"}
@@ -402,7 +382,7 @@ export function BlocoCard({
                     onChange={(e) => setTitleValue(e.target.value)}
                     onBlur={handleSaveTitle}
                     onKeyDown={handleKeyDown}
-                    className="font-semibold text-sm bg-white/5 border-b border-primary/50 outline-none w-full max-w-xs px-0 py-0.5 rounded"
+                    className="font-semibold text-sm /5 border-b border-primary/50 outline-none w-full max-w-xs px-0 py-0.5 rounded"
                     placeholder={meta.label}
                   />
                 ) : (
@@ -432,7 +412,7 @@ export function BlocoCard({
                 {!compact && (
                   <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="p-1.5 rounded-lg text-muted-foreground/50 hover:text-foreground hover:bg-white/10 transition-all"
+                    className="p-1.5 rounded-lg text-muted-foreground/50 hover:text-foreground hover:/10 transition-all"
                   >
                     {isCollapsed ? (
                       <ChevronRight className="h-4 w-4" />
@@ -449,7 +429,7 @@ export function BlocoCard({
                       <DropdownMenuTrigger asChild>
                         <button
                           className={cn(
-                            "p-1.5 rounded-lg hover:bg-white/10 transition-all duration-200",
+                            "p-1.5 rounded-lg hover:/10 transition-all duration-200",
                             isHovered ? "opacity-100" : "opacity-0",
                           )}
                           disabled={isDeleting}
@@ -540,7 +520,7 @@ export function BlocoCard({
                     transition={{ duration: 0.2 }}
                     className="overflow-hidden"
                   >
-                    <div className="h-px bg-white/10 mx-5" />
+                    <div className="h-px /10 mx-5" />
                     {renderContent(bloco, nucleoId, handleDelete)}
                   </motion.div>
                 )}

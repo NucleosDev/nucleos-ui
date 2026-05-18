@@ -16,7 +16,18 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { LayoutGrid, List } from "lucide-react";
+import {
+  LayoutGrid,
+  List,
+  Plus,
+  CheckSquare,
+  CalendarDays,
+  Activity,
+  ListTodo,
+  Timer,
+  Layers,
+  FileText,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -38,6 +49,7 @@ import { HeaderBlock } from "./HeaderBlock";
 import { AddBlockTrigger } from "./AddBlockTrigger";
 import { SlashMenu } from "./SlashMenu";
 import { useCanvasBlocks } from "@/hooks/useCanvas";
+import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { useBlocos } from "@/hooks/useBlocos";
 import { useNucleo } from "@/hooks/useNucleo";
 import { useRouter } from "next/navigation";
@@ -126,6 +138,8 @@ export function NucleoDocument({
     }
     return "list";
   });
+
+  const [blocoPickerOpen, setBlocoPickerOpen] = useState(false);
 
   const [slashMenu, setSlashMenu] = useState<{
     open: boolean;
@@ -752,39 +766,146 @@ export function NucleoDocument({
       {!readOnly && (
         <div
           className={cn(
-            "mx-auto flex items-center justify-end gap-2 pb-2",
+            "mx-auto flex items-center justify-between gap-2 pb-2",
             fullWidth ? "max-w-full" : "max-w-4xl xl:max-w-5xl 2xl:max-w-6xl",
             "px-6 md:pl-20 md:pr-8",
           )}
         >
-          <span className="text-xs text-muted-foreground/60 mr-1">
-            {viewMode === "list" ? "Lista" : "Grade"}
-          </span>
-          <div className="flex items-center bg-muted/50 rounded-lg p-0.5">
-            <button
-              onClick={() => setViewMode("list")}
-              className={cn(
-                "p-1.5 rounded-md transition-all",
-                viewMode === "list"
-                  ? "bg-background shadow-sm text-foreground"
-                  : "text-muted-foreground/60 hover:text-foreground",
-              )}
-              title="Visualização em lista"
+          {/* + Bloco picker */}
+          <div className="relative">
+            <LiquidGlass
+              variant="button"
+              radius="8px"
+              onClick={() => setBlocoPickerOpen((o) => !o)}
+              className="text-xs font-medium text-/80"
             >
-              <List className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => setViewMode("grid")}
-              className={cn(
-                "p-1.5 rounded-md transition-all",
-                viewMode === "grid"
-                  ? "bg-background shadow-sm text-foreground"
-                  : "text-muted-foreground/60 hover:text-foreground",
-              )}
-              title="Visualização em grade"
-            >
-              <LayoutGrid className="h-4 w-4" />
-            </button>
+              <span className="flex items-center gap-1.5 px-3 py-1.5">
+                <Plus className="h-3.5 w-3.5" />
+                Bloco
+              </span>
+            </LiquidGlass>
+
+            {blocoPickerOpen && (
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setBlocoPickerOpen(false)}
+                />
+                <div
+                  className="absolute left-0 top-full mt-1.5 w-56 z-50 rounded-2xl overflow-hidden"
+                  style={{
+                    background: "var(--popover)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    boxShadow:
+                      "0 8px 32px -4px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.06)",
+                    backdropFilter: "blur(16px) saturate(160%)",
+                  }}
+                >
+                  <p className="px-3 pt-2.5 pb-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/50">
+                    Módulos
+                  </p>
+                  <div className="p-1.5">
+                    {[
+                      {
+                        tipo: "tarefas",
+                        label: "Tarefas",
+                        icon: CheckSquare,
+                        accent: "#3b82f6",
+                      },
+                      {
+                        tipo: "calendario",
+                        label: "Calendário",
+                        icon: CalendarDays,
+                        accent: "#6366f1",
+                      },
+                      {
+                        tipo: "habitos",
+                        label: "Hábitos",
+                        icon: Activity,
+                        accent: "#22c55e",
+                      },
+                      {
+                        tipo: "lista",
+                        label: "Lista",
+                        icon: ListTodo,
+                        accent: "#06b6d4",
+                      },
+                      {
+                        tipo: "timer",
+                        label: "Timer",
+                        icon: Timer,
+                        accent: "#f97316",
+                      },
+                      {
+                        tipo: "colecoes",
+                        label: "Coleções",
+                        icon: Layers,
+                        accent: "#10b981",
+                      },
+                      {
+                        tipo: "notas",
+                        label: "Notas",
+                        icon: FileText,
+                        accent: "#a855f7",
+                      },
+                    ].map(({ tipo, label, icon: Icon, accent }) => (
+                      <button
+                        key={tipo}
+                        onClick={() => {
+                          handleAddFunctional(tipo);
+                          setBlocoPickerOpen(false);
+                        }}
+                        className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl hover:bg-accent/70 transition-colors text-left"
+                      >
+                        <div
+                          className="h-6 w-6 rounded-md flex items-center justify-center shrink-0"
+                          style={{ background: `${accent}18` }}
+                        >
+                          <Icon
+                            className="h-3.5 w-3.5"
+                            style={{ color: accent }}
+                          />
+                        </div>
+                        <span className="text-sm font-medium">{label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* View toggle */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground/60 mr-1">
+              {viewMode === "list" ? "Lista" : "Grade"}
+            </span>
+            <div className="flex items-center bg-muted/50 rounded-lg p-0.5">
+              <button
+                onClick={() => setViewMode("list")}
+                className={cn(
+                  "p-1.5 rounded-md transition-all",
+                  viewMode === "list"
+                    ? "bg-background shadow-sm text-foreground"
+                    : "text-muted-foreground/60 hover:text-foreground",
+                )}
+                title="Visualização em lista"
+              >
+                <List className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => setViewMode("grid")}
+                className={cn(
+                  "p-1.5 rounded-md transition-all",
+                  viewMode === "grid"
+                    ? "bg-background shadow-sm text-foreground"
+                    : "text-muted-foreground/60 hover:text-foreground",
+                )}
+                title="Visualização em grade"
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         </div>
       )}

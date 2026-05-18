@@ -30,7 +30,11 @@ const STATUS_CONFIG: Record<
   TarefaStatus,
   { label: string; bg: string; text: string }
 > = {
-  pendente: { label: "Pendente", bg: "bg-blue-500/12", text: "text-blue-500" },
+  pendente: {
+    label: "Pendente",
+    bg: "bg-primary-500/12",
+    text: "text-primary-500",
+  },
   atrasada: { label: "Atrasada", bg: "bg-red-500/12", text: "text-red-500" },
   fazendo: {
     label: "Fazendo",
@@ -184,12 +188,14 @@ export function TarefaCard({
         "group relative flex items-start gap-2.5 px-3 py-2.5 rounded-xl transition-all",
         "bg-card/60 backdrop-blur-sm",
         isAtrasada ? "border-red-500/25 bg-red-500/5" : "",
-        isVencendoHoje && !isAtrasada ? "border-blue-500/25 bg-blue-500/5" : "",
+        isVencendoHoje && !isAtrasada
+          ? "border-primary-500/25 bg-primary-500/5"
+          : "",
         !isAtrasada && !isVencendoHoje
           ? "border-border/50 hover:border-border/80"
           : "",
-        isDragging && "shadow-lg ring-2 ring-blue-500/30",
-        isEditing && "ring-2 ring-blue-500/30",
+        isDragging && "shadow-lg ring-2 ring-primary-500/30",
+        isEditing && "ring-2 ring-primary-500/30",
         draggable && !isConcluida && "cursor-grab active:cursor-grabbing",
       )}
     >
@@ -234,7 +240,7 @@ export function TarefaCard({
           )}
         >
           {isConcluida && (
-            <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />
+            <Check className="h-2.5 w-2.5 text-" strokeWidth={3} />
           )}
         </button>
 
@@ -250,7 +256,7 @@ export function TarefaCard({
                 disabled={isSubmitting}
                 className={cn(
                   "w-full px-2 py-1 text-sm rounded-lg bg-muted/40 border border-border/50",
-                  "focus:outline-none focus:ring-1 focus:ring-blue-500/40",
+                  "focus:outline-none focus:ring-1 focus:ring-primary-500/40",
                 )}
               />
               <div className="flex items-center gap-2">
@@ -269,7 +275,7 @@ export function TarefaCard({
                 <button
                   onClick={handleSave}
                   disabled={isSubmitting || !editTitle.trim()}
-                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-blue-500/12 text-blue-500 hover:bg-blue-500/20 transition-colors disabled:opacity-50"
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-primary-500/12 text-primary-500 hover:bg-primary-500/20 transition-colors disabled:opacity-50"
                 >
                   {isSubmitting ? (
                     <Loader2 className="h-3 w-3 animate-spin" />
@@ -307,7 +313,7 @@ export function TarefaCard({
                   {tarefa.titulo}
                 </p>
                 {isRecorrente && (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-blue-500/10 text-blue-500 shrink-0">
+                  <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-primary-500/10 text-primary-500 shrink-0">
                     <Repeat className="h-2.5 w-2.5" />
                     {getRecorrenciaLabel()}
                   </span>
@@ -334,7 +340,7 @@ export function TarefaCard({
                     className={cn(
                       "inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md",
                       isVencendoHoje
-                        ? "bg-blue-500/10 text-blue-500"
+                        ? "bg-primary-500/10 text-primary-500"
                         : "bg-muted/60 text-muted-foreground/60",
                     )}
                   >

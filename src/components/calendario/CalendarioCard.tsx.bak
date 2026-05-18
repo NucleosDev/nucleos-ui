@@ -714,7 +714,7 @@ export function CalendarioCard({
                     <CalendarDays className="h-4 w-4 text-muted-foreground mt-0.5" />
                     <div>
                       <p className="text-sm font-medium">Descrição</p>
-                      <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                      <p className="text-sm text-muted-foreground space-pre-wrap">
                         {viewingEvento.descricao}
                       </p>
                     </div>

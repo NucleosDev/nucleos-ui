@@ -37,6 +37,7 @@ import { HabitosBlocoCard } from "@/components/blocos/cruds/HabitosBlocoCard";
 import { BlocoDeNotas } from "@/components/blocos/cruds/BlocoDeNotas";
 import { BLOCO_INITIALIZERS } from "@/lib/bloco-initializers";
 import { cn } from "@/lib/utils";
+import { LiquidGlass } from "@/components/ui/liquid-glass";
 import type { CreateBlocoPayload, Bloco } from "@/types/bloco";
 
 const BLOCO_ICONS: Record<string, LucideIcon> = {
@@ -173,12 +174,14 @@ export default function BlocoDetalhesPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
         <p className="text-muted-foreground">Bloco não encontrado.</p>
-        <button
+        <LiquidGlass
+          variant="button"
+          radius="8px"
           onClick={() => router.back()}
-          className="text-sm text-primary hover:underline transition-colors"
+          className="text-sm font-medium text-/80"
         >
-          Voltar
-        </button>
+          <span className="px-3 py-1.5 block">Voltar</span>
+        </LiquidGlass>
       </div>
     );
   }
@@ -194,41 +197,39 @@ export default function BlocoDetalhesPage() {
 
       {/* Sub-blocos */}
       <section>
-        {/* Separador */}
+        {/* Separador + botão */}
         <div className="flex items-center gap-3 mb-6">
           <div className="flex-1 border-t border-border/40" />
           <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
             Sub-blocos
           </span>
           <div className="flex-1 border-t border-border/40" />
+          <LiquidGlass
+            variant="button"
+            radius="8px"
+            onClick={() => setModalAberto(true)}
+            className="text-xs font-medium text-/70"
+          >
+            <span className="flex items-center gap-1.5 h-7 px-2.5">
+              <Plus className="h-3.5 w-3.5" />
+              Sub-bloco
+            </span>
+          </LiquidGlass>
         </div>
 
         {subBlocos.length === 0 ? (
-          <button
-            onClick={() => setModalAberto(true)}
-            className="w-full rounded-xl border-2 border-dashed border-border/50 p-10 text-center hover:border-primary/40 hover:bg-muted/20 transition-all group"
-          >
+          <div className="w-full rounded-xl border-2 border-dashed border-border/30 p-10 text-center">
             <div className="flex flex-col items-center gap-2">
-              <div className="h-9 w-9 rounded-full border-2 border-dashed border-muted-foreground/30 flex items-center justify-center group-hover:border-primary/50 transition-colors">
-                <Plus className="h-4 w-4 text-muted-foreground/50 group-hover:text-primary/70" />
+              <div className="h-9 w-9 rounded-full border-2 border-dashed border-muted-foreground/20 flex items-center justify-center">
+                <Plus className="h-4 w-4 text-muted-foreground/30" />
               </div>
-              <p className="text-sm text-muted-foreground">
-                Nenhum sub-bloco. Clique para adicionar.
+              <p className="text-sm text-muted-foreground/60">
+                Nenhum sub-bloco ainda.
               </p>
             </div>
-          </button>
+          </div>
         ) : (
           <>
-            <div className="flex justify-end mb-4">
-              <button
-                onClick={() => setModalAberto(true)}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border/50 bg-background/40 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors duration-[var(--duration-fast)]"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                Adicionar sub-bloco
-              </button>
-            </div>
-
             <div className="space-y-3">
               {subBlocos.map((sub: any) => {
                 const SubIcon = BLOCO_ICONS[sub.tipo] ?? GripVertical;

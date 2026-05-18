@@ -1,6 +1,7 @@
+// components/layout/dashboard-layout.tsx
 "use client";
 
-import { LiquidGlassCard } from "@/components/ui/liquid-glass";
+import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { useGamification } from "@/hooks/useGamification";
 import {
   Flame,
@@ -14,6 +15,10 @@ import {
   MessageSquare,
   Aperture,
   ChevronRight,
+  Zap,
+  TrendingUp,
+  Inbox,
+  Lightbulb,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCurrentUser } from "@/hooks/useDashboard";
@@ -25,6 +30,7 @@ import NucleosLogo from "@/components/nucleo/NucleosLogo";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -72,8 +78,8 @@ const NAV_MAIN = [
   },
   {
     id: "insights",
-    label: "Insights",
-    icon: BarChart3,
+    label: "Dicas",
+    icon: Lightbulb,
     href: "/dashboard/insights",
   },
 ];
@@ -86,10 +92,22 @@ const NAV_SECONDARY = [
     href: "/dashboard/conquistas",
   },
   {
+    id: "gamificacao",
+    label: "Ranking",
+    icon: TrendingUp,
+    href: "/dashboard/gamificacao",
+  },
+  {
     id: "chatbot",
-    label: "Assistente",
+    label: "Orbit",
     icon: MessageSquare,
     href: "/dashboard/chatbot",
+  },
+  {
+    id: "inbox",
+    label: "Social",
+    icon: Inbox,
+    href: "/dashboard/inbox",
   },
   {
     id: "notificacoes",
@@ -113,8 +131,12 @@ const COLLAPSED_LINKS = [
   { icon: Grid2x2, href: "/dashboard", label: "Início" },
   { icon: Aperture, href: "/dashboard/nucleos", label: "Núcleos" },
   { icon: CalendarDays, href: "/dashboard/calendario", label: "Calendário" },
-  { icon: BarChart3, href: "/dashboard/insights", label: "Insights" },
+  { icon: Lightbulb, href: "/dashboard/insights", label: "Dicas" },
 ];
+
+// ── BgUser (fundo blur extraído) ─────────────────────────────────────────────
+
+// ── NavLink (sidebar expandida) ──────────────────────────────────────────────
 
 function NavLink({
   href,
@@ -122,44 +144,100 @@ function NavLink({
   label,
   isActive,
   onClick,
-  className,
 }: {
   href: string;
   icon: React.ElementType;
   label: string;
   isActive: boolean;
   onClick?: () => void;
-  className?: string;
 }) {
   return (
     <Link
       href={href}
       onClick={onClick}
-      className={cn("nav-item group", isActive && "active", className)}
+      className={cn(
+        "relative bg-transparent flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200",
+        isActive ? "text" : "text/40 hover:text/75",
+      )}
     >
+      {isActive && (
+        <span
+          className="absolute inset-0 rounded-xl backdrop-blur-sm"
+          style={{
+            background: "rgba(255,255,255,0.07)",
+            boxShadow:
+              "inset 1.5px 1.5px 1px 0 rgba(255,255,255,0.28), inset -1.5px -1.5px 1px 0 rgba(255,255,255,0.10), 0 4px 8px rgba(0,0,0,0.2)",
+          }}
+        />
+      )}
+
       <Icon
         className={cn(
-          "h-4 w-4 shrink-0 transition-colors duration-[var(--duration-fast)]",
-          isActive
-            ? "text-primary"
-            : "text-muted-foreground group-hover:text-foreground",
+          "h-4 w-4 shrink-0 relative z-10 transition-colors duration-200",
+          isActive ? "text" : "text/40",
         )}
       />
-      <span>{label}</span>
-      {isActive && (
-        <span className="ml-auto h-1.5 w-1.5 rounded-full bg-primary/70" />
-      )}
+      <span className="relative z-10">{label}</span>
     </Link>
   );
 }
+
+// ── NavIcon (sidebar colapsada standalone - usado apenas no settings) ─────────
+
+function NavIcon({
+  href,
+  icon: Icon,
+  label,
+  isActive,
+}: {
+  href: string;
+  icon: React.ElementType;
+  label: string;
+  isActive: boolean;
+}) {
+  return (
+    <div className="">
+      <Link
+        href={href}
+        title={label}
+        className="relative flex items-center justify-center w-11 h-11 rounded-2xl transition-all duration-300 group"
+      >
+        {isActive ? (
+          <div
+            className="absolute inset-0 rounded-2xl backdrop-blur-sm"
+            style={{
+              background: "rgba(255,255,255,0.09)",
+              boxShadow:
+                "inset 1.5px 1.5px 1px 0 rgba(255,255,255,0.3), inset -1.5px -1.5px 1px 0 rgba(255,255,255,0.10), 0 4px 10px rgba(0,0,0,0.25)",
+            }}
+          />
+        ) : (
+          <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-/[0.05]" />
+        )}
+        <Icon
+          className={cn(
+            "h-[18px] w-[18px] relative z-10 transition-all duration-300",
+            isActive ? "text" : "text/40 group-hover:text/70",
+          )}
+          strokeWidth={isActive ? 2.2 : 1.5}
+        />
+      </Link>
+    </div>
+  );
+}
+
+// ── SidebarContent ───────────────────────────────────────────────────────────
 
 function SidebarContent({ userData, onClose }: DashboardSidebarProps) {
   const pathname = usePathname();
 
   return (
-    <div className="flex flex-col flex-1 overflow-y-auto py-3">
+    <div className="flex flex-col flex-1 overflow-y-auto py-4">
       {/* Main nav */}
-      <div className="px-2 space-y-0.5">
+      <div className="px-3 space-y-1">
+        <p className="px-3 text-[10px] font-semibold text/25 uppercase tracking-widest mb-2">
+          Principal
+        </p>
         {NAV_MAIN.map((link) => (
           <NavLink
             key={link.id}
@@ -178,10 +256,13 @@ function SidebarContent({ userData, onClose }: DashboardSidebarProps) {
       </div>
 
       {/* Divider */}
-      <div className="mx-3 my-3 h-px bg-border/50" />
+      <div className="mx-4 my-4 h-px bg-/[0.06]" />
 
       {/* Secondary nav */}
-      <div className="px-2 space-y-0.5">
+      <div className="px-3 space-y-1">
+        <p className="px-3 text-[10px] font-semibold text/25 uppercase tracking-widest mb-2">
+          Explorar
+        </p>
         {NAV_SECONDARY.map((link) => (
           <NavLink
             key={link.id}
@@ -196,20 +277,8 @@ function SidebarContent({ userData, onClose }: DashboardSidebarProps) {
         ))}
       </div>
 
-      {/* Streak indicator */}
-      {userData.streak !== undefined && userData.streak > 0 && (
-        <div className="mx-3 mt-4">
-          <div className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-orange-500/8 border border-orange-500/15">
-            <Flame className="h-3.5 w-3.5 text-orange-500 shrink-0" />
-            <span className="text-xs font-medium text-orange-600 dark:text-orange-400">
-              {userData.streak} dias seguidos
-            </span>
-          </div>
-        </div>
-      )}
-
       {/* Bottom nav */}
-      <div className="mt-auto pt-3 border-t border-border/50 mx-2 space-y-0.5">
+      <div className="mt-auto pt-3 mx-3 space-y-1 ">
         {NAV_BOTTOM.map((link) => (
           <NavLink
             key={link.id}
@@ -225,6 +294,8 @@ function SidebarContent({ userData, onClose }: DashboardSidebarProps) {
   );
 }
 
+// ── SidebarDesktop ───────────────────────────────────────────────────────────
+
 function SidebarDesktop({
   collapsed,
   userData,
@@ -234,78 +305,116 @@ function SidebarDesktop({
 }: DashboardSidebarProps) {
   const pathname = usePathname();
 
-  if (collapsed) {
-    return (
-      <aside className="hidden md:flex w-14 flex-col items-center border-r border-border/40 sticky top-0 h-screen py-4 bg-sidebar z-30">
-        {/* Logo */}
-        <Link
-          href="/dashboard"
-          className="mb-6 hover:opacity-75 transition-opacity"
-        >
-          <Image src="/icon.svg" height={24} width={24} alt="logo" />
-        </Link>
-
-        {/* Collapsed nav icons */}
-        <div className="flex flex-col items-center gap-1 w-full px-2">
-          {COLLAPSED_LINKS.map((item) => {
-            const Icon = item.icon;
-            const isActive =
-              item.href === "/dashboard"
-                ? pathname === item.href
-                : pathname === item.href ||
-                  pathname?.startsWith(item.href + "/");
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                title={item.label}
-                className={cn(
-                  "flex items-center justify-center w-9 h-9 rounded-lg transition-all duration-[var(--duration-fast)]",
-                  isActive
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground",
-                )}
-              >
-                <Icon className="h-4 w-4" />
-              </Link>
-            );
-          })}
-        </div>
-
-        {/* Bottom icon */}
-        <div className="mt-auto px-2">
-          <Link
-            href="/dashboard/configuracoes"
-            title="Configurações"
-            className="flex items-center justify-center w-9 h-9 rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground transition-all duration-[var(--duration-fast)]"
-          >
-            <Settings className="h-4 w-4" />
-          </Link>
-        </div>
-      </aside>
-    );
-  }
-
   return (
-    <aside className="hidden md:flex w-[220px] flex-col border-r border-border/40 sticky top-0 h-screen bg-sidebar z-30 transition-all duration-[var(--duration-base)]">
-      {/* Header / Logo */}
-      <div className="px-4 py-4 border-b border-border/40">
-        <Link href="/dashboard" className="block">
-          <NucleosLogo size="md" />
-        </Link>
-      </div>
+    <motion.aside
+      initial={false}
+      animate={{ width: collapsed ? 72 : 240 }}
+      transition={{ type: "spring", stiffness: 280, damping: 36, mass: 1 }}
+      className="hidden md:flex sticky top-0 z-40 h-screen overflow-hidden shrink-0 box-border bg-foreground/5 backdrop-blur-lg border-r border-border/30"
+    >
+      <div className="flex flex-col h-full w-full bg-background">
+        {/* Fundo BgUser quando colapsada */}
 
-      {/* Nav content */}
-      <SidebarContent
-        collapsed={collapsed}
-        userData={userData}
-        nucleosCount={nucleosCount}
-        blocosCount={blocosCount}
-        recentNucleos={recentNucleos}
-      />
-    </aside>
+        <AnimatePresence mode="wait" initial={false}>
+          {collapsed ? (
+            <motion.div
+              key="collapsed"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.14, ease: "easeInOut" }}
+              className="relative z-10 flex flex-col items-center pt-4 w-full h-full"
+            >
+              {/* Glass pill — logo + nav icons together */}
+              <div className="relative w-full px-3">
+                <LiquidGlass
+                  variant="default"
+                  radius="var(--radius-xl)"
+                  className="absolute top-[-12] z-10 flex flex-col items-center gap-0.5 py-2"
+                >
+                  {/* Logo inside the pill */}
+                  <Link
+                    href="/dashboard"
+                    title="Início"
+                    className="flex items-center justify-center w-10 h-10 rounded-xl hover:opacity-75 transition-opacity"
+                  >
+                    <Image src="/icon.svg" height={32} width={32} alt="logo" />
+                  </Link>
+
+                  {COLLAPSED_LINKS.map((item) => {
+                    const Icon = item.icon;
+                    const isActive =
+                      item.href === "/dashboard"
+                        ? pathname === item.href
+                        : pathname === item.href ||
+                          pathname?.startsWith(item.href + "/");
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        title={item.label}
+                        className="relative flex items-center justify-center w-10 h-10 rounded-xl group transition-colors duration-200"
+                      >
+                        {isActive && (
+                          <span
+                            className="absolute inset-0 rounded-xl"
+                            style={{ background: "rgba(255,255,255,0.09)" }}
+                          />
+                        )}
+                        <Icon
+                          className={cn(
+                            "h-[18px] w-[18px] relative z-10 transition-all duration-200",
+                            isActive ? "text" : "text/35 group-hover:text/65",
+                          )}
+                          strokeWidth={isActive ? 2.2 : 1.5}
+                        />
+                      </Link>
+                    );
+                  })}
+                </LiquidGlass>
+              </div>
+
+              <div className="mt-auto">
+                <NavIcon
+                  href="/dashboard/configuracoes"
+                  icon={Settings}
+                  label="Configurações"
+                  isActive={pathname === "/dashboard/configuracoes"}
+                />
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="expanded"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.14, ease: "easeInOut" }}
+              className="flex flex-col w-full h-full"
+            >
+              {/* Logo + nav expandida */}
+              <div className="px-5 py-4 ">
+                <Link href="/dashboard" className="block">
+                  <NucleosLogo size="md" />
+                </Link>
+              </div>
+
+              <SidebarContent
+                collapsed={collapsed}
+                userData={userData}
+                nucleosCount={nucleosCount}
+                blocosCount={blocosCount}
+                recentNucleos={recentNucleos}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.aside>
   );
 }
+
+// ── DashboardLayout ──────────────────────────────────────────────────────────
 
 export function DashboardLayout({
   children,
@@ -352,9 +461,9 @@ export function DashboardLayout({
         <Sheet open={isMobileMenuOpen} onOpenChange={onMobileMenuClose}>
           <SheetContent
             side="left"
-            className="w-[220px] p-0 bg-sidebar border-r border-border/40"
+            className="w-[240px] p-0 bg-black/90 backdrop-blur-3xl"
           >
-            <div className="px-4 py-4 border-b border-border/40">
+            <div className="px-5 py-4 ">
               <NucleosLogo size="md" />
             </div>
             <SidebarContent {...sidebarProps} onClose={onMobileMenuClose} />
@@ -367,8 +476,23 @@ export function DashboardLayout({
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
+      {/* Sidebar */}
       <SidebarDesktop {...sidebarProps} />
-      <main className="flex-1 overflow-y-auto min-w-0">{children}</main>
+
+      {/* Main area */}
+      <main className="relative flex-1 min-w-0 overflow-y-auto bg-background">
+        {/* Content */}
+        <div className="relative z-10 min-h-full">
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 4 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {children}
+          </motion.div>
+        </div>
+      </main>
     </div>
   );
 }

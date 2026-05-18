@@ -113,7 +113,7 @@ export function LoginForm() {
         <div className="flex flex-col space-y-4 pt-4 pb-2">
           <Button
             type="submit"
-            className="w-full bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90 transition-opacity"
+            className="w-full bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text- hover:opacity-90 transition-opacity"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Entrando..." : "Entrar"}

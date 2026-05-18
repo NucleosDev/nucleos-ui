@@ -1,6 +1,6 @@
 "use client";
 
-import { Github, Linkedin } from "lucide-react";
+import { Code2, Network } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -197,14 +197,14 @@ export default function AboutPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Github className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                  <Code2 className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
                 </Link>
                 <Link
                   href="https://linkedin.com/"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Linkedin className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                  <Network className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
                 </Link>
               </div>
             </CardContent>
@@ -228,14 +228,14 @@ export default function AboutPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Github className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                  <Code2 className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
                 </Link>
                 <Link
                   href="https://linkedin.com/"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Linkedin className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                  <Network className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
                 </Link>
               </div>
             </CardContent>
@@ -259,14 +259,14 @@ export default function AboutPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Github className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                  <Code2 className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
                 </Link>
                 <Link
                   href="https://www.linkedin.com/in/cau%C3%AA-alves-ab17a02a7/"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Linkedin className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                  <Network className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
                 </Link>
               </div>
             </CardContent>
@@ -290,14 +290,14 @@ export default function AboutPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Github className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                  <Code2 className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
                 </Link>
                 <Link
                   href="https://linkedin.com/"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Linkedin className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                  <Network className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
                 </Link>
               </div>
             </CardContent>
@@ -320,14 +320,14 @@ export default function AboutPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Github className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                  <Code2 className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
                 </Link>
                 <Link
                   href="https://linkedin.com/"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Linkedin className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                  <Network className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
                 </Link>
               </div>
             </CardContent>
@@ -351,14 +351,14 @@ export default function AboutPage() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Github className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                  <Code2 className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
                 </Link>
                 <Link
                   href="https://www.linkedin.com/in/matheus-tavares-8aa9502b5?utm_source=share_via&utm_content=profile&utm_medium=member_ios"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Linkedin className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
+                  <Network className="w-5 h-5 hover:text-primary hover:scale-110 transition" />
                 </Link>
               </div>
             </CardContent>

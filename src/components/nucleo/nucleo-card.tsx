@@ -45,6 +45,8 @@ import {
 import { EditNucleoModal } from "./edit-nucleo-modal";
 import { getTypeStyles, formatXp } from "./utils/nucleo-helpers";
 import type { NucleoCardProps } from "./nucleo-components.types";
+import { LiquidGlass } from "../ui/liquid-glass";
+import { LiquidGlassCard } from "../uilayouts/liquid-glass";
 
 const tipoIcons: Record<string, React.ElementType> = {
   estudo: BookOpen,
@@ -98,8 +100,8 @@ export function NucleoCard({
   const getLevelColor = () => {
     if (level >= 100) return "from-purple-500 to-pink-500";
     if (level >= 80) return "from-indigo-500 to-purple-500";
-    if (level >= 60) return "from-blue-500 to-indigo-500";
-    if (level >= 40) return "from-cyan-500 to-blue-500";
+    if (level >= 60) return "from-primary-500 to-indigo-500";
+    if (level >= 40) return "from-cyan-500 to-primary-500";
     if (level >= 20) return "from-emerald-500 to-teal-500";
     return "from-[#4D7CFF] to-[#00C9A7]";
   };
@@ -157,21 +159,53 @@ export function NucleoCard({
 
   return (
     <>
-      <motion.div
+      <LiquidGlass
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="w-full"
+        radius="26px"
+        variant="default"
+        className="w-full rounded-2xl cursor-pointer"
       >
         <div
           className={cn(
-            "group relative isolate overflow-hidden rounded-2xl transition-all duration-300 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.2),0_8px_10px_-6px_rgba(0,0,0,0.1)]",
+            "group relative isolate overflow-hidden rounded-2xl transition-all duration-300",
             className,
           )}
           onClick={onClick}
         >
+          {/* SVG clipPath para recortar a wave da imagem (mantém área da onda transparente) */}
+          <svg
+            width="0"
+            height="0"
+            className="absolute pointer-events-none"
+            aria-hidden="true"
+          >
+            <defs>
+              <clipPath id="nucleo-wave-clip" clipPathUnits="objectBoundingBox">
+                {/*
+                  Recriação da wave original (M0,20 C150,-40 340,80 500,40 L500,80 L0,80 Z)
+                  convertida para objectBoundingBox. A imagem original tem 200px e a wave
+                  ocupa os 60px inferiores, então:
+                    y_curva_esq = (140 + 20*60/80) / 200 = 0.775
+                    y_curva_dir = (140 + 40*60/80) / 200 = 0.85
+                    control1    = (0.30, 0.55)
+                    control2    = (0.68, 1.00)
+                  O clip mantém apenas a parte ACIMA da curva visível.
+                */}
+                <path d="M 0 0 L 1 0 L 1 0.85 C 0.68 1, 0.30 0.55, 0 0.775 Z" />
+              </clipPath>
+            </defs>
+          </svg>
+
           {/* Image / Gradient Section */}
-          <div className="relative w-full overflow-hidden h-[200px]">
+          <div
+            className="relative w-full overflow-hidden h-[200px]"
+            style={{
+              clipPath: "url(#nucleo-wave-clip)",
+              WebkitClipPath: "url(#nucleo-wave-clip)",
+            }}
+          >
             {capaUrl ? (
               <Image
                 src={capaUrl}
@@ -216,7 +250,7 @@ export function NucleoCard({
             {/* Liquid glass type badge */}
             <div className="absolute top-3 right-3 z-30">
               <div
-                className="px-2.5 py-1 rounded-full text-xs font-medium text-white capitalize"
+                className="px-2.5 py-1 rounded-full text-xs font-medium text- capitalize"
                 style={{
                   background: `${corDestaque}55`,
                   backdropFilter: "blur(10px) saturate(140%)",
@@ -242,7 +276,7 @@ export function NucleoCard({
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium text-white"
+                className="flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium text-"
                 style={{
                   background: "rgba(255,255,255,0.18)",
                   backdropFilter: "blur(14px) saturate(160%)",
@@ -255,18 +289,6 @@ export function NucleoCard({
                 <Eye className="h-4 w-4" />
                 Explorar Nucleo
               </motion.button>
-            </div>
-
-            {/* Wave transition */}
-            <div className="absolute bottom-0 left-0 w-full leading-none z-20 pointer-events-none">
-              <svg
-                viewBox="0 0 500 80"
-                preserveAspectRatio="none"
-                className="w-full h-[60px] -mb-px"
-                fill="var(--card)"
-              >
-                <path d="M0,20 C150,-40 340,80 500,40 L500,80 L0,80 Z" />
-              </svg>
             </div>
           </div>
 
@@ -297,7 +319,7 @@ export function NucleoCard({
                     className="object-contain brightness-0 invert"
                   />
                 ) : (
-                  <IconComponent className="h-7 w-7 text-white" />
+                  <IconComponent className="h-7 w-7 text-" />
                 )}
               </div>
             </div>
@@ -308,7 +330,7 @@ export function NucleoCard({
             {/* Cabeçalho com nome e menu */}
             <div className="mb-3 flex items-start justify-between gap-2">
               <div className="flex-1">
-                <h3 className="text-lg font-bold leading-tight tracking-tight text-foreground line-clamp-1 group-hover:text-[#4D7CFF] transition-colors">
+                <h3 className="text-lg font-bold leading-tight tracking-tight text-foreground line-clamp-1 group-hover:text-foreground/60 transition-colors">
                   {nome}
                 </h3>
                 {variant === "detailed" && descricao && (
@@ -391,9 +413,9 @@ export function NucleoCard({
 
               {/* Relações */}
               {relations.length > 0 && (
-                <div className="flex items-center gap-1 rounded-full bg-blue-500/10 px-2 py-0.5">
-                  <LinkIcon className="h-3 w-3 text-blue-500" />
-                  <span className="text-xs font-medium text-blue-600 dark:text-blue-400">
+                <div className="flex items-center gap-1 rounded-full bg-primary-500/10 px-2 py-0.5">
+                  <LinkIcon className="h-3 w-3 text-primary-500" />
+                  <span className="text-xs font-medium text-primary-600 dark:text-primary-400">
                     {relations.length} conexões
                   </span>
                 </div>
@@ -424,7 +446,7 @@ export function NucleoCard({
             </div>
           </div>
         </div>
-      </motion.div>
+      </LiquidGlass>
 
       {/* Modal de Edição Local */}
       <EditNucleoModal

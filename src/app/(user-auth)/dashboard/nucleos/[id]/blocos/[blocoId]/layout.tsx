@@ -19,6 +19,7 @@ import {
   Calculator,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { LiquidGlass } from "@/components/ui/liquid-glass";
 
 const blocoIconMap: Record<string, LucideIcon> = {
   tarefas: CheckSquare,
@@ -94,12 +95,14 @@ export default function BlocoLayout({
           <p className="text-sm text-muted-foreground mb-5">
             O bloco foi removido ou não existe.
           </p>
-          <button
+          <LiquidGlass
+            variant="button"
+            radius="var(--radius-md)"
             onClick={() => router.back()}
-            className="px-4 py-2 rounded-[var(--radius-md)] bg-primary text-primary-foreground text-sm font-medium hover:opacity-90"
+            className="text-sm font-medium text-"
           >
-            Voltar
-          </button>
+            <span className="px-4 py-2 block">Voltar</span>
+          </LiquidGlass>
         </div>
       </div>
     );
@@ -110,12 +113,14 @@ export default function BlocoLayout({
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-base font-semibold mb-2">Núcleo não encontrado</p>
-          <button
+          <LiquidGlass
+            variant="button"
+            radius="var(--radius-md)"
             onClick={() => router.push("/dashboard/nucleos")}
-            className="mt-4 px-4 py-2 rounded-[var(--radius-md)] bg-primary text-primary-foreground text-sm font-medium hover:opacity-90"
+            className="mt-4 text-sm font-medium text-"
           >
-            Ver Núcleos
-          </button>
+            <span className="px-4 py-2 block">Ver Núcleos</span>
+          </LiquidGlass>
         </div>
       </div>
     );
@@ -169,31 +174,21 @@ export default function BlocoLayout({
         </div>
 
         {/* Glass back button */}
-        <button
+        <LiquidGlass
+          variant="button"
+          radius="999px"
           onClick={() => router.push(`/dashboard/nucleos/${nucleoId}`)}
-          className="absolute top-4 left-4 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium text-white transition-all duration-[var(--duration-fast)]"
-          style={{
-            background: "rgba(0,0,0,0.22)",
-            backdropFilter: "blur(12px) saturate(160%)",
-            WebkitBackdropFilter: "blur(12px) saturate(160%)",
-            border: "1px solid rgba(255,255,255,0.18)",
-            boxShadow:
-              "inset 0 1px 0 rgba(255,255,255,0.2), 0 2px 8px rgba(0,0,0,0.15)",
-          }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.background = "rgba(0,0,0,0.32)")
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.background = "rgba(0,0,0,0.22)")
-          }
+          className="absolute top-4 left-4 z-20 text-sm font-medium text-"
         >
-          <ArrowLeft className="h-4 w-4" />
-          {nucleo.nome}
-        </button>
+          <span className="flex items-center gap-2 px-3 py-1.5">
+            <ArrowLeft className="h-4 w-4" />
+            {nucleo.nome}
+          </span>
+        </LiquidGlass>
 
         {/* Glass bloco type badge */}
         <div
-          className="absolute top-4 right-4 z-20 px-2.5 py-1 rounded-full text-xs font-medium text-white capitalize"
+          className="absolute top-4 right-4 z-20 px-2.5 py-1 rounded-full text-xs font-medium text- capitalize"
           style={{
             background: `${accent}55`,
             backdropFilter: "blur(10px) saturate(140%)",
@@ -228,7 +223,7 @@ export default function BlocoLayout({
                   "inset 0 1.5px 0 rgba(255,255,255,0.40), 0 6px 18px rgba(0,0,0,0.20)",
               }}
             >
-              <BlocoIcon className="h-6 w-6 text-white" />
+              <BlocoIcon className="h-6 w-6 text-" />
             </div>
           </div>
         </div>
