@@ -591,7 +591,8 @@ export function interpret(rawText: string, nucleos: Nucleo[] = []): OrbitCommand
       const partial: Partial<OrbitCommand> = {
         type, titulo, prioridade, dataVencimento, horaExata, periodo,
         frequencia: freqInfo?.frequencia, diasSemana: freqInfo?.diasSemana,
-        tipoNucleo: catInfo?.tipo, nucleoCor: catInfo?.defaultCor,
+        tipoNucleo: catInfo?.tipo ?? "pessoal",
+        nucleoCor: catInfo?.defaultCor ?? "#F97316",
         tipoLista, duracaoMinutos, conteudo,
         ...nucleoMatch,
       };
@@ -608,8 +609,8 @@ export function interpret(rawText: string, nucleos: Nucleo[] = []): OrbitCommand
         periodo,
         frequencia: freqInfo?.frequencia,
         diasSemana: freqInfo?.diasSemana,
-        tipoNucleo: catInfo?.tipo,
-        nucleoCor: nucleoMatch.nucleoCor ?? catInfo?.defaultCor ?? "#4D7CFF",
+        tipoNucleo: catInfo?.tipo ?? "pessoal",
+        nucleoCor: nucleoMatch.nucleoCor ?? catInfo?.defaultCor ?? "#F97316",
         nucleoId: nucleoMatch.nucleoId,
         nucleoNome: nucleoMatch.nucleoNome,
         tipoLista,

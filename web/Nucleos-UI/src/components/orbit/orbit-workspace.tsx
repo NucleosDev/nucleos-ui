@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
@@ -18,6 +18,8 @@ import {
   Clock,
   FileText,
   Edit2,
+  Mic,
+  MicOff,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNucleos } from "@/hooks/useNucleo";
@@ -103,20 +105,31 @@ interface CommandResult {
 
 // ── Helpers de criação ────────────────────────────────────────────────────────
 
+// Cache: "nucleoId:tipo" → blocoId. Evita duplicatas dentro da sessão
+// e consulta o backend uma única vez por (nucleo, tipo) para não criar duplicatas
+// em sessões anteriores.
 async function ensureBloco(
   nucleoId: string,
   tipo: "tarefas" | "habitos" | "lista" | "notas",
   titulo: string,
-  existingBlocos?: Nucleo["blocos"],
+  blocoIdCache: Record<string, string>,
 ): Promise<string> {
-  const existing = (existingBlocos ?? []).find((b) => b.tipo === tipo);
-  if (existing) return existing.id;
-  const created = await blocosService.criar({
-    nucleoId,
-    tipo,
-    titulo,
-    posicao: 0,
-  });
+  const cacheKey = `${nucleoId}:${tipo}`;
+  if (blocoIdCache[cacheKey]) return blocoIdCache[cacheKey];
+
+  try {
+    const existentes = await blocosService.listarPorNucleo(nucleoId);
+    const found = existentes.find((b) => b.tipo === tipo);
+    if (found) {
+      blocoIdCache[cacheKey] = found.id;
+      return found.id;
+    }
+  } catch {
+    // ignore — se a consulta falhar, tenta criar
+  }
+
+  const created = await blocosService.criar({ nucleoId, tipo, titulo, posicao: 0 });
+  blocoIdCache[cacheKey] = created.id;
   return created.id;
 }
 
@@ -164,6 +177,33 @@ async function ensureNucleo(
   return novo;
 }
 
+// ── Web Speech API ────────────────────────────────────────────────────────────
+
+type AnyRecognition = {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  start: () => void;
+  stop: () => void;
+  onresult: ((e: { results: { 0: { 0: { transcript: string } } } }) => void) | null;
+  onerror: (() => void) | null;
+  onend: (() => void) | null;
+};
+
+function createRecognition(): AnyRecognition | null {
+  if (typeof window === "undefined") return null;
+  const w = window as unknown as Record<string, unknown>;
+  const SR = (w.SpeechRecognition || w.webkitSpeechRecognition) as
+    | (new () => AnyRecognition)
+    | undefined;
+  if (!SR) return null;
+  const r = new SR();
+  r.lang = "pt-BR";
+  r.continuous = false;
+  r.interimResults = false;
+  return r;
+}
+
 // ── Componente principal ──────────────────────────────────────────────────────
 
 export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
@@ -182,6 +222,8 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
   const [purgatoryItems, setPurgatoryItems] = useState<PurgatoryItem[]>(() =>
     getPurgatoryItems().filter((i) => !i.processed),
   );
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<ReturnType<typeof createRecognition> | null>(null);
 
   const { data: nucleos = [] } = useNucleos();
   const queryClient = useQueryClient();
@@ -293,32 +335,41 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
 
     setCreationStatus("creating");
     const createdResults: CommandResult[] = [];
+    // Cache de núcleos criados nesta sessão: tipoNucleo → Nucleo
     const newNucleoCache: Record<string, Nucleo> = {};
+    // Cache de blocos para evitar duplicatas: "nucleoId:tipo" → blocoId
+    // Consulta o backend na primeira vez por (nucleoId, tipo), depois usa o cache.
+    const blocoIdCache: Record<string, string> = {};
 
     for (const cmd of toCreate) {
       try {
-        // Resolve núcleo (usa o do override, ou auto-cria)
+        // ── Resolve núcleo ────────────────────────────────────────────────────
         let nucleoId = cmd.nucleoId;
-        let resolvedNucleo: Nucleo | undefined;
 
-        if (!nucleoId && cmd.tipoNucleo) {
-          resolvedNucleo = await ensureNucleo(
-            cmd.tipoNucleo,
-            nucleos,
-            newNucleoCache,
-          );
-          nucleoId = resolvedNucleo?.id;
-        } else if (nucleoId) {
-          resolvedNucleo =
-            nucleos.find((n: Nucleo) => n.id === nucleoId) ??
-            newNucleoCache[cmd.tipoNucleo ?? ""];
+        if (!nucleoId) {
+          // Tenta encontrar/criar pelo tipo
+          const tipo = cmd.tipoNucleo ?? "pessoal";
+          const resolved = await ensureNucleo(tipo, nucleos, newNucleoCache);
+          nucleoId = resolved?.id;
+        }
+
+        if (!nucleoId) {
+          // Último recurso: usa o primeiro núcleo disponível do usuário
+          const fallback = nucleos[0];
+          if (fallback) {
+            nucleoId = fallback.id;
+          } else {
+            // Cria um núcleo pessoal do zero
+            const novo = await ensureNucleo("pessoal", [], newNucleoCache);
+            nucleoId = novo?.id;
+          }
         }
 
         if (!nucleoId) {
           createdResults.push({
             commandId: cmd.id,
-            success: true,
-            message: `"${cmd.titulo}" salvo na fila (sem núcleo)`,
+            success: false,
+            message: `Não foi possível determinar o núcleo para "${cmd.titulo}"`,
           });
           continue;
         }
@@ -333,12 +384,7 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
 
         switch (cmd.type) {
           case "CREATE_TASK": {
-            const blocoId = await ensureBloco(
-              nucleoId,
-              "tarefas",
-              "Tarefas",
-              resolvedNucleo?.blocos,
-            );
+            const blocoId = await ensureBloco(nucleoId, "tarefas", "Tarefas", blocoIdCache);
             await tarefasService.createTarefa({
               blocoId,
               titulo: cmd.titulo,
@@ -354,12 +400,7 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
           }
 
           case "CREATE_HABIT": {
-            const blocoId = await ensureBloco(
-              nucleoId,
-              "habitos",
-              "Hábitos",
-              resolvedNucleo?.blocos,
-            );
+            const blocoId = await ensureBloco(nucleoId, "habitos", "Hábitos", blocoIdCache);
             await habitosService.criar({
               blocoId,
               nome: cmd.titulo,
@@ -391,20 +432,13 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
           }
 
           case "CREATE_LIST": {
-            const blocoId = await ensureBloco(
-              nucleoId,
-              "lista",
-              cmd.tipoLista === "compras" ? "Compras" : "Lista",
-              resolvedNucleo?.blocos,
-            );
+            const blocoTitulo = cmd.tipoLista === "compras" ? "Compras" : "Lista";
+            const blocoId = await ensureBloco(nucleoId, "lista", blocoTitulo, blocoIdCache);
             const lista = await listasService.criar({
               blocoId,
-              nome:
-                cmd.titulo ||
-                (cmd.tipoLista === "compras" ? "Compras" : "Lista"),
+              nome: cmd.titulo || blocoTitulo,
               tipoLista: cmd.tipoLista ?? "generico",
             });
-            // Cria os itens da lista
             if (cmd.listaItems && cmd.listaItems.length > 0) {
               for (const itemNome of cmd.listaItems) {
                 await listasService.criarItem({
@@ -500,6 +534,28 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
       handleProcess();
     }
   };
+
+  const handleMic = useCallback(() => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      return;
+    }
+    const r = createRecognition();
+    if (!r) return;
+    r.onresult = (e) => {
+      const transcript = e.results[0][0].transcript;
+      setInputText((prev) =>
+        prev.trim() ? `${prev.trim()}, ${transcript}` : transcript,
+      );
+      setIsListening(false);
+    };
+    r.onerror = () => setIsListening(false);
+    r.onend = () => setIsListening(false);
+    recognitionRef.current = r;
+    setIsListening(true);
+    r.start();
+  }, [isListening]);
 
   const toggleCommand = (id: string) => {
     setSelected((prev) => {
@@ -658,9 +714,29 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
                 aria-label="Campo de entrada do Orbit"
               />
               <div className="flex items-center justify-between px-5 py-3 border-t border-border/15">
-                <span className="text-[11px] text-muted-foreground/30 hidden sm:block">
-                  ⌘↵ para processar
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] text-muted-foreground/30 hidden sm:block">
+                    ⌘↵ para processar
+                  </span>
+                  {/* Botão microfone */}
+                  <button
+                    type="button"
+                    onClick={handleMic}
+                    title={isListening ? "Parar gravação" : "Falar (pt-BR)"}
+                    className={cn(
+                      "flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-200",
+                      isListening
+                        ? "bg-red-500/15 text-red-500 animate-pulse"
+                        : "text-muted-foreground/40 hover:text-primary/70 hover:bg-primary/8",
+                    )}
+                  >
+                    {isListening ? (
+                      <MicOff className="h-4 w-4" />
+                    ) : (
+                      <Mic className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
                 <motion.button
                   whileHover={inputText.trim() ? { scale: 1.03 } : {}}
                   whileTap={inputText.trim() ? { scale: 0.97 } : {}}
