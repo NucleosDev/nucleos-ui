@@ -57,6 +57,8 @@ const CATEGORIES: CategoryEntry[] = [
       "trabalho", "cliente", "clientes", "projeto", "reunião", "email", "apresentação",
       "relatório", "empresa", "chefe", "deadline", "entrega", "contrato", "proposta",
       "casamento", "editar", "filmagem", "fotografia", "foto", "vídeo",
+      "entrevista", "emprego", "vaga", "cargo", "processo seletivo", "rh", "currículo",
+      "nf", "nota fiscal", "orçamento", "proposta comercial",
     ],
     tipo: "profissional",
     defaultCor: "#4D7CFF",
@@ -66,6 +68,8 @@ const CATEGORIES: CategoryEntry[] = [
       "estudar", "estudo", "faculdade", "universidade", "prova", "aula", "matéria",
       "livro", "ler", "leitura", "curso", "react", "código", "programar", "programação",
       "javascript", "python", "typescript", "sql", "revisão", "revisar",
+      "anotações", "anotar", "caderno", "apostila", "inglês", "idioma", "certificação",
+      "aprender", "workshop", "palestra", "pesquisa",
     ],
     tipo: "estudo",
     defaultCor: "#7C3AED",
@@ -74,6 +78,8 @@ const CATEGORIES: CategoryEntry[] = [
     keywords: [
       "academia", "treino", "exercício", "correr", "nadar", "pedalar", "ginástica",
       "musculação", "yoga", "alongamento", "crossfit", "caminhada",
+      "água", "hidratação", "beber", "whey", "proteína", "dieta", "emagrecer",
+      "peso", "corrida", "ciclismo", "natação", "pilates",
     ],
     tipo: "fitness",
     defaultCor: "#10B981",
@@ -82,6 +88,8 @@ const CATEGORIES: CategoryEntry[] = [
     keywords: [
       "pagar", "banco", "dinheiro", "conta", "boleto", "financeiro", "investimento",
       "poupança", "salário", "imposto", "nota fiscal", "receita", "despesa", "fatura",
+      "iptu", "ipva", "aluguel", "mensalidade", "assinatura", "streaming", "plano",
+      "cartão", "débito", "transferir", "pix", "fornecedor",
     ],
     tipo: "financas",
     defaultCor: "#F59E0B",
@@ -90,6 +98,8 @@ const CATEGORIES: CategoryEntry[] = [
     keywords: [
       "casa", "compras", "mercado", "faxina", "limpeza", "roupa", "conserto",
       "organizar", "arrumar", "cozinhar", "almoço", "janta", "leite", "café", "pão",
+      "supermercado", "farmácia", "carro", "manutenção", "cnh", "documento",
+      "presente", "cabelo", "barbearia", "cabelereiro",
     ],
     tipo: "pessoal",
     defaultCor: "#EC4899",
@@ -97,7 +107,7 @@ const CATEGORIES: CategoryEntry[] = [
   {
     keywords: [
       "médico", "consulta", "exame", "saúde", "remédio", "dentista", "hospital",
-      "psicólogo", "terapia",
+      "psicólogo", "terapia", "vacina", "sangue", "pressão", "checkup",
     ],
     tipo: "pessoal",
     defaultCor: "#06B6D4",
@@ -106,12 +116,17 @@ const CATEGORIES: CategoryEntry[] = [
     keywords: [
       "filho", "filha", "família", "pai", "mãe", "irmão", "namorado", "namorada",
       "aniversário", "viagem", "férias", "ligar", "visitar",
+      "amigo", "amiga", "avó", "avô", "neto", "neta", "esposo", "esposa",
     ],
     tipo: "pessoal",
     defaultCor: "#F97316",
   },
   {
-    keywords: ["música", "tocar", "violão", "guitarra", "piano", "ensaio", "show"],
+    keywords: [
+      "música", "tocar", "violão", "guitarra", "piano", "ensaio", "show",
+      "pintura", "desenho", "fotografia", "hobby", "jogo", "game", "xadrez",
+      "jardinagem", "costura", "artesanato", "culinária", "receita",
+    ],
     tipo: "hobby",
     defaultCor: "#8B5CF6",
   },
@@ -133,12 +148,23 @@ const FREQUENCY_PATTERNS: Array<{
   { pattern: /\btodo\s+dia\b/i, frequencia: "diaria", diasSemana: [0,1,2,3,4,5,6] },
   { pattern: /\bdiariamente\b/i, frequencia: "diaria", diasSemana: [0,1,2,3,4,5,6] },
   { pattern: /\bcada\s+dia\b/i, frequencia: "diaria", diasSemana: [0,1,2,3,4,5,6] },
+  { pattern: /\bpor\s+dia\b/i, frequencia: "diaria", diasSemana: [0,1,2,3,4,5,6] },
+  { pattern: /\btoda[s]?\s+(manhã|tarde|noite)\b/i, frequencia: "diaria", diasSemana: [0,1,2,3,4,5,6] },
+  { pattern: /\btodo[s]?\s+(dia[s]?\s+de\s+)?semana\b/i, frequencia: "diaria", diasSemana: [0,1,2,3,4,5,6] },
   { pattern: /\bdias\s+de\s+semana\b|\bsegunda\s+a\s+sexta\b/i, frequencia: "semanal", diasSemana: [1,2,3,4,5] },
   { pattern: /\bfinais?\s+de\s+semana\b|\bfim\s+de\s+semana\b/i, frequencia: "semanal", diasSemana: [0,6] },
   { pattern: /\btoda\s+semana\b/i, frequencia: "semanal" },
   { pattern: /\bsemanalmente\b/i, frequencia: "semanal" },
   { pattern: /\b(\d+)x\s+por\s+semana\b/i, frequencia: "semanal" },
   { pattern: /\b(\d+)\s+vezes\s+por\s+semana\b/i, frequencia: "semanal" },
+  // "todo domingo", "toda segunda", etc.
+  { pattern: /\btodo\s+(domingo)\b/i, frequencia: "semanal", diasSemana: [0] },
+  { pattern: /\btoda\s+(segunda|segunda-feira)\b/i, frequencia: "semanal", diasSemana: [1] },
+  { pattern: /\btoda\s+(terça|terça-feira)\b/i, frequencia: "semanal", diasSemana: [2] },
+  { pattern: /\btoda\s+(quarta|quarta-feira)\b/i, frequencia: "semanal", diasSemana: [3] },
+  { pattern: /\btoda\s+(quinta|quinta-feira)\b/i, frequencia: "semanal", diasSemana: [4] },
+  { pattern: /\btoda\s+(sexta|sexta-feira)\b/i, frequencia: "semanal", diasSemana: [5] },
+  { pattern: /\btodo\s+(sábado|sabado)\b/i, frequencia: "semanal", diasSemana: [6] },
 ];
 
 const PRIORITY_PATTERNS: Array<{
@@ -173,7 +199,8 @@ const PERIOD_PATTERNS: Array<{ pattern: RegExp; periodo: "manha" | "tarde" | "no
 ];
 
 // Keywords que indicam que " e " não deve ser usado para separar segmentos
-const LIST_START_REGEX = /^\s*(comprar\s+|precisamos\s+de\s+|lista\s+de\s+|falta\s+)/i;
+// e que partes separadas por vírgula devem ser reagrupadas como itens da mesma lista
+const LIST_START_REGEX = /^\s*(comprar\s+|precisamos\s+de\s+|lista\s+de\s+compras|lista\s+de\s+|falta\s+comprar\s+|falta\s+)/i;
 
 const NOTE_PREFIX_REGEX = /^\s*(ideia\s*:\s*|anotação\s*:\s*|nota\s*:\s*|lembrar\s*:\s*|observação\s*:\s*|obs\s*:\s*|pensar\s+em\s*:?\s*)/i;
 
@@ -266,16 +293,44 @@ function extractGlobalDate(text: string): string | undefined {
   return extractDataAbsoluta(text);
 }
 
+// Segmento que parece item solto de lista: curto, sem verbo de ação forte, sem data
+const LOOSE_LIST_ITEM_RE = /^[^,]{2,30}$/;
+const ACTION_VERB_RE = /\b(pagar|estudar|ligar|enviar|fazer|ir|marcar|renovar|reunião|consulta|treinar|correr|buscar|comprar|entregar|falar|responder)\b/i;
+
+function isLooseListItem(s: string): boolean {
+  return LOOSE_LIST_ITEM_RE.test(s.trim()) && !ACTION_VERB_RE.test(s);
+}
+
 function splitSegments(text: string): string[] {
   const cleaned = text.replace(
     /^(hoje\s+)?(preciso\s+|tenho\s+que\s+|quero\s+|vou\s+|devo\s+)?/i,
     "",
   );
 
-  const parts = cleaned
-    .split(/\s*,\s*|\s*;\s*/)
+  const rawParts = cleaned.split(/\s*,\s*|\s*;\s*/);
+
+  // Reagrupa partes que pertencem à mesma lista de compras.
+  // Ex: "comprar pão, leite e ovos" → split dá ["comprar pão", "leite e ovos"]
+  // → reune em "comprar pão, leite e ovos" para ser tratado como 1 segmento.
+  const regrouped: string[] = [];
+  for (let i = 0; i < rawParts.length; i++) {
+    const part = rawParts[i];
+    if (LIST_START_REGEX.test(part)) {
+      // Absorve partes seguintes que parecem ser itens da mesma lista
+      let merged = part;
+      while (i + 1 < rawParts.length && isLooseListItem(rawParts[i + 1])) {
+        i++;
+        merged += ", " + rawParts[i];
+      }
+      regrouped.push(merged);
+    } else {
+      regrouped.push(part);
+    }
+  }
+
+  const parts = regrouped
     .flatMap((part) => {
-      // Segmentos de lista não devem ser partidos no "e" (ex: "comprar leite e café")
+      // Segmentos de lista nunca são partidos no "e"
       if (LIST_START_REGEX.test(part)) return [part];
 
       const subparts = part.split(/\s+e\s+(?=[a-záéíóúâêîôûãẽĩõũçàèìòùäëïöü])/i);
@@ -312,10 +367,11 @@ function detectListInfo(segment: string): {
   }
 
   // Lista de compras: "comprar leite e café", "leite, café, pão"
-  const isShop = /\b(comprar|precisamos\s+de|lista\s+de\s+compras|falta\s+comprar)\b/i.test(segment);
+  const isShop = /\b(comprar|precisamos\s+de|lista\s+de\s+compras|falta\s+comprar|falta)\b/i.test(segment);
   if (isShop) {
     const afterKeyword = segment
-      .replace(/\b(comprar|precisamos\s+de|lista\s+de\s+compras|falta\s+comprar)\b/i, "")
+      .replace(/\b(lista\s+de\s+compras|comprar|precisamos\s+de|falta\s+comprar|falta)\b/i, "")
+      .replace(/^\s*[:\-]\s*/, "") // remove ":" ou "-" após o keyword
       .trim();
     const items = afterKeyword
       .split(/\s*,\s*|\s+e\s+/)
