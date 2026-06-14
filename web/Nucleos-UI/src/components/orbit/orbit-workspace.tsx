@@ -3,9 +3,21 @@
 import { useState, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Sparkles, ArrowRight, CheckSquare, Calendar, Repeat2,
-  Inbox, CheckCircle2, Loader2, X, ChevronRight,
-  AlertCircle, List, Clock, FileText, Edit2,
+  Sparkles,
+  ArrowRight,
+  CheckSquare,
+  Calendar,
+  Repeat2,
+  Inbox,
+  CheckCircle2,
+  Loader2,
+  X,
+  ChevronRight,
+  AlertCircle,
+  List,
+  Clock,
+  FileText,
+  Edit2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNucleos } from "@/hooks/useNucleo";
@@ -17,8 +29,15 @@ import { listasService } from "@/services/lista.service";
 import { calendarioService } from "@/services/calendario.service";
 import { timersService } from "@/services/timers.service";
 import { nucleosService } from "@/services/nucleos.service";
-import { interpret, type OrbitCommand, type OrbitCommandType } from "@/lib/orbit/interpreter";
-import { getPurgatoryItems, type PurgatoryItem } from "@/components/home/capture-field";
+import {
+  interpret,
+  type OrbitCommand,
+  type OrbitCommandType,
+} from "@/lib/orbit/interpreter";
+import {
+  getPurgatoryItems,
+  type PurgatoryItem,
+} from "@/components/home/capture-field";
 import { saveCorrection, applyOverrides } from "@/lib/orbit/user-corrections";
 import { useAuth } from "@/auth";
 import type { Nucleo } from "@/types/nucleo";
@@ -32,13 +51,41 @@ const TYPE_CONFIG: Record<
   OrbitCommandType,
   { icon: React.ReactNode; label: string; cor: string }
 > = {
-  CREATE_TASK:  { icon: <CheckSquare  className="h-3.5 w-3.5" />, label: "Tarefa",  cor: "#4D7CFF" },
-  CREATE_HABIT: { icon: <Repeat2      className="h-3.5 w-3.5" />, label: "Hábito",  cor: "#10B981" },
-  CREATE_EVENT: { icon: <Calendar     className="h-3.5 w-3.5" />, label: "Evento",  cor: "#F59E0B" },
-  CREATE_LIST:  { icon: <List         className="h-3.5 w-3.5" />, label: "Lista",   cor: "#8B5CF6" },
-  CREATE_TIMER: { icon: <Clock        className="h-3.5 w-3.5" />, label: "Timer",   cor: "#06B6D4" },
-  CREATE_NOTE:  { icon: <FileText     className="h-3.5 w-3.5" />, label: "Nota",    cor: "#EC4899" },
-  CAPTURE:      { icon: <Inbox        className="h-3.5 w-3.5" />, label: "Captura", cor: "#9CA3AF" },
+  CREATE_TASK: {
+    icon: <CheckSquare className="h-3.5 w-3.5" />,
+    label: "Tarefa",
+    cor: "#4D7CFF",
+  },
+  CREATE_HABIT: {
+    icon: <Repeat2 className="h-3.5 w-3.5" />,
+    label: "Hábito",
+    cor: "#10B981",
+  },
+  CREATE_EVENT: {
+    icon: <Calendar className="h-3.5 w-3.5" />,
+    label: "Evento",
+    cor: "#F59E0B",
+  },
+  CREATE_LIST: {
+    icon: <List className="h-3.5 w-3.5" />,
+    label: "Lista",
+    cor: "#8B5CF6",
+  },
+  CREATE_TIMER: {
+    icon: <Clock className="h-3.5 w-3.5" />,
+    label: "Timer",
+    cor: "#06B6D4",
+  },
+  CREATE_NOTE: {
+    icon: <FileText className="h-3.5 w-3.5" />,
+    label: "Nota",
+    cor: "#EC4899",
+  },
+  CAPTURE: {
+    icon: <Inbox className="h-3.5 w-3.5" />,
+    label: "Captura",
+    cor: "#9CA3AF",
+  },
 };
 
 const LOW_CONFIDENCE_THRESHOLD = 0.65;
@@ -83,20 +130,30 @@ async function ensureNucleo(
   // Já no cache local desta sessão
   if (newNucleoCache[tipoNucleo]) return newNucleoCache[tipoNucleo];
 
-  // Já existe entre os núcleos do usuário
+  // Já existe entre os Nucleos do usuário
   const found = nucleos.find((n) => n.tipo === tipoNucleo);
   if (found) return found;
 
   // Cria automaticamente
   const nomeMap: Record<string, string> = {
-    pessoal: "Pessoal", profissional: "Profissional", estudo: "Estudos",
-    fitness: "Fitness", financas: "Finanças", hobby: "Hobby",
-    projeto: "Projetos", idiomas: "Idiomas",
+    pessoal: "Pessoal",
+    profissional: "Profissional",
+    estudo: "Estudos",
+    fitness: "Fitness",
+    financas: "Finanças",
+    hobby: "Hobby",
+    projeto: "Projetos",
+    idiomas: "Idiomas",
   };
   const corMap: Record<string, string> = {
-    pessoal: "#F97316", profissional: "#4D7CFF", estudo: "#7C3AED",
-    fitness: "#10B981", financas: "#F59E0B", hobby: "#8B5CF6",
-    projeto: "#06B6D4", idiomas: "#EC4899",
+    pessoal: "#F97316",
+    profissional: "#4D7CFF",
+    estudo: "#7C3AED",
+    fitness: "#10B981",
+    financas: "#F59E0B",
+    hobby: "#8B5CF6",
+    projeto: "#06B6D4",
+    idiomas: "#EC4899",
   };
   const novo = await nucleosService.create({
     nome: nomeMap[tipoNucleo] ?? tipoNucleo,
@@ -149,19 +206,22 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
     }, 1200);
   }, [inputText, nucleos, userId]);
 
-  const handleProcessPurgatory = useCallback((item: PurgatoryItem) => {
-    setInputText(item.text);
-    setHasProcessed(false);
-    setCommands([]);
-    setEditOverrides({});
-    setTimeout(() => {
-      const raw = interpret(item.text, nucleos);
-      const withOverrides = applyOverrides(raw, userId);
-      setCommands(withOverrides);
-      setSelected(new Set(withOverrides.map((c) => c.id)));
-      setHasProcessed(true);
-    }, 400);
-  }, [nucleos, userId]);
+  const handleProcessPurgatory = useCallback(
+    (item: PurgatoryItem) => {
+      setInputText(item.text);
+      setHasProcessed(false);
+      setCommands([]);
+      setEditOverrides({});
+      setTimeout(() => {
+        const raw = interpret(item.text, nucleos);
+        const withOverrides = applyOverrides(raw, userId);
+        setCommands(withOverrides);
+        setSelected(new Set(withOverrides.map((c) => c.id)));
+        setHasProcessed(true);
+      }, 400);
+    },
+    [nucleos, userId],
+  );
 
   // ── Edição inline ────────────────────────────────────────────────────────────
 
@@ -200,7 +260,14 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
         tipoNucleo: nucleo.tipo,
       });
       // Salva correção na memória determinística
-      const effective = { ...cmd, ...editOverrides[cmd.id], nucleoId: nucleo.id, nucleoNome: nucleo.nome, nucleoCor: nucleo.corDestaque ?? "#4D7CFF", tipoNucleo: nucleo.tipo };
+      const effective = {
+        ...cmd,
+        ...editOverrides[cmd.id],
+        nucleoId: nucleo.id,
+        nucleoNome: nucleo.nome,
+        nucleoCor: nucleo.corDestaque ?? "#4D7CFF",
+        tipoNucleo: nucleo.tipo,
+      };
       saveCorrection(userId, cmd.raw, effective as OrbitCommand);
     },
     [nucleos, userId, editOverrides, updateOverride],
@@ -235,47 +302,76 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
         let resolvedNucleo: Nucleo | undefined;
 
         if (!nucleoId && cmd.tipoNucleo) {
-          resolvedNucleo = await ensureNucleo(cmd.tipoNucleo, nucleos, newNucleoCache);
+          resolvedNucleo = await ensureNucleo(
+            cmd.tipoNucleo,
+            nucleos,
+            newNucleoCache,
+          );
           nucleoId = resolvedNucleo?.id;
         } else if (nucleoId) {
-          resolvedNucleo = nucleos.find((n: Nucleo) => n.id === nucleoId) ?? newNucleoCache[cmd.tipoNucleo ?? ""];
+          resolvedNucleo =
+            nucleos.find((n: Nucleo) => n.id === nucleoId) ??
+            newNucleoCache[cmd.tipoNucleo ?? ""];
         }
 
         if (!nucleoId) {
-          createdResults.push({ commandId: cmd.id, success: true, message: `"${cmd.titulo}" salvo na fila (sem núcleo)` });
+          createdResults.push({
+            commandId: cmd.id,
+            success: true,
+            message: `"${cmd.titulo}" salvo na fila (sem núcleo)`,
+          });
           continue;
         }
 
         // Combina data + hora em ISO string para eventos
         const buildDataEvento = (): string => {
-          const base = cmd.dataVencimento ?? new Date().toISOString().split("T")[0];
+          const base =
+            cmd.dataVencimento ?? new Date().toISOString().split("T")[0];
           const hora = cmd.horaExata ?? "09:00";
           return `${base}T${hora}:00`;
         };
 
         switch (cmd.type) {
           case "CREATE_TASK": {
-            const blocoId = await ensureBloco(nucleoId, "tarefas", "Tarefas", resolvedNucleo?.blocos);
+            const blocoId = await ensureBloco(
+              nucleoId,
+              "tarefas",
+              "Tarefas",
+              resolvedNucleo?.blocos,
+            );
             await tarefasService.createTarefa({
               blocoId,
               titulo: cmd.titulo,
               prioridade: cmd.prioridade,
-              dataVencimento: cmd.dataVencimento ? new Date(cmd.dataVencimento) : undefined,
+              dataVencimento: cmd.dataVencimento,
             });
-            createdResults.push({ commandId: cmd.id, success: true, message: `Tarefa "${cmd.titulo}" criada` });
+            createdResults.push({
+              commandId: cmd.id,
+              success: true,
+              message: `Tarefa "${cmd.titulo}" criada`,
+            });
             break;
           }
 
           case "CREATE_HABIT": {
-            const blocoId = await ensureBloco(nucleoId, "habitos", "Hábitos", resolvedNucleo?.blocos);
+            const blocoId = await ensureBloco(
+              nucleoId,
+              "habitos",
+              "Hábitos",
+              resolvedNucleo?.blocos,
+            );
             await habitosService.criar({
               blocoId,
               nome: cmd.titulo,
               frequencia: cmd.frequencia ?? "diaria",
-              diasSemana: cmd.diasSemana ?? [0,1,2,3,4,5,6],
+              diasSemana: cmd.diasSemana ?? [0, 1, 2, 3, 4, 5, 6],
               metaVezes: 1,
             });
-            createdResults.push({ commandId: cmd.id, success: true, message: `Hábito "${cmd.titulo}" criado` });
+            createdResults.push({
+              commandId: cmd.id,
+              success: true,
+              message: `Hábito "${cmd.titulo}" criado`,
+            });
             break;
           }
 
@@ -286,15 +382,26 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
               dataEvento: buildDataEvento(),
               duracaoMinutos: cmd.duracaoMinutos ?? 60,
             });
-            createdResults.push({ commandId: cmd.id, success: true, message: `Evento "${cmd.titulo}" criado` });
+            createdResults.push({
+              commandId: cmd.id,
+              success: true,
+              message: `Evento "${cmd.titulo}" criado`,
+            });
             break;
           }
 
           case "CREATE_LIST": {
-            const blocoId = await ensureBloco(nucleoId, "lista", cmd.tipoLista === "compras" ? "Compras" : "Lista", resolvedNucleo?.blocos);
+            const blocoId = await ensureBloco(
+              nucleoId,
+              "lista",
+              cmd.tipoLista === "compras" ? "Compras" : "Lista",
+              resolvedNucleo?.blocos,
+            );
             const lista = await listasService.criar({
               blocoId,
-              nome: cmd.titulo || (cmd.tipoLista === "compras" ? "Compras" : "Lista"),
+              nome:
+                cmd.titulo ||
+                (cmd.tipoLista === "compras" ? "Compras" : "Lista"),
               tipoLista: cmd.tipoLista ?? "generico",
             });
             // Cria os itens da lista
@@ -303,11 +410,18 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
                 await listasService.criarItem({
                   listaId: lista.id,
                   nome: itemNome,
-                  valorUnitario: cmd.tipoLista === "financeiro" ? cmd.valorFinanceiro : undefined,
+                  valorUnitario:
+                    cmd.tipoLista === "financeiro"
+                      ? cmd.valorFinanceiro
+                      : undefined,
                 });
               }
             }
-            createdResults.push({ commandId: cmd.id, success: true, message: `Lista "${lista.nome}" criada com ${cmd.listaItems?.length ?? 0} itens` });
+            createdResults.push({
+              commandId: cmd.id,
+              success: true,
+              message: `Lista "${lista.nome}" criada com ${cmd.listaItems?.length ?? 0} itens`,
+            });
             break;
           }
 
@@ -318,19 +432,40 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
               duracaoSegundos: (cmd.duracaoMinutos ?? 25) * 60,
               modo: "decrescente",
             });
-            createdResults.push({ commandId: cmd.id, success: true, message: `Timer "${cmd.titulo}" (${cmd.duracaoMinutos ?? 25} min) iniciado` });
+            createdResults.push({
+              commandId: cmd.id,
+              success: true,
+              message: `Timer "${cmd.titulo}" (${cmd.duracaoMinutos ?? 25} min) iniciado`,
+            });
             break;
           }
 
           case "CREATE_NOTE": {
-            const bloco = await blocosService.criar({ nucleoId, tipo: "notas", titulo: cmd.titulo, posicao: 0 });
-            await blocosService.patchContent(bloco.id, `<p>${cmd.conteudo ?? cmd.titulo}</p>`, "notas");
-            createdResults.push({ commandId: cmd.id, success: true, message: `Nota "${cmd.titulo}" criada` });
+            const bloco = await blocosService.criar({
+              nucleoId,
+              tipo: "notas",
+              titulo: cmd.titulo,
+              posicao: 0,
+            });
+            await blocosService.patchContent(
+              bloco.id,
+              `<p>${cmd.conteudo ?? cmd.titulo}</p>`,
+              "notas",
+            );
+            createdResults.push({
+              commandId: cmd.id,
+              success: true,
+              message: `Nota "${cmd.titulo}" criada`,
+            });
             break;
           }
 
           default: {
-            createdResults.push({ commandId: cmd.id, success: true, message: `"${cmd.titulo}" capturado` });
+            createdResults.push({
+              commandId: cmd.id,
+              success: true,
+              message: `"${cmd.titulo}" capturado`,
+            });
           }
         }
       } catch (err) {
@@ -392,8 +527,13 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
   // ── Render ───────────────────────────────────────────────────────────────────
 
   return (
-    <div className={compact ? "space-y-6" : "max-w-[760px] mx-auto px-5 md:px-8 py-8 space-y-8"}>
-
+    <div
+      className={
+        compact
+          ? "space-y-6"
+          : "max-w-[760px] mx-auto px-5 md:px-8 py-8 space-y-8"
+      }
+    >
       {/* Header */}
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
@@ -401,15 +541,21 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
             <div
               className="flex h-9 w-9 items-center justify-center rounded-xl"
               style={{
-                background: "linear-gradient(135deg, rgba(77,124,255,0.22), rgba(0,201,167,0.14))",
+                background:
+                  "linear-gradient(135deg, rgba(77,124,255,0.22), rgba(0,201,167,0.14))",
                 border: "1px solid rgba(77,124,255,0.22)",
               }}
             >
-              <Sparkles className="h-4.5 w-4.5 text-primary" strokeWidth={2.2} />
+              <Sparkles
+                className="h-4.5 w-4.5 text-primary"
+                strokeWidth={2.2}
+              />
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight">Orbit</h1>
-              <p className="text-xs text-muted-foreground/50">Despeje seu caos — o sistema organiza.</p>
+              <p className="text-xs text-muted-foreground/50">
+                Despeje seu caos — o sistema organiza.
+              </p>
             </div>
           </div>
 
@@ -441,7 +587,11 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
             <div className="flex items-center gap-2 mb-3">
               <Inbox className="h-4 w-4 text-primary/70" />
               <span className="text-sm font-semibold text-foreground/80">
-                {purgatoryItems.length} {purgatoryItems.length === 1 ? "item capturado" : "itens capturados"} aguardando
+                {purgatoryItems.length}{" "}
+                {purgatoryItems.length === 1
+                  ? "item capturado"
+                  : "itens capturados"}{" "}
+                aguardando
               </span>
             </div>
             <div className="space-y-2">
@@ -451,7 +601,9 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
                   className="flex items-center gap-3 rounded-xl bg-background/50 px-3 py-2.5 cursor-pointer group hover:bg-background/80 transition-colors duration-150"
                   onClick={() => handleProcessPurgatory(item)}
                 >
-                  <span className="flex-1 text-sm text-foreground/70 line-clamp-1">{item.text}</span>
+                  <span className="flex-1 text-sm text-foreground/70 line-clamp-1">
+                    {item.text}
+                  </span>
                   <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/30 group-hover:text-primary/60 transition-colors" />
                 </div>
               ))}
@@ -468,23 +620,36 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
       {/* Input principal */}
       <AnimatePresence mode="wait">
         {creationStatus !== "done" ? (
-          <motion.div key="input" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-3">
+          <motion.div
+            key="input"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="space-y-3"
+          >
             <div
               className={cn(
                 "relative rounded-2xl border bg-background/50 backdrop-blur-sm transition-all duration-200",
-                inputText ? "border-primary/25 shadow-[0_0_0_2px_rgba(77,124,255,0.08)]" : "border-border/30",
+                inputText
+                  ? "border-primary/25 shadow-[0_0_0_2px_rgba(77,124,255,0.08)]"
+                  : "border-border/30",
               )}
             >
               {!inputText && (
                 <p className="pointer-events-none absolute top-5 left-5 text-base text-muted-foreground/30 select-none leading-relaxed">
-                  {"Exemplo: \"hoje preciso terminar o relatório, comprar pão e leite, ir à academia às 18h\""}
+                  {
+                    'Exemplo: "hoje preciso terminar o relatório, comprar pão e leite, ir à academia às 18h"'
+                  }
                 </p>
               )}
               <textarea
                 value={inputText}
                 onChange={(e) => {
                   setInputText(e.target.value);
-                  if (hasProcessed) { setHasProcessed(false); setCommands([]); }
+                  if (hasProcessed) {
+                    setHasProcessed(false);
+                    setCommands([]);
+                  }
                 }}
                 onKeyDown={handleKeyDown}
                 rows={4}
@@ -493,7 +658,9 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
                 aria-label="Campo de entrada do Orbit"
               />
               <div className="flex items-center justify-between px-5 py-3 border-t border-border/15">
-                <span className="text-[11px] text-muted-foreground/30 hidden sm:block">⌘↵ para processar</span>
+                <span className="text-[11px] text-muted-foreground/30 hidden sm:block">
+                  ⌘↵ para processar
+                </span>
                 <motion.button
                   whileHover={inputText.trim() ? { scale: 1.03 } : {}}
                   whileTap={inputText.trim() ? { scale: 0.97 } : {}}
@@ -507,9 +674,13 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
                   )}
                 >
                   {isProcessing ? (
-                    <><Loader2 className="h-4 w-4 animate-spin" /> Analisando...</>
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" /> Analisando...
+                    </>
                   ) : (
-                    <><Sparkles className="h-4 w-4" /> Processar</>
+                    <>
+                      <Sparkles className="h-4 w-4" /> Processar
+                    </>
                   )}
                 </motion.button>
               </div>
@@ -518,19 +689,33 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
             {/* Processing dots */}
             <AnimatePresence>
               {isProcessing && (
-                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden">
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="overflow-hidden"
+                >
                   <div className="flex items-center gap-3 rounded-xl bg-primary/5 border border-primary/12 px-4 py-3">
                     <div className="flex gap-1">
                       {[0, 1, 2].map((i) => (
                         <motion.div
                           key={i}
-                          animate={{ scale: [1, 1.4, 1], opacity: [0.4, 1, 0.4] }}
-                          transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.15 }}
+                          animate={{
+                            scale: [1, 1.4, 1],
+                            opacity: [0.4, 1, 0.4],
+                          }}
+                          transition={{
+                            duration: 0.8,
+                            repeat: Infinity,
+                            delay: i * 0.15,
+                          }}
                           className="h-1.5 w-1.5 rounded-full bg-primary"
                         />
                       ))}
                     </div>
-                    <span className="text-sm text-primary/70">Identificando intenções, categorias e contexto...</span>
+                    <span className="text-sm text-primary/70">
+                      Identificando intenções, categorias e contexto...
+                    </span>
                   </div>
                 </motion.div>
               )}
@@ -539,19 +724,47 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
             {/* Resultados da interpretação */}
             <AnimatePresence>
               {hasProcessed && commands.length > 0 && (
-                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="space-y-4">
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-4"
+                >
                   {/* Summary chips */}
                   <div className="flex flex-wrap gap-2">
-                    {(Object.keys(TYPE_CONFIG) as OrbitCommandType[]).map((type) =>
-                      typeCounts[type] > 0 ? (
-                        <SummaryChip key={type} type={type} count={typeCounts[type]} />
-                      ) : null,
+                    {(Object.keys(TYPE_CONFIG) as OrbitCommandType[]).map(
+                      (type) =>
+                        typeCounts[type] > 0 ? (
+                          <SummaryChip
+                            key={type}
+                            type={type}
+                            count={typeCounts[type]}
+                          />
+                        ) : null,
                     )}
-                    {commands.filter((c) => !c.nucleoId && editOverrides[c.id]?.nucleoId === undefined).length > 0 && (
-                      <div className="flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold"
-                        style={{ background: "#9CA3AF14", color: "#9CA3AF", border: "1px solid #9CA3AF24" }}>
+                    {commands.filter(
+                      (c) =>
+                        !c.nucleoId &&
+                        editOverrides[c.id]?.nucleoId === undefined,
+                    ).length > 0 && (
+                      <div
+                        className="flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold"
+                        style={{
+                          background: "#9CA3AF14",
+                          color: "#9CA3AF",
+                          border: "1px solid #9CA3AF24",
+                        }}
+                      >
                         <Inbox className="h-3.5 w-3.5" />
-                        {commands.filter((c) => !c.nucleoId && editOverrides[c.id]?.nucleoId === undefined).length} sem núcleo
+                        {
+                          commands.filter(
+                            (c) =>
+                              !c.nucleoId &&
+                              editOverrides[c.id]?.nucleoId === undefined,
+                          ).length
+                        }{" "}
+                        sem núcleo
                       </div>
                     )}
                   </div>
@@ -569,12 +782,23 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
                         onToggle={() => toggleCommand(cmd.id)}
                         onToggleEdit={(e) => {
                           e.stopPropagation();
-                          setExpandedEdit((prev) => (prev === cmd.id ? null : cmd.id));
+                          setExpandedEdit((prev) =>
+                            prev === cmd.id ? null : cmd.id,
+                          );
                         }}
-                        onDiscard={(e) => { e.stopPropagation(); handleDiscard(cmd.id); }}
+                        onDiscard={(e) => {
+                          e.stopPropagation();
+                          handleDiscard(cmd.id);
+                        }}
                         onTypeChange={(tipo) => handleTypeOverride(cmd, tipo)}
-                        onNucleoChange={(nucleoId) => handleNucleoOverride(cmd, nucleoId)}
-                        onDateChange={(date) => updateOverride(cmd.id, { dataVencimento: date || undefined })}
+                        onNucleoChange={(nucleoId) =>
+                          handleNucleoOverride(cmd, nucleoId)
+                        }
+                        onDateChange={(date) =>
+                          updateOverride(cmd.id, {
+                            dataVencimento: date || undefined,
+                          })
+                        }
                         delay={idx * 0.04}
                       />
                     ))}
@@ -582,18 +806,26 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
 
                   {/* CTA criar */}
                   <div className="flex items-center gap-3 pt-1">
-                    <button onClick={() => setSelected(new Set(commands.map((c) => c.id)))}
-                      className="text-xs text-muted-foreground/50 hover:text-muted-foreground/80 transition-colors">
+                    <button
+                      onClick={() =>
+                        setSelected(new Set(commands.map((c) => c.id)))
+                      }
+                      className="text-xs text-muted-foreground/50 hover:text-muted-foreground/80 transition-colors"
+                    >
                       Selecionar todos
                     </button>
-                    <button onClick={() => setSelected(new Set())}
-                      className="text-xs text-muted-foreground/50 hover:text-muted-foreground/80 transition-colors">
+                    <button
+                      onClick={() => setSelected(new Set())}
+                      className="text-xs text-muted-foreground/50 hover:text-muted-foreground/80 transition-colors"
+                    >
                       Limpar seleção
                     </button>
                     <motion.button
                       whileHover={selectedCount > 0 ? { scale: 1.02 } : {}}
                       whileTap={selectedCount > 0 ? { scale: 0.98 } : {}}
-                      disabled={selectedCount === 0 || creationStatus === "creating"}
+                      disabled={
+                        selectedCount === 0 || creationStatus === "creating"
+                      }
                       onClick={handleCreate}
                       className={cn(
                         "ml-auto flex items-center gap-2.5 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-200",
@@ -603,9 +835,16 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
                       )}
                     >
                       {creationStatus === "creating" ? (
-                        <><Loader2 className="h-4 w-4 animate-spin" /> Criando...</>
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />{" "}
+                          Criando...
+                        </>
                       ) : (
-                        <><ArrowRight className="h-4 w-4" /> Criar {selectedCount > 0 ? `${selectedCount} ` : ""}{selectedCount === 1 ? "item" : "itens"}</>
+                        <>
+                          <ArrowRight className="h-4 w-4" /> Criar{" "}
+                          {selectedCount > 0 ? `${selectedCount} ` : ""}
+                          {selectedCount === 1 ? "item" : "itens"}
+                        </>
                       )}
                     </motion.button>
                   </div>
@@ -613,13 +852,19 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
               )}
 
               {hasProcessed && commands.length === 0 && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                  className="flex items-center gap-3 rounded-2xl border border-border/20 bg-muted/10 px-5 py-4">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex items-center gap-3 rounded-2xl border border-border/20 bg-muted/10 px-5 py-4"
+                >
                   <AlertCircle className="h-4 w-4 text-muted-foreground/40 shrink-0" />
                   <div>
-                    <p className="text-sm font-medium text-foreground/70">Não consegui extrair ações claras</p>
+                    <p className="text-sm font-medium text-foreground/70">
+                      Não consegui extrair ações claras
+                    </p>
                     <p className="text-xs text-muted-foreground/50 mt-0.5">
-                      Tente: "comprar leite", "estudar React todo dia", "reunião sexta às 14h"
+                      Tente: "comprar leite", "estudar React todo dia", "reunião
+                      sexta às 14h"
                     </p>
                   </div>
                 </motion.div>
@@ -628,26 +873,42 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
           </motion.div>
         ) : (
           /* Done state */
-          <motion.div key="done" initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} className="space-y-4">
+          <motion.div
+            key="done"
+            initial={{ opacity: 0, scale: 0.97 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="space-y-4"
+          >
             <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-6 text-center">
               <CheckCircle2 className="h-10 w-10 text-emerald-400 mx-auto mb-3" />
-              <p className="text-base font-semibold text-foreground/90">Sistema atualizado</p>
+              <p className="text-base font-semibold text-foreground/90">
+                Sistema atualizado
+              </p>
               <p className="text-sm text-muted-foreground/60 mt-1">
-                {results.filter((r) => r.success).length} {results.filter((r) => r.success).length === 1 ? "item criado" : "itens criados"} com sucesso
+                {results.filter((r) => r.success).length}{" "}
+                {results.filter((r) => r.success).length === 1
+                  ? "item criado"
+                  : "itens criados"}{" "}
+                com sucesso
               </p>
             </div>
 
             <div className="space-y-1.5">
               {results.map((r) => (
-                <div key={r.commandId}
+                <div
+                  key={r.commandId}
                   className={cn(
                     "flex items-center gap-2.5 rounded-xl px-4 py-2.5",
-                    r.success ? "bg-emerald-500/8 text-emerald-400" : "bg-red-500/8 text-red-400",
-                  )}>
-                  {r.success
-                    ? <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
-                    : <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                  }
+                    r.success
+                      ? "bg-emerald-500/8 text-emerald-400"
+                      : "bg-red-500/8 text-red-400",
+                  )}
+                >
+                  {r.success ? (
+                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                  ) : (
+                    <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                  )}
                   <span className="text-xs font-medium">{r.message}</span>
                 </div>
               ))}
@@ -655,10 +916,17 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
 
             <button
               onClick={() => {
-                setInputText(""); setCommands([]); setSelected(new Set());
-                setHasProcessed(false); setCreationStatus("idle"); setResults([]);
-                setEditOverrides({}); setExpandedEdit(null);
-                setPurgatoryItems(getPurgatoryItems().filter((i) => !i.processed));
+                setInputText("");
+                setCommands([]);
+                setSelected(new Set());
+                setHasProcessed(false);
+                setCreationStatus("idle");
+                setResults([]);
+                setEditOverrides({});
+                setExpandedEdit(null);
+                setPurgatoryItems(
+                  getPurgatoryItems().filter((i) => !i.processed),
+                );
               }}
               className="w-full rounded-2xl border border-border/25 bg-background/50 py-3 text-sm font-medium text-foreground/60 hover:text-foreground/80 hover:border-border/40 transition-all duration-150"
             >
@@ -673,12 +941,22 @@ export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
 
 // ── SummaryChip ───────────────────────────────────────────────────────────────
 
-function SummaryChip({ type, count }: { type: OrbitCommandType; count: number }) {
+function SummaryChip({
+  type,
+  count,
+}: {
+  type: OrbitCommandType;
+  count: number;
+}) {
   const { icon, label, cor } = TYPE_CONFIG[type];
   return (
     <div
       className="flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold"
-      style={{ background: `${cor}14`, color: cor, border: `1px solid ${cor}24` }}
+      style={{
+        background: `${cor}14`,
+        color: cor,
+        border: `1px solid ${cor}24`,
+      }}
     >
       {icon}
       {count} {count === 1 ? label.toLowerCase() : `${label.toLowerCase()}s`}
@@ -704,9 +982,18 @@ interface CommandCardProps {
 }
 
 function CommandCard({
-  command, originalCommand, isSelected, isEditExpanded,
-  nucleos, onToggle, onToggleEdit, onDiscard,
-  onTypeChange, onNucleoChange, onDateChange, delay = 0,
+  command,
+  originalCommand,
+  isSelected,
+  isEditExpanded,
+  nucleos,
+  onToggle,
+  onToggleEdit,
+  onDiscard,
+  onTypeChange,
+  onNucleoChange,
+  onDateChange,
+  delay = 0,
 }: CommandCardProps) {
   const cfg = TYPE_CONFIG[command.type] ?? TYPE_CONFIG.CREATE_TASK;
   const cor = command.nucleoCor || cfg.cor;
@@ -714,7 +1001,10 @@ function CommandCard({
 
   const formatDate = (iso?: string) => {
     if (!iso) return null;
-    return new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
+    return new Date(iso).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "short",
+    });
   };
 
   return (
@@ -729,39 +1019,79 @@ function CommandCard({
       )}
     >
       {/* Color accent */}
-      <div className="absolute left-0 top-0 bottom-0 w-[3px]" style={{ background: isSelected ? cor : "transparent", transition: "background 0.15s" }} />
+      <div
+        className="absolute left-0 top-0 bottom-0 w-[3px]"
+        style={{
+          background: isSelected ? cor : "transparent",
+          transition: "background 0.15s",
+        }}
+      />
 
       {/* Main row — click to toggle selection */}
-      <div className="flex items-center gap-3.5 px-4 py-3.5 cursor-pointer" onClick={onToggle}>
+      <div
+        className="flex items-center gap-3.5 px-4 py-3.5 cursor-pointer"
+        onClick={onToggle}
+      >
         {/* Checkbox */}
-        <div className={cn(
-          "flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] border-2 transition-all duration-150",
-          isSelected ? "border-primary bg-primary" : "border-border/40 bg-transparent",
-        )}>
+        <div
+          className={cn(
+            "flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] border-2 transition-all duration-150",
+            isSelected
+              ? "border-primary bg-primary"
+              : "border-border/40 bg-transparent",
+          )}
+        >
           {isSelected && (
-            <motion.svg initial={{ scale: 0 }} animate={{ scale: 1 }} className="h-3 w-3 text-white" fill="none" viewBox="0 0 12 12">
-              <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <motion.svg
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="h-3 w-3 text-white"
+              fill="none"
+              viewBox="0 0 12 12"
+            >
+              <path
+                d="M2 6l3 3 5-5"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </motion.svg>
           )}
         </div>
 
         {/* Type icon */}
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg" style={{ background: `${cor}18`, color: cor }}>
+        <div
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+          style={{ background: `${cor}18`, color: cor }}
+        >
           {cfg.icon}
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: `${cor}99` }}>
+            <span
+              className="text-[10px] font-semibold uppercase tracking-widest"
+              style={{ color: `${cor}99` }}
+            >
               {cfg.label}
             </span>
             {command.nucleoNome ? (
-              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full" style={{ background: `${cor}14`, color: cor, border: `1px solid ${cor}22` }}>
+              <span
+                className="text-[10px] font-medium px-1.5 py-0.5 rounded-full"
+                style={{
+                  background: `${cor}14`,
+                  color: cor,
+                  border: `1px solid ${cor}22`,
+                }}
+              >
                 {command.nucleoNome}
               </span>
             ) : (
-              <span className="text-[10px] text-muted-foreground/40 italic">sem núcleo</span>
+              <span className="text-[10px] text-muted-foreground/40 italic">
+                sem núcleo
+              </span>
             )}
             {isLowConfidence && (
               <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-orange-400/12 text-orange-400 border border-orange-400/20">
@@ -769,42 +1099,77 @@ function CommandCard({
               </span>
             )}
           </div>
-          <p className="text-sm font-semibold text-foreground/85 mt-0.5 truncate">{command.titulo}</p>
+          <p className="text-sm font-semibold text-foreground/85 mt-0.5 truncate">
+            {command.titulo}
+          </p>
           <div className="flex items-center gap-3 mt-0.5 flex-wrap">
-            {command.prioridade === "alta" && <span className="text-[11px] font-medium text-red-400">Alta prioridade</span>}
-            {command.dataVencimento && (
-              <span className="text-[11px] text-muted-foreground/40">{formatDate(command.dataVencimento)}</span>
-            )}
-            {command.horaExata && <span className="text-[11px] text-muted-foreground/40">{command.horaExata}</span>}
-            {command.periodo && (
-              <span className="text-[11px] text-muted-foreground/40 capitalize">
-                {command.periodo === "manha" ? "Manhã" : command.periodo === "tarde" ? "Tarde" : "Noite"}
+            {command.prioridade === "alta" && (
+              <span className="text-[11px] font-medium text-red-400">
+                Alta prioridade
               </span>
             )}
-            {command.frequencia && <span className="text-[11px] text-emerald-500/70">{command.frequencia === "diaria" ? "Diário" : "Semanal"}</span>}
+            {command.dataVencimento && (
+              <span className="text-[11px] text-muted-foreground/40">
+                {formatDate(command.dataVencimento)}
+              </span>
+            )}
+            {command.horaExata && (
+              <span className="text-[11px] text-muted-foreground/40">
+                {command.horaExata}
+              </span>
+            )}
+            {command.periodo && (
+              <span className="text-[11px] text-muted-foreground/40 capitalize">
+                {command.periodo === "manha"
+                  ? "Manhã"
+                  : command.periodo === "tarde"
+                    ? "Tarde"
+                    : "Noite"}
+              </span>
+            )}
+            {command.frequencia && (
+              <span className="text-[11px] text-emerald-500/70">
+                {command.frequencia === "diaria" ? "Diário" : "Semanal"}
+              </span>
+            )}
             {command.tipoLista === "compras" && command.listaItems && (
-              <span className="text-[11px] text-muted-foreground/40">{command.listaItems.length} itens</span>
+              <span className="text-[11px] text-muted-foreground/40">
+                {command.listaItems.length} itens
+              </span>
             )}
             {command.tipoLista === "financeiro" && command.valorFinanceiro && (
-              <span className="text-[11px] text-amber-500/70">R$ {command.valorFinanceiro.toFixed(2)}</span>
+              <span className="text-[11px] text-amber-500/70">
+                R$ {command.valorFinanceiro.toFixed(2)}
+              </span>
             )}
             {command.duracaoMinutos && command.type === "CREATE_TIMER" && (
-              <span className="text-[11px] text-cyan-500/70">{command.duracaoMinutos} min</span>
+              <span className="text-[11px] text-cyan-500/70">
+                {command.duracaoMinutos} min
+              </span>
             )}
           </div>
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
-          <button onClick={onToggleEdit}
+        <div
+          className="flex items-center gap-1 shrink-0"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            onClick={onToggleEdit}
             className={cn(
               "flex h-7 w-7 items-center justify-center rounded-lg transition-colors duration-150",
-              isEditExpanded ? "bg-primary/15 text-primary" : "hover:bg-muted/30 text-muted-foreground/40 hover:text-muted-foreground/70",
-            )}>
+              isEditExpanded
+                ? "bg-primary/15 text-primary"
+                : "hover:bg-muted/30 text-muted-foreground/40 hover:text-muted-foreground/70",
+            )}
+          >
             <Edit2 className="h-3 w-3" />
           </button>
-          <button onClick={onDiscard}
-            className="flex h-7 w-7 items-center justify-center rounded-lg hover:bg-red-500/10 text-muted-foreground/40 hover:text-red-400 transition-colors duration-150">
+          <button
+            onClick={onDiscard}
+            className="flex h-7 w-7 items-center justify-center rounded-lg hover:bg-red-500/10 text-muted-foreground/40 hover:text-red-400 transition-colors duration-150"
+          >
             <X className="h-3 w-3" />
           </button>
         </div>
@@ -819,41 +1184,58 @@ function CommandCard({
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden border-t border-border/15"
           >
-            <div className="px-4 py-3 grid grid-cols-1 sm:grid-cols-3 gap-3" onClick={(e) => e.stopPropagation()}>
+            <div
+              className="px-4 py-3 grid grid-cols-1 sm:grid-cols-3 gap-3"
+              onClick={(e) => e.stopPropagation()}
+            >
               {/* Tipo */}
               <div className="space-y-1">
-                <label className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-wider">Tipo</label>
+                <label className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-wider">
+                  Tipo
+                </label>
                 <select
                   value={command.type}
-                  onChange={(e) => onTypeChange(e.target.value as OrbitCommandType)}
+                  onChange={(e) =>
+                    onTypeChange(e.target.value as OrbitCommandType)
+                  }
                   className="w-full rounded-lg border border-border/30 bg-background/60 px-2.5 py-1.5 text-xs font-medium text-foreground outline-none focus:border-primary/40"
                 >
                   {(Object.keys(TYPE_CONFIG) as OrbitCommandType[])
                     .filter((t) => t !== "CAPTURE")
                     .map((t) => (
-                      <option key={t} value={t}>{TYPE_CONFIG[t].label}</option>
+                      <option key={t} value={t}>
+                        {TYPE_CONFIG[t].label}
+                      </option>
                     ))}
                 </select>
               </div>
 
               {/* Núcleo */}
               <div className="space-y-1">
-                <label className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-wider">Núcleo</label>
+                <label className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-wider">
+                  Núcleo
+                </label>
                 <select
                   value={command.nucleoId ?? ""}
-                  onChange={(e) => { if (e.target.value) onNucleoChange(e.target.value); }}
+                  onChange={(e) => {
+                    if (e.target.value) onNucleoChange(e.target.value);
+                  }}
                   className="w-full rounded-lg border border-border/30 bg-background/60 px-2.5 py-1.5 text-xs font-medium text-foreground outline-none focus:border-primary/40"
                 >
                   <option value="">Sem núcleo</option>
                   {nucleos.map((n: Nucleo) => (
-                    <option key={n.id} value={n.id}>{n.nome}</option>
+                    <option key={n.id} value={n.id}>
+                      {n.nome}
+                    </option>
                   ))}
                 </select>
               </div>
 
               {/* Data */}
               <div className="space-y-1">
-                <label className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-wider">Data</label>
+                <label className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-wider">
+                  Data
+                </label>
                 <input
                   type="date"
                   value={command.dataVencimento ?? ""}

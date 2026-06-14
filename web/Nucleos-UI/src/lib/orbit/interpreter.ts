@@ -318,7 +318,7 @@ function detectListInfo(segment: string): {
       .replace(/\b(comprar|precisamos\s+de|lista\s+de\s+compras|falta\s+comprar)\b/i, "")
       .trim();
     const items = afterKeyword
-      .split(/\s*[,e]\s+|\s+e\s+/)
+      .split(/\s*,\s*|\s+e\s+/)
       .map((s) => normalizeText(s))
       .filter((s) => s.length >= 2);
     return { isShoppingList: true, isFinancialList: false, items: items.length ? items : [afterKeyword] };
@@ -559,7 +559,7 @@ export function interpret(rawText: string, nucleos: Nucleo[] = []): OrbitCommand
       const nucleoMatch = matchNucleo(catInfo?.tipo, nucleos);
 
       // Campos específicos por tipo
-      let tipoLista: "generica" | "compras" | "financeiro" | undefined;
+      let tipoLista: "generico" | "compras" | "financeiro" | undefined;
       let listaItems: string[] | undefined;
       let valorFinanceiro: number | undefined;
       let duracaoMinutos: number | undefined;
