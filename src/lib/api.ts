@@ -12,6 +12,8 @@ interface RequestOptions extends RequestInit {
   params?: Record<string, string | number | boolean | undefined>;
 }
 
+const REQUEST_TIMEOUT_MS = 10_000;
+
 async function request<T>(
   endpoint: string,
   options: RequestOptions = {},
@@ -45,11 +47,16 @@ async function request<T>(
     (headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
   }
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
   try {
     const response = await fetch(url, {
       ...fetchOptions,
       headers,
+      signal: fetchOptions.signal ?? controller.signal,
     });
+    clearTimeout(timeoutId);
 
     // Parsear resposta
     const data = await response.json().catch(() => null);
@@ -65,9 +72,17 @@ async function request<T>(
 
     return data as T;
   } catch (error) {
+    clearTimeout(timeoutId);
     // Se já é um ApiError, propagar
     if ((error as ApiError).statusCode) {
       throw error;
+    }
+    // AbortController disparou
+    if ((error as Error).name === "AbortError") {
+      throw {
+        message: "Requisição cancelada por timeout",
+        statusCode: 0,
+      } as ApiError;
     }
     // Erro de rede ou outro
     throw {

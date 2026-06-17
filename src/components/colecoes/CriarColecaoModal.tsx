@@ -2,17 +2,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Layers, Check, Loader2 } from "lucide-react";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+  GlassModal,
+  GlassModalHeader,
+  GlassInput,
+  GlassModalFooter,
+  GlassButton,
+} from "@/components/ui/glass-modal";
+
+const ACCENT = "#10b981";
 
 interface CriarColecaoModalProps {
   open: boolean;
@@ -51,40 +50,52 @@ export function CriarColecaoModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{titulo}</DialogTitle>
-          <DialogDescription>
-            Dê um nome para sua coleção. Você poderá adicionar campos depois.
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="nome">Nome da coleção</Label>
-            <Input
-              id="nome"
-              placeholder="Ex: Biblioteca de Filmes"
-              value={nome}
-              onChange={(e) => {
-                setNome(e.target.value);
-                setError(null);
-              }}
-              autoFocus
-              disabled={isSubmitting}
-            />
-            {error && <p className="text-xs text-destructive">{error}</p>}
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={onClose} disabled={isSubmitting}>
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={isSubmitting || !nome.trim()}>
-              {isSubmitting ? "Salvando..." : "Salvar"}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <GlassModal open={open} onClose={onClose}>
+      <GlassModalHeader
+        title={titulo}
+        description="Organize dados em tabelas flexíveis. Você pode adicionar campos e itens depois."
+        icon={Layers}
+        accent={ACCENT}
+        onClose={onClose}
+      />
+
+      <form onSubmit={handleSubmit} className="px-5 py-4">
+        <GlassInput
+          label="Nome da coleção"
+          placeholder="Ex: Biblioteca de Filmes, Clientes..."
+          value={nome}
+          onChange={(e) => {
+            setNome(e.target.value);
+            setError(null);
+          }}
+          autoFocus
+          disabled={isSubmitting}
+          error={error}
+        />
+        <GlassModalFooter>
+          <GlassButton
+            variant="outline"
+            type="button"
+            onClick={onClose}
+            disabled={isSubmitting}
+          >
+            Cancelar
+          </GlassButton>
+          <GlassButton
+            type="submit"
+            disabled={isSubmitting || !nome.trim()}
+            style={{ background: ACCENT, boxShadow: `0 4px 12px ${ACCENT}35` }}
+            className="text- hover:opacity-90 bg-transparent"
+          >
+            {isSubmitting ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Check className="h-3.5 w-3.5" />
+            )}
+            Criar
+          </GlassButton>
+        </GlassModalFooter>
+      </form>
+    </GlassModal>
   );
 }

@@ -65,8 +65,7 @@ export const notificationsService = {
         }
       }
       return [];
-    } catch (error: any) {
-      console.error("Erro ao buscar notificações:", error?.message);
+    } catch {
       return [];
     }
   },
@@ -110,8 +109,7 @@ export const notificationsService = {
         }
       }
       return 0;
-    } catch (error: any) {
-      console.error("Erro ao buscar contagem:", error?.message);
+    } catch {
       return 0;
     }
   },

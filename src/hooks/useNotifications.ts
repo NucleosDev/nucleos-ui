@@ -19,9 +19,9 @@ export function useNotifications() {
     return useQuery({
       queryKey: NOTIFICATION_KEYS.all,
       queryFn: () => notificationsService.getNotifications(),
-      staleTime: 1000 * 30,
-      refetchInterval: 1000 * 60,
-      // Retorna array vazio se não houver notificações
+      staleTime: 1000 * 60,
+      refetchInterval: 1000 * 120,
+      retry: 0,
       select: (data) => data || [],
     });
   };
@@ -31,9 +31,9 @@ export function useNotifications() {
     return useQuery({
       queryKey: NOTIFICATION_KEYS.unreadCount,
       queryFn: () => notificationsService.getUnreadCount(),
-      staleTime: 1000 * 10,
-      refetchInterval: 1000 * 30,
-      // Retorna 0 se não houver contagem
+      staleTime: 1000 * 30,
+      refetchInterval: 1000 * 60,
+      retry: 0,
       select: (data) => data ?? 0,
     });
   };

@@ -1,16 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, MoreVertical, Pencil, Trash2, CheckSquare } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Plus, Activity } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { HabitoCard } from "@/components/habitos/HabitoCard";
 import { CriarHabitoModal } from "@/components/habitos/CriarHabitoModal";
@@ -27,12 +18,7 @@ interface HabitosBlocoCardProps {
   isDeleting?: boolean;
 }
 
-export function HabitosBlocoCard({
-  bloco,
-  onDelete,
-  onEdit,
-  isDeleting,
-}: HabitosBlocoCardProps) {
+export function HabitosBlocoCard({ bloco }: HabitosBlocoCardProps) {
   const {
     habitos = [],
     isLoading,
@@ -41,7 +27,6 @@ export function HabitosBlocoCard({
     deletar,
     registrar,
     isCreating,
-    isUpdating,
     isDeleting: isDeletingHabito,
     isRegistering,
   } = useHabitos(bloco.id);
@@ -49,7 +34,7 @@ export function HabitosBlocoCard({
   const [modalCriarAberto, setModalCriarAberto] = useState(false);
   const [habitoEditando, setHabitoEditando] = useState<Habito | null>(null);
 
-  const handleCriarHabito = async (data: {
+  const handleCriar = async (data: {
     nome: string;
     frequencia: FrequenciaHabito;
     diasSemana?: number[];
@@ -59,16 +44,12 @@ export function HabitosBlocoCard({
       await criar({ blocoId: bloco.id, ...data });
       toast({ title: "Hábito criado!" });
       setModalCriarAberto(false);
-    } catch (error: any) {
-      toast({
-        title: "Erro ao criar",
-        description: error?.message,
-        variant: "destructive",
-      });
+    } catch (e: any) {
+      toast({ title: "Erro ao criar", description: e?.message, variant: "destructive" });
     }
   };
 
-  const handleEditarHabito = async (data: {
+  const handleEditar = async (data: {
     nome: string;
     frequencia: FrequenciaHabito;
     diasSemana?: number[];
@@ -79,130 +60,107 @@ export function HabitosBlocoCard({
       await atualizar({ id: habitoEditando.id, payload: data });
       toast({ title: "Hábito atualizado!" });
       setHabitoEditando(null);
-    } catch (error: any) {
-      toast({
-        title: "Erro ao atualizar",
-        description: error?.message,
-        variant: "destructive",
-      });
+    } catch (e: any) {
+      toast({ title: "Erro ao atualizar", description: e?.message, variant: "destructive" });
     }
   };
 
-  const handleDeletarHabito = async (id: string) => {
-    if (!confirm("Excluir este hábito?")) return;
+  const handleDeletar = async (id: string) => {
     try {
       await deletar(id);
       toast({ title: "Hábito excluído!" });
-    } catch (error: any) {
-      toast({
-        title: "Erro ao excluir",
-        description: error?.message,
-        variant: "destructive",
-      });
+    } catch (e: any) {
+      toast({ title: "Erro ao excluir", description: e?.message, variant: "destructive" });
     }
   };
 
-  const handleRegistrarHabito = async (id: string) => {
+  const handleRegistrar = async (id: string) => {
     try {
-      await registrar({
-        habitoId: id,
-        data: new Date().toISOString().split("T")[0],
-        vezesCompletadas: 1,
-      });
-      toast({ title: "Hábito registrado! 🔥" });
-    } catch (error: any) {
-      toast({
-        title: "Erro ao registrar",
-        description: error?.message,
-        variant: "destructive",
-      });
+      await registrar({ habitoId: id, data: new Date().toISOString().split("T")[0], vezesCompletadas: 1 });
+      toast({ title: "Hábito registrado!" });
+    } catch (e: any) {
+      toast({ title: "Erro ao registrar", description: e?.message, variant: "destructive" });
     }
   };
+
+  const done   = habitos.filter((h) => h.completoHoje).length;
+  const total  = habitos.length;
 
   return (
     <>
-      <Card className="group relative hover:shadow-md transition-shadow">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
+      <div className="space-y-3">
+        {/* Toolbar */}
+        <div className="flex items-center justify-between">
+          {total > 0 && (
             <div className="flex items-center gap-2">
-              <CheckSquare className="h-5 w-5 text-muted-foreground" />
-              <CardTitle className="text-lg">
-                {bloco.titulo || "Hábitos"}
-              </CardTitle>
-            </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => onEdit(bloco.id)}>
-                  <Pencil className="mr-2 h-4 w-4" /> Editar bloco
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => onDelete(bloco.id)}
-                  className="text-destructive"
-                  disabled={isDeleting}
-                >
-                  <Trash2 className="mr-2 h-4 w-4" /> Excluir bloco
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </CardHeader>
-
-        <CardContent className="space-y-4">
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full"
-            onClick={() => setModalCriarAberto(true)}
-            disabled={isCreating}
-          >
-            <Plus className="mr-2 h-4 w-4" /> Novo hábito
-          </Button>
-
-          {isLoading ? (
-            <div className="space-y-3">
-              <Skeleton className="h-24 w-full" />
-              <Skeleton className="h-24 w-full" />
-            </div>
-          ) : habitos.length === 0 ? (
-            <div className="text-center py-6 text-muted-foreground text-sm">
-              Nenhum hábito ainda. Crie seu primeiro!
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {habitos.map((habito) => (
-                <HabitoCard
-                  key={habito.id}
-                  habito={habito}
-                  onRegistrar={handleRegistrarHabito}
-                  onEdit={() => setHabitoEditando(habito)}
-                  onDelete={handleDeletarHabito}
-                  isRegistering={isRegistering}
-                  isDeleting={isDeletingHabito}
-                />
-              ))}
+              <div className="flex items-center gap-1.5">
+                <div className="h-1.5 rounded-full bg-muted overflow-hidden w-20">
+                  <div
+                    className="h-full rounded-full bg-emerald-500 transition-all duration-500"
+                    style={{ width: total > 0 ? `${(done / total) * 100}%` : "0%" }}
+                  />
+                </div>
+                <span className="text-[11px] tabular-nums text-muted-foreground">
+                  {done}/{total}
+                </span>
+              </div>
             </div>
           )}
-        </CardContent>
-      </Card>
+          <button
+            onClick={() => setModalCriarAberto(true)}
+            disabled={isCreating}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-primary hover:bg-primary/8 border border-primary/25 transition-colors ml-auto"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Novo hábito
+          </button>
+        </div>
+
+        {/* List */}
+        {isLoading ? (
+          <div className="space-y-2">
+            <Skeleton className="h-14 w-full rounded-xl" />
+            <Skeleton className="h-14 w-full rounded-xl" />
+          </div>
+        ) : habitos.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-10 text-center">
+            <Activity className="h-8 w-8 text-muted-foreground/20 mb-3" />
+            <p className="text-sm text-muted-foreground/60">Nenhum hábito ainda</p>
+            <button
+              onClick={() => setModalCriarAberto(true)}
+              className="mt-3 text-xs text-primary hover:underline"
+            >
+              Criar primeiro hábito
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-1.5">
+            {habitos.map((habito) => (
+              <HabitoCard
+                key={habito.id}
+                habito={habito}
+                onRegistrar={handleRegistrar}
+                onEdit={() => setHabitoEditando(habito)}
+                onDelete={handleDeletar}
+                isRegistering={isRegistering}
+                isDeleting={isDeletingHabito}
+              />
+            ))}
+          </div>
+        )}
+      </div>
 
       <CriarHabitoModal
         open={modalCriarAberto}
         onClose={() => setModalCriarAberto(false)}
-        onConfirm={handleCriarHabito}
+        onConfirm={handleCriar}
         isSubmitting={isCreating}
       />
-
       {habitoEditando && (
         <CriarHabitoModal
-          open={!!habitoEditando}
+          open
           onClose={() => setHabitoEditando(null)}
-          onConfirm={handleEditarHabito}
+          onConfirm={handleEditar}
           initialData={{
             nome: habitoEditando.nome,
             frequencia: habitoEditando.frequencia,

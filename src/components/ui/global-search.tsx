@@ -27,6 +27,7 @@ import type { Nucleo } from "@/types/nucleo";
 import type { Bloco } from "@/types/bloco";
 import type { Colecao } from "@/types/colecao";
 import type { Timer } from "@/types/timer";
+import { LiquidGlass } from "./liquid-glass";
 
 interface SearchResult {
   type:
@@ -96,6 +97,7 @@ export function GlobalSearch({
   const [showDropdown, setShowDropdown] = useState(false);
   const [results, setResults] = useState<SearchResult[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   // Páginas fixas do sistema
@@ -243,7 +245,7 @@ export function GlobalSearch({
       }));
     searchResults.push(...paginasMatch);
 
-    // Limitar a 8 resultados no total para não sobrecarregar
+    // Limitar a 8 resultados no total
     setResults(searchResults.slice(0, 8));
   };
 
@@ -287,82 +289,103 @@ export function GlobalSearch({
   const handleClear = () => {
     setSearchQuery("");
     setShowDropdown(false);
+    inputRef.current?.focus();
   };
 
   return (
     <div ref={dropdownRef} className={`relative ${className}`}>
-      <div className="relative">
-        <Input
-          type="search"
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            setShowDropdown(true);
-          }}
-          onFocus={() => setShowDropdown(true)}
-          placeholder={placeholder}
-          className="w-full px-3 py-1 rounded-md bg-background/50 border border-border focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary text-sm pr-9"
-          autoComplete="off"
-        />
+      {/* Wrapper LiquidGlass + Input real dentro */}
+      <LiquidGlass
+        variant="subtle"
+        radius="11px"
+        className="relative flex items-center"
+      >
+        <div className="relative flex items-center w-full">
+          <Input
+            ref={inputRef}
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setShowDropdown(true);
+            }}
+            onFocus={() => setShowDropdown(true)}
+            placeholder={placeholder}
+            className="w-full h-8 px-3 pr-78 bg-transparent border-none text-sm placeholder:text-/30 text-/90 focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+            autoComplete="off"
+          />
 
-        {/* Ícone dinâmico: Lupa ou X */}
-        <button
-          onClick={searchQuery ? handleClear : undefined}
-          className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-          aria-label={searchQuery ? "Limpar busca" : "Buscar"}
-        >
-          {searchQuery ? (
-            <X className="w-4 h-4" />
-          ) : (
-            <Search className="w-4 h-4" />
-          )}
-        </button>
-      </div>
+          {/* Ícone dinâmico: Lupa ou X */}
+          <button
+            onClick={searchQuery ? handleClear : undefined}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-/40 hover:text-/70 transition-colors"
+            aria-label={searchQuery ? "Limpar busca" : "Buscar"}
+          >
+            {searchQuery ? (
+              <X className="w-4 h-4" />
+            ) : (
+              <Search className="w-4 h-4" />
+            )}
+          </button>
+        </div>
+      </LiquidGlass>
 
       {/* Dropdown de resultados */}
       {showDropdown && searchQuery.trim() && results.length > 0 && (
-        <div className="absolute left-0 right-0 top-full mt-1 z-50 bg-popover rounded-md border border-border shadow-lg overflow-hidden">
-          <div className="max-h-96 overflow-y-auto py-2">
+        <LiquidGlass
+          variant="visionOS"
+          radius="12px"
+          className="absolute left-0 right-0 top-full mt-2 z-50 overflow-hidden"
+        >
+          <div className="max-h-80 overflow-y-auto py-2">
             {results.map((result, index) => (
               <button
                 key={`${result.type}-${index}`}
                 onClick={() => handleResultClick(result.url)}
-                className="w-full text-left px-3 py-2 hover:bg-accent transition-colors flex items-center gap-3"
+                className="w-full text-left px-3 py-2.5 hover:bg-/[0.06] transition-colors flex items-center gap-3"
               >
                 {/* Ícone do tipo */}
-                <div className="text-muted-foreground shrink-0">
+                <div className="text-/50 shrink-0">
                   {result.icon || getTypeIcon(result.type)}
                 </div>
 
                 {/* Conteúdo */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{result.title}</p>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {result.subtitle}
+                  <p className="text-sm font-medium text-/90 truncate">
+                    {result.title}
                   </p>
+                  <p className="text-xs text-/40 truncate">{result.subtitle}</p>
                 </div>
 
                 {/* Badge do tipo */}
-                <span className="text-xs text-muted-foreground capitalize px-1.5 py-0.5 rounded bg-muted shrink-0">
+                <span className="text-[10px] text-/40 capitalize px-1.5 py-0.5 rounded-md bg-/[0.06] shrink-0">
                   {result.type}
                 </span>
               </button>
             ))}
           </div>
-        </div>
+        </LiquidGlass>
       )}
 
       {/* Mensagem de nenhum resultado */}
       {showDropdown && searchQuery.trim() && results.length === 0 && (
-        <div className="absolute left-0 right-0 top-full mt-1 z-50 bg-popover rounded-md border border-border shadow-lg p-6 text-center">
-          <Search className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-          <p className="text-sm text-muted-foreground">
-            Nenhum resultado encontrado para "<strong>{searchQuery}</strong>"
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Tente buscar por Nucleos, blocos, coleções, timers ou páginas
-          </p>
-        </div>
+        <LiquidGlass
+          variant="visionOS"
+          radius="12px"
+          className="absolute left-0 right-0 top-full mt-2 z-50 overflow-hidden"
+        >
+          <div className="p-8 text-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-/[0.06] mx-auto mb-3">
+              <Search className="w-5 h-5 text-/30" />
+            </div>
+            <p className="text-sm text-/60">
+              Nenhum resultado para "
+              <strong className="text-/80">{searchQuery}</strong>"
+            </p>
+            <p className="text-xs text-/30 mt-1">
+              Tente buscar por Nucleos, blocos, coleções ou páginas
+            </p>
+          </div>
+        </LiquidGlass>
       )}
     </div>
   );

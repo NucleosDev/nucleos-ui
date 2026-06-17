@@ -64,6 +64,8 @@ export const API_ROUTES = {
     ANCESTORS: (id: string) => `/blocos/${id}/ancestors`,
     MOVE: (id: string) => `/blocos/${id}/move`,
 
+    PATCH_CONTENT: (id: string) => `/blocos/${id}/content`,
+
     CANVAS: {
       GET: (nucleoId: string) => `/blocos/canvas/${nucleoId}`,
       SAVE: (nucleoId: string) => `/blocos/canvas/${nucleoId}`,

@@ -89,7 +89,7 @@ export default function RootLayout({
   return (
     <html className="min-h-dvh" lang="pt-BR" suppressHydrationWarning>
       <body
-        className={`min-h-dvh ${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
+        className={` ${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
         suppressHydrationWarning
       >
         <GoogleOAuthProvider clientId="989373819860-qb1csbaig0afvm9s5ek3p1on3ojco7j4.apps.googleusercontent.com">

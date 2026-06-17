@@ -8,13 +8,10 @@ export interface CanvasData {
 
 export const canvasService = {
   async getCanvas(nucleoId: string): Promise<CanvasData> {
-    const response = await api.get<CanvasData>(`/blocos/canvas/${nucleoId}`);
-    console.log("📥 Canvas carregado:", response);
-    return response;
+    return api.get<CanvasData>(`/blocos/canvas/${nucleoId}`);
   },
 
   async saveCanvas(nucleoId: string, content: string): Promise<void> {
-    console.log("💾 Salvando canvas:", { nucleoId, content });
     await api.put(`/blocos/canvas/${nucleoId}`, { content });
   },
 };

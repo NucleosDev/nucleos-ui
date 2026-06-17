@@ -1,27 +1,19 @@
+// src/components/habitos/CriarHabitoModal.tsx
 "use client";
 
 import { useState, useEffect } from "react";
+import { Activity, Check, Loader2 } from "lucide-react";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+  GlassModal,
+  GlassModalHeader,
+  GlassInput,
+  GlassModalFooter,
+  GlassButton,
+} from "@/components/ui/glass-modal";
+import { cn } from "@/lib/utils";
 import type { FrequenciaHabito } from "@/types/habitos";
 
+const ACCENT = "#22c55e";
 const diasSemanaLabels = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
 interface CriarHabitoModalProps {
@@ -61,7 +53,11 @@ export function CriarHabitoModal({
       if (initialData) {
         setNome(initialData.nome);
         setFrequencia(initialData.frequencia);
-        setDiasSemana(initialData.diasSemana || []);
+        setDiasSemana(
+          Array.isArray(initialData.diasSemana)
+            ? initialData.diasSemana.map(Number)
+            : [],
+        );
         setMetaVezes(initialData.metaVezes || 1);
       } else {
         setNome("");
@@ -75,12 +71,12 @@ export function CriarHabitoModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nome.trim()) return;
-
+    const diasLimpos = diasSemana.map(Number).filter((d) => !isNaN(d));
     await onConfirm({
       nome: nome.trim(),
       frequencia,
-      diasSemana: frequencia === "semanal" ? diasSemana : undefined,
-      metaVezes,
+      diasSemana: frequencia === "semanal" ? diasLimpos : undefined,
+      metaVezes: metaVezes || 1,
     });
   };
 
@@ -91,91 +87,141 @@ export function CriarHabitoModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{titulo}</DialogTitle>
-          <DialogDescription>
-            Crie um hábito para acompanhar sua consistência.
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="nome">Nome do hábito</Label>
-            <Input
-              id="nome"
-              placeholder="Ex: Meditar, Ler, Exercitar..."
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              autoFocus
-              disabled={isSubmitting}
-            />
-          </div>
+    <GlassModal open={open} onClose={onClose}>
+      <GlassModalHeader
+        title={titulo}
+        description="Crie um hábito para acompanhar sua consistência."
+        icon={Activity}
+        accent={ACCENT}
+        onClose={onClose}
+      />
 
-          <div className="space-y-2">
-            <Label htmlFor="frequencia">Frequência</Label>
-            <Select
-              value={frequencia}
-              onValueChange={(v) => setFrequencia(v as FrequenciaHabito)}
-              disabled={isSubmitting}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="diaria">Diária</SelectItem>
-                <SelectItem value="semanal">Semanal</SelectItem>
-                <SelectItem value="personalizada">Personalizada</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+      <form onSubmit={handleSubmit} className="px-5 py-4 space-y-4">
+        <GlassInput
+          label="Nome do hábito"
+          placeholder="Ex: Meditar, Ler, Exercitar..."
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+          autoFocus
+          disabled={isSubmitting}
+        />
 
-          {frequencia === "semanal" && (
-            <div className="space-y-2">
-              <Label>Dias da semana</Label>
-              <ToggleGroup type="multiple" className="grid grid-cols-7 gap-1">
-                {diasSemanaLabels.map((label, index) => (
-                  <ToggleGroupItem
-                    key={index}
-                    value={index.toString()}
-                    onClick={() => toggleDia(index)}
-                    className="h-9 text-xs data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground/70">
+            Frequência
+          </label>
+          <div className="flex rounded-xl border border-border/50 bg-muted/30 p-0.5 gap-0.5">
+            {(["diaria", "semanal", "personalizada"] as FrequenciaHabito[]).map(
+              (f) => (
+                <button
+                  key={f}
+                  type="button"
+                  onClick={() => setFrequencia(f)}
+                  disabled={isSubmitting}
+                  className={cn(
+                    "flex-1 py-1.5 rounded-lg text-xs font-medium transition-all",
+                    frequencia === f
+                      ? "bg-background shadow-[var(--shadow-xs)] text-foreground"
+                      : "text-muted-foreground/60 hover:text-muted-foreground",
+                  )}
+                >
+                  {f === "diaria"
+                    ? "Diária"
+                    : f === "semanal"
+                      ? "Semanal"
+                      : "Personalizada"}
+                </button>
+              ),
+            )}
+          </div>
+        </div>
+
+        {frequencia === "semanal" && (
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-muted-foreground/70">
+              Dias da semana
+            </label>
+            <div className="grid grid-cols-7 gap-1">
+              {diasSemanaLabels.map((label, idx) => {
+                const active = diasSemana.includes(idx);
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => toggleDia(idx)}
+                    className={cn(
+                      "py-1.5 rounded-lg text-[11px] font-medium border transition-all",
+                      active
+                        ? "text- border-transparent"
+                        : "border-border/40 text-muted-foreground hover:border-border",
+                    )}
+                    style={
+                      active
+                        ? {
+                            background: ACCENT,
+                            boxShadow: `0 2px 8px ${ACCENT}30`,
+                          }
+                        : {}
+                    }
                   >
                     {label}
-                  </ToggleGroupItem>
-                ))}
-              </ToggleGroup>
+                  </button>
+                );
+              })}
             </div>
-          )}
-
-          <div className="space-y-2">
-            <Label htmlFor="meta">Meta diária (vezes)</Label>
-            <Input
-              id="meta"
-              type="number"
-              min={1}
-              max={99}
-              value={metaVezes}
-              onChange={(e) => setMetaVezes(parseInt(e.target.value) || 1)}
-              disabled={isSubmitting}
-            />
           </div>
+        )}
 
-          <DialogFooter>
-            <Button
-              variant="outline"
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground/70">
+            Meta diária (vezes)
+          </label>
+          <div className="flex items-center gap-2">
+            <button
               type="button"
-              onClick={onClose}
-              disabled={isSubmitting}
+              onClick={() => setMetaVezes(Math.max(1, metaVezes - 1))}
+              disabled={isSubmitting || metaVezes <= 1}
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/50 text-muted-foreground hover:bg-accent transition-colors disabled:opacity-40"
             >
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={isSubmitting || !nome.trim()}>
-              {isSubmitting ? "Salvando..." : "Salvar"}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+              −
+            </button>
+            <span className="w-8 text-center text-sm font-semibold tabular-nums">
+              {metaVezes}
+            </span>
+            <button
+              type="button"
+              onClick={() => setMetaVezes(Math.min(99, metaVezes + 1))}
+              disabled={isSubmitting || metaVezes >= 99}
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-border/50 text-muted-foreground hover:bg-accent transition-colors disabled:opacity-40"
+            >
+              +
+            </button>
+          </div>
+        </div>
+        <GlassModalFooter>
+          <GlassButton
+            variant="outline"
+            type="button"
+            onClick={onClose}
+            disabled={isSubmitting}
+          >
+            Cancelar
+          </GlassButton>
+          <GlassButton
+            type="submit"
+            disabled={isSubmitting || !nome.trim()}
+            style={{ background: ACCENT, boxShadow: `0 4px 12px ${ACCENT}35` }}
+            className="text- hover:opacity-90 bg-transparent"
+          >
+            {isSubmitting ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Check className="h-3.5 w-3.5" />
+            )}
+            Salvar
+          </GlassButton>
+        </GlassModalFooter>
+      </form>
+    </GlassModal>
   );
 }

@@ -242,7 +242,10 @@ export function DailyTrackerDialog({
                 const columnConfig = {
                   pendente: { bgColor: "bg-gray-50", color: "text-gray-600" },
                   atrasada: { bgColor: "bg-red-50", color: "text-red-600" },
-                  fazendo: { bgColor: "bg-blue-50", color: "text-blue-600" },
+                  fazendo: {
+                    bgColor: "bg-primary-50",
+                    color: "text-primary-600",
+                  },
                   concluida: {
                     bgColor: "bg-green-50",
                     color: "text-green-600",

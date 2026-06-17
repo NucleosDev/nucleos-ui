@@ -19,7 +19,11 @@ export const BLOCO_INITIALIZERS: Partial<Record<BlocoTipo, BlocoInitializer>> =
         tipoLista: "generica",
       });
     },
-    tarefas: async () => {},
+
+    tarefas: async (blocoId, titulo) => {
+      console.log(`Bloco de tarefas criado: ${blocoId}`);
+    },
+
     colecoes: async (blocoId, titulo) => {
       const colecao = await colecoesService.createColecao(
         blocoId,
@@ -27,7 +31,12 @@ export const BLOCO_INITIALIZERS: Partial<Record<BlocoTipo, BlocoInitializer>> =
       );
       await colecoesService.createCampo(colecao.id, "Nome", "texto");
     },
-    calendario: async () => {},
+
+    calendario: async (blocoId, titulo) => {
+      console.log(`Bloco de calendário criado: ${blocoId}`);
+    },
+
+    // ✅ CORRIGIDO: Payload compatível com CreateHabitoDto
     habitos: async (blocoId, titulo) => {
       await habitosService.criar({
         blocoId,
@@ -35,19 +44,35 @@ export const BLOCO_INITIALIZERS: Partial<Record<BlocoTipo, BlocoInitializer>> =
         frequencia: "diaria",
         metaVezes: 8,
       });
+    },
+
+    // ✅ CORRIGIDO: Singular também funciona
+    habito: async (blocoId, titulo) => {
       await habitosService.criar({
         blocoId,
-        nome: "Meditar",
+        nome: titulo || "Novo Hábito",
         frequencia: "diaria",
         metaVezes: 1,
       });
     },
-    timers: async () => {},
-    timer: async () => {},
-    habito: async () => {},
-    notas: async (blocoId, titulo) => {
-      console.log(`Bloco de notas ${blocoId} criado: ${titulo || "Notas"}`);
+
+    timer: async (blocoId, titulo) => {
+      console.log(`Bloco de timer criado: ${blocoId}`);
     },
-    calculo: async () => {},
-    canvas: async () => {}, // NOVO
+
+    timers: async (blocoId, titulo) => {
+      console.log(`Bloco de timers criado: ${blocoId}`);
+    },
+
+    notas: async (blocoId, titulo) => {
+      console.log(`Bloco de notas criado: ${blocoId} - ${titulo || "Notas"}`);
+    },
+
+    calculo: async (blocoId, titulo) => {
+      console.log(`Bloco de cálculo criado: ${blocoId}`);
+    },
+
+    canvas: async (blocoId, titulo) => {
+      console.log(`Canvas criado: ${blocoId}`);
+    },
   };

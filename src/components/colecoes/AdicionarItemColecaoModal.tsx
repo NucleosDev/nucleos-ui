@@ -1,4 +1,3 @@
-// src/components/colecoes/AdicionarItemColecaoModal.tsx
 "use client";
 
 import { useState, useEffect } from "react";

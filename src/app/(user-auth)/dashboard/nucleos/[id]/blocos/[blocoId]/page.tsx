@@ -2,52 +2,32 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import { useBloco, useBlocos } from "@/hooks/useBlocos";
 import { useNucleo } from "@/hooks/useNucleo";
-import Image from "next/image";
 import {
-  Loader2,
-  ArrowLeft,
-  Layers,
   Plus,
-  BookOpen,
-  Heart,
-  Briefcase,
-  Home,
-  Dumbbell,
-  Palette,
-  Music,
-  Code,
-  Star,
-  Globe,
-  Coffee,
-  Camera,
-  Plane,
-  ShoppingBag,
-  Users,
-  Mic,
-  Gamepad2,
-  Leaf,
-  GraduationCap,
-  Target,
-  Wallet,
   CheckSquare,
-  ListTodo,
   CalendarDays,
-  Timer,
   Activity,
+  ListTodo,
+  Timer,
+  Layers,
+  FileText,
+  BookOpen,
   GripVertical,
-  Calculator,
+  ExternalLink,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { CriarBlocoModal } from "@/components/blocos/CriarBlocoModal";
-import { BlocoHoverActions } from "@/components/blocos/BlocoHoverActions";
-import { NucleoCanvas } from "@/components/nucleo/NucleoCanvas";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  GlassModal,
+  GlassModalFooter,
+  GlassButton,
+} from "@/components/ui/glass-modal";
 import { toast } from "@/hooks/use-toast";
-import { useState } from "react";
-import type { CreateBlocoPayload, Bloco } from "@/types/bloco";
-import { BLOCO_INITIALIZERS } from "@/lib/bloco-initializers";
+import { CriarBlocoModal } from "@/components/blocos/CriarBlocoModal";
 import { ColecoesBlocoCard } from "@/components/blocos/cruds/ColecoesBlocoCard";
 import { TarefasBlocoCard } from "@/components/blocos/cruds/TarefasBlocoCard";
 import { ListasBlocoCard } from "@/components/blocos/cruds/ListasBlocoCard";
@@ -55,43 +35,48 @@ import { CalendarioBlocoCard } from "@/components/blocos/cruds/CalendarioBlocoCa
 import { TimersBlocoCard } from "@/components/blocos/cruds/TimersBlocoCard";
 import { HabitosBlocoCard } from "@/components/blocos/cruds/HabitosBlocoCard";
 import { BlocoDeNotas } from "@/components/blocos/cruds/BlocoDeNotas";
-import { motion } from "framer-motion";
+import { BLOCO_INITIALIZERS } from "@/lib/bloco-initializers";
+import { cn } from "@/lib/utils";
+import { LiquidGlass } from "@/components/ui/liquid-glass";
+import type { CreateBlocoPayload, Bloco } from "@/types/bloco";
 
-// ICONS
-const blocoIconMap: Record<string, LucideIcon> = {
+const BLOCO_ICONS: Record<string, LucideIcon> = {
   tarefas: CheckSquare,
+  calendario: CalendarDays,
   habitos: Activity,
   habito: Activity,
+  lista: ListTodo,
   timer: Timer,
   timers: Timer,
-  notas: BookOpen,
-  lista: ListTodo,
-  calendario: CalendarDays,
-  calculo: Calculator,
   colecoes: Layers,
+  notas: BookOpen,
 };
 
-function getBlocoIcon(tipo: string): LucideIcon {
-  return blocoIconMap[tipo] || GripVertical;
-}
+const BLOCO_LABELS: Record<string, string> = {
+  tarefas: "Tarefas",
+  calendario: "Calendário",
+  habitos: "Hábitos",
+  habito: "Hábito",
+  lista: "Lista",
+  timer: "Timer",
+  timers: "Timers",
+  colecoes: "Coleções",
+  notas: "Notas",
+};
 
-function getBlocoTitle(tipo: string): string {
-  const titles: Record<string, string> = {
-    tarefas: "Tarefas",
-    habitos: "Hábitos",
-    habito: "Hábito",
-    timer: "Timer",
-    timers: "Timers",
-    notas: "Notas",
-    lista: "Lista",
-    calendario: "Calendário",
-    calculo: "Calculadora",
-    colecoes: "Coleções",
-  };
-  return titles[tipo] || tipo.charAt(0).toUpperCase() + tipo.slice(1);
-}
+const BLOCO_COLORS: Record<string, string> = {
+  tarefas: "#3B82F6",
+  calendario: "#6366F1",
+  habitos: "#22C55E",
+  habito: "#22C55E",
+  lista: "#06B6D4",
+  timer: "#F97316",
+  timers: "#F97316",
+  colecoes: "#10B981",
+  notas: "#A855F7",
+};
 
-function renderBlocoContent(bloco: Bloco, nucleoId: string) {
+function renderConteudo(bloco: Bloco, nucleoId: string) {
   const props = {
     bloco,
     nucleoId,
@@ -100,32 +85,34 @@ function renderBlocoContent(bloco: Bloco, nucleoId: string) {
     isDeleting: false,
   };
   switch (bloco.tipo) {
-    case "colecoes":
-      return <ColecoesBlocoCard {...props} />;
-    case "lista":
-      return <ListasBlocoCard {...props} />;
     case "tarefas":
       return <TarefasBlocoCard {...props} />;
     case "calendario":
       return <CalendarioBlocoCard {...props} />;
-    case "timer":
-    case "timers":
-      return <TimersBlocoCard {...props} />;
     case "habitos":
     case "habito":
       return <HabitosBlocoCard {...props} />;
+    case "lista":
+      return <ListasBlocoCard {...props} />;
+    case "timer":
+    case "timers":
+      return <TimersBlocoCard {...props} />;
+    case "colecoes":
+      return <ColecoesBlocoCard {...props} />;
     case "notas":
       return (
         <BlocoDeNotas bloco={bloco} nucleoId={nucleoId} onDelete={() => {}} />
       );
     default:
       return (
-        <p className="text-muted-foreground text-sm">Bloco: {bloco.tipo}</p>
+        <div className="flex flex-col items-center justify-center py-12 gap-2">
+          <FileText className="h-8 w-8 text-muted-foreground/40" />
+          <p className="text-muted-foreground text-sm">Bloco: {bloco.tipo}</p>
+        </div>
       );
   }
 }
 
-// PÁGINA
 export default function BlocoDetalhesPage() {
   const params = useParams();
   const router = useRouter();
@@ -142,219 +129,207 @@ export default function BlocoDetalhesPage() {
     blocos: subBlocos,
     create: createSub,
     remove: removeSub,
-    update: updateSub,
     isCreating,
     isDeleting,
   } = useBlocos(nucleoId, blocoId);
 
-  const [modalCriarAberto, setModalCriarAberto] = useState(false);
+  const [modalAberto, setModalAberto] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
-  const handleCriarSubBloco = async (payload: CreateBlocoPayload) => {
+  const handleCriarSub = async (payload: CreateBlocoPayload) => {
     try {
-      const blocoCriado = await createSub({ ...payload, parentId: blocoId });
+      const criado = await createSub({ ...payload, parentId: blocoId });
       const initializer = BLOCO_INITIALIZERS[payload.tipo];
-      if (initializer) await initializer(blocoCriado.id, payload.titulo);
+      if (initializer) await initializer(criado.id, payload.titulo);
       toast({ title: "Sub-bloco criado!" });
-      setModalCriarAberto(false);
+      setModalAberto(false);
     } catch {
-      toast({ title: "Erro", variant: "destructive" });
+      toast({ title: "Erro ao criar", variant: "destructive" });
     }
   };
 
-  const handleExcluirSubBloco = async (id: string) => {
-    if (!confirm("Excluir este sub-bloco?")) return;
+  const confirmExcluirSub = async () => {
+    if (!deleteTarget) return;
+    const id = deleteTarget;
+    setDeleteTarget(null);
     try {
       await removeSub(id);
       toast({ title: "Excluído!" });
     } catch {
-      toast({ title: "Erro", variant: "destructive" });
+      toast({ title: "Erro ao excluir", variant: "destructive" });
     }
   };
 
   if (blocoLoading || nucleoLoading) {
     return (
-      <div className="flex h-96 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="max-w-3xl mx-auto px-6 md:pl-20 md:pr-8 py-6 space-y-4">
+        <Skeleton className="h-52 w-full rounded-xl" />
+        <Skeleton className="h-10 w-1/2 rounded-lg" />
+        <Skeleton className="h-32 w-full rounded-xl" />
       </div>
     );
   }
 
-  if (blocoError || !bloco) {
+  if (blocoError || !bloco || !nucleo) {
     return (
-      <div className="container py-8 text-center">
+      <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
         <p className="text-muted-foreground">Bloco não encontrado.</p>
-        <Button variant="link" onClick={() => router.back()}>
-          Voltar
-        </Button>
+        <LiquidGlass
+          variant="button"
+          radius="8px"
+          onClick={() => router.back()}
+          className="text-sm font-medium text-/80"
+        >
+          <span className="px-3 py-1.5 block">Voltar</span>
+        </LiquidGlass>
       </div>
     );
   }
 
-  if (!nucleo) {
-    return (
-      <div className="container py-8 text-center">
-        <p className="text-muted-foreground">Núcleo não encontrado.</p>
-        <Button variant="link" onClick={() => router.back()}>
-          Voltar
-        </Button>
-      </div>
-    );
-  }
-
-  const capaUrl =
-    nucleo.imagemCapa || `https://picsum.photos/seed/${nucleo.id}/1200/400`;
-  const IconComponentBloco = getBlocoIcon(bloco.tipo);
-  const corDestaque = nucleo.corDestaque || "#6366f1";
-  const blocoTitle = bloco.titulo || getBlocoTitle(bloco.tipo);
+  const cor = BLOCO_COLORS[bloco.tipo] ?? nucleo.corDestaque ?? "#4D7CFF";
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Banner */}
-      <div className="relative w-full h-[240px] md:h-[300px] overflow-hidden">
-        <Image
-          src={capaUrl}
-          alt={nucleo.nome}
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-        <div className="absolute bottom-0 w-full text-background">
-          <svg
-            viewBox="0 0 500 100"
-            preserveAspectRatio="none"
-            className="w-full h-[60px]"
-            fill="hsl(var(--background))"
-          >
-            <path
-              d="M0,40 C150,-20 350,120 500,60 L500,100 L0,100 Z"
-              fill="currentColor"
-            />
-          </svg>
-        </div>
-        <Button
-          variant="ghost"
-          className="absolute top-6 left-6 bg-background/20 backdrop-blur text-white"
-          onClick={() => router.push(`/dashboard/nucleos/${nucleoId}`)}
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para {nucleo.nome}
-        </Button>
-        <div className="absolute top-6 right-6 flex items-center gap-2 px-3 py-1.5 bg-black/40 backdrop-blur-md rounded-full border border-white/20">
-          <IconComponentBloco className="h-4 w-4 text-white" />
-          <span className="text-sm font-medium text-white">{blocoTitle}</span>
-        </div>
+    <div className="max-w-3xl mx-auto px-6 md:pl-20 md:pr-8 pb-32">
+      {/* Conteúdo principal do bloco */}
+      <div className="rounded-xl border border-border/50 bg-card overflow-hidden mb-10">
+        {renderConteudo(bloco, nucleoId)}
       </div>
 
-      {/* Conteúdo */}
-      <div className="container mx-auto px-4 md:px-6 lg:px-8 pb-15">
-        <div className="relative z-30 -mt-21 ml-8 top--10">
-          {" "}
-          <div
-            className="w-16 h-16 md:w-20 md:h-20 rounded-xl flex items-center justify-center text-white shadow-xl border-4 border-background"
-            style={{ backgroundColor: corDestaque }}
+      {/* Sub-blocos */}
+      <section>
+        {/* Separador + botão */}
+        <div className="flex items-center gap-3 mb-6">
+          <div className="flex-1 border-t border-border/40" />
+          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
+            Sub-blocos
+          </span>
+          <div className="flex-1 border-t border-border/40" />
+          <LiquidGlass
+            variant="button"
+            radius="8px"
+            onClick={() => setModalAberto(true)}
+            className="text-xs font-medium text-/70"
           >
-            <IconComponentBloco className="w-8 h-8 md:w-10 md:h-10" />
-          </div>
+            <span className="flex items-center gap-1.5 h-7 px-2.5">
+              <Plus className="h-3.5 w-3.5" />
+              Sub-bloco
+            </span>
+          </LiquidGlass>
         </div>
 
-        <div className="max-w-3xl mb-8 pt-8">
-          <h1 className="text-3xl font-bold">{blocoTitle}</h1>
-          <p className="text-muted-foreground mt-1">
-            Tipo: {bloco.tipo} • Profundidade: {bloco.depth || 0}
-          </p>
-        </div>
-
-        {/* CANVAS (Substitui o CanvasEditor) */}
-        <NucleoCanvas
-          nucleoId={nucleoId}
-          onAddFunctionalBlock={() => setModalCriarAberto(true)}
-        />
-
-        {/* CONTEÚDO DO BLOCO */}
-        <div className="my-8 flex items-center gap-4">
-          <div className="flex-1 border-t border-border/50" />
-          <span className="text-xs text-muted-foreground font-medium">
-            CONTEÚDO
-          </span>
-          <div className="flex-1 border-t border-border/50" />
-        </div>
-        <div className="rounded-xl border border-border/50 bg-card p-4">
-          {renderBlocoContent(bloco, nucleoId)}
-        </div>
-
-        {/* SUB-BLOCOS */}
-        <div className="my-8 flex items-center gap-4">
-          <div className="flex-1 border-t border-border/50" />
-          <span className="text-xs text-muted-foreground font-medium">
-            SUB-BLOCOS
-          </span>
-          <div className="flex-1 border-t border-border/50" />
-        </div>
-
-        <div className="space-y-4 max-w-3xl mx-auto">
-          <div className="flex justify-end">
-            <Button onClick={() => setModalCriarAberto(true)} size="sm">
-              <Plus className="mr-2 h-4 w-4" /> Sub-bloco
-            </Button>
-          </div>
-
-          {subBlocos.length === 0 ? (
-            <div
-              onClick={() => setModalCriarAberto(true)}
-              className="rounded-xl border-2 border-dashed p-8 text-center cursor-pointer hover:border-primary/40"
-            >
-              <Plus className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-              <p className="font-medium">Nenhum sub-bloco</p>
+        {subBlocos.length === 0 ? (
+          <div className="w-full rounded-xl border-2 border-dashed border-border/30 p-10 text-center">
+            <div className="flex flex-col items-center gap-2">
+              <div className="h-9 w-9 rounded-full border-2 border-dashed border-muted-foreground/20 flex items-center justify-center">
+                <Plus className="h-4 w-4 text-muted-foreground/30" />
+              </div>
+              <p className="text-sm text-muted-foreground/60">
+                Nenhum sub-bloco ainda.
+              </p>
             </div>
-          ) : (
-            subBlocos.map((subBloco) => (
-              <motion.div
-                key={subBloco.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="group relative ml-6 border-l-2 border-primary/30 pl-4"
-              >
-                <BlocoHoverActions
-                  bloco={subBloco}
-                  nucleoId={nucleoId}
-                  onOpenFullPage={() =>
-                    router.push(
-                      `/dashboard/nucleos/${nucleoId}/blocos/${subBloco.id}`,
-                    )
-                  }
-                  onEdit={() => {
-                    const novoTitulo = prompt(
-                      "Novo título:",
-                      subBloco.titulo || "",
-                    );
-                    if (novoTitulo !== null && novoTitulo.trim()) {
-                      updateSub({
-                        id: subBloco.id,
-                        payload: { titulo: novoTitulo.trim() },
-                      });
-                    }
-                  }}
-                  onDelete={() => handleExcluirSubBloco(subBloco.id)}
-                  isDeleting={isDeleting}
-                />
-                <div className="rounded-xl border border-border/50 bg-card p-4 hover:border-border transition-all">
-                  {renderBlocoContent(subBloco, nucleoId)}
-                </div>
-              </motion.div>
-            ))
-          )}
-        </div>
-      </div>
+          </div>
+        ) : (
+          <>
+            <div className="space-y-3">
+              {subBlocos.map((sub: any) => {
+                const SubIcon = BLOCO_ICONS[sub.tipo] ?? GripVertical;
+                const subCor = BLOCO_COLORS[sub.tipo] ?? "#6366f1";
+                return (
+                  <motion.div
+                    key={sub.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.15 }}
+                    className="group relative"
+                  >
+                    {/* Indicador lateral de hierarquia */}
+                    <div
+                      className="absolute left-0 top-3 bottom-3 w-0.5 rounded-full opacity-40"
+                      style={{ backgroundColor: subCor }}
+                    />
 
-      {/* Modal */}
+                    <div className="ml-4 rounded-xl border border-border/50 bg-card overflow-hidden hover:border-border hover:shadow-sm transition-all duration-150">
+                      {/* Header do sub-bloco */}
+                      <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/30 bg-muted/20">
+                        <div className="flex items-center gap-2.5">
+                          <div
+                            className="h-6 w-6 rounded-md flex items-center justify-center text shrink-0"
+                            style={{ backgroundColor: subCor }}
+                          >
+                            <SubIcon className="h-3.5 w-3.5" />
+                          </div>
+                          <span className="text-sm font-medium">
+                            {sub.titulo || BLOCO_LABELS[sub.tipo] || sub.tipo}
+                          </span>
+                        </div>
+
+                        <div
+                          className={cn(
+                            "flex items-center gap-1 transition-opacity",
+                            "opacity-0 group-hover:opacity-100",
+                          )}
+                        >
+                          <button
+                            onClick={() =>
+                              router.push(
+                                `/dashboard/nucleos/${nucleoId}/blocos/${sub.id}`,
+                              )
+                            }
+                            title="Abrir em tela cheia"
+                            className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-accent transition-colors duration-[var(--duration-fast)]"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            onClick={() => setDeleteTarget(sub.id)}
+                            disabled={isDeleting}
+                            title="Excluir"
+                            className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground/60 hover:text-destructive hover:bg-destructive/10 transition-colors duration-[var(--duration-fast)] disabled:opacity-40"
+                          >
+                            <span className="text-base leading-none">×</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      <div>{renderConteudo(sub, nucleoId)}</div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </>
+        )}
+      </section>
+
       <CriarBlocoModal
-        open={modalCriarAberto}
-        onClose={() => setModalCriarAberto(false)}
-        onConfirm={handleCriarSubBloco}
+        open={modalAberto}
+        onClose={() => setModalAberto(false)}
+        onConfirm={handleCriarSub}
         nucleoId={nucleoId}
         isCreating={isCreating}
         parentId={blocoId}
       />
+
+      <GlassModal
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        size="max-w-sm"
+      >
+        <div className="px-5 pt-5 pb-2 space-y-3">
+          <h3 className="text-sm font-semibold">Excluir sub-bloco?</h3>
+          <p className="text-xs text-muted-foreground/70">
+            Esta ação não pode ser desfeita.
+          </p>
+        </div>
+        <GlassModalFooter>
+          <GlassButton variant="outline" onClick={() => setDeleteTarget(null)}>
+            Cancelar
+          </GlassButton>
+          <GlassButton variant="destructive" onClick={confirmExcluirSub}>
+            Excluir
+          </GlassButton>
+        </GlassModalFooter>
+      </GlassModal>
     </div>
   );
 }

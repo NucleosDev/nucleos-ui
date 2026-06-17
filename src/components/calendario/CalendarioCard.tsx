@@ -35,6 +35,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -83,7 +93,7 @@ const CalendarDay: React.FC<{
         "col-span-1 row-span-1 flex h-9 w-9 items-center justify-center transition-all duration-200",
         isHeader ? "cursor-default" : "rounded-xl hover:scale-105",
         isToday && !isSelected && "bg-indigo-500/10 ring-1 ring-indigo-500/30",
-        isSelected && "bg-indigo-500 text-white shadow-lg shadow-indigo-500/25",
+        isSelected && "bg-indigo-500 text shadow-lg shadow-indigo-500/25",
         hasEvents && !isSelected && !isToday && "bg-indigo-500/5",
         !isHeader &&
           !isToday &&
@@ -97,7 +107,7 @@ const CalendarDay: React.FC<{
         className={cn(
           "font-medium",
           isHeader ? "text-xs text-muted-foreground" : "text-sm",
-          isSelected && "text-white",
+          isSelected && "text",
           isToday &&
             !isSelected &&
             "text-indigo-600 dark:text-indigo-400 font-semibold",
@@ -122,6 +132,7 @@ export function CalendarioCard({
 
   // Modais
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [editingEvento, setEditingEvento] = useState<CalendarioEvento | null>(
     null,
   );
@@ -260,15 +271,21 @@ export function CalendarioCard({
     });
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!editingEvento) return;
-    if (!confirm("Tem certeza que deseja excluir este evento?")) return;
+    setDeleteTargetId(editingEvento.id);
+    setCreateDialogOpen(false);
+  };
+
+  const confirmDeleteEvento = async () => {
+    if (!deleteTargetId) return;
+    const id = deleteTargetId;
+    setDeleteTargetId(null);
     try {
-      await onDeleteEvento(editingEvento.id);
-      setCreateDialogOpen(false);
+      await onDeleteEvento(id);
       resetForm();
-    } catch (error) {
-      // Erro já tratado no componente pai
+    } catch {
+      // tratado no pai
     }
   };
 
@@ -282,7 +299,7 @@ export function CalendarioCard({
     const daysArray: React.ReactNode[] = [];
 
     // Cabeçalho dos dias da semana
-    dayNames.forEach((day, i) => {
+    dayNames.forEach((day) => {
       daysArray.push(<CalendarDay key={`header-${day}`} day={day} isHeader />);
     });
 
@@ -317,9 +334,9 @@ export function CalendarioCard({
             day={format(day, "d")}
             isToday={isToday(day)}
             hasEvents={hasEvents}
-            isSelected={isSelected ?? undefined} // Converte null para undefined
+            isSelected={isSelected ?? undefined}
             onClick={() => handleDayClick(day)}
-            disabled={isLoading ?? undefined} // Converte null para undefined
+            disabled={isLoading ?? undefined}
           />,
         );
       }
@@ -329,13 +346,9 @@ export function CalendarioCard({
   };
 
   return (
-    <div className="space-y-4">
-      {/* Container principal com design inspirado */}
-      <div className="rounded-[24px] bg-card p-4 transition-all duration-300 hover:border-indigo-400/50 hover:shadow-lg hover:shadow-indigo-500/5">
-        <div
-          className="rounded-2xl border border-border/10 bg-background/50 p-4"
-          style={{ boxShadow: "0px 2px 1.5px 0px rgba(0,0,0,0.05) inset" }}
-        >
+    <div className="">
+      <div className="">
+        <div className="">
           {/* Cabeçalho do mês */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
@@ -433,7 +446,7 @@ export function CalendarioCard({
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={(e) => {
+                      onClick={(e: React.MouseEvent) => {
                         e.stopPropagation();
                         handleViewEvento(evento);
                       }}
@@ -445,7 +458,7 @@ export function CalendarioCard({
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={(e) => {
+                      onClick={(e: React.MouseEvent) => {
                         e.stopPropagation();
                         handleEditEvento(evento);
                       }}
@@ -701,7 +714,7 @@ export function CalendarioCard({
                     <CalendarDays className="h-4 w-4 text-muted-foreground mt-0.5" />
                     <div>
                       <p className="text-sm font-medium">Descrição</p>
-                      <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                      <p className="text-sm text-muted-foreground space-pre-wrap">
                         {viewingEvento.descricao}
                       </p>
                     </div>
@@ -725,10 +738,8 @@ export function CalendarioCard({
                 <Button
                   variant="destructive"
                   onClick={() => {
-                    if (confirm("Excluir este evento?")) {
-                      onDeleteEvento(viewingEvento.id);
-                      setViewDialogOpen(false);
-                    }
+                    setDeleteTargetId(viewingEvento.id);
+                    setViewDialogOpen(false);
                   }}
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
@@ -745,6 +756,31 @@ export function CalendarioCard({
           )}
         </DialogContent>
       </Dialog>
+
+      <AlertDialog
+        open={!!deleteTargetId}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTargetId(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir evento?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDeleteEvento}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

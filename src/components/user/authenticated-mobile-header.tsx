@@ -4,20 +4,17 @@ import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Menu, X, Search, Bell } from "lucide-react";
+import { Menu, Search, Bell, LogOut } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/auth";
 import { useUserPlan } from "@/hooks/useDashboard";
 import { ROUTES } from "@/constants/routes";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
-  Eclipse,
-  Heart,
-  ClipboardList,
   User,
   Settings,
   HelpCircle,
@@ -27,7 +24,6 @@ import {
   FileText,
   Shield,
   CreditCard,
-  LogOut,
   LayoutGrid,
   Layers,
   Calendar,
@@ -35,11 +31,36 @@ import {
   BarChart3,
 } from "lucide-react";
 import NucleosLogo from "@/components/nucleo/NucleosLogo";
+import { LiquidGlass } from "@/components/ui/liquid-glass";
 
 interface AuthenticatedMobileHeaderProps {
   onMenuToggle?: () => void;
   isOpen?: boolean;
 }
+
+const mainNavItems = [
+  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
+  { icon: LayoutGrid, label: "Nucleos", href: "/dashboard/nucleos" },
+  { icon: Layers, label: "Blocos", href: "/dashboard/blocos" },
+  { icon: Calendar, label: "Calendário", href: "/dashboard/calendario" },
+  { icon: Trophy, label: "Conquistas", href: "/dashboard/conquistas" },
+  { icon: BarChart3, label: "Insights", href: "/dashboard/insights" },
+];
+
+const accountNavItems = [
+  { icon: User, label: "Meu Perfil", href: ROUTES.DASHBOARD_PROFILE },
+  { icon: Settings, label: "Configurações", href: ROUTES.DASHBOARD_SETTINGS },
+  { icon: CreditCard, label: "Planos", href: ROUTES.PLANOS },
+];
+
+const resourceNavItems = [
+  { icon: HelpCircle, label: "Central de Ajuda", href: ROUTES.AJUDA },
+  { icon: Zap, label: "Blog", href: ROUTES.BLOG },
+  { icon: Users, label: "Sobre", href: ROUTES.SOBRE },
+  { icon: Mail, label: "Contato", href: ROUTES.CONTATO },
+  { icon: FileText, label: "Termos", href: ROUTES.TERMOS },
+  { icon: Shield, label: "Privacidade", href: ROUTES.PRIVACIDADE },
+];
 
 export function AuthenticatedMobileHeader({
   onMenuToggle,
@@ -52,9 +73,7 @@ export function AuthenticatedMobileHeader({
   const pathname = usePathname();
 
   React.useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -64,165 +83,102 @@ export function AuthenticatedMobileHeader({
     setSheetOpen(false);
   };
 
-  const getInitials = () => {
-    if (!user?.fullName) return "U";
-    return user.fullName
-      .split(" ")
-      .map((n) => n[0])
-      .slice(0, 2)
-      .join("")
-      .toUpperCase();
-  };
-
-  const getPlanDisplay = () => {
-    if (planLoading) {
-      return <Skeleton className="h-3 w-12" />;
-    }
-    const planName = userPlan?.plan?.name;
-    if (!planName || planName.toLowerCase() === "free") {
-      return "Grátis";
-    }
-    return planName.charAt(0).toUpperCase() + planName.slice(1);
-  };
-
   const handleSheetChange = (open: boolean) => {
     setSheetOpen(open);
-    if (onMenuToggle) {
-      onMenuToggle();
-    }
+    onMenuToggle?.();
   };
 
-  // Links principais do dashboard
-  const mainNavItems = [
-    { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-    { icon: LayoutGrid, label: "Nucleos", href: "/dashboard/nucleos" },
-    { icon: Layers, label: "Blocos", href: "/dashboard/blocos" },
-    { icon: Calendar, label: "Calendário", href: "/dashboard/calendario" },
-    { icon: Trophy, label: "Conquistas", href: "/dashboard/conquistas" },
-    { icon: BarChart3, label: "Insights", href: "/dashboard/insights" },
-  ];
-
-  // Links de conta
-  const accountNavItems = [
-    { icon: User, label: "Meu Perfil", href: ROUTES.DASHBOARD_PROFILE },
-    { icon: Settings, label: "Configurações", href: ROUTES.DASHBOARD_SETTINGS },
-    { icon: CreditCard, label: "Planos", href: ROUTES.PLANOS },
-  ];
-
-  // Links de recursos
-  const resourceNavItems = [
-    { icon: HelpCircle, label: "Central de Ajuda", href: ROUTES.AJUDA },
-    { icon: Zap, label: "Blog", href: ROUTES.BLOG },
-    { icon: Users, label: "Sobre", href: ROUTES.SOBRE },
-    { icon: Mail, label: "Contato", href: ROUTES.CONTATO },
-    { icon: FileText, label: "Termos", href: ROUTES.TERMOS },
-    { icon: Shield, label: "Privacidade", href: ROUTES.PRIVACIDADE },
-  ];
-
-  const isActive = (href: string) => {
-    if (href === "/dashboard") {
-      return pathname === href;
-    }
-    return pathname?.startsWith(href);
+  const getInitials = () => {
+    if (!user?.fullName) return "U";
+    return user.fullName.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
   };
+
+  const getPlanLabel = () => {
+    if (planLoading) return <Skeleton className="h-3 w-12 inline-block" />;
+    const name = userPlan?.plan?.name;
+    if (!name || name.toLowerCase() === "free") return "Grátis";
+    return name.charAt(0).toUpperCase() + name.slice(1);
+  };
+
+  const isActive = (href: string) =>
+    href === "/dashboard" ? pathname === href : pathname?.startsWith(href);
 
   return (
     <header
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300 md:hidden",
         scrolled
-          ? "bg-background/95 backdrop-blur-md border-b border-border/50 shadow-sm"
-          : "bg-background/80 backdrop-blur-sm border-b border-border/30",
+          ? "bg-background/90 backdrop-blur-[var(--glass-blur)] border-b border-border/50 shadow-sm"
+          : "bg-background/70 backdrop-blur-[var(--glass-blur-sm)] border-b border-border/30",
       )}
     >
       <div className="flex items-center justify-between px-4 py-2">
-        {/* Logo */}
         <Link href="/dashboard" className="flex items-center">
           <NucleosLogo size="sm" />
         </Link>
 
-        {/* Ações direitas */}
         <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-9 w-9 rounded-full"
-            aria-label="Buscar"
-          >
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" aria-label="Buscar">
             <Search className="h-4 w-4" />
           </Button>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-9 w-9 rounded-full"
-            aria-label="Notificações"
-          >
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" aria-label="Notificações">
             <Bell className="h-4 w-4" />
           </Button>
-
           <ModeToggle />
 
-          {/* Menu hambúrguer com Sheet */}
           <Sheet open={sheetOpen} onOpenChange={handleSheetChange}>
             <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 rounded-full"
-                aria-label="Menu"
-              >
+              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" aria-label="Menu">
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-85 p-0 sm:w-96">
+
+            <SheetContent
+              side="left"
+              className="w-[280px] p-0 sm:w-[300px] bg-background/60 backdrop-blur-xl border-r border-border/40"
+            >
+              <SheetTitle className="sr-only">Menu de navegação</SheetTitle>
               <div className="flex flex-col h-full">
-                {/* Cabeçalho do Sheet */}
-                <div className="p-4 border-b border-border flex items-center justify-between">
+                {/* Logo */}
+                <div className="px-5 py-4 border-b border-border/40">
                   <NucleosLogo size="sm" />
-                  {/* <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setSheetOpen(false)}
-                    className="h-8 w-8"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button> */}
                 </div>
 
-                {/* Conteúdo do menu */}
-                <div className="flex-1 overflow-y-auto">
-                  {/* Perfil do usuário */}
-                  <div className="p-4 border-b border-border flex items-center gap-3">
-                    <Avatar className="h-12 w-12">
-                      <AvatarImage src={user?.avatarUrl || undefined} />
-                      <AvatarFallback className="bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white text-lg font-bold">
-                        {getInitials()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <p className="font-semibold text-base">
-                        {user?.fullName || "Usuário"}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {user?.email}
-                      </p>
-                      <div className="flex items-center gap-1 mt-1">
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
-                          Plano {getPlanDisplay()}
-                        </span>
+                {/* Scrollable content */}
+                <div className="flex-1 overflow-y-auto py-3 space-y-1">
+
+                  {/* User profile card */}
+                  <div className="px-3 pb-2">
+                    <LiquidGlass variant="subtle" radius="14px" interactive={false}>
+                      <div className="flex items-center gap-3 px-4 py-3.5">
+                        <Avatar className="h-10 w-10 ring-1 ring-border shrink-0">
+                          <AvatarImage src={user?.avatarUrl || undefined} />
+                          <AvatarFallback className="bg-gradient-to-br from-primary/30 to-primary/10 text-primary text-sm font-bold">
+                            {getInitials()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold truncate">
+                            {user?.fullName || "Usuário"}
+                          </p>
+                          <p className="text-[11px] text-muted-foreground/70 truncate">
+                            {user?.email}
+                          </p>
+                          <span className="inline-block text-[10px] font-medium text-primary bg-primary/10 px-1.5 py-px rounded-full mt-0.5">
+                            {getPlanLabel()}
+                          </span>
+                        </div>
                       </div>
-                    </div>
+                    </LiquidGlass>
                   </div>
 
-                  {/* Links principais */}
-                  <div className="p-4 border-b border-border">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
+                  {/* Main nav */}
+                  <div className="px-3">
+                    <p className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-widest px-2 mb-1.5">
                       Principal
                     </p>
-                    <nav className="space-y-1">
+                    <nav className="space-y-0.5">
                       {mainNavItems.map((item) => {
-                        const Icon = item.icon;
                         const active = isActive(item.href);
                         return (
                           <Link
@@ -230,77 +186,79 @@ export function AuthenticatedMobileHeader({
                             href={item.href}
                             onClick={() => setSheetOpen(false)}
                             className={cn(
-                              "flex items-center gap-3 px-3 py-2 rounded-lg transition-all",
+                              "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-[var(--duration-fast)]",
                               active
                                 ? "bg-primary/10 text-primary"
-                                : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
+                                : "text-muted-foreground hover:text-foreground hover:bg-accent/60",
                             )}
                           >
-                            <Icon className="h-4 w-4" />
-                            <span className="text-sm font-medium">
-                              {item.label}
-                            </span>
+                            <item.icon className="h-4 w-4 shrink-0" />
+                            {item.label}
+                            {active && (
+                              <span className="ml-auto h-1.5 w-1.5 rounded-full bg-primary/70" />
+                            )}
                           </Link>
                         );
                       })}
                     </nav>
                   </div>
 
-                  {/* Links da conta */}
-                  <div className="p-4 border-b border-border">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
+                  <div className="mx-3 h-px bg-border/40" />
+
+                  {/* Account nav */}
+                  <div className="px-3">
+                    <p className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-widest px-2 mb-1.5">
                       Conta
                     </p>
-                    <nav className="space-y-1">
+                    <nav className="space-y-0.5">
                       {accountNavItems.map((item) => (
                         <Link
                           key={item.href}
                           href={item.href}
                           onClick={() => setSheetOpen(false)}
-                          className="flex items-center gap-3 px-3 py-2 rounded-lg text-muted-foreground hover:bg-accent/50 hover:text-foreground transition-all"
+                          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-all duration-[var(--duration-fast)]"
                         >
-                          <item.icon className="h-4 w-4" />
-                          <span className="text-sm font-medium">
-                            {item.label}
-                          </span>
+                          <item.icon className="h-4 w-4 shrink-0" />
+                          {item.label}
                         </Link>
                       ))}
                     </nav>
                   </div>
 
-                  {/* Links de recursos */}
-                  <div className="p-4">
-                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
+                  <div className="mx-3 h-px bg-border/40" />
+
+                  {/* Resources nav */}
+                  <div className="px-3">
+                    <p className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-widest px-2 mb-1.5">
                       Recursos
                     </p>
-                    <nav className="space-y-1">
+                    <nav className="space-y-0.5">
                       {resourceNavItems.map((item) => (
                         <Link
                           key={item.href}
                           href={item.href}
                           onClick={() => setSheetOpen(false)}
-                          className="flex items-center gap-3 px-3 py-2 rounded-lg text-muted-foreground hover:bg-accent/50 hover:text-foreground transition-all"
+                          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-all duration-[var(--duration-fast)]"
                         >
-                          <item.icon className="h-4 w-4" />
-                          <span className="text-sm font-medium">
-                            {item.label}
-                          </span>
+                          <item.icon className="h-4 w-4 shrink-0" />
+                          {item.label}
                         </Link>
                       ))}
                     </nav>
                   </div>
                 </div>
 
-                {/* Botão Sair */}
-                <div className="p-4 border-t border-border">
-                  <Button
-                    variant="destructive"
-                    className="w-full"
-                    onClick={handleLogout}
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Sair da conta
-                  </Button>
+                {/* Logout */}
+                <div className="px-3 py-3 border-t border-border/40">
+                  <LiquidGlass variant="subtle" radius="10px" interactive={false}>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-destructive hover:bg-destructive/8 transition-colors duration-[var(--duration-fast)] rounded-[10px]"
+                    >
+                      <LogOut className="h-4 w-4 shrink-0" />
+                      Sair da conta
+                    </button>
+                  </LiquidGlass>
                 </div>
               </div>
             </SheetContent>

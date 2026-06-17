@@ -1,29 +1,22 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Plus,
-  GripVertical,
-  Pencil,
-  Trash2,
-  CornerDownRight,
-  ChevronRight,
-  ChevronDown,
-  Type,
-  Copy,
-  MoreHorizontal,
+  Plus, GripVertical, Pencil, Trash2, CornerDownRight,
+  ChevronRight, ChevronDown, Type, Copy, MoreHorizontal,
+  ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 
+const iconBtn = "flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:bg-accent transition-colors";
+const smIconBtn = "flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground/50 hover:text-foreground hover:bg-accent transition-colors";
 
-// ============ Ações de hover para blocos funcionais ============
+// ── Hover actions for functional blocks ──────────────────────────────────────
 interface BlockHoverActionsProps {
   onEdit?: () => void;
   onDelete?: () => void;
@@ -34,77 +27,48 @@ interface BlockHoverActionsProps {
 }
 
 export function BlockHoverActions({
-  onEdit,
-  onDelete,
-  onAddSubBloco,
-  onDuplicate,
-  isVisible = false,
-  className,
+  onEdit, onDelete, onAddSubBloco, onDuplicate, isVisible = false, className,
 }: BlockHoverActionsProps) {
   return (
     <div
       className={cn(
-        "flex items-center gap-1 bg-popover border rounded-lg shadow-sm p-1 transition-all duration-200",
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-1",
+        "flex items-center gap-0.5 bg-popover border border-border/50 rounded-lg shadow-[var(--shadow-sm)] p-0.5 transition-all duration-150",
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-1 pointer-events-none",
         className,
       )}
     >
       {onEdit && (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7"
-          onClick={onEdit}
-          title="Editar"
-        >
+        <button className={iconBtn} onClick={onEdit} title="Editar">
           <Pencil className="h-3.5 w-3.5" />
-        </Button>
+        </button>
       )}
-
       {onAddSubBloco && (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7"
-          onClick={onAddSubBloco}
-          title="Adicionar sub-bloco"
-        >
+        <button className={iconBtn} onClick={onAddSubBloco} title="Adicionar sub-bloco">
           <CornerDownRight className="h-3.5 w-3.5" />
-        </Button>
+        </button>
       )}
-
       {onDuplicate && (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7"
-          onClick={onDuplicate}
-          title="Duplicar"
-        >
+        <button className={iconBtn} onClick={onDuplicate} title="Duplicar">
           <Copy className="h-3.5 w-3.5" />
-        </Button>
+        </button>
       )}
-
       {(onEdit || onAddSubBloco || onDuplicate) && onDelete && (
-        <div className="w-px h-4 bg-border mx-0.5" />
+        <div className="mx-0.5 h-4 w-px bg-border/60" />
       )}
-
       {onDelete && (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7 text-destructive hover:text-destructive"
+        <button
+          className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground/60 hover:text-destructive hover:bg-destructive/10 transition-colors"
           onClick={onDelete}
           title="Excluir"
         >
           <Trash2 className="h-3.5 w-3.5" />
-        </Button>
+        </button>
       )}
     </div>
   );
 }
 
-// ============ Ações de arraste (6 pontinhos + botão +) ============
+// ── Drag handle + add-below ───────────────────────────────────────────────────
 interface DragHandleProps {
   onAddBelow?: () => void;
   onDragStart?: (e: React.DragEvent) => void;
@@ -112,12 +76,7 @@ interface DragHandleProps {
   className?: string;
 }
 
-export function DragHandle({
-  onAddBelow,
-  onDragStart,
-  isVisible = false,
-  className,
-}: DragHandleProps) {
+export function DragHandle({ onAddBelow, onDragStart, isVisible = false, className }: DragHandleProps) {
   return (
     <div
       className={cn(
@@ -126,33 +85,24 @@ export function DragHandle({
         className,
       )}
     >
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-6 w-6 cursor-grab active:cursor-grabbing"
+      <button
+        className={cn(smIconBtn, "cursor-grab active:cursor-grabbing")}
         draggable
         onDragStart={onDragStart}
         title="Arrastar para reordenar"
       >
-        <GripVertical className="h-3.5 w-3.5 text-muted-foreground" />
-      </Button>
-
+        <GripVertical className="h-3.5 w-3.5" />
+      </button>
       {onAddBelow && (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-6 w-6"
-          onClick={onAddBelow}
-          title="Adicionar abaixo"
-        >
-          <Plus className="h-3.5 w-3.5 text-muted-foreground" />
-        </Button>
+        <button className={smIconBtn} onClick={onAddBelow} title="Adicionar abaixo">
+          <Plus className="h-3.5 w-3.5" />
+        </button>
       )}
     </div>
   );
 }
 
-// ============ Botão expandir/colapsar (para nesting) ============
+// ── Expand/collapse toggle ────────────────────────────────────────────────────
 interface ExpandCollapseButtonProps {
   isExpanded: boolean;
   onToggle: () => void;
@@ -160,133 +110,78 @@ interface ExpandCollapseButtonProps {
   className?: string;
 }
 
-export function ExpandCollapseButton({
-  isExpanded,
-  onToggle,
-  isVisible = false,
-  className,
-}: ExpandCollapseButtonProps) {
+export function ExpandCollapseButton({ isExpanded, onToggle, isVisible = false, className }: ExpandCollapseButtonProps) {
   return (
-    <div
-      className={cn(
-        "flex items-center gap-1 transition-opacity",
-        isVisible ? "opacity-100" : "opacity-0",
-        className,
-      )}
-    >
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-6 w-6"
-        onClick={onToggle}
-        title={isExpanded ? "Colapsar" : "Expandir"}
-      >
-        {isExpanded ? (
-          <ChevronDown className="h-3.5 w-3.5" />
-        ) : (
-          <ChevronRight className="h-3.5 w-3.5" />
-        )}
-      </Button>
+    <div className={cn("flex items-center gap-1 transition-opacity", isVisible ? "opacity-100" : "opacity-0", className)}>
+      <button className={smIconBtn} onClick={onToggle} title={isExpanded ? "Colapsar" : "Expandir"}>
+        {isExpanded ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
+      </button>
     </div>
   );
 }
 
-// ============ Menu de formatação de texto (aparece ao focar/digitar) ============
+// ── Text format menu ──────────────────────────────────────────────────────────
 interface TextFormatMenuProps {
   onTypeChange: (type: string) => void;
   onDelete: () => void;
-  formatCommands: {
-    type: string;
-    label: string;
-    icon: React.ComponentType<{ className?: string }>;
-  }[];
+  formatCommands: { type: string; label: string; icon: React.ComponentType<{ className?: string }> }[];
   isVisible?: boolean;
   className?: string;
 }
 
-export function TextFormatMenu({
-  onTypeChange,
-  onDelete,
-  formatCommands,
-  isVisible = false,
-  className,
-}: TextFormatMenuProps) {
+export function TextFormatMenu({ onTypeChange, onDelete, formatCommands, isVisible = false, className }: TextFormatMenuProps) {
   if (!isVisible) return null;
-
   return (
-    <div
-      className={cn(
-        "flex items-center gap-1 bg-popover border rounded-lg shadow-lg p-1 z-50",
-        className,
-      )}
-    >
+    <div className={cn("flex items-center gap-0.5 bg-popover border border-border/50 rounded-lg shadow-[var(--shadow-sm)] p-0.5 z-50", className)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7"
-            title="Tipo de texto"
-          >
+          <button className={iconBtn} title="Tipo de texto">
             <Type className="h-3.5 w-3.5" />
-          </Button>
+          </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-48">
+        <DropdownMenuContent align="start" className="w-48 text-sm">
           {formatCommands
             .filter((c) => c.type !== "divider")
             .map((cmd) => {
               const Icon = cmd.icon;
               return (
-                <DropdownMenuItem
-                  key={cmd.type}
-                  onClick={() => onTypeChange(cmd.type)}
-                >
-                  <Icon className="mr-2 h-4 w-4" />
-                  <span>{cmd.label}</span>
+                <DropdownMenuItem key={cmd.type} onClick={() => onTypeChange(cmd.type)} className="gap-2">
+                  <Icon className="h-3.5 w-3.5" />
+                  {cmd.label}
                 </DropdownMenuItem>
               );
             })}
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <div className="w-px h-4 bg-border mx-1" />
+      <div className="mx-0.5 h-4 w-px bg-border/60" />
 
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-7 w-7 text-destructive hover:text-destructive"
+      <button
+        className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground/60 hover:text-destructive hover:bg-destructive/10 transition-colors"
         onClick={onDelete}
         title="Excluir"
       >
         <Trash2 className="h-3.5 w-3.5" />
-      </Button>
+      </button>
     </div>
   );
 }
 
-// ============ Ícone de 6 pontinhos para drag (SVG inline) ============
+// ── Six-dot drag icon ─────────────────────────────────────────────────────────
 export function DragDotsIcon({ className }: { className?: string }) {
   return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      className={className}
-    >
-      <circle cx="9" cy="6" r="1.5" fill="currentColor" />
-      <circle cx="9" cy="12" r="1.5" fill="currentColor" />
-      <circle cx="9" cy="18" r="1.5" fill="currentColor" />
-      <circle cx="15" cy="6" r="1.5" fill="currentColor" />
-      <circle cx="15" cy="12" r="1.5" fill="currentColor" />
-      <circle cx="15" cy="18" r="1.5" fill="currentColor" />
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <circle cx="9"  cy="6"  r="1.5" />
+      <circle cx="9"  cy="12" r="1.5" />
+      <circle cx="9"  cy="18" r="1.5" />
+      <circle cx="15" cy="6"  r="1.5" />
+      <circle cx="15" cy="12" r="1.5" />
+      <circle cx="15" cy="18" r="1.5" />
     </svg>
   );
 }
 
-// ============ Menu de ações estilo Notion (3 pontinhos) ============
+// ── More-actions dropdown (⋯) ─────────────────────────────────────────────────
 interface MoreActionsMenuProps {
   onEdit?: () => void;
   onDelete?: () => void;
@@ -300,95 +195,60 @@ interface MoreActionsMenuProps {
 }
 
 export function MoreActionsMenu({
-  onEdit,
-  onDelete,
-  onDuplicate,
-  onAddBelow,
-  onAddSubBloco,
-  onOpenFullScreen,
-  isDeleting = false,
-  compact = true,
-  className,
+  onEdit, onDelete, onDuplicate, onAddBelow, onAddSubBloco, onOpenFullScreen,
+  isDeleting = false, compact = true, className,
 }: MoreActionsMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn("h-8 w-8", className)}
+        <button
+          className={cn(iconBtn, "h-8 w-8", className)}
           disabled={isDeleting}
           title="Mais ações"
         >
           <MoreHorizontal className="h-4 w-4" />
-        </Button>
+        </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
+      <DropdownMenuContent align="end" className="w-48 text-sm">
         {compact && onOpenFullScreen && (
-          <DropdownMenuItem onClick={onOpenFullScreen}>
-            <ExternalLinkIcon className="mr-2 h-4 w-4" />
-            Abrir em tela cheia
+          <DropdownMenuItem onClick={onOpenFullScreen} className="gap-2">
+            <ExternalLink className="h-3.5 w-3.5" /> Abrir em tela cheia
           </DropdownMenuItem>
         )}
         {onEdit && (
-          <DropdownMenuItem onClick={onEdit}>
-            <Pencil className="mr-2 h-4 w-4" />
-            Editar
+          <DropdownMenuItem onClick={onEdit} className="gap-2">
+            <Pencil className="h-3.5 w-3.5" /> Editar
           </DropdownMenuItem>
         )}
         {onDuplicate && (
-          <DropdownMenuItem onClick={onDuplicate}>
-            <Copy className="mr-2 h-4 w-4" />
-            Duplicar
+          <DropdownMenuItem onClick={onDuplicate} className="gap-2">
+            <Copy className="h-3.5 w-3.5" /> Duplicar
           </DropdownMenuItem>
         )}
         {onAddSubBloco && (
-          <DropdownMenuItem onClick={onAddSubBloco}>
-            <CornerDownRight className="mr-2 h-4 w-4" />
-            Adicionar sub-bloco
+          <DropdownMenuItem onClick={onAddSubBloco} className="gap-2">
+            <CornerDownRight className="h-3.5 w-3.5" /> Adicionar sub-bloco
           </DropdownMenuItem>
         )}
         {onAddBelow && (
-          <DropdownMenuItem onClick={onAddBelow}>
-            <Plus className="mr-2 h-4 w-4" />
-            Adicionar bloco abaixo
+          <DropdownMenuItem onClick={onAddBelow} className="gap-2">
+            <Plus className="h-3.5 w-3.5" /> Adicionar bloco abaixo
           </DropdownMenuItem>
         )}
         {onDelete && (
           <>
-            <div className="h-px bg-border my-1" />
+            <div className="my-1 h-px bg-border/60" />
             <DropdownMenuItem
               onClick={onDelete}
-              className="text-destructive"
               disabled={isDeleting}
+              className="gap-2 text-destructive focus:text-destructive"
             >
-              <Trash2 className="mr-2 h-4 w-4" />
+              <Trash2 className="h-3.5 w-3.5" />
               {isDeleting ? "Excluindo..." : "Excluir"}
             </DropdownMenuItem>
           </>
         )}
       </DropdownMenuContent>
     </DropdownMenu>
-  );
-}
-
-// Ícone inline para ExternalLink (evita import extra)
-function ExternalLinkIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-      <polyline points="15 3 21 3 21 9" />
-      <line x1="10" y1="14" x2="21" y2="3" />
-    </svg>
   );
 }

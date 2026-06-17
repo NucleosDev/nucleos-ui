@@ -3,50 +3,26 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Play,
-  MoreVertical,
-  Pencil,
-  Trash2,
-  Timer as TimerIcon,
   Loader2,
   TrendingUp,
   TrendingDown,
   Volume2,
   VolumeX,
   Clock,
+  Timer as TimerIcon,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { cn } from "@/lib/utils";
 import { TimerCard } from "@/components/timer/TimerCard";
 import { useTimers } from "@/hooks/useTimers";
 import { toast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
 import type { Bloco } from "@/types/bloco";
 
-const TIME_PRESETS = [
-  { label: "Pomodoro", minutes: 25 },
-  { label: "Pausa", minutes: 5 },
-  { label: "Foco", minutes: 45 },
-  { label: "Estudo", minutes: 60 },
+const PRESETS = [
+  { label: "Pomodoro", min: 25 },
+  { label: "Pausa", min: 5 },
+  { label: "Foco", min: 45 },
+  { label: "Estudo", min: 60 },
 ];
 
 interface TimersBlocoCardProps {
@@ -57,13 +33,7 @@ interface TimersBlocoCardProps {
   isDeleting?: boolean;
 }
 
-export function TimersBlocoCard({
-  bloco,
-  nucleoId,
-  onDelete,
-  onEdit,
-  isDeleting,
-}: TimersBlocoCardProps) {
+export function TimersBlocoCard({ nucleoId }: TimersBlocoCardProps) {
   const {
     timers = [],
     isLoading,
@@ -71,356 +41,269 @@ export function TimersBlocoCard({
     stop,
     deletar,
     atualizar,
-    isStarting,
     isStopping,
     isDeleting: isDeletingTimer,
     isUpdating,
   } = useTimers(nucleoId);
 
-  const [novaDescricao, setNovaDescricao] = useState("");
-  const [tempoMinutos, setTempoMinutos] = useState<number>(25);
+  const [descricao, setDescricao] = useState("");
+  const [minutos, setMinutos] = useState(25);
   const [modo, setModo] = useState<"crescente" | "decrescente">("decrescente");
-  const [somAtivado, setSomAtivado] = useState(true);
-  const [isStartingTimer, setIsStartingTimer] = useState(false);
+  const [som, setSom] = useState(true);
+  const [isStarting, setIsStarting] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const activeTimer = timers.find((t) => !t.fim && t.inicio);
-  const hasRunningTimer = !!activeTimer;
 
   useEffect(() => {
     audioRef.current = new Audio("/sounds/timer-complete.mp3");
   }, []);
 
-  const handleStartTimer = async (e: React.FormEvent) => {
+  const handleStart = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!novaDescricao.trim()) {
-      toast({
-        title: "Informe uma descrição para o timer",
-        variant: "destructive",
-      });
+    if (!descricao.trim()) {
+      toast({ title: "Informe uma descrição", variant: "destructive" });
       return;
     }
-    setIsStartingTimer(true);
+    setIsStarting(true);
     try {
-      const duracaoSegundos =
-        modo === "decrescente" ? tempoMinutos * 60 : undefined;
       await start({
         nucleoId,
-        titulo: novaDescricao.trim(),
-        duracaoSegundos,
+        titulo: descricao.trim(),
+        duracaoSegundos: modo === "decrescente" ? minutos * 60 : undefined,
         modo,
       });
-      setNovaDescricao("");
-      toast({
-        title: "Timer iniciado!",
-        description: `${novaDescricao.trim()} - ${modo === "decrescente" ? `${tempoMinutos}min` : "cronômetro"}`,
-      });
-    } catch (error: any) {
+      setDescricao("");
+      toast({ title: "Timer iniciado!" });
+    } catch (e: any) {
       toast({
         title: "Erro ao iniciar timer",
-        description: error?.message,
+        description: e?.message,
         variant: "destructive",
       });
     } finally {
-      setIsStartingTimer(false);
+      setIsStarting(false);
     }
   };
 
-  const handleStopTimer = async (id: string) => {
+  const handleStop = async (id: string) => {
     try {
       await stop(id);
       toast({ title: "Timer finalizado!" });
-      if (somAtivado && audioRef.current) {
-        audioRef.current.play().catch(() => {});
-      }
-    } catch (error: any) {
+      if (som && audioRef.current) audioRef.current.play().catch(() => {});
+    } catch (e: any) {
       toast({
         title: "Erro ao parar timer",
-        description: error?.message,
+        description: e?.message,
         variant: "destructive",
       });
     }
   };
 
-  const handleDeleteTimer = async (id: string) => {
-    if (!confirm("Excluir este timer permanentemente?")) return;
+  const handleDelete = async (id: string) => {
+    if (!confirm("Excluir este timer?")) return;
     try {
       await deletar(id);
-      toast({ title: "Timer excluído!" });
-    } catch (error: any) {
+    } catch (e: any) {
       toast({
-        title: "Erro ao excluir timer",
-        description: error?.message,
+        title: "Erro ao excluir",
+        description: e?.message,
         variant: "destructive",
       });
     }
   };
 
-  const handleUpdateTimer = async (id: string, titulo: string) => {
+  const handleUpdate = async (id: string, titulo: string) => {
     try {
       await atualizar({ id, titulo });
-      toast({ title: "Timer atualizado!" });
-    } catch (error: any) {
+    } catch (e: any) {
       toast({
         title: "Erro ao atualizar",
-        description: error?.message,
+        description: e?.message,
         variant: "destructive",
       });
     }
   };
 
-  const handleSelectPreset = (minutes: number) => {
-    setTempoMinutos(minutes);
-    setModo("decrescente");
-  };
+  /* ── Timer ativo ── */
+  if (activeTimer) {
+    return (
+      <TimerCard
+        timer={activeTimer}
+        onStop={handleStop}
+        onDelete={handleDelete}
+        onUpdate={handleUpdate}
+        isStopping={isStopping}
+        isDeleting={isDeletingTimer}
+        isUpdating={isUpdating}
+      />
+    );
+  }
 
+  /* ── Formulário ── */
   return (
-    <Card className="group relative hover:shadow-md transition-shadow">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-2">
-            <div
+    <div className="space-y-4">
+      <form onSubmit={handleStart} className="space-y-3">
+        {/* Descrição */}
+        <input
+          type="text"
+          placeholder="O que você vai fazer?"
+          value={descricao}
+          onChange={(e) => setDescricao(e.target.value)}
+          disabled={isStarting}
+          autoFocus
+          className={cn(
+            "w-full px-3 py-2.5 text-sm rounded-xl",
+            "bg-muted/40 border border-border/50",
+            "placeholder:text-muted-foreground/40",
+            "focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50",
+            "transition-[border-color,box-shadow] duration-[var(--duration-fast)]",
+          )}
+        />
+
+        {/* Presets */}
+        <div className="grid grid-cols-4 gap-1.5">
+          {PRESETS.map((p) => (
+            <button
+              key={p.label}
+              type="button"
+              onClick={() => {
+                setMinutos(p.min);
+                setModo("decrescente");
+              }}
               className={cn(
-                "p-1.5 rounded-md transition-colors",
-                hasRunningTimer ? "bg-primary/20" : "bg-primary/10",
+                "py-1.5 rounded-lg text-xs font-medium border transition-all duration-[var(--duration-fast)]",
+                minutos === p.min && modo === "decrescente"
+                  ? "bg-primary/10 border-primary/30 text-primary"
+                  : "border-border/40 text-muted-foreground hover:border-border hover:text-foreground",
               )}
             >
-              <TimerIcon
-                className={cn(
-                  "h-4 w-4 transition-colors",
-                  hasRunningTimer
-                    ? "text-primary animate-pulse"
-                    : "text-primary",
-                )}
-              />
-            </div>
-            <CardTitle className="text-base font-semibold">
-              {bloco.titulo || "Timer Focus"}
-            </CardTitle>
-            {hasRunningTimer && (
-              <Badge variant="default" className="ml-1 text-xs animate-pulse">
-                Em andamento
-              </Badge>
-            )}
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                disabled={isStartingTimer || isStopping}
-              >
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onEdit(bloco.id)}>
-                <Pencil className="mr-2 h-4 w-4" /> Editar bloco
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => onDelete(bloco.id)}
-                className="text-destructive"
-                disabled={isDeleting}
-              >
-                <Trash2 className="mr-2 h-4 w-4" /> Excluir bloco
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              {p.min}m
+            </button>
+          ))}
         </div>
-      </CardHeader>
 
-      <CardContent className="space-y-4">
-        {/* Timer ativo */}
-        {hasRunningTimer && activeTimer && (
-          <div className="mb-4">
-            <TimerCard
-              timer={activeTimer}
-              onStop={handleStopTimer}
-              onDelete={handleDeleteTimer}
-              onUpdate={handleUpdateTimer}
-              isStopping={isStopping}
-              isDeleting={isDeletingTimer}
-              isUpdating={isUpdating}
-            />
-          </div>
-        )}
-
-        {/* Formulário para iniciar novo timer */}
-        {!hasRunningTimer && (
-          <form onSubmit={handleStartTimer} className="space-y-4">
-            <div className="space-y-1.5">
-              <Label
-                htmlFor="descricao"
-                className="text-xs text-muted-foreground"
-              >
-                O que você vai fazer?
-              </Label>
-              <Input
-                id="descricao"
-                placeholder="Ex: Estudar, Trabalhar, Meditar..."
-                value={novaDescricao}
-                onChange={(e) => setNovaDescricao(e.target.value)}
-                className="h-9"
-                disabled={isStartingTimer}
-                autoFocus
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">Duração</Label>
-              <ToggleGroup type="single" className="grid grid-cols-4 gap-1">
-                {TIME_PRESETS.map((preset) => (
-                  <ToggleGroupItem
-                    key={preset.label}
-                    value={preset.minutes.toString()}
-                    onClick={() => handleSelectPreset(preset.minutes)}
-                    className="h-8 text-xs data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
-                  >
-                    {preset.minutes}min
-                  </ToggleGroupItem>
-                ))}
-              </ToggleGroup>
-            </div>
-
-            <div className="flex gap-2">
-              <div className="flex-1">
-                <Select
-                  value={modo}
-                  onValueChange={(v) =>
-                    setModo(v as "crescente" | "decrescente")
-                  }
-                  disabled={isStartingTimer}
+        {/* Modo + tempo custom */}
+        <div className="flex items-center gap-2">
+          {/* Segmented mode control */}
+          <div className="flex rounded-lg border border-border/50 bg-muted/30 p-0.5 gap-0.5">
+            {(["decrescente", "crescente"] as const).map((m) => {
+              const Icon = m === "decrescente" ? TrendingDown : TrendingUp;
+              return (
+                <button
+                  key={m}
+                  type="button"
+                  onClick={() => setModo(m)}
+                  className={cn(
+                    "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-all duration-[var(--duration-fast)]",
+                    modo === m
+                      ? "bg-background shadow-[var(--shadow-xs)] text-foreground"
+                      : "text-muted-foreground/60 hover:text-muted-foreground",
+                  )}
                 >
-                  <SelectTrigger className="h-9">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="crescente">
-                      <div className="flex items-center gap-2">
-                        <TrendingUp className="h-4 w-4 text-green-500" />
-                        <span>Crescente</span>
-                        <span className="text-xs text-muted-foreground">
-                          (cronômetro)
-                        </span>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="decrescente">
-                      <div className="flex items-center gap-2">
-                        <TrendingDown className="h-4 w-4 text-blue-500" />
-                        <span>Decrescente</span>
-                        <span className="text-xs text-muted-foreground">
-                          (temporizador)
-                        </span>
-                      </div>
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                  <Icon className="h-3 w-3" />
+                  {m === "decrescente" ? "Timer" : "Stopwatch"}
+                </button>
+              );
+            })}
+          </div>
 
-              {modo === "decrescente" && (
-                <div className="w-24">
-                  <Input
-                    type="number"
-                    min="1"
-                    max="480"
-                    value={tempoMinutos}
-                    onChange={(e) =>
-                      setTempoMinutos(parseInt(e.target.value) || 25)
-                    }
-                    className="h-9"
-                    disabled={isStartingTimer}
-                  />
-                </div>
+          {modo === "decrescente" && (
+            <input
+              type="number"
+              min={1}
+              max={480}
+              value={minutos}
+              onChange={(e) => setMinutos(parseInt(e.target.value) || 25)}
+              disabled={isStarting}
+              className={cn(
+                "w-16 px-2 py-1.5 text-xs text-center rounded-lg",
+                "bg-muted/40 border border-border/50",
+                "focus:outline-none focus:ring-2 focus:ring-primary/20",
               )}
-            </div>
+            />
+          )}
 
-            <div className="flex items-center justify-between pt-1">
-              <div className="flex items-center gap-2">
-                {somAtivado ? (
-                  <Volume2 className="h-4 w-4 text-muted-foreground" />
-                ) : (
-                  <VolumeX className="h-4 w-4 text-muted-foreground" />
-                )}
-                <Label htmlFor="som" className="text-xs cursor-pointer">
-                  Som ao finalizar
-                </Label>
-              </div>
-              <Switch
-                id="som"
-                checked={somAtivado}
-                onCheckedChange={setSomAtivado}
-                disabled={isStartingTimer}
-              />
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isStartingTimer || !novaDescricao.trim()}
-            >
-              {isStartingTimer ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  Iniciando...
-                </>
-              ) : (
-                <>
-                  <Play className="h-4 w-4 mr-2" />
-                  Iniciar{" "}
-                  {modo === "decrescente" ? `${tempoMinutos}min` : "cronômetro"}
-                </>
-              )}
-            </Button>
-          </form>
-        )}
-
-        {/* Histórico de timers */}
-        {!hasRunningTimer && (
-          <>
-            <div className="flex items-center gap-2 pt-2">
-              <Clock className="h-4 w-4 text-muted-foreground" />
-              <h4 className="text-sm font-medium text-muted-foreground">
-                Histórico recente
-              </h4>
-            </div>
-
-            {isLoading ? (
-              <div className="space-y-2">
-                <Skeleton className="h-12 w-full" />
-                <Skeleton className="h-12 w-full" />
-              </div>
-            ) : timers.length === 0 ? (
-              <div className="text-center py-4 text-muted-foreground text-sm bg-muted/20 rounded-lg">
-                <TimerIcon className="h-8 w-8 mx-auto mb-2 opacity-40" />
-                <p>Nenhum timer ainda.</p>
-                <p className="text-xs mt-1">Inicie seu primeiro timer acima!</p>
-              </div>
+          {/* Som */}
+          <button
+            type="button"
+            onClick={() => setSom((s) => !s)}
+            className="ml-auto flex items-center justify-center h-7 w-7 rounded-lg text-muted-foreground/50 hover:text-muted-foreground hover:bg-accent transition-colors"
+          >
+            {som ? (
+              <Volume2 className="h-3.5 w-3.5" />
             ) : (
-              <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
-                {timers.slice(0, 5).map((timer) => (
-                  <TimerCard
-                    key={timer.id}
-                    timer={timer}
-                    onStop={handleStopTimer}
-                    onDelete={handleDeleteTimer}
-                    onUpdate={handleUpdateTimer}
-                    isStopping={isStopping}
-                    isDeleting={isDeletingTimer}
-                    isUpdating={isUpdating}
-                  />
-                ))}
-                {timers.length > 5 && (
-                  <p className="text-xs text-muted-foreground text-center pt-1">
-                    +{timers.length - 5} timers anteriores
-                  </p>
-                )}
-              </div>
+              <VolumeX className="h-3.5 w-3.5" />
             )}
-          </>
-        )}
-      </CardContent>
-    </Card>
+          </button>
+        </div>
+
+        {/* Submit */}
+        <button
+          type="submit"
+          disabled={isStarting || !descricao.trim()}
+          className={cn(
+            "w-full flex items-center justify-center gap-2 py-2.5 rounded-xl",
+            "text-sm font-semibold text-",
+            "bg-gradient-to-r from-orange-500 to-amber-500",
+            "hover:opacity-90 disabled:opacity-40 transition-opacity",
+            "shadow-[0_4px_14px_rgba(249,115,22,0.30)]",
+          )}
+        >
+          {isStarting ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" /> Iniciando...
+            </>
+          ) : (
+            <>
+              <Play className="h-4 w-4" />{" "}
+              {modo === "decrescente"
+                ? `Iniciar ${minutos}min`
+                : "Iniciar stopwatch"}
+            </>
+          )}
+        </button>
+      </form>
+
+      {/* Histórico */}
+      {!isLoading && timers.length > 0 && (
+        <div className="space-y-2">
+          <div className="flex items-center gap-1.5 pt-1">
+            <Clock className="h-3.5 w-3.5 text-muted-foreground/50" />
+            <p className="text-xs font-medium text-muted-foreground/60">
+              Recente
+            </p>
+          </div>
+          <div className="space-y-1.5 max-h-52 overflow-y-auto">
+            {timers.slice(0, 5).map((timer) => (
+              <TimerCard
+                key={timer.id}
+                timer={timer}
+                onStop={handleStop}
+                onDelete={handleDelete}
+                onUpdate={handleUpdate}
+                isStopping={isStopping}
+                isDeleting={isDeletingTimer}
+                isUpdating={isUpdating}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {isLoading && (
+        <div className="space-y-1.5">
+          <Skeleton className="h-11 w-full rounded-xl" />
+          <Skeleton className="h-11 w-full rounded-xl" />
+        </div>
+      )}
+
+      {!isLoading && timers.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-6 text-center">
+          <TimerIcon className="h-7 w-7 text-muted-foreground/20 mb-2" />
+          <p className="text-xs text-muted-foreground/50">Nenhum timer ainda</p>
+        </div>
+      )}
+    </div>
   );
 }

@@ -60,6 +60,17 @@ export const gamificacaoService = {
     return Array.isArray(response) ? response : [];
   },
 
+  async getEnergy(): Promise<{ energy: number; maxEnergy: number; baseEnergy: number }> {
+    const response = await api.get<
+      | { success: boolean; data: { energy: number; maxEnergy: number; baseEnergy: number } }
+      | { energy: number; maxEnergy: number; baseEnergy: number }
+    >(API_ROUTES.PROGRESS.ENERGY);
+    if (response && typeof response === "object" && "data" in response) {
+      return response.data;
+    }
+    return response as { energy: number; maxEnergy: number; baseEnergy: number };
+  },
+
   async getStreak(): Promise<StreakData> {
     const response = await api.get<
       { success: boolean; data: StreakData } | StreakData

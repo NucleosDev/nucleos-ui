@@ -83,21 +83,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className={`min-h-dvh`} lang="pt-BR" suppressHydrationWarning>
-      <body
-        className={`min-h-dvh ${geistSans.variable} ${geistMono.variable} font-sans antialiased`}
-        suppressHydrationWarning
-      >
-        <AuthProvider>
-          <div className="relative flex min-h-dvh flex-col">
-            <Header />
-            <main className="flex-1 min-h-dvh">{children}</main>
-            <Footer />
-          </div>
-        </AuthProvider>
+    <html lang="pt-BR" suppressHydrationWarning>
+      <AuthProvider>
+        <div className="relative flex flex-col">
+          <Header />
+          <main className="flex-1 ">{children}</main>
+          <Footer />
+        </div>
+      </AuthProvider>
 
-        <Analytics />
-      </body>
+      <Analytics />
     </html>
   );
 }

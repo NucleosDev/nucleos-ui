@@ -1,212 +1,218 @@
+// src/components/blocos/cruds/ListasBlocoCard.tsx
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Plus, MoreVertical, Pencil, Trash2, ListChecks } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { Plus, Check, ChevronDown, ListTodo } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ListaCard } from "@/components/lista/ListaCard";
 import { CriarListaModal } from "@/components/lista/CriarListaModal";
+import { ListaFinanceiraInteligente } from "@/components/lista/ListaFinanceiraInteligente";
 import { useListas } from "@/hooks/useListas";
+import { useItensLista } from "@/hooks/useItensLista";
 import { toast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 import type { Bloco } from "@/types/bloco";
-import type { Lista } from "@/types/lista";
 
 interface ListasBlocoCardProps {
   bloco: Bloco;
   nucleoId: string;
-  onDelete: (blocoId: string) => void;
-  onEdit: (blocoId: string) => void;
+  onDelete?: () => void;
+  onEdit?: () => void;
   isDeleting?: boolean;
 }
 
-export function ListasBlocoCard({
-  bloco,
-  nucleoId,
-  onDelete,
-  onEdit,
-  isDeleting,
-}: ListasBlocoCardProps) {
-  const router = useRouter();
-  const {
-    listas,
-    isLoading,
-    criar,
-    atualizar,
-    excluir,
-    isCreating,
-    isDeleting: isDeletingLista,
-  } = useListas(bloco.id);
+const TIPO_LABEL: Record<string, string> = {
+  compras: "Compras",
+  financeiro: "Financeiro",
+  geral: "Geral",
+};
 
-  const [modalCriarAberta, setModalCriarAberta] = useState(false);
-  const [listaEditando, setListaEditando] = useState<Lista | null>(null);
+export function ListasBlocoCard({ bloco }: ListasBlocoCardProps) {
+  const { listas, isLoading, criar, isCreating } = useListas(bloco.id);
+  const [modalAberta, setModalAberta] = useState(false);
+  const [colapsadas, setColapsadas] = useState<Set<string>>(new Set());
 
-  const handleCriarLista = async (
-    nome: string,
-    tipoLista: string,
-    metadata?: Record<string, any>,
-  ) => {
+  const toggleLista = (id: string) =>
+    setColapsadas((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+
+  const handleCriar = async (nome: string, tipoLista: string) => {
     try {
-      const payload: any = {
-        blocoId: bloco.id,
-        nome,
-        tipoLista: tipoLista as any,
-      };
-
-      if (metadata) {
-        console.log("Metadados da lista:", metadata);
-      }
-
-      await criar(payload);
-      toast({ title: "Lista criada com sucesso!" });
-      setModalCriarAberta(false);
-    } catch (error: any) {
-      console.error("Erro ao criar lista:", error);
+      await criar({ blocoId: bloco.id, nome, tipoLista: tipoLista as any });
+      toast({ title: "Lista criada!" });
+      setModalAberta(false);
+    } catch (e: any) {
       toast({
         title: "Erro ao criar lista",
-        description: error?.message,
+        description: e?.message,
         variant: "destructive",
       });
     }
   };
 
-  const handleEditarLista = async (
-    lista: Lista,
-    novoNome: string,
-    novoTipo?: string,
-    metadata?: Record<string, any>,
-  ) => {
-    try {
-      await atualizar({
-        id: lista.id,
-        payload: { nome: novoNome, tipoLista: novoTipo as any },
-      });
-      toast({ title: "Lista atualizada" });
-      setListaEditando(null);
-    } catch (error: any) {
-      toast({
-        title: "Erro ao atualizar",
-        description: error?.message,
-        variant: "destructive",
-      });
-    }
-  };
+  if (isLoading) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-12 w-full rounded-xl" />
+        <Skeleton className="h-12 w-full rounded-xl" />
+      </div>
+    );
+  }
 
-  const handleExcluirLista = async (listaId: string) => {
-    if (!confirm("Tem certeza que deseja excluir esta lista?")) return;
-    try {
-      await excluir(listaId);
-      toast({ title: "Lista excluída" });
-    } catch (error: any) {
-      toast({
-        title: "Erro ao excluir",
-        description: error?.message,
-        variant: "destructive",
-      });
-    }
-  };
+  if (listas.length === 0) {
+    return (
+      <>
+        <div className="flex flex-col items-center justify-center py-10 text-center">
+          <div
+            className="flex h-10 w-10 items-center justify-center rounded-xl mb-3"
+            style={{ background: "#06b6d418", border: "1px solid #06b6d430" }}
+          >
+            <ListTodo className="h-5 w-5" style={{ color: "#06b6d4" }} />
+          </div>
+          <p className="text-sm text-muted-foreground/60 mb-4">
+            Nenhuma lista ainda
+          </p>
+          <button
+            onClick={() => setModalAberta(true)}
+            disabled={isCreating}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold text- transition-opacity hover:opacity-90"
+            style={{
+              background: "#06b6d4",
+              boxShadow: "0 4px 12px rgba(6,182,212,0.25)",
+            }}
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Criar primeira lista
+          </button>
+        </div>
+        <CriarListaModal
+          open={modalAberta}
+          onClose={() => setModalAberta(false)}
+          onConfirm={handleCriar}
+          isSubmitting={isCreating}
+        />
+      </>
+    );
+  }
 
   return (
-    <>
-      <Card className="group relative hover:shadow-md transition-shadow">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-2">
-              <ListChecks className="h-5 w-5 text-muted-foreground" />
-              <CardTitle className="text-lg">
-                {bloco.titulo || "Listas"}
-              </CardTitle>
-            </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => onEdit(bloco.id)}>
-                  <Pencil className="mr-2 h-4 w-4" /> Editar bloco
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => onDelete(bloco.id)}
-                  className="text-destructive"
-                  disabled={isDeleting}
-                >
-                  <Trash2 className="mr-2 h-4 w-4" /> Excluir bloco
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </CardHeader>
+    <div className="space-y-2">
+      {listas.map((lista) => (
+        <ListaExpandivel
+          key={lista.id}
+          lista={lista}
+          isExpanded={!colapsadas.has(lista.id)}
+          onToggle={() => toggleLista(lista.id)}
+        />
+      ))}
 
-        <CardContent className="space-y-4">
-          {isLoading ? (
-            <div className="space-y-2">
-              <Skeleton className="h-28 w-full" />
-              <Skeleton className="h-28 w-full" />
-            </div>
-          ) : listas.length === 0 ? (
-            <div className="text-center py-6 text-muted-foreground text-sm">
-              Nenhuma lista ainda. Clique em "Nova lista" para começar.
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {listas.map((lista) => (
-                <ListaCard
-                  key={lista.id}
-                  lista={lista}
-                  nucleoId={nucleoId}
-                  blocoId={bloco.id}
-                  onEdit={() => setListaEditando(lista)}
-                  onDelete={() => handleExcluirLista(lista.id)}
-                  showProgressDetails
-                />
-              ))}
-            </div>
-          )}
-
-          {/* BOTÃO AGORA EMBAIXO */}
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full"
-            onClick={() => setModalCriarAberta(true)}
-            disabled={isCreating}
-          >
-            <Plus className="mr-2 h-4 w-4" /> Nova lista
-          </Button>
-        </CardContent>
-      </Card>
+      <button
+        onClick={() => setModalAberta(true)}
+        disabled={isCreating}
+        className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium text-muted-foreground/60 hover:text-muted-foreground border border-dashed border-border/40 hover:border-border/70 transition-colors"
+      >
+        <Plus className="h-3.5 w-3.5" />
+        Nova lista
+      </button>
 
       <CriarListaModal
-        open={modalCriarAberta}
-        onClose={() => setModalCriarAberta(false)}
-        onConfirm={handleCriarLista}
+        open={modalAberta}
+        onClose={() => setModalAberta(false)}
+        onConfirm={handleCriar}
         isSubmitting={isCreating}
       />
+    </div>
+  );
+}
 
-      {listaEditando && (
-        <CriarListaModal
-          open={!!listaEditando}
-          onClose={() => setListaEditando(null)}
-          onConfirm={(nome, tipo, metadata) =>
-            handleEditarLista(listaEditando, nome, tipo, metadata)
-          }
-          initialNome={listaEditando.nome}
-          initialTipo={listaEditando.tipoLista}
-          titulo="Editar lista"
-          isSubmitting={false}
-        />
+function ListaExpandivel({
+  lista,
+  isExpanded,
+  onToggle,
+}: {
+  lista: any;
+  isExpanded: boolean;
+  onToggle: () => void;
+}) {
+  const { itens, criarItem, atualizarItem, excluirItem, toggleItem } =
+    useItensLista(lista.id);
+  const done = itens.filter((i: any) => i.concluido).length;
+  const total = itens.length;
+
+  return (
+    <div
+      className={cn(
+        "rounded-xl border border-border/50 bg-card/60 overflow-hidden",
+        "transition-[border-color] duration-[var(--duration-fast)]",
+        isExpanded && "border-border/80",
       )}
-    </>
+    >
+      {/* Header */}
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center gap-2.5 px-3.5 py-2.5 hover:bg-accent/40 transition-colors text-left"
+      >
+        <div
+          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md"
+          style={{ background: "#06b6d418" }}
+        >
+          <Check className="h-3.5 w-3.5" style={{ color: "#06b6d4" }} />
+        </div>
+        <span className="text-sm font-medium flex-1 truncate">
+          {lista.nome}
+        </span>
+        <div className="flex items-center gap-2 shrink-0">
+          {total > 0 && (
+            <span className="text-[11px] tabular-nums text-muted-foreground/60">
+              {done}/{total}
+            </span>
+          )}
+          <span className="text-[10px] text-muted-foreground/40">
+            {TIPO_LABEL[lista.tipoLista] ?? "Geral"}
+          </span>
+          <ChevronDown
+            className={cn(
+              "h-3.5 w-3.5 text-muted-foreground/40 transition-transform duration-[var(--duration-fast)]",
+              !isExpanded && "-rotate-90",
+            )}
+          />
+        </div>
+      </button>
+
+      {/* Content */}
+      <AnimatePresence initial={false}>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+            className="overflow-hidden border-t border-border/30"
+          >
+            <div className="px-3.5 py-3">
+              <ListaFinanceiraInteligente
+                lista={lista}
+                itens={itens}
+                onAddItem={async (p) => {
+                  await criarItem(p as any);
+                }}
+                onUpdateItem={async (id, p) => {
+                  await atualizarItem({ id, payload: p });
+                }}
+                onDeleteItem={async (id) => {
+                  await excluirItem(id);
+                }}
+                onToggleItem={async (id) => {
+                  await toggleItem(id);
+                }}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

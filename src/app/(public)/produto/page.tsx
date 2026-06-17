@@ -26,7 +26,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { NucleoCoreCard } from "@/components/nucleo/nucleo-core-card";
-import { NucleoCardCompact } from "@/components/nucleo/nucleo-card-mini";
 // import { mockNucleos } from "@/components/nucleo/mocks/nucleo-card.mock";
 
 const features = [
@@ -107,8 +106,8 @@ export default function ProdutoPage() {
       {/* Hero Section */}
       <section className="relative overflow-hidden px-4 pt-32 pb-20 sm:px-6 lg:px-8 lg:pt-40">
         {/* Gradientes */}
-        <div className="absolute top-0 left-0 right-0 h-40 pointer-events-none z-10 bg-gradient-to-b from-white via-white/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none z-10 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-40 pointer-events-none z-10 bg-gradient-to-b from via/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none z-10 bg-gradient-to-t from via/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
 
         {/* Elementos decorativos */}
         <div className="absolute inset-0 -z-10">

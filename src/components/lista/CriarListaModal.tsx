@@ -1,29 +1,28 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { ListTodo, Check, Loader2 } from "lucide-react";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { toast } from "@/hooks/use-toast";
+  GlassModal,
+  GlassModalHeader,
+  GlassInput,
+  GlassModalFooter,
+  GlassButton,
+} from "@/components/ui/glass-modal";
 import { cn } from "@/lib/utils";
+import { toast } from "@/hooks/use-toast";
 import type { TipoLista } from "@/types/lista";
 
+const ACCENT = "#06b6d4";
+
 type TipoFinanceiro = "gastos" | "despesas" | "receitas" | "compras";
+
+const TIPO_OPTS: { value: TipoFinanceiro; label: string; desc: string }[] = [
+  { value: "gastos", label: "Gastos", desc: "Controle de gastos gerais" },
+  { value: "despesas", label: "Despesas", desc: "Despesas fixas e variáveis" },
+  { value: "receitas", label: "Receitas", desc: "Entradas e rendimentos" },
+  { value: "compras", label: "Compras", desc: "Lista de itens para comprar" },
+];
 
 const mapBackendToFrontend = (tipo: string): TipoFinanceiro => {
   if (tipo === "compras") return "compras";
@@ -61,15 +60,12 @@ export function CriarListaModal({
   isSubmitting = false,
 }: CriarListaModalProps) {
   const nomeInputRef = useRef<HTMLInputElement>(null);
-
   const [nome, setNome] = useState(initialNome);
   const [tipoLista, setTipoLista] = useState<TipoFinanceiro | "">(
     initialTipo ? mapBackendToFrontend(initialTipo) : "",
   );
-  const [orcamento, setOrcamento] = useState<string>("");
-  const [localCompra, setLocalCompra] = useState<string>("");
-
-  // Estados de erro
+  const [orcamento, setOrcamento] = useState("");
+  const [localCompra, setLocalCompra] = useState("");
   const [nomeError, setNomeError] = useState<string | null>(null);
   const [tipoError, setTipoError] = useState<string | null>(null);
 
@@ -84,169 +80,155 @@ export function CriarListaModal({
     }
   }, [open, initialNome, initialTipo]);
 
-  const validateFields = (): boolean => {
-    let isValid = true;
-
-    if (!nome.trim()) {
-      setNomeError("O nome da lista é obrigatório.");
-      isValid = false;
-    } else {
-      setNomeError(null);
-    }
-
-    if (!tipoLista) {
-      setTipoError("Selecione um tipo de lista.");
-      isValid = false;
-    } else {
-      setTipoError(null);
-    }
-
-    return isValid;
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!validateFields()) {
-      // Foca no primeiro campo com erro
-      if (!nome.trim()) {
-        nomeInputRef.current?.focus();
-      }
+    let valid = true;
+    if (!nome.trim()) {
+      setNomeError("O nome da lista é obrigatório.");
+      valid = false;
+    }
+    if (!tipoLista) {
+      setTipoError("Selecione um tipo de lista.");
+      valid = false;
+    }
+    if (!valid) {
+      if (!nome.trim()) nomeInputRef.current?.focus();
       toast({
         title: "Campos obrigatórios",
-        description: "Preencha todos os campos obrigatórios para continuar.",
+        description: "Preencha todos os campos.",
         variant: "destructive",
       });
       return;
     }
-
     const metadata: Record<string, any> = {};
     if (orcamento) {
-      const valor = parseFloat(orcamento);
-      if (!isNaN(valor) && valor >= 0) {
-        metadata.orcamento = valor;
-      }
+      const v = parseFloat(orcamento);
+      if (!isNaN(v) && v >= 0) metadata.orcamento = v;
     }
-    if (tipoLista === "compras" && localCompra) {
+    if (tipoLista === "compras" && localCompra)
       metadata.localCompra = localCompra;
-    }
-
-    const tipoParaBackend = mapFrontendToBackend(tipoLista);
-    onConfirm(nome.trim(), tipoParaBackend as TipoLista, metadata);
+    onConfirm(
+      nome.trim(),
+      mapFrontendToBackend(tipoLista!) as TipoLista,
+      metadata,
+    );
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{titulo}</DialogTitle>
-          <DialogDescription>
-            Crie uma lista para controlar seus gastos, despesas ou receitas.
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Nome da lista */}
-          <div className="space-y-2">
-            <Label htmlFor="nome" className="flex items-center gap-1">
-              Nome da lista
-              <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              id="nome"
-              ref={nomeInputRef}
-              placeholder="Ex: Gastos do mês"
-              value={nome}
-              onChange={(e) => {
-                setNome(e.target.value);
-                if (nomeError) setNomeError(null);
-              }}
-              className={cn(nomeError && "border-destructive")}
-              disabled={isSubmitting}
-            />
-            {nomeError && (
-              <p className="text-xs text-destructive">{nomeError}</p>
+    <GlassModal open={open} onClose={onClose}>
+      <GlassModalHeader
+        title={titulo}
+        description="Crie uma lista para controlar seus gastos, despesas ou receitas."
+        icon={ListTodo}
+        accent={ACCENT}
+        onClose={onClose}
+      />
+
+      <form onSubmit={handleSubmit} className="px-5 py-4 space-y-4">
+        <GlassInput
+          label="Nome da lista *"
+          placeholder="Ex: Gastos do mês"
+          value={nome}
+          onChange={(e) => {
+            setNome(e.target.value);
+            if (nomeError) setNomeError(null);
+          }}
+          disabled={isSubmitting}
+          error={nomeError}
+        />
+
+        {/* Tipo selector */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground/70">
+            Tipo da lista *
+          </label>
+          <div className="grid grid-cols-2 gap-1.5">
+            {TIPO_OPTS.map((opt) => {
+              const active = tipoLista === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => {
+                    setTipoLista(opt.value);
+                    if (tipoError) setTipoError(null);
+                  }}
+                  disabled={isSubmitting}
+                  className={cn(
+                    "flex flex-col items-start px-3 py-2.5 rounded-xl border text-left transition-all",
+                    active
+                      ? "border-transparent"
+                      : "border-border/50 hover:border-border bg-muted/30 hover:bg-muted/50",
+                  )}
+                  style={
+                    active
+                      ? {
+                          background: `${ACCENT}15`,
+                          border: `1px solid ${ACCENT}40`,
+                        }
+                      : {}
+                  }
+                >
+                  <span
+                    className="text-xs font-semibold"
+                    style={active ? { color: ACCENT } : {}}
+                  >
+                    {opt.label}
+                  </span>
+                  <span className="text-[10px] text-muted-foreground/50 mt-0.5">
+                    {opt.desc}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          {tipoError && <p className="text-xs text-destructive">{tipoError}</p>}
+        </div>
+
+        <GlassInput
+          label="Orçamento (opcional)"
+          type="number"
+          step="0.01"
+          min="0"
+          placeholder="R$ 0,00"
+          value={orcamento}
+          onChange={(e) => setOrcamento(e.target.value)}
+          disabled={isSubmitting}
+        />
+
+        {tipoLista === "compras" && (
+          <GlassInput
+            label="Local de compra (opcional)"
+            placeholder="Ex: Mercado, Farmácia..."
+            value={localCompra}
+            onChange={(e) => setLocalCompra(e.target.value)}
+            disabled={isSubmitting}
+          />
+        )}
+        <GlassModalFooter>
+          <GlassButton
+            variant="outline"
+            type="button"
+            onClick={onClose}
+            disabled={isSubmitting}
+          >
+            Cancelar
+          </GlassButton>
+          <GlassButton
+            type="submit"
+            disabled={isSubmitting}
+            style={{ background: ACCENT, boxShadow: `0 4px 12px ${ACCENT}35` }}
+            className="text- hover:opacity-90 bg-transparent"
+          >
+            {isSubmitting ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Check className="h-3.5 w-3.5" />
             )}
-          </div>
-
-          {/* Tipo da lista */}
-          <div className="space-y-2">
-            <Label htmlFor="tipo" className="flex items-center gap-1">
-              Tipo da lista
-              <span className="text-destructive">*</span>
-            </Label>
-            <Select
-              value={tipoLista}
-              onValueChange={(v) => {
-                setTipoLista(v as TipoFinanceiro);
-                if (tipoError) setTipoError(null);
-              }}
-              disabled={isSubmitting}
-            >
-              <SelectTrigger className={cn(tipoError && "border-destructive")}>
-                <SelectValue placeholder="Escolha o tipo" />
-              </SelectTrigger>
-              <SelectContent>
-                {/* <SelectItem value="" disabled> */}
-                Escolha o tipo
-                {/* </SelectItem> */}
-                <SelectItem value="gastos">Gastos</SelectItem>
-                <SelectItem value="despesas">Despesas</SelectItem>
-                <SelectItem value="receitas">Receitas</SelectItem>
-                <SelectItem value="compras">Compras</SelectItem>
-              </SelectContent>
-            </Select>
-            {tipoError && (
-              <p className="text-xs text-destructive">{tipoError}</p>
-            )}
-          </div>
-
-          {/* Orçamento (opcional) */}
-          <div className="space-y-2">
-            <Label htmlFor="orcamento">Orçamento (opcional)</Label>
-            <Input
-              id="orcamento"
-              type="number"
-              step="0.01"
-              min="0"
-              placeholder="R$ 0,00"
-              value={orcamento}
-              onChange={(e) => setOrcamento(e.target.value)}
-              disabled={isSubmitting}
-            />
-            <p className="text-xs text-muted-foreground">
-              Define um limite de gastos para esta lista.
-            </p>
-          </div>
-
-          {/* Local de compra (apenas para compras) */}
-          {tipoLista === "compras" && (
-            <div className="space-y-2">
-              <Label htmlFor="local">Local de compra (opcional)</Label>
-              <Input
-                id="local"
-                placeholder="Ex: Mercado, Farmácia..."
-                value={localCompra}
-                onChange={(e) => setLocalCompra(e.target.value)}
-                disabled={isSubmitting}
-              />
-            </div>
-          )}
-
-          <DialogFooter>
-            <Button
-              variant="outline"
-              type="button"
-              onClick={onClose}
-              disabled={isSubmitting}
-            >
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Salvando..." : "Salvar"}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+            Salvar
+          </GlassButton>
+        </GlassModalFooter>
+      </form>
+    </GlassModal>
   );
 }

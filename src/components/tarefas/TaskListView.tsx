@@ -3,21 +3,18 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Pencil, Trash2, Calendar, Flame } from "lucide-react";
+import { Check, Pencil, Trash2, Calendar, Flame, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Tarefa, TarefaPrioridade, TarefaStatus } from "@/types/tarefas";
+
+const PRIORIDADE_CONFIG: Record<
+  TarefaPrioridade,
+  { label: string; dot: string }
+> = {
+  baixa: { label: "Baixa", dot: "bg-emerald-500" },
+  media: { label: "Média", dot: "bg-amber-500" },
+  alta: { label: "Alta", dot: "bg-red-500" },
+};
 
 interface TaskListViewProps {
   tasks: Tarefa[];
@@ -31,15 +28,6 @@ interface TaskListViewProps {
   isUpdating?: boolean;
 }
 
-const prioridadeConfig: Record<
-  TarefaPrioridade,
-  { label: string; color: string; icon: string }
-> = {
-  baixa: { label: "Baixa", color: "text-green-600", icon: "🟢" },
-  media: { label: "Média", color: "text-yellow-600", icon: "🟡" },
-  alta: { label: "Alta", color: "text-red-600", icon: "🔴" },
-};
-
 export function TaskListView({
   tasks,
   onTaskToggle,
@@ -52,6 +40,10 @@ export function TaskListView({
   const [editPrioridade, setEditPrioridade] =
     useState<TarefaPrioridade>("media");
 
+  const done = tasks.filter((t) => t.status === "concluida").length;
+  const total = tasks.length;
+  const pct = total > 0 ? (done / total) * 100 : 0;
+
   const handleEditStart = (task: Tarefa) => {
     setEditingId(task.id);
     setEditTitle(task.titulo);
@@ -59,240 +51,205 @@ export function TaskListView({
   };
 
   const handleEditSave = (taskId: string) => {
-    if (editTitle.trim()) {
-      onTaskEdit(taskId, editTitle.trim(), editPrioridade);
-    }
+    if (editTitle.trim()) onTaskEdit(taskId, editTitle.trim(), editPrioridade);
     setEditingId(null);
   };
 
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return null;
     try {
-      return new Date(dateStr).toLocaleDateString("en-US", {
+      return new Date(dateStr).toLocaleDateString("pt-BR", {
+        day: "2-digit",
         month: "short",
-        day: "numeric",
-        year: "numeric",
       });
-    } catch (error) {
+    } catch {
       return dateStr;
     }
   };
 
-  const getStatusText = (status: TarefaStatus): string => {
-    switch (status) {
-      case "pendente":
-        return "Pending";
-      case "fazendo":
-        return "In Progress";
-      case "concluida":
-        return "Completed";
-      default:
-        return "Pending";
-    }
-  };
-
-  const getStatusBgColor = (status: TarefaStatus): string => {
-    switch (status) {
-      case "pendente":
-        return "bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100";
-      case "fazendo":
-        return "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100";
-      case "concluida":
-        return "bg-green-50 text-green-700 border-green-200 hover:bg-green-100";
-      default:
-        return "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100";
-    }
-  };
-
-  const TaskRow = ({ task, index }: { task: Tarefa; index: number }) => (
-    <motion.tr
-      layout
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, height: 0 }}
-      transition={{ duration: 0.2 }}
-      className={cn(
-        "border-b transition-colors hover:bg-muted/50",
-        task.status === "concluida" && "opacity-60",
-      )}
-    >
-      <TableCell className="font-medium text-muted-foreground w-12 align-top">
-        {index + 1}
-      </TableCell>
-
-      <TableCell className="align-top">
-        {editingId === task.id ? (
-          <div className="flex gap-2 items-center flex-wrap">
-            <Input
-              value={editTitle}
-              onChange={(e) => setEditTitle(e.target.value)}
-              className="h-8 flex-1 min-w-[200px]"
-              autoFocus
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleEditSave(task.id);
-                if (e.key === "Escape") setEditingId(null);
-              }}
-            />
-            <select
-              value={editPrioridade}
-              onChange={(e) =>
-                setEditPrioridade(e.target.value as TarefaPrioridade)
-              }
-              className="h-8 text-sm rounded-md border bg-background px-2"
-            >
-              <option value="baixa">🟢 Baixa</option>
-              <option value="media">🟡 Média</option>
-              <option value="alta">🔴 Alta</option>
-            </select>
-            <Button size="sm" onClick={() => handleEditSave(task.id)}>
-              Salvar
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => setEditingId(null)}
-            >
-              Cancelar
-            </Button>
-          </div>
-        ) : (
-          <div className="flex gap-3">
-            <Checkbox
-              checked={task.status === "concluida"}
-              onCheckedChange={() =>
-                onTaskToggle(
-                  task.id,
-                  task.status === "concluida" ? "pendente" : "concluida",
-                )
-              }
-              disabled={isUpdating}
-              className="mt-0.5"
-            />
-            <div className="flex-1">
-              <span
-                className={cn(
-                  "text-sm",
-                  task.status === "concluida" &&
-                    "line-through text-muted-foreground",
-                )}
-              >
-                {task.titulo}
-              </span>
-              <div className="flex items-center gap-3 mt-1">
-                <span
-                  className={cn(
-                    "text-xs font-medium",
-                    prioridadeConfig[task.prioridade].color,
-                  )}
-                >
-                  {prioridadeConfig[task.prioridade].icon}{" "}
-                  {prioridadeConfig[task.prioridade].label}
-                </span>
-                {task.dataVencimento && (
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Calendar className="h-3 w-3" />
-                    <span>{formatDate(task.dataVencimento)}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-      </TableCell>
-
-      <TableCell className="align-top">
-        <Badge
-          variant="outline"
-          className={cn("font-normal", getStatusBgColor(task.status))}
-        >
-          {getStatusText(task.status)}
-        </Badge>
-      </TableCell>
-
-      <TableCell className="text-muted-foreground align-top">
-        {task.dataVencimento ? formatDate(task.dataVencimento) : "—"}
-      </TableCell>
-
-      {/* <TableCell className="align-top">
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
-            onClick={() => handleEditStart(task)}
-          >
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-red-500 hover:text-red-700"
-            onClick={() => onTaskDelete(task.id)}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      </TableCell> */}
-    </motion.tr>
-  );
-
   return (
-    <div className="space-y-6">
-      {/* Header com progresso */}
-      <div className="bg-gradient-to-r from-primary/5 to-transparent rounded-lg p-4 border border-primary/10">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <Flame className="h-4 w-4 text-orange-500" />
-            <span className="text-sm font-medium">Progresso Geral</span>
-          </div>
-          <span className="text-sm text-muted-foreground">
-            {tasks.filter((t) => t.status === "concluida").length}/
-            {tasks.length} concluídas
-          </span>
-        </div>
-        <div className="h-2 bg-muted rounded-full overflow-hidden">
+    <div className="space-y-3">
+      {/* Progress bar */}
+      <div className="flex items-center gap-3 px-1">
+        <Flame className="h-3.5 w-3.5 text-orange-500 shrink-0" />
+        <div className="flex-1 h-1.5 rounded-full bg-muted/60 overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-primary to-emerald-500 rounded-full transition-all duration-500"
-            style={{
-              width: `${tasks.length > 0 ? (tasks.filter((t) => t.status === "concluida").length / tasks.length) * 100 : 0}%`,
-            }}
+            className="h-full rounded-full bg-gradient-to-r from-primary-500 to-emerald-500 transition-all duration-500"
+            style={{ width: `${pct}%` }}
           />
         </div>
+        <span className="text-[11px] tabular-nums text-muted-foreground/60 shrink-0">
+          {done}/{total}
+        </span>
       </div>
 
-      {/* Tabela de tarefas */}
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-muted/50 hover:bg-muted/50">
-              <TableHead className="w-12">No</TableHead>
-              <TableHead>Task</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Due Date</TableHead>
-              <TableHead className="w-20"></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <AnimatePresence mode="wait">
-              {tasks.length > 0 ? (
-                tasks.map((task, index) => (
-                  <TaskRow key={task.id} task={task} index={index} />
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center py-12">
-                    <div className="text-center text-muted-foreground">
-                      <p className="text-sm">Nenhuma tarefa ainda.</p>
-                      <p className="text-xs mt-1">
-                        Clique em "Nova tarefa" para começar.
-                      </p>
+      {/* Task list */}
+      <div className="space-y-1">
+        <AnimatePresence mode="popLayout">
+          {tasks.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-10 text-center">
+              <p className="text-sm text-muted-foreground/50">
+                Nenhuma tarefa ainda.
+              </p>
+              <p className="text-xs text-muted-foreground/40 mt-1">
+                Clique em "Nova tarefa" para começar.
+              </p>
+            </div>
+          ) : (
+            tasks.map((task, idx) => {
+              const isConcluida = task.status === "concluida";
+              const pConfig = PRIORIDADE_CONFIG[task.prioridade];
+              const isEditing = editingId === task.id;
+
+              return (
+                <motion.div
+                  key={task.id}
+                  layout
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.18 }}
+                  className={cn(
+                    "group relative flex items-start gap-2.5 px-3 py-2.5 rounded-xl border transition-all",
+                    "bg-card/60 backdrop-blur-sm",
+                    isConcluida
+                      ? "border-border/30 opacity-60"
+                      : "border-border/50 hover:border-border/80",
+                    isEditing &&
+                      "ring-2 ring-primary-500/30 border-primary-500/30",
+                  )}
+                >
+                  {/* Left strip */}
+                  <div
+                    className={cn(
+                      "absolute left-0 top-2.5 bottom-2.5 w-[3px] rounded-full",
+                      isConcluida ? "bg-emerald-500/60" : "bg-border/40",
+                    )}
+                  />
+
+                  {/* Index */}
+                  <span className="text-[11px] tabular-nums text-muted-foreground/30 mt-0.5 w-4 shrink-0 text-center">
+                    {idx + 1}
+                  </span>
+
+                  {/* Checkbox */}
+                  <button
+                    onClick={() =>
+                      onTaskToggle(
+                        task.id,
+                        isConcluida ? "pendente" : "concluida",
+                      )
+                    }
+                    disabled={isUpdating}
+                    className={cn(
+                      "mt-0.5 shrink-0 flex h-4 w-4 items-center justify-center rounded border-2 transition-all",
+                      isConcluida
+                        ? "border-emerald-500 bg-emerald-500"
+                        : "border-border/60 hover:border-border",
+                    )}
+                  >
+                    {isConcluida && (
+                      <Check className="h-2.5 w-2.5 text-" strokeWidth={3} />
+                    )}
+                  </button>
+
+                  {/* Content */}
+                  {isEditing ? (
+                    <div className="flex-1 flex items-center gap-2 min-w-0">
+                      <input
+                        value={editTitle}
+                        onChange={(e) => setEditTitle(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleEditSave(task.id);
+                          if (e.key === "Escape") setEditingId(null);
+                        }}
+                        autoFocus
+                        className={cn(
+                          "flex-1 px-2 py-1 text-sm rounded-lg bg-muted/40 border border-border/50",
+                          "focus:outline-none focus:ring-1 focus:ring-primary-500/40",
+                        )}
+                      />
+                      <select
+                        value={editPrioridade}
+                        onChange={(e) =>
+                          setEditPrioridade(e.target.value as TarefaPrioridade)
+                        }
+                        className="px-2 py-1 text-xs rounded-lg bg-muted/40 border border-border/50 focus:outline-none"
+                      >
+                        <option value="baixa">Baixa</option>
+                        <option value="media">Média</option>
+                        <option value="alta">Alta</option>
+                      </select>
+                      <button
+                        onClick={() => handleEditSave(task.id)}
+                        className="flex h-6 w-6 items-center justify-center rounded-md text-emerald-500 hover:bg-emerald-500/10 transition-colors"
+                      >
+                        <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+                      </button>
+                      <button
+                        onClick={() => setEditingId(null)}
+                        className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground/50 hover:bg-accent transition-colors"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
                     </div>
-                  </TableCell>
-                </TableRow>
-              )}
-            </AnimatePresence>
-          </TableBody>
-        </Table>
+                  ) : (
+                    <div className="flex-1 min-w-0">
+                      <span
+                        className={cn(
+                          "text-sm font-medium break-words",
+                          isConcluida &&
+                            "line-through text-muted-foreground/60",
+                        )}
+                      >
+                        {task.titulo}
+                      </span>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span
+                          className={cn(
+                            "inline-flex items-center gap-1 text-[10px] font-medium text-muted-foreground/60",
+                          )}
+                        >
+                          <span
+                            className={cn(
+                              "h-1.5 w-1.5 rounded-full",
+                              pConfig.dot,
+                            )}
+                          />
+                          {pConfig.label}
+                        </span>
+                        {task.dataVencimento && (
+                          <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground/50">
+                            <Calendar className="h-2.5 w-2.5" />
+                            {formatDate(task.dataVencimento)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Actions */}
+                  {!isEditing && (
+                    <div className="flex items-center gap-0.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => handleEditStart(task)}
+                        className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground/50 hover:text-muted-foreground hover:bg-accent transition-colors"
+                      >
+                        <Pencil className="h-3 w-3" />
+                      </button>
+                      <button
+                        onClick={() => onTaskDelete(task.id)}
+                        className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 transition-colors"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </button>
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

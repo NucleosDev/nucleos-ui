@@ -1,4 +1,3 @@
-// src/components/colecoes/VisualizarItensModal.tsx
 "use client";
 
 import {
@@ -64,48 +63,70 @@ export function VisualizarItensModal({
       <Dialog open={open} onOpenChange={onClose}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
-            <DialogTitle>Itens da coleção</DialogTitle>
+            <DialogTitle className="text-xl">Itens da Coleção</DialogTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              {itens.length} {itens.length === 1 ? "item" : "itens"}
+            </p>
           </DialogHeader>
-          <div className="max-h-[500px] overflow-auto">
+          <div className="max-h-[500px] overflow-auto rounded-lg border border-border">
             {itens.length === 0 ? (
-              <p className="text-center py-8 text-muted-foreground">
-                Nenhum item ainda.
-              </p>
+              <div className="flex items-center justify-center py-12 text-muted-foreground">
+                <p className="text-sm">Nenhum item ainda na coleção.</p>
+              </div>
             ) : (
               <Table>
-                <TableHeader>
-                  <TableRow>
+                <TableHeader className="sticky top-0 bg-muted/50">
+                  <TableRow className="border-b border-border hover:bg-muted/30">
+                    <TableHead className="font-semibold text-foreground/80 w-12">
+                      #
+                    </TableHead>
                     {campos.map((c) => (
-                      <TableHead key={c.id}>{c.nome}</TableHead>
+                      <TableHead
+                        key={c.id}
+                        className="font-semibold text-foreground/80"
+                      >
+                        {c.nome}
+                      </TableHead>
                     ))}
-                    <TableHead className="w-20">Ações</TableHead>
+                    <TableHead className="w-24 font-semibold text-foreground/80 text-right pr-4">
+                      Ações
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {itens.map((item) => (
-                    <TableRow key={item.id}>
+                  {itens.map((item, idx) => (
+                    <TableRow
+                      key={item.id}
+                      className="border-b border-border/50 hover:bg-primary/5 transition-colors group"
+                    >
+                      <TableCell className="text-xs text-muted-foreground font-medium">
+                        {idx + 1}
+                      </TableCell>
                       {campos.map((c) => (
-                        <TableCell key={c.id}>
+                        <TableCell
+                          key={c.id}
+                          className="text-foreground/80 font-medium"
+                        >
                           {formatValor(item.valores[c.id], c.tipoCampo)}
                         </TableCell>
                       ))}
-                      <TableCell>
-                        <div className="flex gap-1">
+                      <TableCell className="text-right">
+                        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8"
+                            className="h-7 w-7 text-primary hover:bg-primary/10"
                             onClick={() => setItemEditando(item)}
                           >
-                            <Pencil className="h-4 w-4" />
+                            <Pencil className="h-3.5 w-3.5" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-destructive"
+                            className="h-7 w-7 text-destructive hover:bg-destructive/10"
                             onClick={() => handleDelete(item.id)}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-3.5 w-3.5" />
                           </Button>
                         </div>
                       </TableCell>

@@ -1,42 +1,36 @@
+// components/layout/dashboard-layout.tsx
 "use client";
 
-import { NucleoCardMini } from "@/components/nucleo/nucleo-card-nano";
-import { ReactNode, useState, useEffect } from "react";
-import { useAuth } from "@/auth";
-import { MessageSquare } from "lucide-react";
+import { LiquidGlass } from "@/components/ui/liquid-glass";
+import { useGamification } from "@/hooks/useGamification";
 import {
-  Zap,
   Flame,
-  Layers,
-  Activity,
-  Lightbulb,
-  Sparkles,
-  Aperture,
-  Menu,
   CalendarDays,
   Trophy,
   BarChart3,
   Bell,
   User,
   Settings,
-  Grid2x2PlusIcon,
-  X,
+  Grid2x2,
+  MessageSquare,
+  Aperture,
+  ChevronRight,
+  Zap,
+  TrendingUp,
+  Inbox,
+  Lightbulb,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { useCurrentUser } from "@/hooks/useDashboard";
 import { useNucleos } from "@/hooks/useNucleo";
+import type { Nucleo } from "@/types/nucleo";
 import { useTotalBlocosCount } from "@/hooks/useBlocos";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useBlocos } from "@/hooks/useBlocos";
-import { useColecoes } from "@/hooks/useColecoes";
-import { useTimers } from "@/hooks/useTimers";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import NucleosLogo from "@/components/nucleo/NucleosLogo";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -62,163 +56,247 @@ interface DashboardSidebarProps {
     id: string;
     nome: string;
     tipo?: string;
-    level?: number;
     iconId?: string | null;
-    icon?: { iconUrl?: string };
     corDestaque?: string;
   }>;
-  blocosData?: any[];
-  colecoesData?: any[];
-  timersData?: any[];
-  isMobile?: boolean;
   onClose?: () => void;
 }
 
-// Componente de conteúdo da sidebar (reutilizável para desktop e mobile)
-function SidebarContentComponent({
-  userData,
-  nucleosCount,
-  blocosCount,
-  recentNucleos,
-  isMobile,
-  onClose,
-}: DashboardSidebarProps) {
-  const pathname = usePathname();
-  const xpPercent = Math.min(
-    ((userData.currentXp || 0) / (userData.nextLevelXp || 100)) * 100,
-    100,
+const NAV_MAIN = [
+  { id: "dashboard", label: "Início", icon: Grid2x2, href: "/dashboard" },
+  {
+    id: "nucleos",
+    label: "Núcleos",
+    icon: Aperture,
+    href: "/dashboard/nucleos",
+  },
+  {
+    id: "calendario",
+    label: "Calendário",
+    icon: CalendarDays,
+    href: "/dashboard/calendario",
+  },
+  {
+    id: "insights",
+    label: "Dicas",
+    icon: Lightbulb,
+    href: "/dashboard/insights",
+  },
+];
+
+const NAV_SECONDARY = [
+  {
+    id: "conquistas",
+    label: "Conquistas",
+    icon: Trophy,
+    href: "/dashboard/conquistas",
+  },
+  {
+    id: "gamificacao",
+    label: "Ranking",
+    icon: TrendingUp,
+    href: "/dashboard/gamificacao",
+  },
+  {
+    id: "chatbot",
+    label: "Orbit",
+    icon: MessageSquare,
+    href: "/dashboard/chatbot",
+  },
+  {
+    id: "inbox",
+    label: "Social",
+    icon: Inbox,
+    href: "/dashboard/inbox",
+  },
+  {
+    id: "notificacoes",
+    label: "Notificações",
+    icon: Bell,
+    href: "/dashboard/notificacoes",
+  },
+];
+
+const NAV_BOTTOM = [
+  { id: "perfil", label: "Perfil", icon: User, href: "/dashboard/perfil" },
+  {
+    id: "configuracoes",
+    label: "Configurações",
+    icon: Settings,
+    href: "/dashboard/configuracoes",
+  },
+];
+
+const COLLAPSED_LINKS = [
+  { icon: Grid2x2, href: "/dashboard", label: "Início" },
+  { icon: Aperture, href: "/dashboard/nucleos", label: "Núcleos" },
+  { icon: CalendarDays, href: "/dashboard/calendario", label: "Calendário" },
+  { icon: Lightbulb, href: "/dashboard/insights", label: "Dicas" },
+];
+
+// ── BgUser (fundo blur extraído) ─────────────────────────────────────────────
+
+// ── NavLink (sidebar expandida) ──────────────────────────────────────────────
+
+function NavLink({
+  href,
+  icon: Icon,
+  label,
+  isActive,
+  onClick,
+}: {
+  href: string;
+  icon: React.ElementType;
+  label: string;
+  isActive: boolean;
+  onClick?: () => void;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className={cn(
+        "relative bg-transparent flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200",
+        isActive ? "text" : "text/40 hover:text/75",
+      )}
+    >
+      {isActive && (
+        <span
+          className="absolute inset-0 rounded-xl backdrop-blur-sm"
+          style={{
+            background: "rgba(255,255,255,0.07)",
+            boxShadow:
+              "inset 1.5px 1.5px 1px 0 rgba(255,255,255,0.28), inset -1.5px -1.5px 1px 0 rgba(255,255,255,0.10), 0 4px 8px rgba(0,0,0,0.2)",
+          }}
+        />
+      )}
+
+      <Icon
+        className={cn(
+          "h-4 w-4 shrink-0 relative z-10 transition-colors duration-200",
+          isActive ? "text" : "text/40",
+        )}
+      />
+      <span className="relative z-10">{label}</span>
+    </Link>
   );
+}
 
-  const getInitials = () => {
-    if (!userData.fullName) return "U";
-    return userData.fullName
-      .split(" ")
-      .map((n) => n[0])
-      .slice(0, 2)
-      .join("")
-      .toUpperCase();
-  };
+// ── NavIcon (sidebar colapsada standalone - usado apenas no settings) ─────────
 
-  const mainLinks = [
-    {
-      id: "nucleos",
-      label: "Nucleos",
-      icon: Aperture,
-      href: "/dashboard/nucleos",
-      count: nucleosCount,
-    },
-    {
-      id: "blocos",
-      label: "Blocos",
-      icon: Layers,
-      href: "/dashboard/blocos",
-      count: blocosCount,
-    },
-    {
-      id: "atividades",
-      label: "Atividades Recentes",
-      icon: Activity,
-      href: "/dashboard/atividades",
-      count: 0,
-    },
-  ];
+function NavIcon({
+  href,
+  icon: Icon,
+  label,
+  isActive,
+}: {
+  href: string;
+  icon: React.ElementType;
+  label: string;
+  isActive: boolean;
+}) {
+  return (
+    <div className="">
+      <Link
+        href={href}
+        title={label}
+        className="relative flex items-center justify-center w-11 h-11 rounded-2xl transition-all duration-300 group"
+      >
+        {isActive ? (
+          <div
+            className="absolute inset-0 rounded-2xl backdrop-blur-sm"
+            style={{
+              background: "rgba(255,255,255,0.09)",
+              boxShadow:
+                "inset 1.5px 1.5px 1px 0 rgba(255,255,255,0.3), inset -1.5px -1.5px 1px 0 rgba(255,255,255,0.10), 0 4px 10px rgba(0,0,0,0.25)",
+            }}
+          />
+        ) : (
+          <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-/[0.05]" />
+        )}
+        <Icon
+          className={cn(
+            "h-[18px] w-[18px] relative z-10 transition-all duration-300",
+            isActive ? "text" : "text/40 group-hover:text/70",
+          )}
+          strokeWidth={isActive ? 2.2 : 1.5}
+        />
+      </Link>
+    </div>
+  );
+}
 
-  const dashboardLinks = [
-    {
-      id: "dashboard",
-      label: "Dashboard",
-      icon: Grid2x2PlusIcon,
-      href: "/dashboard",
-    },
-    {
-      id: "calendario",
-      label: "Calendário",
-      icon: CalendarDays,
-      href: "/dashboard/calendario",
-    },
-    {
-      id: "conquistas",
-      label: "Conquistas",
-      icon: Trophy,
-      href: "/dashboard/conquistas",
-    },
-    {
-      id: "insights",
-      label: "Insights",
-      icon: BarChart3,
-      href: "/dashboard/insights",
-    },
-    {
-      id: "notificacoes",
-      label: "Notificações",
-      icon: Bell,
-      href: "/dashboard/notificacoes",
-    },
-    {
-      id: "chat-bot",
-      label: "Chat-Bot",
-      icon: MessageSquare,
-      href: "/dashboard/chatbot",
-    },
-    { id: "perfil", label: "Perfil", icon: User, href: "/dashboard/perfil" },
-    {
-      id: "configuracoes",
-      label: "Configurações",
-      icon: Settings,
-      href: "/dashboard/configuracoes",
-    },
-  ];
+// ── SidebarContent ───────────────────────────────────────────────────────────
 
-  const insights = [
-    {
-      id: "streak",
-      title: "Streak",
-      description: `${userData.streak || 0} dias consecutivos! Continue assim.`,
-      icon: Flame,
-    },
-    {
-      id: "nucleos-recentes",
-      title: "Nucleos ativos",
-      description:
-        recentNucleos.length > 0
-          ? recentNucleos.map((n) => n.nome).join(", ")
-          : "Nenhum Nucleo criado ainda.",
-      icon: Sparkles,
-    },
-  ];
+function SidebarContent({ userData, onClose }: DashboardSidebarProps) {
+  const pathname = usePathname();
 
   return (
-    <div className="flex flex-col">
-      <div className="px-3 py-3 space-y-1">
-        <p className="px-3 text-xs font-medium uppercase tracking-wider mb-4">
-          Navegação
+    <div className="flex flex-col flex-1 overflow-y-auto py-4">
+      {/* Main nav */}
+      <div className="px-3 space-y-1">
+        <p className="px-3 text-[10px] font-semibold text/25 uppercase tracking-widest mb-2">
+          Principal
         </p>
-        {dashboardLinks.map((link) => {
-          const Icon = link.icon;
-          const isActive = pathname === link.href;
-          return (
-            <Link
-              key={link.id}
-              href={link.href}
-              onClick={onClose}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all hover:scale-[1.01]",
-                isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-background hover:text-accent",
-              )}
-            >
-              <Icon className="h-4 w-4" />
-              <span className="text-sm font-medium">{link.label}</span>
-            </Link>
-          );
-        })}
+        {NAV_MAIN.map((link) => (
+          <NavLink
+            key={link.id}
+            href={link.href}
+            icon={link.icon}
+            label={link.label}
+            isActive={
+              link.href === "/dashboard"
+                ? pathname === link.href
+                : pathname === link.href ||
+                  pathname?.startsWith(link.href + "/")
+            }
+            onClick={onClose}
+          />
+        ))}
+      </div>
+
+      {/* Divider */}
+      <div className="mx-4 my-4 h-px bg-/[0.06]" />
+
+      {/* Secondary nav */}
+      <div className="px-3 space-y-1">
+        <p className="px-3 text-[10px] font-semibold text/25 uppercase tracking-widest mb-2">
+          Explorar
+        </p>
+        {NAV_SECONDARY.map((link) => (
+          <NavLink
+            key={link.id}
+            href={link.href}
+            icon={link.icon}
+            label={link.label}
+            isActive={
+              pathname === link.href || pathname?.startsWith(link.href + "/")
+            }
+            onClick={onClose}
+          />
+        ))}
+      </div>
+
+      {/* Bottom nav */}
+      <div className="mt-auto pt-3 mx-3 space-y-1 ">
+        {NAV_BOTTOM.map((link) => (
+          <NavLink
+            key={link.id}
+            href={link.href}
+            icon={link.icon}
+            label={link.label}
+            isActive={pathname === link.href}
+            onClick={onClose}
+          />
+        ))}
       </div>
     </div>
   );
 }
 
-function DashboardSidebarDesktop({
+// ── SidebarDesktop ───────────────────────────────────────────────────────────
+
+function SidebarDesktop({
   collapsed,
   userData,
   nucleosCount,
@@ -227,128 +305,117 @@ function DashboardSidebarDesktop({
 }: DashboardSidebarProps) {
   const pathname = usePathname();
 
-  {
-    /* Sidebar Fechada */
-  }
-
-  if (collapsed) {
-    return (
-      <aside className="hidden md:flex w-16 border-r border-none flex-col items-center gap-8 transition-all duration-300 ease-in-out sticky top-0 bg-none backdrop-blur-md z-100 pb-0 py-4">
-        {/* espaçamento do header */}
-        <div className="">
-          <Link
-            href="/dashboard"
-            className="hover:opacity-80 transition-opacity"
-          >
-            <Image src={"/icon.svg"} height={32} width={32} alt="logo" />
-          </Link>
-        </div>
-
-        {/* Main icons */}
-        <div className="flex flex-col items-center gap-2">
-          {[
-            { icon: Grid2x2PlusIcon, href: "/dashboard", label: "Dashboard" },
-            { icon: Aperture, href: "/dashboard/nucleos", label: "Nucleos" },
-            { icon: Layers, href: "/dashboard/blocos", label: "Blocos" },
-            {
-              icon: Activity,
-              href: "/dashboard/atividades",
-              label: "Atividades",
-            },
-          ].map((item, index) => {
-            const Icon = item.icon;
-            const isActive =
-              pathname === item.href || pathname?.startsWith(item.href + "/");
-
-            return (
-              <Link
-                key={index}
-                href={item.href}
-                className={cn(
-                  "p-2 rounded-lg transition-all group relative",
-                  isActive
-                    ? "bg-primary/10 text-primary"
-                    : "hover:bg-accent/60 text-muted-background hover:text-foreground",
-                )}
-                title={item.label}
-              >
-                <Icon className="w-5 h-5 hover:text-foreground" />
-              </Link>
-            );
-          })}
-        </div>
-
-        <div className="mt-auto flex flex-col items-center gap-2">
-          <Link
-            href="/dashboard/configuracoes"
-            className="p-2 rounded-lg hover:bg-accent/60 text-muted-background hover:text-foreground"
-            title="Configurações"
-          >
-            <Settings className="w-5 h-5" />
-          </Link>
-        </div>
-      </aside>
-    );
-  }
-
   return (
-    <aside
-      className="
-    hidden md:flex
-    w-72
-    flex-col
-    border-r border-border/60
-    sticky top-0
-    h-screen
-    text-background
-    bg-foreground
-    backdrop-blur-xl
-dark:bg-popover/80 
-dark:shadow-xl 
-
-dark:bg-gradient-to-r 
-dark:from-primary/10 
-dark:to-transparent 
-
-dark:text-foreground
-    overflow-y-auto
-    transition-all duration-300 ease-in-out
-
-    z-30
-  "
+    <motion.aside
+      initial={false}
+      animate={{ width: collapsed ? 72 : 240 }}
+      transition={{ type: "spring", stiffness: 280, damping: 36, mass: 1 }}
+      className="hidden md:flex sticky top-0 z-40 h-screen overflow-hidden shrink-0 box-border bg-foreground/5 backdrop-blur-lg border-r border-border/30"
     >
-      {/* Logo que sobrepõe - posicionada para cobrir a borda do header */}
-      <div className="relative">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 z-50">
-          <Link href="/dashboard" className="block">
-            <div className="p-5">
-              <NucleosLogo
-                size={
-                  typeof window !== "undefined" && window.innerWidth < 768
-                    ? "md"
-                    : "lg"
-                }
-              />
-            </div>
-          </Link>
-        </div>
-      </div>
+      <div className="flex flex-col h-full w-full bg-background">
+        {/* Fundo BgUser quando colapsada */}
 
-      {/* Conteúdo da sidebar com padding extra no topo para compensar a logo */}
-      <div className="pt-24">
-        <SidebarContentComponent
-          collapsed={collapsed}
-          userData={userData}
-          nucleosCount={nucleosCount}
-          blocosCount={blocosCount}
-          recentNucleos={recentNucleos}
-        />
+        <AnimatePresence mode="wait" initial={false}>
+          {collapsed ? (
+            <motion.div
+              key="collapsed"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.14, ease: "easeInOut" }}
+              className="relative z-10 flex flex-col items-center pt-4 w-full h-full"
+            >
+              {/* Glass pill — logo + nav icons together */}
+              <div className="relative w-full px-3">
+                <LiquidGlass
+                  variant="default"
+                  radius="var(--radius-xl)"
+                  className="absolute top-[-12] z-10 flex flex-col items-center gap-0.5 py-2"
+                >
+                  {/* Logo inside the pill */}
+                  <Link
+                    href="/dashboard"
+                    title="Início"
+                    className="flex items-center justify-center w-10 h-10 rounded-xl hover:opacity-75 transition-opacity"
+                  >
+                    <Image src="/icon.svg" height={32} width={32} alt="logo" />
+                  </Link>
+
+                  {COLLAPSED_LINKS.map((item) => {
+                    const Icon = item.icon;
+                    const isActive =
+                      item.href === "/dashboard"
+                        ? pathname === item.href
+                        : pathname === item.href ||
+                          pathname?.startsWith(item.href + "/");
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        title={item.label}
+                        className="relative flex items-center justify-center w-10 h-10 rounded-xl group transition-colors duration-200"
+                      >
+                        {isActive && (
+                          <span
+                            className="absolute inset-0 rounded-xl"
+                            style={{ background: "rgba(255,255,255,0.09)" }}
+                          />
+                        )}
+                        <Icon
+                          className={cn(
+                            "h-[18px] w-[18px] relative z-10 transition-all duration-200",
+                            isActive ? "text" : "text/35 group-hover:text/65",
+                          )}
+                          strokeWidth={isActive ? 2.2 : 1.5}
+                        />
+                      </Link>
+                    );
+                  })}
+                </LiquidGlass>
+              </div>
+
+              <div className="mt-auto">
+                <NavIcon
+                  href="/dashboard/configuracoes"
+                  icon={Settings}
+                  label="Configurações"
+                  isActive={pathname === "/dashboard/configuracoes"}
+                />
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="expanded"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.14, ease: "easeInOut" }}
+              className="flex flex-col w-full h-full"
+            >
+              {/* Logo + nav expandida */}
+              <div className="px-5 py-4 ">
+                <Link href="/dashboard" className="block">
+                  <NucleosLogo size="md" />
+                </Link>
+              </div>
+
+              <SidebarContent
+                collapsed={collapsed}
+                userData={userData}
+                nucleosCount={nucleosCount}
+                blocosCount={blocosCount}
+                recentNucleos={recentNucleos}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </aside>
+    </motion.aside>
   );
 }
 
-// ========== LAYOUT PRINCIPAL ==========
+// ── DashboardLayout ──────────────────────────────────────────────────────────
+
 export function DashboardLayout({
   children,
   collapsed = false,
@@ -356,35 +423,28 @@ export function DashboardLayout({
   isMobileMenuOpen = false,
   onMobileMenuClose = () => {},
 }: DashboardLayoutProps) {
-  const { logout } = useAuth();
-  const pathname = usePathname();
-
   const { data: user } = useCurrentUser();
   const { data: nucleos } = useNucleos();
   const { data: totalBlocos = 0 } = useTotalBlocosCount(nucleos || []);
-
-  const { blocos: blocosData = [] } = useBlocos();
-  const { colecoes: colecoesData = [] } = useColecoes();
-  const { timers: timersData = [] } = useTimers();
+  const gamification = useGamification();
+  const { data: stats } = gamification.useStats();
 
   const userData = {
     fullName: user?.fullName || user?.email?.split("@")[0] || "Usuário",
     avatarUrl: user?.avatarUrl || "",
-    level: 5,
-    currentXp: 340,
-    nextLevelXp: 500,
-    streak: 12,
+    level: stats?.level,
+    currentXp: stats?.currentXp,
+    nextLevelXp: stats?.nextLevelXp,
+    streak: stats?.currentStreak,
   };
 
-  const nucleosCount = nucleos?.length || 0;
-  const recentNucleos = (nucleos || []).slice(0, 3).map((nucleo) => ({
-    id: nucleo.id,
-    nome: nucleo.nome,
-    tipo: nucleo.tipo,
-    level: (nucleo as any)?.level || 1,
-    iconId: nucleo.iconId,
-    icon: (nucleo as any)?.icon,
-    corDestaque: nucleo.corDestaque,
+  const nucleosCount = nucleos?.length ?? 0;
+  const recentNucleos = (nucleos ?? []).slice(0, 5).map((n: Nucleo) => ({
+    id: n.id,
+    nome: n.nome,
+    tipo: n.tipo,
+    iconId: n.iconId,
+    corDestaque: n.corDestaque,
   }));
 
   const sidebarProps = {
@@ -393,24 +453,20 @@ export function DashboardLayout({
     nucleosCount,
     blocosCount: totalBlocos,
     recentNucleos,
-    blocosData,
-    colecoesData,
-    timersData,
   };
 
-  // Mobile: menu em sheet
   if (isMobile) {
     return (
       <div className="flex">
         <Sheet open={isMobileMenuOpen} onOpenChange={onMobileMenuClose}>
-          <SheetContent side="left" className="w-72 p-0">
-            <div className="pt-12">
-              <SidebarContentComponent
-                {...sidebarProps}
-                isMobile={true}
-                onClose={onMobileMenuClose}
-              />
+          <SheetContent
+            side="left"
+            className="w-[240px] p-0 bg-black/90 backdrop-blur-3xl"
+          >
+            <div className="px-5 py-4 ">
+              <NucleosLogo size="md" />
             </div>
+            <SidebarContent {...sidebarProps} onClose={onMobileMenuClose} />
           </SheetContent>
         </Sheet>
         <main className="flex-1 overflow-auto pb-16">{children}</main>
@@ -418,12 +474,25 @@ export function DashboardLayout({
     );
   }
 
-  // Desktop: sidebar fixa
   return (
-    <div className="flex h-screen overflow-hidden">
-      <DashboardSidebarDesktop {...sidebarProps} />
+    <div className="flex h-screen overflow-hidden bg-background">
+      {/* Sidebar */}
+      <SidebarDesktop {...sidebarProps} />
 
-      <main className="flex-1 overflow-y-auto">{children}</main>
+      {/* Main area */}
+      <main className="relative flex-1 min-w-0 overflow-y-auto bg-background">
+        {/* Content */}
+        <div className="relative z-10 min-h-full">
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 4 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {children}
+          </motion.div>
+        </div>
+      </main>
     </div>
   );
 }

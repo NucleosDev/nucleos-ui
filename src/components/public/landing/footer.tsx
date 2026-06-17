@@ -1,4 +1,4 @@
-import { Github, Twitter, Instagram, Linkedin } from "lucide-react"
+import { Code2, MessageCircle, Camera, Briefcase } from "lucide-react"
 import Image from "next/image"
 
 const footerLinks = {
@@ -22,10 +22,10 @@ const footerLinks = {
 }
 
 const socialLinks = [
-  { icon: Twitter, href: "#", label: "Twitter" },
-  { icon: Instagram, href: "#", label: "Instagram" },
-  { icon: Linkedin, href: "#", label: "LinkedIn" },
-  { icon: Github, href: "#", label: "GitHub" },
+  { icon: MessageCircle, href: "#", label: "MessageCircle" },
+  { icon: Camera, href: "#", label: "Camera" },
+  { icon: Briefcase, href: "#", label: "LinkedIn" },
+  { icon: Code2, href: "#", label: "GitHub" },
 ]
 
 export function Footer() {

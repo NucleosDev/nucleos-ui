@@ -5,6 +5,7 @@ import type {
   UpdateHabitoPayload,
   RegistrarHabitoPayload,
 } from "@/types/habitos";
+import { GAMIFICATION_KEYS } from "./useGamification";
 
 export function useHabitos(blocoId?: string) {
   const queryClient = useQueryClient();
@@ -47,6 +48,8 @@ export function useHabitos(blocoId?: string) {
       habitosService.registrar(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["habitos", blocoId] });
+      queryClient.invalidateQueries({ queryKey: GAMIFICATION_KEYS.stats });
+      queryClient.invalidateQueries({ queryKey: GAMIFICATION_KEYS.fullStats });
     },
   });
 

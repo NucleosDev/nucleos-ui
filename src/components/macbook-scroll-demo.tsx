@@ -3,7 +3,7 @@
 
 // export default function MacbookScrollDemo() {
 //   return (
-//     <div className="w-full overflow-hidden bg-white dark:bg-[#0B0B0F]">
+//     <div className="w-full overflow-hidden bg dark:bg-[#0B0B0F]">
 //       <MacbookScroll
 //         title={
 //           <span>
@@ -52,7 +52,7 @@
 //         fillRule="evenodd"
 //         clipRule="evenodd"
 //         d="M18 11H29.0769C36.2141 11 42 16.5716 42 23.4444C42 30.3173 36.2141 35.8889 29.0769 35.8889H25.3846V43H18V11ZM25.3846 28.7778H29.0769C32.1357 28.7778 34.6154 26.39 34.6154 23.4444C34.6154 20.4989 32.1357 18.1111 29.0769 18.1111H25.3846V28.7778Z"
-//         fill="white"
+//         fill=""
 //       ></path>
 //       <path
 //         fillRule="evenodd"

@@ -1,7 +1,7 @@
+// src/components/blocos/BlocoHoverActions.tsx
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Layers, Pencil, Trash2, Copy, Plus } from "lucide-react";
+import { ExternalLink, Pencil, Trash2, Copy, Plus } from "lucide-react";
 import type { Bloco } from "@/types/bloco";
 
 interface BlocoHoverActionsProps {
@@ -23,63 +23,65 @@ export function BlocoHoverActions({
   onEdit,
   isDeleting = false,
 }: BlocoHoverActionsProps) {
+  const hasActions =
+    onOpenFullPage || onEdit || onDuplicate || onAddBelow || onDelete;
+
+  if (!hasActions) return null;
+
   return (
-    <div className="absolute -top-3 right-2 z-20 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-      {/* Abrir em tela cheia */}
-      <Button
-        size="icon"
-        variant="ghost"
-        className="h-7 w-7 bg-background shadow-sm hover:bg-accent"
-        onClick={onOpenFullPage}
-        title="Abrir em tela cheia"
-      >
-        <Layers className="h-3.5 w-3.5" />
-      </Button>
+    <div className="absolute -top-[-14px] left-[85%] -translate-x-1/2 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+      <div className="flex flex-row items-center gap-0.5 px-1 py-1 bg-black/20 backdrop-blur-md rounded-xl border border-/20 shadow-lg">
+        {onOpenFullPage && (
+          <button
+            onClick={onOpenFullPage}
+            title="Abrir em tela cheia"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:/10 transition-all"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+          </button>
+        )}
 
-      {/* Editar - abre edição inline no card */}
-      <Button
-        size="icon"
-        variant="ghost"
-        className="h-7 w-7 bg-background shadow-sm hover:bg-accent"
-        onClick={onEdit}
-        title="Editar nome"
-      >
-        <Pencil className="h-3.5 w-3.5" />
-      </Button>
+        {onEdit && (
+          <button
+            onClick={onEdit}
+            title="Editar nome"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:/10 transition-all"
+          >
+            <Pencil className="h-3.5 w-3.5" />
+          </button>
+        )}
 
-      {/* Duplicar */}
-      <Button
-        size="icon"
-        variant="ghost"
-        className="h-7 w-7 bg-background shadow-sm hover:bg-accent"
-        onClick={onDuplicate}
-        title="Duplicar"
-      >
-        <Copy className="h-3.5 w-3.5" />
-      </Button>
+        {onDuplicate && (
+          <button
+            onClick={onDuplicate}
+            title="Duplicar"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:/10 transition-all"
+          >
+            <Copy className="h-3.5 w-3.5" />
+          </button>
+        )}
 
-      {/* Adicionar bloco abaixo */}
-      <Button
-        size="icon"
-        variant="ghost"
-        className="h-7 w-7 bg-background shadow-sm hover:bg-accent"
-        onClick={onAddBelow}
-        title="Adicionar bloco abaixo"
-      >
-        <Plus className="h-3.5 w-3.5" />
-      </Button>
+        {onAddBelow && (
+          <button
+            onClick={onAddBelow}
+            title="Adicionar bloco abaixo"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground/60 hover:text-foreground hover:/10 transition-all"
+          >
+            <Plus className="h-3.5 w-3.5" />
+          </button>
+        )}
 
-      {/* Excluir */}
-      <Button
-        size="icon"
-        variant="ghost"
-        className="h-7 w-7 bg-background shadow-sm text-destructive hover:text-destructive hover:bg-destructive/10"
-        onClick={onDelete}
-        disabled={isDeleting}
-        title="Excluir"
-      >
-        <Trash2 className="h-3.5 w-3.5" />
-      </Button>
+        {onDelete && (
+          <button
+            onClick={onDelete}
+            disabled={isDeleting}
+            title="Excluir"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted-foreground/60 hover:text-destructive hover:bg-destructive/10 transition-all disabled:opacity-40"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        )}
+      </div>
     </div>
   );
 }

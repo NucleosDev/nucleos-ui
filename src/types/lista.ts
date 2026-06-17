@@ -1,15 +1,26 @@
-export type TipoLista = "generica" | "compras" | "financeiro";
+// src/types/lista.ts
+
+export type TipoLista = "financeiro" | "compras" | "generico";
 
 export interface Lista {
   id: string;
   blocoId: string;
   nome: string;
   tipoLista: TipoLista;
+  orcamento?: number;
+  metadata?: ListaMetadata;
+  itens?: ItemLista[];
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;
-  itens?: ItemLista[];
-  categorias?: Categoria[];
+}
+
+export interface ListaMetadata {
+  localCompra?: string;
+  dataLimite?: string;
+  tags?: string[];
+  moeda?: string;
+  icone?: string;
 }
 
 export interface ItemLista {
@@ -35,10 +46,19 @@ export interface Categoria {
   createdAt: string;
 }
 
+// ── Payloads ─────────────────────────────────────────────────────────────
+
 export interface CreateListaPayload {
   blocoId: string;
   nome: string;
   tipoLista?: TipoLista;
+}
+
+export interface UpdateListaPayload extends Partial<
+  Omit<CreateListaPayload, "blocoId">
+> {
+  orcamento?: number;
+  metadata?: ListaMetadata;
 }
 
 export interface CreateItemListaPayload {
@@ -54,7 +74,3 @@ export interface UpdateItemListaPayload extends Partial<
 > {
   checked?: boolean;
 }
-
-export interface UpdateListaPayload extends Partial<
-  Omit<CreateListaPayload, "blocoId">
-> {}

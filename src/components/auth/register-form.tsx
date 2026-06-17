@@ -6,14 +6,7 @@ import { useAuth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+
 import { Eye, EyeOff } from "lucide-react";
 
 export function RegisterForm() {
@@ -106,9 +99,9 @@ export function RegisterForm() {
     //     <div className="absolute right-1/4 bottom-1/4 size-96 rounded-full bg-accent/15 blur-3xl" />
     //   </div>
 
-    <Card className="w-full py-5 shadow-lg border-0 bg-background/90 backdrop-blur-lg">
+    <div>
       <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
+        <div className="space-y-4">
           {error && (
             <div className="p-3 text-sm text-red-500 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-800">
               {error}
@@ -236,12 +229,12 @@ export function RegisterForm() {
               </button>
             </div>
           </div>
-        </CardContent>
+        </div>
 
-        <CardFooter className="flex flex-col space-y-4 pt-4 pb-2">
+        <div className="flex flex-col space-y-4 pt-4 pb-2">
           <Button
             type="submit"
-            className="w-full bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90"
+            className="w-full bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text- hover:opacity-90"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Cadastrando..." : "Cadastrar"}
@@ -253,8 +246,8 @@ export function RegisterForm() {
               Faça login
             </a>
           </p>
-        </CardFooter>
+        </div>
       </form>
-    </Card>
+    </div>
   );
 }

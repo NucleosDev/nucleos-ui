@@ -93,8 +93,8 @@ export const tarefasService = {
         return (res as any).data;
       }
       return res as Tarefa;
-    } catch (error) {
-      console.error("Erro ao atualizar tarefa:", error);
+    } catch (error: any) {
+      console.error("Erro ao atualizar tarefa:", error?.message || error?.statusCode || error);
       throw error;
     }
   },

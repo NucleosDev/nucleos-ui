@@ -3,8 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { NucleoCard } from "./nucleo-card";
 import { CreateNucleoModal } from "./nucleo-create-modal";
@@ -12,33 +10,18 @@ import { ROUTES } from "@/constants/routes";
 import { useNucleos } from "@/hooks/useNucleo";
 import type { NucleoComStats } from "@/types/nucleo";
 import { ArrowRight } from "lucide-react";
-
+import { LiquidGlass } from "../ui/liquid-glass";
+import { motion } from "framer-motion";
 type Props = {
   limit?: number;
   variant?: "all" | "recent";
 };
 
-export function NucleosOverview({ limit, variant = "all" }: Props) {
-  const { data: nucleos = [], isLoading, remove, isDeleting } = useNucleos();
-  const today = new Date();
-  let filteredNucleos = [...nucleos];
-  // APENAS OS CARDS RECENTES, CRIADOS NO DASHBOARD
-  if (variant === "recent") {
-    filteredNucleos = filteredNucleos
-      .filter((n) => {
-        const created = new Date(n.createdAt);
-        const usedToday = false;
-
-        const createdRecently =
-          created >= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-
-        return usedToday || createdRecently;
-      })
-      .sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      );
-  }
+export function NucleosOverview({ limit }: Props) {
+  const { data: nucleos = [], isLoading, remove } = useNucleos();
+  let filteredNucleos = [...nucleos].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  );
   if (limit) {
     filteredNucleos = filteredNucleos.slice(0, limit);
   }
@@ -78,15 +61,17 @@ export function NucleosOverview({ limit, variant = "all" }: Props) {
             Nucleos Recentes
           </h2>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
+        <LiquidGlass
+          variant="button"
+          radius="var(--radius-md)"
           onClick={() => router.push("/dashboard/nucleos")}
-          className="group gap-1.5 text-muted-foreground hover:text-background transition-all duration-300"
+          className="hidden sm:inline-flex text-sm p-1.2 font-medium text-"
         >
-          <span>Ver todos</span>
-          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-        </Button>
+          <span className="flex items-center gap-2 px-3.5 py-2">
+            <ArrowRight className="h-3.5 w-3.5" />
+            Ver todos
+          </span>
+        </LiquidGlass>
       </div>
 
       {nucleos.length === 0 ? (
@@ -117,7 +102,7 @@ export function NucleosOverview({ limit, variant = "all" }: Props) {
               />
             );
           })}
-          <AddNucleoCard onClick={() => setCreateModalOpen(true)} />
+          <CreateNucleoCard onClick={() => setCreateModalOpen(true)} />
         </div>
       )}
 
@@ -129,39 +114,157 @@ export function NucleosOverview({ limit, variant = "all" }: Props) {
   );
 }
 
-function AddNucleoCard({ onClick }: { onClick: () => void }) {
+function CreateNucleoCard({ onClick }: { onClick: () => void }) {
   return (
-    <Card
-      className="group h-full min-h-[280px] cursor-pointer border-2 border-dashed border-muted-foreground/25 bg-muted/20 transition-all hover:border-primary/50 hover:bg-muted/30"
+    <LiquidGlass
+      radius="26px"
+      variant="default"
+      className="w-full rounded-2xl cursor-pointer"
       onClick={onClick}
     >
-      <CardContent className="flex h-full flex-col items-center justify-center p-6 text-center">
-        <div className="rounded-full bg-primary/10 p-4 transition-transform group-hover:scale-110">
-          <Plus className="h-8 w-8 text-primary" />
+      <div className="group relative isolate overflow-hidden rounded-2xl transition-all duration-300 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.2),0_8px_10px_-6px_rgba(0,0,0,0.1)]">
+        <svg
+          width="0"
+          height="0"
+          className="absolute pointer-events-none"
+          aria-hidden="true"
+        >
+          <defs>
+            <clipPath
+              id="nucleo-wave-clip-create"
+              clipPathUnits="objectBoundingBox"
+            >
+              <path d="M 0 0 L 1 0 L 1 0.85 C 0.68 1, 0.30 0.55, 0 0.775 Z" />
+            </clipPath>
+          </defs>
+        </svg>
+
+        {/* Image area */}
+        <div
+          className="relative w-full overflow-hidden h-[200px]"
+          style={{
+            clipPath: "url(#nucleo-wave-clip-create)",
+            WebkitClipPath: "url(#nucleo-wave-clip-create)",
+          }}
+        >
+          <div
+            className="absolute inset-0 z-0 transition-transform duration-700 group-hover:scale-105"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(107,114,128,0.22) 0%, rgba(75,85,99,0.15) 40%, rgba(31,41,55,0.30) 100%)",
+            }}
+          >
+            <div
+              className="absolute inset-0 opacity-[0.04]"
+              style={{
+                backgroundImage: `repeating-linear-gradient(0deg, oklch(1 0 0) 0px, oklch(1 0 0) 1px, transparent 1px, transparent 28px), repeating-linear-gradient(90deg, oklch(1 0 0) 0px, oklch(1 0 0) 1px, transparent 1px, transparent 28px)`,
+              }}
+            />
+          </div>
+
+          {/* Overlay gradiente — igual ao NucleoCard */}
+          <div className="absolute inset-0 z-10 bg-gradient-to-t from-card/95 via-card/50 to-transparent" />
+
+          {/* Hover overlay — IDÊNTICO ao NucleoCard */}
+          <div
+            className="absolute inset-0 z-20 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            style={{
+              background: "rgba(0,0,0,0.28)",
+              backdropFilter: "blur(4px) saturate(120%)",
+              WebkitBackdropFilter: "blur(4px) saturate(120%)",
+            }}
+          >
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium"
+              style={{
+                background: "rgba(255,255,255,0.18)",
+                backdropFilter: "blur(14px) saturate(160%)",
+                WebkitBackdropFilter: "blur(14px) saturate(160%)",
+                border: "1px solid rgba(255,255,255,0.30)",
+                boxShadow:
+                  "inset 0 1px 0 rgba(255,255,255,0.30), 0 4px 16px rgba(0,0,0,0.18)",
+              }}
+            >
+              <Plus className="h-4 w-4" />
+              Criar novo Núcleo
+            </motion.button>
+          </div>
         </div>
-        <h3 className="mt-4 text-lg font-medium">Criar novo Nucleo</h3>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Organize sua vida em áreas específicas
-        </p>
-      </CardContent>
-    </Card>
+
+        {/* Floating "?" icon — mesma posição do NucleoCard */}
+        <div className="absolute z-30 left-12" style={{ top: "122px" }}>
+          <div className="relative inline-flex">
+            <div
+              className="absolute inset-0 rounded-2xl blur-xl opacity-55"
+              style={{ background: "rgba(107,114,128,0.5)" }}
+            />
+            <div
+              className="relative flex h-14 w-14 items-center justify-center rounded-2xl"
+              style={{
+                background:
+                  "linear-gradient(145deg, rgba(107,114,128,0.55), rgba(75,85,99,0.40))",
+                border: "1.5px solid rgba(255,255,255,0.12)",
+                boxShadow:
+                  "inset 0 1.5px 0 rgba(255,255,255,0.18), 0 8px 20px rgba(0,0,0,0.14)",
+              }}
+            >
+              <span className="text-2xl font-bold text-foreground/35 select-none">
+                ?
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="relative p-5">
+          <div className="mb-3 flex items-start justify-between gap-2">
+            <h3 className="text-lg font-bold leading-tight tracking-tight text-foreground/25 line-clamp-1 blur-[3px] select-none pointer-events-none">
+              Novo Núcleo
+            </h3>
+          </div>
+
+          <div className="mb-4 flex flex-wrap items-center gap-2 blur-sm opacity-20 select-none pointer-events-none">
+            <div className="flex items-center gap-1 rounded-full bg-muted/40 px-2.5 py-0.5">
+              <span className="text-xs font-medium">● ● ●</span>
+            </div>
+            <div className="flex items-center gap-1 rounded-full bg-muted/40 px-2.5 py-0.5">
+              <span className="text-xs font-medium">● ●</span>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-3">
+            <div className="flex items-center gap-2.5">
+              <Plus className="h-4 w-4 text-foreground/40 group-hover:text-primary transition-colors duration-300" />
+              <span className="text-sm font-semibold text-foreground/40 group-hover:text-primary transition-colors duration-300"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </LiquidGlass>
   );
 }
 
 function EmptyState({ onCreateClick }: { onCreateClick: () => void }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/25 bg-muted/20 p-12 text-center">
+    <div className="flex flex-col items-center justify-center rounded-[var(--radius-lg)] border-2 border-dashed border-border/40 bg-muted/10 p-12 text-center">
       <div className="rounded-full bg-primary/10 p-4">
         <Plus className="h-10 w-10 text-primary" />
       </div>
       <h3 className="mt-6 text-xl font-semibold">Nenhum Nucleo ainda</h3>
-      <p className="mt-2 text-muted-foreground">
+      <p className="mt-2 text-sm text-muted-foreground/60">
         Crie seu primeiro Nucleo para começar a organizar suas atividades
       </p>
-      <Button onClick={onCreateClick} className="mt-6">
-        <Plus className="mr-2 h-4 w-4" />
-        Criar primeiro Nucleo
-      </Button>
+      <div className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2s">
+        <button
+          onClick={onCreateClick}
+          className="mt-6 flex items-center gap-2 px-4 py-2.5 rounded-[var(--radius-md)] bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity shadow-[var(--shadow-xs)]"
+        >
+          <Plus className="h-4 w-4" />
+          Criar primeiro Nucleo
+        </button>
+      </div>
     </div>
   );
 }
@@ -170,29 +273,23 @@ function NucleosGridSkeleton() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {[1, 2, 3, 4].map((i) => (
-        <Card key={i} className="h-[280px] overflow-hidden">
-          <div className="h-2 w-full bg-muted" />
-          <CardContent className="p-6">
+        <div
+          key={i}
+          className="h-[200px] rounded-[var(--radius-lg)] overflow-hidden border border-border/40"
+        >
+          <div className="h-1.5 w-full bg-muted" />
+          <div className="p-5 space-y-4">
             <div className="flex items-start gap-3">
-              <Skeleton className="h-12 w-12 rounded-xl" />
+              <Skeleton className="h-10 w-10 rounded-xl" />
               <div className="flex-1 space-y-2">
-                <Skeleton className="h-5 w-3/4" />
+                <Skeleton className="h-4 w-3/4" />
                 <Skeleton className="h-3 w-1/2" />
               </div>
-              <Skeleton className="h-6 w-12 rounded-full" />
             </div>
-            <Skeleton className="mt-4 h-4 w-full" />
-            <Skeleton className="mt-2 h-4 w-2/3" />
-            <div className="mt-6 space-y-2">
-              <Skeleton className="h-2 w-full" />
-              <div className="grid grid-cols-3 gap-2 pt-2">
-                <Skeleton className="h-12 rounded-lg" />
-                <Skeleton className="h-12 rounded-lg" />
-                <Skeleton className="h-12 rounded-lg" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            <Skeleton className="h-3 w-full" />
+            <Skeleton className="h-3 w-2/3" />
+          </div>
+        </div>
       ))}
     </div>
   );
