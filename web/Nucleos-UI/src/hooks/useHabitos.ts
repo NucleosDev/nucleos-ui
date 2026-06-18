@@ -46,6 +46,20 @@ export function useHabitos(blocoId?: string) {
   const registrarMutation = useMutation({
     mutationFn: (payload: RegistrarHabitoPayload) =>
       habitosService.registrar(payload),
+    onMutate: async (payload) => {
+      await queryClient.cancelQueries({ queryKey: ["habitos", blocoId] });
+      const previous = queryClient.getQueryData(["habitos", blocoId]);
+      queryClient.setQueryData(["habitos", blocoId], (old: any[]) =>
+        (old ?? []).map((h) =>
+          h.id === payload.habitoId ? { ...h, registrado_hoje: true } : h,
+        ),
+      );
+      return { previous };
+    },
+    onError: (_err, _vars, ctx) => {
+      if (ctx?.previous)
+        queryClient.setQueryData(["habitos", blocoId], ctx.previous);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["habitos", blocoId] });
       queryClient.invalidateQueries({ queryKey: GAMIFICATION_KEYS.stats });

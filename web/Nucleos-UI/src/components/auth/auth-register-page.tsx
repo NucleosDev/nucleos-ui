@@ -7,7 +7,7 @@ import Link from "next/link";
 import { ChevronLeftIcon } from "lucide-react";
 import { RegisterForm } from "@/components/auth/register-form";
 import Image from "next/image";
-import { useAuth } from "@/auth/auth-context";
+import { GoogleAuthButton } from "@/components/auth/google-button";
 
 export default function RegisterPage() {
   return (
@@ -18,7 +18,6 @@ export default function RegisterPage() {
 }
 
 export function AuthPage() {
-  const { loginWithGoogle } = useAuth();
 
   return (
     <main className="relative min-h-screen overflow-hidden lg:grid lg:grid-cols-2">
@@ -100,6 +99,18 @@ export function AuthPage() {
         <div className="w-full max-w-md z-10">
           <div className="bg-background rounded-2xl border border-white/20 p-8">
             <RegisterForm />
+
+            {/* Divider */}
+            <div className="my-5 flex items-center gap-3">
+              <div className="h-px flex-1 bg-border/50" />
+              <span className="text-[11px] text-muted-foreground/60 uppercase tracking-wider">
+                ou
+              </span>
+              <div className="h-px flex-1 bg-border/50" />
+            </div>
+
+            {/* Google sign up */}
+            <GoogleAuthButton />
           </div>
         </div>
       </div>
