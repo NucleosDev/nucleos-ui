@@ -11,12 +11,7 @@ import { useAuth } from "@/auth";
 import { useUserPlan } from "@/hooks/useDashboard";
 import { ROUTES } from "@/constants/routes";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
@@ -95,12 +90,7 @@ export function AuthenticatedMobileHeader({
 
   const getInitials = () => {
     if (!user?.fullName) return "U";
-    return user.fullName
-      .split(" ")
-      .map((n) => n[0])
-      .slice(0, 2)
-      .join("")
-      .toUpperCase();
+    return user.fullName.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
   };
 
   const getPlanLabel = () => {
@@ -124,42 +114,21 @@ export function AuthenticatedMobileHeader({
     >
       <div className="flex items-center justify-between px-4 py-2">
         <Link href="/dashboard" className="flex items-center">
-          <Image
-            src="/lettermark-nucleos.svg"
-            width={96}
-            height={24}
-            alt="Nucleos"
-            className="h-6 w-auto"
-          />
+          <Image src="/logotype-nucleos.svg" width={96} height={24} alt="Nucleos" className="h-6 w-auto" />
         </Link>
 
         <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-9 w-9 rounded-full"
-            aria-label="Buscar"
-          >
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" aria-label="Buscar">
             <Search className="h-4 w-4" />
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-9 w-9 rounded-full"
-            aria-label="Notificações"
-          >
+          <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" aria-label="Notificações">
             <Bell className="h-4 w-4" />
           </Button>
           <ModeToggle />
 
           <Sheet open={sheetOpen} onOpenChange={handleSheetChange}>
             <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 rounded-full"
-                aria-label="Menu"
-              >
+              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full" aria-label="Menu">
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
@@ -172,24 +141,15 @@ export function AuthenticatedMobileHeader({
               <div className="flex flex-col h-full">
                 {/* Logo */}
                 <div className="px-5 py-4 border-b border-border/40">
-                  <Image
-                    src="/logotype-nucleos.svg"
-                    width={100}
-                    height={26}
-                    alt="Nucleos"
-                    className="h-6 w-auto"
-                  />
+                  <Image src="/logotype-nucleos.svg" width={100} height={26} alt="Nucleos" className="h-6 w-auto" />
                 </div>
 
                 {/* Scrollable content */}
                 <div className="flex-1 overflow-y-auto py-3 space-y-1">
+
                   {/* User profile card */}
                   <div className="px-3 pb-2">
-                    <LiquidGlass
-                      variant="subtle"
-                      radius="14px"
-                      interactive={false}
-                    >
+                    <LiquidGlass variant="subtle" radius="14px" interactive={false}>
                       <div className="flex items-center gap-3 px-4 py-3.5">
                         <Avatar className="h-10 w-10 ring-1 ring-border shrink-0">
                           <AvatarImage src={user?.avatarUrl || undefined} />
@@ -290,11 +250,7 @@ export function AuthenticatedMobileHeader({
 
                 {/* Logout */}
                 <div className="px-3 py-3 border-t border-border/40">
-                  <LiquidGlass
-                    variant="subtle"
-                    radius="10px"
-                    interactive={false}
-                  >
+                  <LiquidGlass variant="subtle" radius="10px" interactive={false}>
                     <button
                       onClick={handleLogout}
                       className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm font-medium text-destructive hover:bg-destructive/8 transition-colors duration-[var(--duration-fast)] rounded-[10px]"

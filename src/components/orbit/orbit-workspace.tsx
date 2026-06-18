@@ -20,13 +20,7 @@ import {
   Edit2,
   Mic,
   MicOff,
-  Building2,
 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useNucleos } from "@/hooks/useNucleo";
 import { useQueryClient } from "@tanstack/react-query";
@@ -42,9 +36,6 @@ import {
   type OrbitCommand,
   type OrbitCommandType,
 } from "@/lib/orbit/interpreter";
-
-import Image from "next/image";
-
 import {
   getPurgatoryItems,
   type PurgatoryItem,
@@ -215,13 +206,7 @@ function createRecognition(): AnyRecognition | null {
 
 // ── Componente principal ──────────────────────────────────────────────────────
 
-export function OrbitWorkspace({
-  compact = false,
-  defaultNucleoId,
-}: {
-  compact?: boolean;
-  defaultNucleoId?: string;
-}) {
+export function OrbitWorkspace({ compact = false }: { compact?: boolean }) {
   const { user } = useAuth();
   const userId = user?.userId ?? "anon";
 
@@ -239,8 +224,6 @@ export function OrbitWorkspace({
   );
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<ReturnType<typeof createRecognition> | null>(null);
-  const [nucleoPromptOpen, setNucleoPromptOpen] = useState(false);
-  const [promptNucleoId, setPromptNucleoId] = useState<string>("");
 
   const { data: nucleos = [] } = useNucleos();
   const queryClient = useQueryClient();
@@ -257,17 +240,13 @@ export function OrbitWorkspace({
 
     setTimeout(() => {
       const raw = interpret(inputText, nucleos);
-      const withOverrides = applyOverrides(raw, userId).map((cmd) =>
-        !cmd.nucleoId && defaultNucleoId
-          ? { ...cmd, nucleoId: defaultNucleoId }
-          : cmd,
-      );
+      const withOverrides = applyOverrides(raw, userId);
       setCommands(withOverrides);
       setSelected(new Set(withOverrides.map((c) => c.id)));
       setIsProcessing(false);
       setHasProcessed(true);
     }, 1200);
-  }, [inputText, nucleos, userId, defaultNucleoId]);
+  }, [inputText, nucleos, userId]);
 
   const handleProcessPurgatory = useCallback(
     (item: PurgatoryItem) => {
@@ -347,26 +326,10 @@ export function OrbitWorkspace({
 
   // ── Criar ────────────────────────────────────────────────────────────────────
 
-  const handleCreate = useCallback(async (nucleoOverride?: string) => {
-    const overrideNucleo = nucleoOverride
-      ? nucleos.find((n) => n.id === nucleoOverride) ?? null
-      : null;
-
+  const handleCreate = useCallback(async () => {
     const toCreate = commands
       .filter((c) => selected.has(c.id))
-      .map((c) => {
-        const merged = { ...c, ...editOverrides[c.id] };
-        if (!merged.nucleoId && overrideNucleo) {
-          return {
-            ...merged,
-            nucleoId: overrideNucleo.id,
-            nucleoNome: overrideNucleo.nome,
-            nucleoCor: overrideNucleo.corDestaque ?? "#4D7CFF",
-            tipoNucleo: overrideNucleo.tipo,
-          };
-        }
-        return merged;
-      });
+      .map((c) => ({ ...c, ...editOverrides[c.id] }));
 
     if (toCreate.length === 0) return;
 
@@ -565,21 +528,6 @@ export function OrbitWorkspace({
     setSelected(new Set());
   }, [commands, selected, editOverrides, nucleos, queryClient]);
 
-  const handleCreateClick = useCallback(() => {
-    const hasUnassigned = commands.some((cmd) => {
-      if (!selected.has(cmd.id)) return false;
-      const effective = { ...cmd, ...editOverrides[cmd.id] };
-      return !effective.nucleoId;
-    });
-
-    if (hasUnassigned && nucleos.length > 0) {
-      setPromptNucleoId(nucleos[0]?.id ?? "");
-      setNucleoPromptOpen(true);
-    } else {
-      handleCreate();
-    }
-  }, [commands, selected, editOverrides, nucleos, handleCreate]);
-
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
@@ -654,12 +602,9 @@ export function OrbitWorkspace({
                 border: "1px solid rgba(77,124,255,0.22)",
               }}
             >
-              <Image
-              src="/orbit-icon.svg"
-              alt="Orbit Icon"
-              width={28}
-              height={28}
-              className="h-8 w-8.5"
+              <Sparkles
+                className="h-4.5 w-4.5 text-primary"
+                strokeWidth={2.2}
               />
             </div>
             <div>
@@ -957,7 +902,7 @@ export function OrbitWorkspace({
                       disabled={
                         selectedCount === 0 || creationStatus === "creating"
                       }
-                      onClick={handleCreateClick}
+                      onClick={handleCreate}
                       className={cn(
                         "ml-auto flex items-center gap-2.5 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-200",
                         selectedCount > 0
@@ -1066,50 +1011,6 @@ export function OrbitWorkspace({
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Prompt: em qual núcleo criar? */}
-      <Dialog open={nucleoPromptOpen} onOpenChange={setNucleoPromptOpen}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogTitle>Em qual núcleo criar?</DialogTitle>
-          <p className="text-sm text-muted-foreground">
-            {commands.filter((c) => selected.has(c.id) && !{ ...c, ...editOverrides[c.id] }.nucleoId).length} item(s) sem núcleo atribuído. Escolha onde adicioná-los:
-          </p>
-          <div className="mt-3 flex flex-col gap-3">
-            <select
-              value={promptNucleoId}
-              onChange={(e) => setPromptNucleoId(e.target.value)}
-              className="w-full rounded-lg border border-border/40 bg-background px-3 py-2 text-sm outline-none focus:border-primary/60"
-            >
-              {nucleos.map((n) => (
-                <option key={n.id} value={n.id}>
-                  {n.nome}
-                </option>
-              ))}
-            </select>
-            <div className="flex gap-2">
-              <button
-                onClick={() => {
-                  setNucleoPromptOpen(false);
-                  handleCreate();
-                }}
-                className="flex-1 rounded-xl border border-border/30 bg-background/60 py-2 text-sm font-medium text-foreground/60 hover:text-foreground/80 transition-all"
-              >
-                Deixar Orbit decidir
-              </button>
-              <button
-                onClick={() => {
-                  setNucleoPromptOpen(false);
-                  handleCreate(promptNucleoId);
-                }}
-                disabled={!promptNucleoId}
-                className="flex-1 rounded-xl bg-primary py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-all disabled:opacity-40"
-              >
-                Confirmar
-              </button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
