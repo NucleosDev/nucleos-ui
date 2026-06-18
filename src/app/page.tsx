@@ -13,7 +13,7 @@ import { Badges } from "@/components/public/landing/badges";
 import DashboardMosty from "@/components/public/landing/dashboard-most";
 import Users from "@/components/public/landing/users";
 import { Header } from "@/components/public/landing/header";
-import { Footer } from "react-day-picker";
+import { Footer } from "@/components/public/landing/footer";
 import NucleosHero from "@/components/ui/hero-section-sm";
 import NucleosHeroMd from "@/components/ui/hero-section-md";
 import NucleosHeroDesktop from "@/components/public/landing/HeroSection";
