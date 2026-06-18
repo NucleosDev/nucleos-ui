@@ -37,12 +37,16 @@ export function useGamificationSocket() {
   const { addRealtimeNotification } = useNotifications();
   const queryClient = useQueryClient();
   const socketRef = useRef<Socket | null>(null);
+  const invalidateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function invalidateGamification() {
-    queryClient.invalidateQueries({ queryKey: GAMIFICATION_KEYS.stats });
-    queryClient.invalidateQueries({ queryKey: GAMIFICATION_KEYS.fullStats });
-    queryClient.invalidateQueries({ queryKey: GAMIFICATION_KEYS.streak });
-    queryClient.invalidateQueries({ queryKey: GAMIFICATION_KEYS.history });
+    if (invalidateTimerRef.current) clearTimeout(invalidateTimerRef.current);
+    invalidateTimerRef.current = setTimeout(() => {
+      queryClient.invalidateQueries({ queryKey: GAMIFICATION_KEYS.stats });
+      queryClient.invalidateQueries({ queryKey: GAMIFICATION_KEYS.fullStats });
+      queryClient.invalidateQueries({ queryKey: GAMIFICATION_KEYS.streak });
+      queryClient.invalidateQueries({ queryKey: GAMIFICATION_KEYS.history });
+    }, 150);
   }
 
   useEffect(() => {
