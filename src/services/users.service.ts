@@ -46,4 +46,30 @@ export const usersService = {
   async reactivateAccount(): Promise<void> {
     return api.post(API_ROUTES.USERS.REACTIVATE);
   },
+
+  async getReentryStatus(): Promise<ReentryStatus> {
+    const res = await api.get<{ data: ReentryStatus }>(API_ROUTES.USERS.REENTRY_STATUS);
+    return (res as any).data ?? res;
+  },
+
+  async processReentry(): Promise<ReentryResult> {
+    const res = await api.post<{ data: ReentryResult }>(API_ROUTES.USERS.REENTRY_PROCESS);
+    return (res as any).data ?? res;
+  },
 };
+
+export interface ReentryStatus {
+  needsReentry: boolean;
+  daysSince: number;
+  overdueTasksCount: number;
+  pendingTasksCount: number;
+  topFocus: { id: string; nome: string; corDestaque: string; overdueCount: number } | null;
+  streakStatus: { currentStreak: number; isActive: boolean };
+  severity: "none" | "soft" | "full";
+}
+
+export interface ReentryResult {
+  rescheduled: number;
+  archived: number;
+  message: string;
+}

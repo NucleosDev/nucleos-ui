@@ -35,7 +35,7 @@ export function BentoGrid() {
   return (
     <section className="py-24 bg-muted/30">
       <div className="container px-4 mx-auto">
-        <div className="text-center mb-16">
+        <div data-animate="fade-up" className="text-center mb-16">
           <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
             <Sparkles className="size-4" />
             Experiencia Completa
@@ -50,7 +50,7 @@ export function BentoGrid() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
           {/* Card Grande - XP em tempo real */}
-          <div className="lg:col-span-2 lg:row-span-2 group relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-primary/80 p-8 text-primary-foreground">
+          <div data-animate="fade-up" data-delay="100" className="lg:col-span-2 lg:row-span-2 group relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-primary/80 p-8 text-primary-foreground">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-6">
@@ -85,7 +85,7 @@ export function BentoGrid() {
           </div>
 
           {/* Streak */}
-          <div className="group relative overflow-hidden rounded-3xl bg-card border border-border p-6 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-1">
+          <div data-animate="fade-up" data-delay="200" className="group relative overflow-hidden rounded-3xl bg-card border border-border p-6 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-1">
             <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-red-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
@@ -110,7 +110,7 @@ export function BentoGrid() {
           </div>
 
           {/* Tarefas Hoje */}
-          <div className="group relative overflow-hidden rounded-3xl bg-card border border-border p-6 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-1">
+          <div data-animate="fade-up" data-delay="300" className="group relative overflow-hidden rounded-3xl bg-card border border-border p-6 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-1">
             <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
@@ -125,7 +125,7 @@ export function BentoGrid() {
           </div>
 
           {/* Foco do dia */}
-          <div className="group relative overflow-hidden rounded-3xl bg-card border border-border p-6 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-1">
+          <div data-animate="fade-up" data-delay="200" className="group relative overflow-hidden rounded-3xl bg-card border border-border p-6 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-1">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
@@ -143,7 +143,7 @@ export function BentoGrid() {
           </div>
 
           {/* Calendario */}
-          <div className="group relative overflow-hidden rounded-3xl bg-card border border-border p-6 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-1">
+          <div data-animate="fade-up" data-delay="300" className="group relative overflow-hidden rounded-3xl bg-card border border-border p-6 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-1">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
@@ -168,7 +168,7 @@ export function BentoGrid() {
           </div>
 
           {/* Card longo - AI Insights */}
-          <div className="lg:col-span-2 group relative overflow-hidden rounded-3xl bg-gradient-to-r from-card to-muted/50 border border-border p-6 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
+          <div data-animate="fade-up" data-delay="400" className="lg:col-span-2 group relative overflow-hidden rounded-3xl bg-gradient-to-r from-card to-muted/50 border border-border p-6 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
             <div className="flex items-start gap-6">
               <div className="p-4 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10">
                 <Brain className="size-8 text-primary" />

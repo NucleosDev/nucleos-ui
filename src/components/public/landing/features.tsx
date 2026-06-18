@@ -52,7 +52,7 @@ export function Features() {
   return (
     <section className="px-6 py-24">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-16 text-center">
+        <div data-animate="fade-up" className="mb-16 text-center">
           <span className="mb-4 inline-block rounded-full bg-accent/20 px-4 py-1.5 text-sm font-medium text-accent-foreground">
             Recursos
           </span>
@@ -66,8 +66,10 @@ export function Features() {
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, index) => (
-            <Card 
-              key={index} 
+            <Card
+              key={index}
+              data-animate="fade-up"
+              data-delay={String((index + 1) * 100)}
               className="group relative overflow-hidden border-border/50 transition-all hover:border-primary/30 hover:shadow-lg"
             >
               <CardContent className="p-6">
@@ -93,7 +95,7 @@ export function Features() {
         </div>
 
         {/* Preview de Dashboard */}
-        <div className="mt-16 rounded-2xl border bg-card p-8 shadow-lg">
+        <div data-animate="fade-up" data-delay="200" className="mt-16 rounded-2xl border bg-card p-8 shadow-lg">
           <div className="mb-6 flex items-center justify-between">
             <div>
               <h3 className="text-xl font-bold">Seu Dashboard</h3>

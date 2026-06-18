@@ -1,9 +1,8 @@
 import { api } from "@/lib/api";
 import { API_ROUTES } from "@/constants/routes";
-import {
+import type {
   UserGameStats,
   Achievement,
-  LeaderboardUser,
   XpTransactionBackend,
   StreakData,
   GamificationStats,
@@ -13,89 +12,239 @@ import {
   XPTransaction,
 } from "@/types/gamification";
 
+// ── Level maths ────────────────────────────────────────────────────────────────
+// Total XP needed to reach level N = 100 * N²
+// Level given totalXp = floor(sqrt(totalXp / 100)), minimum 1
+export function xpForLevel(level: number): number {
+  return 100 * level * level;
+}
+
+export function levelFromTotalXp(totalXp: number): number {
+  return Math.max(1, Math.floor(Math.sqrt(Math.max(0, totalXp) / 100)));
+}
+
+export function computeXpStats(totalXp: number): {
+  level: number;
+  currentXp: number;
+  nextLevelXp: number;
+  progressToNextLevel: number;
+} {
+  const level = levelFromTotalXp(totalXp);
+  // Level 1 starts at 0 XP; level N>=2 starts at xpForLevel(N)
+  const xpAtCurrentLevel = level <= 1 ? 0 : xpForLevel(level);
+  const xpAtNextLevel = xpForLevel(level + 1);
+  const currentXp = totalXp - xpAtCurrentLevel;
+  const nextLevelXp = xpAtNextLevel - xpAtCurrentLevel;
+  const progressToNextLevel =
+    nextLevelXp > 0 ? Math.round((currentXp / nextLevelXp) * 100) : 100;
+  return { level, currentXp, nextLevelXp, progressToNextLevel };
+}
+
+// ── Streak computation ─────────────────────────────────────────────────────────
+export function computeStreakFromLogs(
+  logs: Pick<XpTransactionBackend, "created_at">[],
+): StreakData {
+  if (logs.length === 0)
+    return { currentStreak: 0, maxStreak: 0, lastActivityDate: null };
+
+  const activeDays = new Set(logs.map((l) => l.created_at.slice(0, 10)));
+  const sortedDays = Array.from(activeDays).sort();
+
+  const today = new Date().toISOString().slice(0, 10);
+  const yesterday = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+
+  // Current streak: count backwards from today or yesterday
+  let currentStreak = 0;
+  const anchor = activeDays.has(today)
+    ? today
+    : activeDays.has(yesterday)
+      ? yesterday
+      : null;
+
+  if (anchor) {
+    currentStreak = 1;
+    const d = new Date(anchor);
+    while (true) {
+      d.setDate(d.getDate() - 1);
+      if (activeDays.has(d.toISOString().slice(0, 10))) {
+        currentStreak++;
+      } else {
+        break;
+      }
+    }
+  }
+
+  // Max streak: longest consecutive sequence in sorted days
+  let maxStreak = Math.max(1, currentStreak);
+  let run = 1;
+  for (let i = 1; i < sortedDays.length; i++) {
+    const prev = new Date(sortedDays[i - 1] + "T12:00:00");
+    const curr = new Date(sortedDays[i] + "T12:00:00");
+    const diffDays = Math.round(
+      (curr.getTime() - prev.getTime()) / 86_400_000,
+    );
+    if (diffDays === 1) {
+      run++;
+      if (run > maxStreak) maxStreak = run;
+    } else {
+      run = 1;
+    }
+  }
+
+  return {
+    currentStreak,
+    maxStreak,
+    lastActivityDate: sortedDays[sortedDays.length - 1] ?? null,
+  };
+}
+
+// ── Achievement normalisation ─────────────────────────────────────────────────
+// The backend may return different shapes. Normalise to Achievement.
+function normaliseAchievement(raw: any): Achievement {
+  return {
+    id: raw.id ?? raw.achievementId ?? String(Math.random()),
+    nome: raw.nome ?? raw.name ?? raw.titulo ?? "Conquista",
+    descricao: raw.descricao ?? raw.description ?? "",
+    tipo: raw.tipo ?? raw.type ?? raw.achievementType ?? "especial",
+    xp_recompensa:
+      raw.xp_recompensa ?? raw.xpRecompensa ?? raw.xp ?? raw.reward ?? 0,
+    unlocked:
+      raw.unlocked ??
+      raw.desbloqueada ??
+      raw.unlockedAt != null ??
+      false,
+    unlockedAt: raw.unlockedAt ?? raw.desbloquedaEm ?? null,
+  };
+}
+
+// ── Service ───────────────────────────────────────────────────────────────────
 export const gamificacaoService = {
-  // ========== API METHODS ==========
-
-  async getUserStats(): Promise<UserGameStats> {
-    const response = await api.get<
-      { success: boolean; data: UserGameStats } | UserGameStats
-    >(API_ROUTES.GAMIFICACAO.STATS);
-    if (response && typeof response === "object" && "data" in response) {
-      return response.data;
-    }
-    return response as UserGameStats;
-  },
-
-  async getLeaderboard(limit: number = 10): Promise<LeaderboardUser[]> {
-    const response = await api.get<
-      { success: boolean; data: LeaderboardUser[] } | LeaderboardUser[]
-    >(`${API_ROUTES.GAMIFICACAO.LEADERBOARD}?limit=${limit}`);
-    if (response && typeof response === "object" && "data" in response) {
-      return Array.isArray(response.data) ? response.data : [];
-    }
-    return Array.isArray(response) ? response : [];
-  },
-
-  async getAchievements(): Promise<Achievement[]> {
-    const response = await api.get<
-      { success: boolean; data: Achievement[] } | Achievement[]
-    >(API_ROUTES.GAMIFICACAO.ACHIEVEMENTS);
-    if (response && typeof response === "object" && "data" in response) {
-      return Array.isArray(response.data) ? response.data : [];
-    }
-    return Array.isArray(response) ? response : [];
-  },
-
+  // ── XP History ──────────────────────────────────────────────────────────────
   async getXpHistory(
-    limit: number = 50,
-    offset: number = 0,
+    limit = 200,
+    _offset = 0,
   ): Promise<XpTransactionBackend[]> {
-    const response = await api.get<
-      | { success: boolean; data: XpTransactionBackend[] }
-      | XpTransactionBackend[]
-    >(`${API_ROUTES.GAMIFICACAO.HISTORY}?limit=${limit}&offset=${offset}`);
-    if (response && typeof response === "object" && "data" in response) {
-      return Array.isArray(response.data) ? response.data : [];
+    try {
+      const res = await api.get<
+        { success: boolean; data: XpTransactionBackend[] } | XpTransactionBackend[]
+      >(API_ROUTES.USERS.XP_LOGS);
+
+      const raw = Array.isArray(res)
+        ? res
+        : "data" in res && Array.isArray(res.data)
+          ? res.data
+          : [];
+
+      return raw.slice(0, limit);
+    } catch {
+      return [];
     }
-    return Array.isArray(response) ? response : [];
   },
 
-  async getEnergy(): Promise<{ energy: number; maxEnergy: number; baseEnergy: number }> {
-    const response = await api.get<
-      | { success: boolean; data: { energy: number; maxEnergy: number; baseEnergy: number } }
-      | { energy: number; maxEnergy: number; baseEnergy: number }
-    >(API_ROUTES.PROGRESS.ENERGY);
-    if (response && typeof response === "object" && "data" in response) {
-      return response.data;
+  // ── Achievements ────────────────────────────────────────────────────────────
+  async getAchievements(): Promise<Achievement[]> {
+    try {
+      const res = await api.get<any>(API_ROUTES.USERS.ACHIEVEMENTS);
+      const raw: any[] = Array.isArray(res)
+        ? res
+        : Array.isArray(res?.data)
+          ? res.data
+          : [];
+      return raw.map(normaliseAchievement);
+    } catch {
+      return [];
     }
-    return response as { energy: number; maxEnergy: number; baseEnergy: number };
   },
 
+  // ── Stats (computed from XP logs) ──────────────────────────────────────────
+  async getUserStats(): Promise<UserGameStats> {
+    try {
+      const logs = await this.getXpHistory(1000);
+      const totalXp = logs.reduce((s, l) => s + (l.xp_amount ?? 0), 0);
+      const { level, currentXp, nextLevelXp, progressToNextLevel } =
+        computeXpStats(totalXp);
+      const today = new Date().toISOString().slice(0, 10);
+      const todayXp = logs
+        .filter((l) => l.created_at.slice(0, 10) === today)
+        .reduce((s, l) => s + (l.xp_amount ?? 0), 0);
+      const streak = computeStreakFromLogs(logs);
+      const achievements = await this.getAchievements();
+      const achievementsCount = achievements.filter((a) => a.unlocked).length;
+
+      return {
+        level,
+        currentXp,
+        nextLevelXp,
+        totalXp,
+        currentStreak: streak.currentStreak,
+        maxStreak: streak.maxStreak,
+        achievementsCount,
+        todayXp,
+        totalActions: logs.length,
+        progressToNextLevel,
+      };
+    } catch {
+      return {
+        level: 1,
+        currentXp: 0,
+        nextLevelXp: 100,
+        totalXp: 0,
+        currentStreak: 0,
+        maxStreak: 0,
+        achievementsCount: 0,
+        todayXp: 0,
+        totalActions: 0,
+        progressToNextLevel: 0,
+      };
+    }
+  },
+
+  // ── Streak ──────────────────────────────────────────────────────────────────
   async getStreak(): Promise<StreakData> {
-    const response = await api.get<
-      { success: boolean; data: StreakData } | StreakData
-    >(API_ROUTES.GAMIFICACAO.STREAK);
-    if (response && typeof response === "object" && "data" in response) {
-      return response.data;
+    try {
+      const logs = await this.getXpHistory(1000);
+      return computeStreakFromLogs(logs);
+    } catch {
+      return { currentStreak: 0, maxStreak: 0, lastActivityDate: null };
     }
-    return response as StreakData;
   },
 
-  getLevelTitle(level: number): string {
-    if (level >= 100) return "Mestre Supremo";
-    if (level >= 80) return "Lenda Viva";
-    if (level >= 60) return "Mestre Experiente";
-    if (level >= 40) return "Guerreiro Dedicado";
-    if (level >= 20) return "Aprendiz Avançado";
-    if (level >= 10) return "Aprendiz";
-    if (level >= 5) return "Iniciante";
-    return "Novo Explorador";
+  // ── Leaderboard (try backend, empty fallback) ─────────────────────────────
+  async getLeaderboard(limit = 10) {
+    try {
+      const res = await api.get<any>(
+        `${API_ROUTES.GAMIFICACAO.LEADERBOARD}?limit=${limit}`,
+      );
+      const raw: any[] = Array.isArray(res)
+        ? res
+        : Array.isArray(res?.data)
+          ? res.data
+          : [];
+      return raw;
+    } catch {
+      return [];
+    }
   },
 
+  // ── Energy (try backend, empty fallback) ──────────────────────────────────
+  async getEnergy() {
+    try {
+      const res = await api.get<any>(API_ROUTES.PROGRESS.ENERGY);
+      const d = res?.data ?? res;
+      return {
+        energy: d?.energy ?? 0,
+        maxEnergy: d?.maxEnergy ?? 100,
+        baseEnergy: d?.baseEnergy ?? 100,
+      };
+    } catch {
+      return { energy: 0, maxEnergy: 100, baseEnergy: 100 };
+    }
+  },
+
+  // ── Full stats (used by useFullStats) ─────────────────────────────────────
   async getFullGamificationStats(): Promise<GamificationStats> {
-    const [stats, streakData, achievements] = await Promise.all([
+    const [stats, achievements] = await Promise.all([
       this.getUserStats(),
-      this.getStreak(),
       this.getAchievements(),
     ]);
 
@@ -119,7 +268,7 @@ export const gamificacaoService = {
       id: ach.id,
       nome: ach.nome,
       descricao: ach.descricao,
-      icone: this.getAchievementIconName(ach.tipo), // AGORA RETORNA NOME DO ÍCONE
+      icone: this.getAchievementIconName(ach.tipo),
       categoria: this.mapCategoria(ach.tipo),
       desbloqueada: ach.unlocked,
       dataDesbloqueio: ach.unlockedAt ? new Date(ach.unlockedAt) : undefined,
@@ -128,20 +277,28 @@ export const gamificacaoService = {
     return { level, streaks, conquistas };
   },
 
-  // ========== ACHIEVEMENT ICONS (Nomes dos ícones Lucide) ==========
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  getLevelTitle(level: number): string {
+    if (level >= 100) return "Mestre Supremo";
+    if (level >= 80) return "Lenda Viva";
+    if (level >= 60) return "Mestre Experiente";
+    if (level >= 40) return "Guerreiro Dedicado";
+    if (level >= 20) return "Aprendiz Avançado";
+    if (level >= 10) return "Aprendiz";
+    if (level >= 5) return "Iniciante";
+    return "Novo Explorador";
+  },
+
   getAchievementIconName(tipo: string): string {
     const icons: Record<string, string> = {
       creation: "Rocket",
       progress: "CheckCircle",
       streak: "Flame",
       level: "Star",
+      especial: "Trophy",
       default: "Trophy",
     };
     return icons[tipo] || icons.default;
-  },
-
-  getAchievementIcon(tipo: string): string {
-    return this.getAchievementIconName(tipo);
   },
 
   mapCategoria(tipo: string): Conquista["categoria"] {
@@ -150,13 +307,12 @@ export const gamificacaoService = {
       progress: "tarefa",
       streak: "habito",
       level: "especial",
+      especial: "especial",
     };
     return mapping[tipo] || "especial";
   },
 
-  convertToXPTransaction(
-    transactions: XpTransactionBackend[],
-  ): XPTransaction[] {
+  convertToXPTransaction(transactions: XpTransactionBackend[]): XPTransaction[] {
     return transactions.map((tx) => ({
       id: tx.id,
       amount: tx.xp_amount,

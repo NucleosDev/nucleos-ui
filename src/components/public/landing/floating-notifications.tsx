@@ -11,7 +11,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { Iphone15Pro } from "../ui/iphone-15-pro";
+import { Iphone15Pro } from "@/components/ui/iphone-15-pro";
 import { NotificacaoIOS } from "@/components/nucleo/ui/notification";
 import { BadgeConquista } from "@/components/nucleo/ui/badge-conquist";
 import { NucleoProgress } from "@/components/nucleo/nucleo-progress";
@@ -196,7 +196,7 @@ export function FloatingNotifications() {
   }, [isClient]);
 
   return (
-    <section className="relative pb-60 pt-40 overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8">
+    <section className="relative  overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8">
       {/* Gradientes */}
       <div className="absolute top-0 left-0 right-0 h-100 pointer-events-none z-10 bg-gradient-to-b from-white via-white/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 h-64 pointer-events-none z-10 bg-gradient-to-t from-white via-white/60 to-transparent dark:from-black dark:via-black/60 dark:to-transparent" />

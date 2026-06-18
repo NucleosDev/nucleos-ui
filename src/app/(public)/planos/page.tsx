@@ -13,15 +13,15 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-export const PAYMENT_FREQUENCIES = ["mensal", "anual"];
+const PAYMENT_FREQUENCIES = ["mensal", "anual"];
 
-export const TIERS = [
+const TIERS = [
   {
     id: "gratis",
     name: "Grátis",
     price: {
-      mensal: "0",
-      anual: "0",
+      mensal: "Grátis",
+      anual: "Grátis",
     },
     description: "Para começar sua jornada",
     features: [

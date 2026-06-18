@@ -30,9 +30,13 @@ import {
   Layers,
   Target,
   Wallet,
+  MessageSquare,
+  X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { LiquidGlass } from "@/components/ui/liquid-glass";
+import { useState } from "react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { OrbitWorkspace } from "@/components/orbit/orbit-workspace";
 
 const tipoIcons: Record<string, LucideIcon> = {
   estudo: BookOpen,
@@ -88,6 +92,7 @@ export default function NucleoLayout({
   const pathname = usePathname();
   const router = useRouter();
   const id = params.id as string;
+  const [orbitOpen, setOrbitOpen] = useState(false);
 
   if (pathname.includes("/blocos/")) return <>{children}</>;
 
@@ -113,14 +118,12 @@ export default function NucleoLayout({
           <p className="text-sm text-muted-foreground mb-5">
             O núcleo que você procura não existe ou foi removido.
           </p>
-          <LiquidGlass
-            variant="button"
-            radius="var(--radius-md)"
+          <button
             onClick={() => router.push("/dashboard")}
-            className="text-sm font-medium text-"
+            className="px-4 py-2 text-sm font-medium rounded-lg border border-border/50 hover:bg-accent transition-colors"
           >
-            <span className="px-4 py-2 block">Voltar ao Dashboard</span>
-          </LiquidGlass>
+            Voltar ao Dashboard
+          </button>
         </div>
       </div>
     );
@@ -164,18 +167,23 @@ export default function NucleoLayout({
           </svg>
         </div>
 
-        {/* Glass back button */}
-        <LiquidGlass
-          variant="button"
-          radius="999px"
+        {/* Back button */}
+        <button
           onClick={() => router.push("/dashboard/nucleos")}
-          className="absolute top-4 left-4 z-20 text-sm font-medium text-"
+          className="absolute top-4 left-4 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-background/60 backdrop-blur-md border border-border/40 hover:bg-background/80 transition-colors"
         >
-          <span className="flex items-center gap-2 px-3 py-1.5">
-            <ArrowLeft className="h-4 w-4" />
-            Nucleos
-          </span>
-        </LiquidGlass>
+          <ArrowLeft className="h-4 w-4" />
+          Núcleos
+        </button>
+
+        {/* Orbit button */}
+        <button
+          onClick={() => setOrbitOpen(true)}
+          className="absolute top-4 right-4 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-background/60 backdrop-blur-md border border-border/40 hover:bg-background/80 transition-colors"
+        >
+          <MessageSquare className="h-4 w-4" />
+          Orbit
+        </button>
       </div>
 
       <div className="max-w-4xl mx-auto px-8 md:px-4 pb-4">
@@ -234,6 +242,32 @@ export default function NucleoLayout({
       </div>
 
       {children}
+
+      {/* Orbit drawer */}
+      <Sheet open={orbitOpen} onOpenChange={setOrbitOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-lg p-0 flex flex-col">
+          <SheetHeader className="px-5 pt-5 pb-3 border-b border-border/50 shrink-0">
+            <div className="flex items-center justify-between">
+              <SheetTitle className="text-sm font-semibold flex items-center gap-2">
+                <MessageSquare className="h-4 w-4 text-primary" />
+                Orbit — {nucleo.nome}
+              </SheetTitle>
+              <button
+                onClick={() => setOrbitOpen(false)}
+                className="rounded-md p-1 hover:bg-muted transition-colors"
+              >
+                <X className="h-4 w-4 text-muted-foreground" />
+              </button>
+            </div>
+            <p className="text-xs text-muted-foreground/60">
+              Descreva o que quer criar neste Núcleo
+            </p>
+          </SheetHeader>
+          <div className="flex-1 overflow-auto">
+            <OrbitWorkspace compact defaultNucleoId={id} />
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

@@ -21,6 +21,10 @@ import {
   BookOpen,
   ChevronDown,
   ChevronRight,
+  Table2,
+  LayoutGrid,
+  Kanban,
+  Dumbbell,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -36,12 +40,16 @@ import { cn } from "@/lib/utils";
 import type { Bloco, CreateBlocoPayload } from "@/types/bloco";
 
 import { ColecoesBlocoCard } from "@/components/blocos/cruds/ColecoesBlocoCard";
+import { TabelaBlocoCard } from "@/components/blocos/cruds/TabelaBlocoCard";
+import { GaleriaBlocoCard } from "@/components/blocos/cruds/GaleriaBlocoCard";
+import { QuadroBlocoCard } from "@/components/blocos/cruds/QuadroBlocoCard";
 import { TarefasBlocoCard } from "@/components/blocos/cruds/TarefasBlocoCard";
 import { ListasBlocoCard } from "@/components/blocos/cruds/ListasBlocoCard";
 import { CalendarioBlocoCard } from "@/components/blocos/cruds/CalendarioBlocoCard";
 import { TimersBlocoCard } from "@/components/blocos/cruds/TimersBlocoCard";
 import { HabitosBlocoCard } from "@/components/blocos/cruds/HabitosBlocoCard";
 import { BlocoDeNotas } from "@/components/blocos/cruds/BlocoDeNotas";
+import { ExerciciosBlocoCard } from "@/components/blocos/cruds/ExerciciosBlocoCard";
 
 interface BlocoCardProps {
   bloco: Bloco;
@@ -134,13 +142,40 @@ const BLOCK_META: Record<
     descricao: "Múltiplos timers para produtividade",
   },
   colecoes: {
-    label: "Base de Dados",
+    label: "Coleções",
     icon: Layers,
-    color: "text-emerald-400",
-    bg: "bg-emerald-500/10",
-    accent: "bg-emerald-500",
-    tint: "bg-emerald-500/[0.04]",
-    descricao: "Crie bases de dados flexíveis",
+    color: "text-indigo-400",
+    bg: "bg-indigo-500/10",
+    accent: "bg-indigo-500",
+    tint: "bg-indigo-500/[0.04]",
+    descricao: "Múltiplas coleções de dados flexíveis",
+  },
+  tabela: {
+    label: "Tabela",
+    icon: Table2,
+    color: "text-teal-500",
+    bg: "bg-teal-500/10",
+    accent: "bg-teal-500",
+    tint: "bg-teal-500/[0.04]",
+    descricao: "Planilha com linhas e colunas",
+  },
+  galeria: {
+    label: "Galeria",
+    icon: LayoutGrid,
+    color: "text-rose-500",
+    bg: "bg-rose-500/10",
+    accent: "bg-rose-500",
+    tint: "bg-rose-500/[0.04]",
+    descricao: "Itens em grade de cards",
+  },
+  quadro: {
+    label: "Quadro",
+    icon: Kanban,
+    color: "text-orange-500",
+    bg: "bg-orange-500/10",
+    accent: "bg-orange-500",
+    tint: "bg-orange-500/[0.04]",
+    descricao: "Kanban por status ou categoria",
   },
   notas: {
     label: "Notas",
@@ -150,6 +185,15 @@ const BLOCK_META: Record<
     accent: "bg-purple-500",
     tint: "bg-purple-500/[0.04]",
     descricao: "Anotações e lembretes",
+  },
+  exercicios: {
+    label: "Exercícios",
+    icon: Dumbbell,
+    color: "text-orange-500",
+    bg: "bg-orange-500/10",
+    accent: "bg-orange-500",
+    tint: "bg-orange-500/[0.04]",
+    descricao: "Planos de treino e exercícios",
   },
 };
 
@@ -184,10 +228,22 @@ function renderContent(bloco: Bloco, nucleoId: string, onDelete: () => void) {
     case "colecoes":
       content = <ColecoesBlocoCard {...common} />;
       break;
+    case "tabela":
+      content = <TabelaBlocoCard {...common} />;
+      break;
+    case "galeria":
+      content = <GaleriaBlocoCard {...common} />;
+      break;
+    case "quadro":
+      content = <QuadroBlocoCard {...common} />;
+      break;
     case "notas":
       content = (
         <BlocoDeNotas bloco={bloco} nucleoId={nucleoId} onDelete={onDelete} />
       );
+      break;
+    case "exercicios":
+      content = <ExerciciosBlocoCard {...common} />;
       break;
     default:
       content = (

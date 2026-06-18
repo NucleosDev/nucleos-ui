@@ -1,5 +1,5 @@
-import { Code2, MessageCircle, Camera, Briefcase } from "lucide-react"
-import Image from "next/image"
+import { Code2, MessageCircle, Camera, Briefcase } from "lucide-react";
+import Image from "next/image";
 
 const footerLinks = {
   produto: [
@@ -19,14 +19,14 @@ const footerLinks = {
     { label: "Privacidade", href: "/privacidade" },
     { label: "Cookies", href: "/cookies" },
   ],
-}
+};
 
 const socialLinks = [
   { icon: MessageCircle, href: "#", label: "MessageCircle" },
   { icon: Camera, href: "#", label: "Camera" },
   { icon: Briefcase, href: "#", label: "LinkedIn" },
   { icon: Code2, href: "#", label: "GitHub" },
-]
+];
 
 export function Footer() {
   return (
@@ -36,17 +36,18 @@ export function Footer() {
           {/* Brand */}
           <div className="lg:col-span-2">
             <a href="/" className="flex items-center gap-2">
-              <Image 
-                src="/icon.svg" 
-                alt="Nucleos Logo" 
-                width={40} 
+              <Image
+                src="/lettermark-nucleos.svg"
+                alt="Nucleos Logo"
+                width={40}
                 height={40}
                 className="object-contain"
               />
               <span className="text-xl font-bold">Nucleos</span>
             </a>
             <p className="mt-4 max-w-xs text-sm text-muted-foreground">
-              Organize sua vida, evolua todos os dias. O sistema de organizacao pessoal que transforma habitos em conquistas.
+              Organize sua vida, evolua todos os dias. O sistema de organizacao
+              pessoal que transforma habitos em conquistas.
             </p>
             <div className="mt-6 flex gap-4">
               {socialLinks.map((social) => (
@@ -68,7 +69,10 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.produto.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  <a
+                    href={link.href}
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
                     {link.label}
                   </a>
                 </li>
@@ -81,7 +85,10 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.empresa.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  <a
+                    href={link.href}
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
                     {link.label}
                   </a>
                 </li>
@@ -94,7 +101,10 @@ export function Footer() {
             <ul className="space-y-3">
               {footerLinks.legal.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  <a
+                    href={link.href}
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
                     {link.label}
                   </a>
                 </li>
@@ -113,5 +123,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

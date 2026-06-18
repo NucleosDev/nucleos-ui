@@ -7,9 +7,7 @@ import Link from "next/link";
 import { ChevronLeftIcon } from "lucide-react";
 import { RegisterForm } from "@/components/auth/register-form";
 import Image from "next/image";
-import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { useAuth } from "@/auth/auth-context";
-import { ROUTES } from "@/constants/routes";
 
 export default function RegisterPage() {
   return (
@@ -35,10 +33,11 @@ export function AuthPage() {
         "
       >
         <Image
-          src="/logo-full.svg"
+          src="/lettermark-nucleos.svg"
           alt="logo nucleos"
           width={600}
           height={600}
+          priority
           className="absolute left-15 top-50 z-[1] opacity-40"
         />
         <div className="from-background absolute inset-0 z-10 bg-gradient-to-t to-transparent" />
@@ -65,7 +64,10 @@ export function AuthPage() {
       {/* ── Right panel — form ────────────────────────────────────────────── */}
       <div className="relative flex min-h-screen flex-col items-center justify-center p-6">
         {/* Ambient gradient orbs */}
-        <div aria-hidden className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div
+          aria-hidden
+          className="absolute inset-0 overflow-hidden pointer-events-none"
+        >
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[50%] w-[520px] h-[520px] rounded-full bg-primary/10 blur-[80px]" />
           <div className="absolute top-[25%] right-[20%] w-[300px] h-[300px] rounded-full bg-[#00C9A7]/12 blur-[64px]" />
           <div className="absolute bottom-[20%] left-[15%] w-[260px] h-[260px] rounded-full bg-[#5B7FFF]/10 blur-[64px]" />
@@ -75,12 +77,12 @@ export function AuthPage() {
         {/* Back button */}
         <Button
           variant="ghost"
-          size="sm"
-          className="absolute top-5 left-5 z-10 text-muted-foreground hover:text-foreground"
+          size="lg"
+          className="absolute top-5 left-5 z-10 text-muted-foreground hover:text-foreground text-lg"
           asChild
         >
           <Link href="/">
-            <ChevronLeftIcon className="size-3.5 me-1" />
+            <ChevronLeftIcon className="size-5 me-1 " />
             Voltar
           </Link>
         </Button>
@@ -92,26 +94,14 @@ export function AuthPage() {
           </p>
         </div>
 
-        {/* ── Glass form card ────────────────────────────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 16, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="relative z-10 w-full max-w-md"
-        >
-          <LiquidGlass
-            variant="default"
-            radius="24px"
-            interactive={false}
-            className="p-8"
-          >
-            <p className="text-sm text-muted-foreground mb-6">
-              Preencha os dados abaixo para se cadastrar.
-            </p>
-
+        <p className="text-sm text-muted-foreground mb-6">
+          Preencha os dados abaixo para se cadastrar.
+        </p>
+        <div className="w-full max-w-md z-10">
+          <div className="bg-background rounded-2xl border border-white/20 p-8">
             <RegisterForm />
-          </LiquidGlass>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </main>
   );

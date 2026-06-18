@@ -69,7 +69,7 @@ const faqs = [
 
 export function FAQ() {
   return (
-    <section className="relative pb-60 pt-60 overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8">
+    <section className="relative overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8">
       {/* GRADIENTE SUPERIOR */}
       <div className="absolute top-0 left-0 right-0 h-100 pointer-events-none z-10 bg-gradient-to-b from-white via-white/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
 
@@ -80,13 +80,13 @@ export function FAQ() {
       <div className="absolute bottom-0 left-0 right-0 h-80 pointer-events-none z-5 bg-gradient-to-t from-white/40 via-transparent to-transparent dark:from-black/40 dark:via-transparent dark:to-transparent" />
 
       {/* Background elements com parallax */}
-      <motion.div className="absolute inset-0 -z-10">
+      <div className="absolute inset-0 -z-10">
         <div className="absolute top-1/4 left-1/4 size-96 rounded-full bg-background/20 blur-3xl animate-pulse" />
         <div className="absolute right-1/4 bottom-1/4 size-96 rounded-full bg-accent/20 blur-3xl animate-pulse delay-700" />
-      </motion.div>
+      </div>
 
       <div className="mx-auto max-w-3xl relative z-20">
-        <div className="mb-12 text-center">
+        <div data-animate="fade-up" className="mb-12 text-center">
           <Badge
             variant="outline"
             className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 text-[#4D7CFF] mb-4"
@@ -107,12 +107,16 @@ export function FAQ() {
           </p>
         </div>
 
-        <motion.div>
+        <div data-animate="fade-up" data-delay="100">
           <Accordion type="single" collapsible className="w-full space-y-3">
             {faqs.map((faq, index) => {
               const Icon = faq.icon;
               return (
-                <motion.div key={index}>
+                <div
+                  key={index}
+                  data-animate="fade-up"
+                  data-delay={`${(index + 1) * 100}`}
+                >
                   <AccordionItem
                     value={`item-${index}`}
                     className="border border-border/50 rounded-lg bg-card/50 backdrop-blur-sm overflow-hidden hover:border-[#4D7CFF]/30 transition-all group"
@@ -136,27 +140,32 @@ export function FAQ() {
                       <div className="pt-4">{faq.answer}</div>
                     </AccordionContent>
                   </AccordionItem>
-                </motion.div>
+                </div>
               );
             })}
           </Accordion>
-        </motion.div>
+        </div>
 
         {/* Botão para página completa de FAQ */}
-        <motion.div className="mt-12 flex justify-center">
-          <Link href="/duvidas">
-            <Button
-              size="lg"
-              className="group relative overflow-hidden bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] hover:from-[#00C9A7] hover:to-[#4D7CFF] transition-all duration-500 shadow-lg hover:shadow-xl"
-            >
-              <span className="relative z-10 flex items-center gap-2">
+        <div
+          data-animate="fade-up"
+          data-delay="200"
+          className="mt-12 flex justify-center"
+        >
+          <Button
+            size="lg"
+            className="group relative overflow-hidden bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] hover:from-[#00C9A7] hover:to-[#4D7CFF] transition-all duration-500 shadow-lg hover:shadow-xl border-0"
+            asChild
+          >
+            <Link href="/duvidas">
+              <span className="relative z-10 flex items-center gap-2 text-white font-medium">
                 Ver todas as perguntas
-                <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="size-4" />
               </span>
               <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-            </Button>
-          </Link>
-        </motion.div>
+            </Link>
+          </Button>
+        </div>
 
         {/* Link rápido para suporte */}
         <motion.div

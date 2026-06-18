@@ -2,11 +2,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import {
-  ArrowLeft,
   Inbox,
-  Check,
   CheckCheck,
   Trash2,
   Star,
@@ -64,12 +61,12 @@ const formatDate = (dateString: string | undefined | null): string => {
 };
 
 export default function InboxPage() {
-  const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [filter, setFilter] = useState<"all" | "unread" | "read">("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     loadMessages();
@@ -100,13 +97,23 @@ export default function InboxPage() {
     }
   };
 
+  const handleRowClick = async (id: string) => {
+    setExpandedId((prev) => (prev === id ? null : id));
+    const msg = messages.find((m) => m.id === id);
+    if (msg && !msg.read) {
+      try {
+        await notificationsService.markAsRead(id);
+        setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, read: true } : m)));
+      } catch { /* silently ignore */ }
+    }
+  };
+
   const marcarLida = async (id: string) => {
     try {
       await notificationsService.markAsRead(id);
       setMessages((prev) =>
         prev.map((m) => (m.id === id ? { ...m, read: true } : m)),
       );
-      toast({ title: "Marcada como lida" });
     } catch {
       toast({ title: "Erro", variant: "destructive" });
     }
@@ -136,10 +143,15 @@ export default function InboxPage() {
     toast({ title: "Mensagem favoritada" });
   };
 
-  const excluirSelecionadas = () => {
+  const excluirSelecionadas = async () => {
+    const ids = Array.from(selectedIds);
     setMessages((prev) => prev.filter((m) => !selectedIds.has(m.id)));
     setSelectedIds(new Set());
-    toast({ title: "Mensagens removidas" });
+    // tenta deletar no backend; falhas individuais são silenciosas
+    await Promise.allSettled(
+      ids.map((id) => notificationsService.deleteNotification(id)),
+    );
+    toast({ title: `${ids.length} notificaç${ids.length === 1 ? "ão removida" : "ões removidas"}` });
   };
 
   const toggleSelect = (id: string) => {
@@ -207,48 +219,44 @@ export default function InboxPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border sticky top-0 z-10 bg-background/95 backdrop-blur-sm">
-        <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => router.back()}>
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-            <div className="flex items-center gap-2">
-              <Inbox className="w-4 h-4 text-primary" />
-              <span className="font-semibold">Inbox</span>
-              {naoLidas > 0 && (
-                <Badge className="h-5 text-xs px-1.5 bg-primary text-white">
-                  {naoLidas} não lidas
-                </Badge>
-              )}
-            </div>
+    <div className="flex-1 overflow-auto">
+      {/* Sticky header */}
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 px-5 md:px-6 h-14 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/8">
+            <Inbox className="h-3.5 w-3.5 text-primary" />
           </div>
-          <div className="flex items-center gap-2">
-            {selectedIds.size > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={excluirSelecionadas}
-                className="text-red-500"
-              >
-                <Trash2 className="w-3.5 h-3.5 mr-1" />
-                Excluir ({selectedIds.size})
-              </Button>
-            )}
-            <Button variant="ghost" size="sm" onClick={marcarTodas}>
-              <CheckCheck className="w-3.5 h-3.5 mr-1" />
-              Marcar todas
-            </Button>
-          </div>
+          <h1 className="text-sm font-semibold tracking-tight">Inbox</h1>
+          {naoLidas > 0 && (
+            <Badge className="h-5 text-xs px-1.5 bg-primary text-primary-foreground">
+              {naoLidas}
+            </Badge>
+          )}
         </div>
-      </header>
+        <div className="flex items-center gap-2">
+          {selectedIds.size > 0 && (
+            <button
+              onClick={excluirSelecionadas}
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-red-500 hover:bg-red-500/8 transition-colors"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Excluir ({selectedIds.size})
+            </button>
+          )}
+          <button
+            onClick={marcarTodas}
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+          >
+            <CheckCheck className="h-3.5 w-3.5" />
+            Marcar todas
+          </button>
+        </div>
+      </div>
 
-      <main className="max-w-5xl mx-auto px-4 py-6">
-        {/* Barra de ferramentas */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-4 pb-4 border-b border-border">
-          <div className="flex items-center gap-2">
+      <div className="px-5 md:px-6 py-5 max-w-3xl mx-auto">
+        {/* Toolbar */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-4 pb-4 border-b border-border/50">
+          <div className="flex items-center gap-2 shrink-0">
             <Checkbox
               checked={
                 selectedIds.size === filteredMessages.length &&
@@ -256,28 +264,38 @@ export default function InboxPage() {
               }
               onCheckedChange={toggleSelectAll}
             />
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-xs"
-              onClick={() => setSelectedIds(new Set())}
-            >
-              Limpar
-            </Button>
+            <span className="text-xs text-muted-foreground/60">Selecionar todos</span>
+            {selectedIds.size > 0 && (
+              <>
+                <button
+                  onClick={excluirSelecionadas}
+                  className="sm:hidden inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium text-red-500 hover:bg-red-500/8 transition-colors"
+                >
+                  <Trash2 className="h-3 w-3" />
+                  Excluir ({selectedIds.size})
+                </button>
+                <button
+                  onClick={() => setSelectedIds(new Set())}
+                  className="text-xs text-muted-foreground/60 hover:text-foreground transition-colors"
+                >
+                  Limpar
+                </button>
+              </>
+            )}
           </div>
 
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/50" />
             <Input
               placeholder="Buscar mensagens..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9"
+              className="pl-9 h-9 text-sm"
             />
           </div>
 
           <Select value={filter} onValueChange={(v) => setFilter(v as any)}>
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-full sm:w-[130px] h-9 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -313,124 +331,131 @@ export default function InboxPage() {
           </div>
         ) : (
           <div className="space-y-1">
-            {filteredMessages.map((message) => (
-              <div
-                key={message.id}
-                className={cn(
-                  "group flex items-start gap-3 p-4 rounded-xl border transition-all hover:shadow-md cursor-pointer",
-                  message.read
-                    ? "bg-card border-border"
-                    : "bg-gradient-to-r from-primary/5 to-transparent border-primary/20",
-                )}
-                onClick={() => marcarLida(message.id)}
-              >
-                <Checkbox
-                  checked={selectedIds.has(message.id)}
-                  onCheckedChange={() => toggleSelect(message.id)}
-                  onClick={(e) => e.stopPropagation()}
-                />
-
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="w-7 h-7 shrink-0"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleStar(message.id);
-                  }}
-                >
-                  {message.starred ? (
-                    <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                  ) : (
-                    <StarOff className="w-4 h-4 text-muted-foreground" />
-                  )}
-                </Button>
-
+            {filteredMessages.map((message) => {
+              const isExpanded = expandedId === message.id;
+              return (
                 <div
+                  key={message.id}
                   className={cn(
-                    "w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-xl shrink-0",
-                    getTypeColor(message.type),
+                    "group rounded-xl border transition-all cursor-pointer",
+                    message.read
+                      ? "bg-card border-border"
+                      : "bg-gradient-to-r from-primary/5 to-transparent border-primary/20",
+                    isExpanded && "shadow-md",
                   )}
+                  onClick={() => handleRowClick(message.id)}
                 >
-                  {getTypeIcon(message.type)}
-                </div>
+                  {/* Cabeçalho da mensagem */}
+                  <div className="flex items-start gap-3 p-4">
+                    <Checkbox
+                      checked={selectedIds.has(message.id)}
+                      onCheckedChange={() => toggleSelect(message.id)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
 
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <p
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="w-7 h-7 shrink-0"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleStar(message.id);
+                      }}
+                    >
+                      {message.starred ? (
+                        <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                      ) : (
+                        <StarOff className="w-4 h-4 text-muted-foreground" />
+                      )}
+                    </Button>
+
+                    <div
                       className={cn(
-                        "text-sm font-medium",
-                        !message.read && "text-primary",
+                        "w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-xl shrink-0",
+                        getTypeColor(message.type),
                       )}
                     >
-                      {message.titulo}
-                    </p>
-                    {!message.read && (
-                      <Badge className="bg-primary/10 text-primary text-xs">
-                        Nova
-                      </Badge>
-                    )}
-                    {message.xp_amount && (
-                      <Badge variant="outline" className="text-xs">
-                        +{message.xp_amount} XP
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
-                    {message.mensagem}
-                  </p>
-                  <p className="text-xs text-muted-foreground/60 mt-1">
-                    {formatDate(message.created_at)}
-                  </p>
-                </div>
+                      {getTypeIcon(message.type)}
+                    </div>
 
-                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="w-7 h-7"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      marcarLida(message.id);
-                    }}
-                  >
-                    {message.read ? (
-                      <MailOpen className="w-3.5 h-3.5" />
-                    ) : (
-                      <Mail className="w-3.5 h-3.5" />
-                    )}
-                  </Button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger
-                      asChild
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Button variant="ghost" size="icon" className="w-7 h-7">
-                        <MoreVertical className="w-3.5 h-3.5" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => toggleStar(message.id)}>
-                        {message.starred ? "Remover favorito" : "Favoritar"}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        className="text-red-500"
-                        onClick={() => {
-                          setMessages((prev) =>
-                            prev.filter((m) => m.id !== message.id),
-                          );
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p
+                          className={cn(
+                            "text-sm font-medium",
+                            !message.read && "text-primary",
+                          )}
+                        >
+                          {message.titulo}
+                        </p>
+                        {!message.read && (
+                          <Badge className="bg-primary/10 text-primary text-xs">
+                            Nova
+                          </Badge>
+                        )}
+                        {message.xp_amount && (
+                          <Badge variant="outline" className="text-xs">
+                            +{message.xp_amount} XP
+                          </Badge>
+                        )}
+                      </div>
+                      <p className={cn("text-xs text-muted-foreground mt-0.5", !isExpanded && "line-clamp-1")}>
+                        {message.mensagem}
+                      </p>
+                      <p className="text-xs text-muted-foreground/60 mt-1">
+                        {formatDate(message.created_at)}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="w-7 h-7"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          marcarLida(message.id);
                         }}
                       >
-                        Excluir
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                        {message.read ? (
+                          <MailOpen className="w-3.5 h-3.5" />
+                        ) : (
+                          <Mail className="w-3.5 h-3.5" />
+                        )}
+                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger
+                          asChild
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Button variant="ghost" size="icon" className="w-7 h-7">
+                            <MoreVertical className="w-3.5 h-3.5" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => toggleStar(message.id)}>
+                            {message.starred ? "Remover favorito" : "Favoritar"}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-red-500"
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              setMessages((prev) => prev.filter((m) => m.id !== message.id));
+                              await notificationsService.deleteNotification(message.id);
+                            }}
+                          >
+                            Excluir
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }

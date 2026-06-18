@@ -69,10 +69,8 @@ const plans = [
 
 export function Pricing() {
   return (
-    <section className="relative overflow-hidden px-4 py-20 sm:px-6 lg:px-8 lg:py-32">
+    <section className="relative overflow-hidden px-4 py-20 sm:px-6 lg:px-8 lg:py-32 bg-[#000]">
       {/* Gradientes de fundo */}
-      <div className="absolute top-0 left-0 right-0 h-40 pointer-events-none z-10 bg-gradient-to-b from-white via-white/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none z-10 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
 
       {/* Elementos decorativos */}
       <div className="absolute inset-0 -z-10">
@@ -81,7 +79,7 @@ export function Pricing() {
       </div>
 
       <div className="mx-auto max-w-7xl relative z-20">
-        <motion.div className="mx-auto max-w-2xl text-center">
+        <div data-animate="fade-up" className="mx-auto max-w-2xl text-center">
           <Badge
             variant="outline"
             className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 text-[#4D7CFF] mb-4"
@@ -90,28 +88,32 @@ export function Pricing() {
             <span>Preços simples</span>
           </Badge>
 
-          <h2 className="text-pretty text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+          <h2 className="text-white text-3xl font-bold  sm:text-4xl lg:text-5xl">
             Invista em{" "}
             <span className="bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
               você mesmo
             </span>
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Comece grátis. Escale quando precisar. Sem surpresas, sem letras
-            miúdas.
+          <p className="mt-4 text-lg text-white">
+            Crescimento pessoal é o maior ativo que você pode ter.
           </p>
-        </motion.div>
+        </div>
 
         <div className="mt-16 grid gap-6 lg:grid-cols-3">
           {plans.map((plan, index) => {
             const Icon = plan.icon;
             return (
-              <motion.div key={index} className="group relative">
+              <div
+                key={index}
+                data-animate="fade-up"
+                data-delay={`${(index + 1) * 100}`}
+                className="group relative"
+              >
                 <div
                   className={`relative flex flex-col rounded-2xl border p-8 h-full transition-all ${
                     plan.popular
-                      ? "border-[#4D7CFF]/30 bg-gradient-to-b from-[#4D7CFF]/5 to-transparent shadow-xl hover:shadow-2xl hover:shadow-[#4D7CFF]/10"
-                      : "border-border/50 bg-card/50 backdrop-blur-sm hover:border-[#4D7CFF]/30 hover:shadow-lg"
+                      ? "border-[#4D7CFF]/30 bg-white shadow-xl hover:shadow-2xl hover:shadow-[#4D7CFF]/10"
+                      : "border-border/50 bg-white backdrop-blur-sm hover:border-[#4D7CFF]/30 hover:shadow-lg"
                   }`}
                 >
                   {/* Badge de popular */}
@@ -129,7 +131,7 @@ export function Pricing() {
                     <div className="absolute -top-3 right-4">
                       <Badge
                         variant="outline"
-                        className="border-[#FFD700] text-[#FFD700] bg-[#FFD700]/10"
+                        className="border-black border-0.5 text-black bg-[#FFD700] px-3 py-1 text-xs"
                       >
                         {plan.highlight}
                       </Badge>
@@ -157,7 +159,9 @@ export function Pricing() {
 
                   {/* Preço */}
                   <div className="mb-6">
-                    <span className="text-4xl font-bold">{plan.price}</span>
+                    <span className="text-4xl text font-bold">
+                      {plan.price}
+                    </span>
                     <span className="text-sm text-muted-foreground ml-1">
                       {plan.period}
                     </span>
@@ -176,55 +180,55 @@ export function Pricing() {
                         className="flex items-center gap-2 text-sm"
                       >
                         <Check className="size-4 shrink-0 text-[#4D7CFF]" />
-                        <span className="text-muted-foreground">{feature}</span>
+                        <span className="text-black">{feature}</span>
                       </li>
                     ))}
                   </ul>
 
                   {/* CTA */}
                   <Button
-                    variant={plan.popular ? "default" : "outline"}
-                    className={`w-full group/btn ${
-                      plan.popular
-                        ? "bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] hover:from-[#00C9A7] hover:to-[#4D7CFF]"
-                        : ""
-                    }`}
+                    size="default"
+                    className="group/btn relative overflow-hidden w-full bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] hover:from-[#00C9A7] hover:to-[#4D7CFF] transition-all duration-500 shadow-lg hover:shadow-xl border-0"
                     asChild
                   >
                     <Link href="/planos">
-                      <span className="flex items-center justify-center gap-2">
+                      <span className="relative z-10 flex items-center justify-center gap-2 text-white font-medium">
                         {plan.cta}
-                        <ArrowRight className="size-4 transition-transform group-hover/btn:translate-x-1" />
+                        <ArrowRight className="size-4" />
                       </span>
+                      <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
                     </Link>
                   </Button>
 
                   {/* Efeito de brilho */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 rounded-2xl pointer-events-none" />
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>
 
         {/* CTA para página de planos */}
-        <motion.div className="mt-12 text-center">
+        <div
+          data-animate="fade-up"
+          data-delay="200"
+          className="mt-12 text-center"
+        >
           <p className="text-muted-foreground mb-4">
             Precisa de um plano para equipes ou empresa?
           </p>
           <Link href="/planos">
             <Button
-              variant="outline"
               size="lg"
-              className="group border-2 border-[#4D7CFF]/30 transition-all"
+              className="group relative overflow-hidden bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] hover:from-[#00C9A7] hover:to-[#4D7CFF] transition-all duration-500 shadow-lg hover:shadow-xl border-0"
             >
-              <span className="flex items-center gap-2">
+              <span className="flex items-center gap-2 text-white font-medium">
                 Ver todos os planos
                 <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
               </span>
             </Button>
           </Link>
-        </motion.div>
+        </div>
 
         {/* Selo de garantia */}
         <motion.div

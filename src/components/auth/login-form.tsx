@@ -3,10 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/auth";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
 import { Eye, EyeOff } from "lucide-react";
 
 export function LoginForm() {
@@ -111,13 +109,13 @@ export function LoginForm() {
         </div>
 
         <div className="flex flex-col space-y-4 pt-4 pb-2">
-          <Button
+          <button
             type="submit"
-            className="w-full bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text- hover:opacity-90 transition-opacity"
             disabled={isSubmitting}
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 w-full bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90 transition-opacity"
           >
             {isSubmitting ? "Entrando..." : "Entrar"}
-          </Button>
+          </button>
 
           <div className="flex justify-between w-full text-sm">
             <a

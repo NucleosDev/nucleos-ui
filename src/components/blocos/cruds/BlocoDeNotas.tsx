@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useBlocoNotas } from "@/hooks/useBlocoNotas";
 import { useBlocos } from "@/hooks/useBlocos";
 import { cn } from "@/lib/utils";
+import { toast } from "@/hooks/use-toast";
 
 interface BlocoDeNotasProps {
   bloco: {
@@ -64,6 +65,7 @@ export function BlocoDeNotas({ bloco }: BlocoDeNotasProps) {
       idleTimer.current = setTimeout(() => setSaveState("idle"), 2000);
     } catch {
       setSaveState("idle");
+      toast({ title: "Erro ao salvar nota", description: "Verifique sua conexão e tente novamente.", variant: "destructive" });
     }
   }, [salvarConteudo]);
 

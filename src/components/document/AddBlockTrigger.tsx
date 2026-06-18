@@ -8,7 +8,7 @@ import {
   Plus, Type, Heading1, Heading2, Heading3,
   Quote, Code2, List, ListOrdered, CheckSquare,
   Minus, CalendarDays, Timer, Activity, ListTodo,
-  Layers, FileText, Loader2, Columns2,
+  Layers, FileText, Loader2, Columns2, Table2, LayoutGrid, Kanban, Dumbbell,
 } from "lucide-react";
 import type { DocumentBlockType } from "./document-types";
 
@@ -40,6 +40,10 @@ const FUNCTIONAL_BLOCKS = [
   { type: "timer",     label: "Timer",      icon: Timer,        desc: "Cronômetro / Pomodoro",   accent: "#f97316" },
   { type: "colecoes",  label: "Coleções",   icon: Layers,       desc: "Banco de dados",          accent: "#10b981" },
   { type: "notas",     label: "Notas",      icon: FileText,     desc: "Bloco de notas",          accent: "#a855f7" },
+  { type: "tabela",    label: "Tabela",     icon: Table2,       desc: "Linhas e colunas",        accent: "#14b8a6" },
+  { type: "galeria",   label: "Galeria",    icon: LayoutGrid,   desc: "Cards em grade",          accent: "#f43f5e" },
+  { type: "quadro",    label: "Quadro",     icon: Kanban,       desc: "Kanban por status",       accent: "#f97316" },
+  { type: "exercicios", label: "Exercícios", icon: Dumbbell,    desc: "Planos de treino",         accent: "#f97316" },
 ];
 
 export function AddBlockTrigger({ onAddText, onAddFunctional, isCreating = false }: AddBlockTriggerProps) {

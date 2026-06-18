@@ -6,7 +6,6 @@ import { useAuth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
 import { Eye, EyeOff } from "lucide-react";
 
 export function RegisterForm() {
@@ -32,9 +31,10 @@ export function RegisterForm() {
       const done = localStorage.getItem("onboarding");
 
       if (done) {
-        router.replace("/painel");
+        router.replace("/dashboard");
       } else {
-        router.replace("/onboarding");
+        localStorage.removeItem("onboarding");
+        router.replace("/dashboard/onboarding");
       }
     }
   }, [isAuthenticated, router]);
@@ -93,13 +93,7 @@ export function RegisterForm() {
   };
 
   return (
-    // blur reutilizavel abaixo
-    //  <div className="absolute inset-0 -z-10">
-    //     <div className="absolute top-1/4 left-1/4 size-96 rounded-full bg-primary/15 blur-3xl" />
-    //     <div className="absolute right-1/4 bottom-1/4 size-96 rounded-full bg-accent/15 blur-3xl" />
-    //   </div>
-
-    <div>
+    <div className="relative z-10">
       <form onSubmit={handleSubmit}>
         <div className="space-y-4">
           {error && (
@@ -232,13 +226,13 @@ export function RegisterForm() {
         </div>
 
         <div className="flex flex-col space-y-4 pt-4 pb-2">
-          <Button
+          <button
             type="submit"
-            className="w-full bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text- hover:opacity-90"
             disabled={isSubmitting}
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 w-full bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] text-white hover:opacity-90 transition-opacity"
           >
             {isSubmitting ? "Cadastrando..." : "Cadastrar"}
-          </Button>
+          </button>
 
           <p className="text-sm text-center text-muted-foreground">
             Já tem uma conta?{" "}

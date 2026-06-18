@@ -1,9 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, Bell, Check, CheckCheck, Trophy, Flame, Award, Star } from "lucide-react";
+import {
+  Bell,
+  Check,
+  CheckCheck,
+  Trophy,
+  Flame,
+  Award,
+  Star,
+} from "lucide-react";
 import { notificationsService } from "@/services/notifications.service";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import { format } from "date-fns";
@@ -11,7 +19,6 @@ import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { GamificationNotification } from "@/types/notifications";
 import { motion } from "framer-motion";
-import { LiquidGlass } from "@/components/ui/liquid-glass";
 
 interface Notificacao {
   id: string;
@@ -33,30 +40,35 @@ const convertToNotificacao = (n: GamificationNotification): Notificacao => ({
   created_at: n.createdAt.toISOString(),
 });
 
-const iconBtn =
-  "flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors duration-[var(--duration-fast)]";
-
 function getIcon(type?: string) {
   switch (type) {
-    case "LEVEL_UP":     return <Trophy className="h-4 w-4 text-amber-500" />;
-    case "ACHIEVEMENT":  return <Award  className="h-4 w-4 text-purple-500" />;
-    case "STREAK":       return <Flame  className="h-4 w-4 text-orange-500" />;
-    case "DAILY_REWARD": return <Star   className="h-4 w-4 text-blue-500" />;
-    default:             return <Bell   className="h-4 w-4 text-primary" />;
+    case "LEVEL_UP":
+      return <Trophy className="h-4 w-4 text-amber-500" />;
+    case "ACHIEVEMENT":
+      return <Award className="h-4 w-4 text-purple-500" />;
+    case "STREAK":
+      return <Flame className="h-4 w-4 text-orange-500" />;
+    case "DAILY_REWARD":
+      return <Star className="h-4 w-4 text-blue-500" />;
+    default:
+      return <Bell className="h-4 w-4 text-primary" />;
   }
 }
 
 export default function NotificacoesPage() {
-  const router = useRouter();
-  const [items, setItems]   = useState<Notificacao[]>([]);
+  const [items, setItems] = useState<Notificacao[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => { loadNotifications(); }, []);
+  useEffect(() => {
+    loadNotifications();
+  }, []);
 
   const loadNotifications = async () => {
     try {
       const data = await notificationsService.getNotifications();
-      setItems((Array.isArray(data) ? data : []).map(convertToNotificacao));
+      setItems(
+        (Array.isArray(data) ? data : []).map(convertToNotificacao),
+      );
     } catch {
       setItems([]);
     } finally {
@@ -67,9 +79,15 @@ export default function NotificacoesPage() {
   const marcarLida = async (id: string) => {
     try {
       await notificationsService.markAsRead(id);
-      setItems((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
+      setItems((prev) =>
+        prev.map((n) => (n.id === id ? { ...n, read: true } : n)),
+      );
     } catch {
-      toast({ title: "Erro", description: "Não foi possível marcar como lida", variant: "destructive" });
+      toast({
+        title: "Erro",
+        description: "Não foi possível marcar como lida",
+        variant: "destructive",
+      });
     }
   };
 
@@ -77,9 +95,16 @@ export default function NotificacoesPage() {
     try {
       await notificationsService.markAllAsRead();
       setItems((prev) => prev.map((n) => ({ ...n, read: true })));
-      toast({ title: "Sucesso", description: "Todas notificações marcadas como lidas" });
+      toast({
+        title: "Sucesso",
+        description: "Todas notificações marcadas como lidas",
+      });
     } catch {
-      toast({ title: "Erro", description: "Não foi possível marcar todas", variant: "destructive" });
+      toast({
+        title: "Erro",
+        description: "Não foi possível marcar todas",
+        variant: "destructive",
+      });
     }
   };
 
@@ -87,37 +112,36 @@ export default function NotificacoesPage() {
 
   return (
     <div className="flex-1 overflow-auto">
-      {/* Page header */}
-      <div className="px-5 md:px-7 pt-7 pb-5 flex items-center gap-3 border-b border-border/40">
-        <button onClick={() => router.back()} className={iconBtn} aria-label="Voltar">
-          <ArrowLeft className="h-4 w-4" />
-        </button>
-        <Bell className="h-4 w-4 text-primary" />
-        <h1 className="text-base font-semibold">Notificações</h1>
-        {naoLidas > 0 && (
-          <span className="inline-flex items-center h-5 px-1.5 rounded-full text-[10px] font-semibold bg-primary text-primary-foreground">
-            {naoLidas}
-          </span>
-        )}
-        {naoLidas > 0 && (
-          <LiquidGlass
-            variant="button"
-            radius="8px"
-            onClick={marcarTodas}
-            className="ml-auto text-xs font-medium text-white/70"
-          >
-            <span className="flex items-center gap-1.5 px-2.5 py-1.5">
-              <CheckCheck className="h-3.5 w-3.5" />
-              Marcar todas
+      {/* Sticky header */}
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 px-5 md:px-6 h-14 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/8">
+            <Bell className="h-3.5 w-3.5 text-primary" />
+          </div>
+          <h1 className="text-sm font-semibold tracking-tight">Notificações</h1>
+          {naoLidas > 0 && (
+            <span className="inline-flex items-center h-5 px-1.5 rounded-full text-[10px] font-semibold bg-primary text-primary-foreground">
+              {naoLidas}
             </span>
-          </LiquidGlass>
+          )}
+        </div>
+        {naoLidas > 0 && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={marcarTodas}
+            className="text-xs gap-1.5"
+          >
+            <CheckCheck className="h-3.5 w-3.5" />
+            Marcar todas
+          </Button>
         )}
       </div>
 
       <div className="px-5 md:px-7 py-6 max-w-2xl mx-auto space-y-2">
         {loading ? (
           [...Array(5)].map((_, i) => (
-            <Skeleton key={i} className="h-[76px] rounded-[var(--radius-lg)]" />
+            <Skeleton key={i} className="h-[76px] rounded-xl" />
           ))
         ) : items.length === 0 ? (
           <div className="flex flex-col items-center gap-4 py-20 text-center">
@@ -125,8 +149,12 @@ export default function NotificacoesPage() {
               <Bell className="h-7 w-7 text-muted-foreground/30" />
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground/60">Nenhuma notificação</p>
-              <p className="text-xs text-muted-foreground/40 mt-0.5">Você está em dia!</p>
+              <p className="text-sm font-medium text-muted-foreground/60">
+                Nenhuma notificação
+              </p>
+              <p className="text-xs text-muted-foreground/40 mt-0.5">
+                Você está em dia!
+              </p>
             </div>
           </div>
         ) : (
@@ -137,32 +165,43 @@ export default function NotificacoesPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2, delay: i * 0.03 }}
               className={cn(
-                "flex items-start gap-3 p-4 rounded-[var(--radius-lg)] border transition-all",
+                "flex items-start gap-3 p-4 rounded-xl border transition-all",
                 item.read
                   ? "bg-card/30 border-border/30 opacity-55"
-                  : "bg-card/60 backdrop-blur-sm border-primary/20 shadow-[var(--shadow-xs)]",
+                  : "bg-card/60 backdrop-blur-sm border-primary/20",
               )}
             >
-              <div className={cn("w-2 h-2 rounded-full mt-2 shrink-0", item.read ? "bg-muted-foreground/20" : "bg-primary")} />
+              <div
+                className={cn(
+                  "w-2 h-2 rounded-full mt-2 shrink-0",
+                  item.read ? "bg-muted-foreground/20" : "bg-primary",
+                )}
+              />
               <div className="w-8 h-8 rounded-full bg-primary/8 flex items-center justify-center shrink-0">
                 {getIcon(item.type)}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground">{item.titulo}</p>
-                <p className="text-xs text-muted-foreground/70 mt-0.5">{item.mensagem}</p>
+                <p className="text-sm font-medium text-foreground">
+                  {item.titulo}
+                </p>
+                <p className="text-xs text-muted-foreground/70 mt-0.5">
+                  {item.mensagem}
+                </p>
                 {item.xp_amount && (
                   <span className="text-[10px] font-semibold text-emerald-500 mt-1 block">
                     +{item.xp_amount} XP
                   </span>
                 )}
                 <p className="text-[10px] text-muted-foreground/40 mt-1">
-                  {format(new Date(item.created_at), "d MMM, HH:mm", { locale: ptBR })}
+                  {format(new Date(item.created_at), "d MMM, HH:mm", {
+                    locale: ptBR,
+                  })}
                 </p>
               </div>
               {!item.read && (
                 <button
                   onClick={() => marcarLida(item.id)}
-                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-muted-foreground/50 hover:text-foreground hover:bg-accent transition-colors duration-[var(--duration-fast)]"
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-muted-foreground/50 hover:text-foreground hover:bg-accent transition-colors"
                   aria-label="Marcar como lida"
                 >
                   <Check className="h-3.5 w-3.5" />

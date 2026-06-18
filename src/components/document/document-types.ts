@@ -23,7 +23,11 @@ export type DocumentBlockType =
   | "timer"
   | "timers"
   | "colecoes"
-  | "notas";
+  | "notas"
+  | "tabela"
+  | "galeria"
+  | "quadro"
+  | "exercicios";
 
 export const FUNCTIONAL_TYPES = new Set([
   "tarefas",
@@ -35,6 +39,10 @@ export const FUNCTIONAL_TYPES = new Set([
   "timers",
   "colecoes",
   "notas",
+  "tabela",
+  "galeria",
+  "quadro",
+  "exercicios",
 ] as const);
 
 export const TEXT_TYPES = new Set([

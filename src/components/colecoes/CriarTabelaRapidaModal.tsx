@@ -1,19 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Plus, Trash2, Zap, Check, Loader2 } from "lucide-react";
-import {
-  GlassModal,
-  GlassModalHeader,
-  GlassInput,
-  GlassModalFooter,
-  GlassButton,
-} from "@/components/ui/glass-modal";
 import { cn } from "@/lib/utils";
-import { toast } from "@/hooks/use-toast";
 import type { TipoCampo } from "@/types/colecao";
-
-const ACCENT = "#10b981";
 
 const TIPO_LABELS: Record<TipoCampo, string> = {
   texto: "Texto",
@@ -118,134 +109,148 @@ export function CriarTabelaRapidaModal({
   };
 
   return (
-    <GlassModal open={open} onClose={onClose} size="max-w-lg">
-      <GlassModalHeader
-        title="Criar Tabela Rápida"
-        description="Crie uma nova tabela com campos predefinidos."
-        icon={Zap}
-        accent={ACCENT}
-        onClose={onClose}
-      />
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-md p-0 overflow-hidden gap-0">
+        {/* Header */}
+        <div className="px-5 pt-5 pb-4 border-b border-border/60">
+          <div className="flex items-center gap-2.5 mb-0.5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10">
+              <Zap className="h-3.5 w-3.5 text-emerald-500" />
+            </div>
+            <DialogTitle className="text-sm font-semibold">
+              Tabela rápida
+            </DialogTitle>
+          </div>
+          <p className="text-xs text-muted-foreground/60 pl-9">
+            Defina o nome e os campos — os dados vêm depois.
+          </p>
+        </div>
 
-      <form onSubmit={handleSubmit} className="px-5 py-4 space-y-4">
-        <GlassInput
-          label="Nome da tabela"
-          placeholder="Ex: Contatos, Produtos, Pedidos..."
-          value={tabelaNome}
-          onChange={(e) => {
-            setTabelaNome(e.target.value);
-            setErro(null);
-          }}
-          disabled={isSubmitting}
-          autoFocus
-        />
+        <form onSubmit={handleSubmit}>
+          <div className="px-4 pt-4 pb-3 space-y-4 max-h-[60vh] overflow-y-auto">
+            {/* Nome da tabela */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-muted-foreground/70">
+                Nome da tabela
+              </label>
+              <input
+                autoFocus
+                value={tabelaNome}
+                onChange={(e) => {
+                  setTabelaNome(e.target.value);
+                  setErro(null);
+                }}
+                placeholder="Ex: Contatos, Produtos, Pedidos…"
+                disabled={isSubmitting}
+                className="w-full px-3 py-2 text-sm rounded-[var(--radius-md)] border border-border/60 bg-background placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-[border-color,box-shadow]"
+              />
+            </div>
 
-        {/* Add field row */}
-        <div className="space-y-3 rounded-xl border border-border/40 bg-muted/30 p-3">
-          <p className="text-xs font-semibold text-foreground/70">Campos</p>
-          <div className="flex gap-2">
-            <input
-              placeholder="Nome do campo"
-              value={novoNome}
-              onChange={(e) => setNovoNome(e.target.value)}
-              disabled={isSubmitting}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  adicionarCampo();
-                }
-              }}
-              className={cn(
-                "flex-1 px-3 py-2 text-sm rounded-xl bg-background border border-border/50",
-                "focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-500/40",
-                "placeholder:text-muted-foreground/40 transition-[border-color,box-shadow]",
+            {/* Adicionar campo */}
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-muted-foreground/70">
+                Campos
+              </label>
+              <div className="flex gap-2">
+                <input
+                  placeholder="Nome do campo"
+                  value={novoNome}
+                  onChange={(e) => {
+                    setNovoNome(e.target.value);
+                    setErro(null);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      adicionarCampo();
+                    }
+                  }}
+                  disabled={isSubmitting}
+                  className="flex-1 px-3 py-2 text-sm rounded-[var(--radius-md)] border border-border/60 bg-background placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-[border-color,box-shadow]"
+                />
+                <select
+                  value={novoTipo}
+                  onChange={(e) => setNovoTipo(e.target.value as TipoCampo)}
+                  disabled={isSubmitting}
+                  className="w-28 px-2 py-2 text-xs rounded-[var(--radius-md)] border border-border/60 bg-background focus:outline-none focus:ring-2 focus:ring-primary/20"
+                >
+                  {(Object.keys(TIPO_LABELS) as TipoCampo[]).map((t) => (
+                    <option key={t} value={t}>
+                      {TIPO_LABELS[t]}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={adicionarCampo}
+                  disabled={isSubmitting}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-md)] bg-emerald-500 text-white hover:opacity-90 disabled:opacity-50 transition-opacity shadow-[0_2px_8px_rgba(16,185,129,0.2)]"
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              </div>
+
+              {erro && (
+                <p className="text-xs text-destructive font-medium">{erro}</p>
               )}
-            />
-            <select
-              value={novoTipo}
-              onChange={(e) => setNovoTipo(e.target.value as TipoCampo)}
-              className="w-28 px-2 py-2 text-xs rounded-xl bg-background border border-border/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
-            >
-              {(Object.keys(TIPO_LABELS) as TipoCampo[]).map((t) => (
-                <option key={t} value={t}>
-                  {TIPO_LABELS[t]}
-                </option>
-              ))}
-            </select>
-            <button
-              type="button"
-              onClick={adicionarCampo}
-              disabled={isSubmitting}
-              className="flex h-9 w-9 items-center justify-center rounded-xl text- transition-opacity hover:opacity-90 disabled:opacity-50"
-              style={{ background: ACCENT, boxShadow: `0 2px 8px ${ACCENT}30` }}
-            >
-              <Plus className="h-4 w-4" />
-            </button>
+
+              {campos.length > 0 && (
+                <div className="space-y-1 mt-1">
+                  <p className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-wider">
+                    {campos.length} campo{campos.length !== 1 ? "s" : ""}
+                  </p>
+                  {campos.map((campo) => (
+                    <div
+                      key={campo.tempId}
+                      className="flex items-center gap-2 px-3 py-2 rounded-[var(--radius-md)] bg-muted/40 border border-border/40"
+                    >
+                      <span className="text-xs font-bold text-emerald-500 w-5 text-center shrink-0">
+                        {TIPO_SYMBOL[campo.tipo]}
+                      </span>
+                      <span className="text-sm font-medium flex-1 min-w-0 truncate">
+                        {campo.nome}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground/50 shrink-0">
+                        {TIPO_LABELS[campo.tipo]}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => removerCampo(campo.tempId)}
+                        className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
-          {erro && (
-            <p className="text-xs text-destructive font-medium">{erro}</p>
-          )}
-
-          {campos.length > 0 && (
-            <div className="space-y-1.5">
-              <p className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-wider">
-                {campos.length} campo{campos.length !== 1 ? "s" : ""} adicionado
-                {campos.length !== 1 ? "s" : ""}
-              </p>
-              {campos.map((campo) => (
-                <div
-                  key={campo.tempId}
-                  className="flex items-center justify-between px-3 py-2 rounded-lg bg-background/60 border border-border/40"
-                >
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="text-xs font-semibold w-5 text-center"
-                      style={{ color: ACCENT }}
-                    >
-                      {TIPO_SYMBOL[campo.tipo]}
-                    </span>
-                    <span className="text-sm font-medium">{campo.nome}</span>
-                    <span className="text-[10px] text-muted-foreground/50">
-                      ({TIPO_LABELS[campo.tipo]})
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => removerCampo(campo.tempId)}
-                    className="flex h-6 w-6 items-center justify-center rounded-md text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-        <GlassModalFooter>
-          <GlassButton
-            variant="outline"
-            type="button"
-            onClick={onClose}
-            disabled={isSubmitting}
-          >
-            Cancelar
-          </GlassButton>
-          <GlassButton
-            type="submit"
-            disabled={isSubmitting || campos.length === 0 || !tabelaNome.trim()}
-            style={{ background: ACCENT, boxShadow: `0 4px 12px ${ACCENT}35` }}
-            className="text- hover:opacity-90 bg-transparent"
-          >
-            {isSubmitting ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : (
-              <Check className="h-3.5 w-3.5" />
-            )}
-            Criar Tabela
-          </GlassButton>
-        </GlassModalFooter>
-      </form>
-    </GlassModal>
+          <div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-border/40 bg-muted/20">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isSubmitting}
+              className="px-3.5 py-1.5 rounded-[var(--radius-md)] text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting || campos.length === 0 || !tabelaNome.trim()}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-[var(--radius-md)] text-sm font-medium bg-emerald-500 text-white hover:opacity-90 disabled:opacity-50 transition-opacity shadow-[0_2px_8px_rgba(16,185,129,0.25)]"
+            >
+              {isSubmitting ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Check className="h-3.5 w-3.5" />
+              )}
+              Criar tabela
+            </button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

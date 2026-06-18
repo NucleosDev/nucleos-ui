@@ -7,7 +7,6 @@ import Link from "next/link";
 import { ChevronLeftIcon } from "lucide-react";
 import { LoginForm } from "@/components/auth/login-form";
 import Image from "next/image";
-import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { useAuth } from "@/auth/auth-context";
 
 export function AuthPage() {
@@ -25,22 +24,23 @@ export function AuthPage() {
           to-background
         "
       >
+        <p className="text-xl font-semibold">Nucleos</p>
         <Image
-          src="/logo-full.svg"
+          src="/lettermark-nucleos.svg"
           alt="logo nucleos"
           width={600}
           height={600}
-          className="absolute right-15 top-50 z-[1] opacity-40"
+          priority
+          className="relative left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[1] "
         />
         <div className="from-background absolute inset-0 z-10 bg-gradient-to-t to-transparent" />
-        <div className="z-10 flex items-center justify-end w-full gap-2 text-right">
-          <p className="text-xl font-semibold">Nucleos</p>
-        </div>
-        <div className="z-10 mt-auto w-full text-right">
+        <div className="z-10 flex items-center justify-end w-full gap-2 text-right"></div>
+
+        <div className="z-10 mt-auto w-full text-left">
           <blockquote className="space-y-1">
             <p className="text-xl leading-relaxed">
-              &ldquo;É melhor você tentar, ver não funcionar e aprender com
-              isso, do que não fazer nada.&rdquo;
+              &ldquo;É melhor tentar, ver não funcionar e aprender, do que não
+              fazer nada.&rdquo;
             </p>
             <footer className="font-mono text-sm font-semibold text-muted-foreground">
               ~ Mark Zuckerberg
@@ -55,22 +55,26 @@ export function AuthPage() {
 
       {/* ── Right panel — form ────────────────────────────────────────────── */}
       <div className="relative flex min-h-screen flex-col items-center justify-center p-6">
-        {/* Ambient gradient orbs — form backdrop */}
-        <div aria-hidden className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[55%] w-[500px] h-[500px] rounded-full bg-primary/10 blur-[80px]" />
-          <div className="absolute top-[30%] right-[20%] w-[280px] h-[280px] rounded-full bg-[#00C9A7]/12 blur-[64px]" />
-          <div className="absolute bottom-[25%] left-[15%] w-[240px] h-[240px] rounded-full bg-[#5B7FFF]/10 blur-[64px]" />
+        {/* Ambient gradient orbs */}
+        <div
+          aria-hidden
+          className="absolute inset-0 overflow-hidden pointer-events-none"
+        >
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[50%] w-[520px] h-[520px] rounded-full bg-primary/10 blur-[80px]" />
+          <div className="absolute top-[25%] right-[20%] w-[300px] h-[300px] rounded-full bg-[#00C9A7]/12 blur-[64px]" />
+          <div className="absolute bottom-[20%] left-[15%] w-[260px] h-[260px] rounded-full bg-[#5B7FFF]/10 blur-[64px]" />
+          <div className="absolute top-[60%] right-[10%] w-[200px] h-[200px] rounded-full bg-[#1FBFA8]/8 blur-[48px]" />
         </div>
 
         {/* Back button */}
         <Button
           variant="ghost"
-          size="sm"
-          className="absolute top-5 left-5 z-10 text-muted-foreground hover:text-foreground"
+          size="lg"
+          className="absolute top-5 left-5 z-10 text-muted-foreground hover:text-foreground text-lg"
           asChild
         >
           <Link href="/">
-            <ChevronLeftIcon className="size-3.5 me-1" />
+            <ChevronLeftIcon className="size-5 me-1 " />
             Voltar
           </Link>
         </Button>
@@ -82,23 +86,11 @@ export function AuthPage() {
           </p>
         </div>
 
-        {/* ── Glass form card ────────────────────────────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 16, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="relative z-10 w-full max-w-md"
-        >
-          <LiquidGlass
-            variant="default"
-            radius="24px"
-            interactive={false}
-            className="p-8"
-          >
-            <p className="text-sm text-muted-foreground mb-6">
-              Preencha os dados abaixo e acesse sua conta.
-            </p>
-
+        <p className="text-sm text-muted-foreground mb-6">
+          Preencha os dados abaixo para fazer login.
+        </p>
+        <div className="w-full max-w-md z-10">
+          <div className="bg-background rounded-2xl border border-white/20 p-8">
             <LoginForm />
 
             {/* Divider */}
@@ -111,12 +103,15 @@ export function AuthPage() {
             </div>
 
             {/* Google login */}
-            <button className="w-full flex items-center justify-center gap-x-2.5 py-2.5 px-4 border border-border/70 rounded-xl text-sm font-medium text-foreground bg-background/40 backdrop-blur-sm hover:bg-background/60 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+            <button
+              // onClick={loginWithGoogle}
+              className="w-full flex items-center justify-center gap-x-2.5 py-2.5 px-4 border border-border/70 rounded-xl text-sm font-medium text-foreground bg-background/40 backdrop-blur-sm hover:bg-background/60 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
               <GoogleSVG className="w-4.5 h-4.5" />
               Continue com o Google
             </button>
-          </LiquidGlass>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </main>
   );
@@ -171,7 +166,11 @@ function FloatingPaths({ position }: { position: number }) {
 
 function GoogleSVG(props: React.ComponentProps<"svg">) {
   return (
-    <svg viewBox="0 0 533.5 544.3" xmlns="http://www.w3.org/2000/svg" {...props}>
+    <svg
+      viewBox="0 0 533.5 544.3"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
       <path
         d="M533.5 278.4c0-17.4-1.6-34.1-4.6-50.2H272v95h146.9c-6.3 33.9-25 62.5-53.2 81.8v68.1h85.8c50.2-46.3 82-114.6 82-194.7z"
         fill="#4285F4"

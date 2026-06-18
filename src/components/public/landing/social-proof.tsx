@@ -42,7 +42,7 @@ export function SocialProof() {
       <div className="container px-4 mx-auto">
         <div className="max-w-4xl mx-auto">
           {/* Live Activity Feed */}
-          <div className="mb-16">
+          <div data-animate="fade-up" className="mb-16">
             <div 
               className={`flex items-center justify-center gap-4 p-4 rounded-2xl bg-card border border-border shadow-lg transition-all duration-300 ${
                 isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
@@ -63,28 +63,28 @@ export function SocialProof() {
 
           {/* Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
-            <div className="text-center p-6 rounded-2xl bg-card border border-border">
+            <div data-animate="fade-up" data-delay="100" className="text-center p-6 rounded-2xl bg-card border border-border">
               <div className="flex justify-center mb-3">
                 <Users className="size-8 text-primary" />
               </div>
               <div className="text-3xl md:text-4xl font-bold mb-1">50K+</div>
               <p className="text-sm text-muted-foreground">Usuarios ativos</p>
             </div>
-            <div className="text-center p-6 rounded-2xl bg-card border border-border">
+            <div data-animate="fade-up" data-delay="200" className="text-center p-6 rounded-2xl bg-card border border-border">
               <div className="flex justify-center mb-3">
                 <Zap className="size-8 text-accent" />
               </div>
               <div className="text-3xl md:text-4xl font-bold mb-1">2M+</div>
               <p className="text-sm text-muted-foreground">Tarefas completas</p>
             </div>
-            <div className="text-center p-6 rounded-2xl bg-card border border-border">
+            <div data-animate="fade-up" data-delay="300" className="text-center p-6 rounded-2xl bg-card border border-border">
               <div className="flex justify-center mb-3">
                 <Award className="size-8 text-orange-500" />
               </div>
               <div className="text-3xl md:text-4xl font-bold mb-1">500K+</div>
               <p className="text-sm text-muted-foreground">Conquistas</p>
             </div>
-            <div className="text-center p-6 rounded-2xl bg-card border border-border">
+            <div data-animate="fade-up" data-delay="400" className="text-center p-6 rounded-2xl bg-card border border-border">
               <div className="flex justify-center mb-3">
                 <Star className="size-8 text-yellow-500" />
               </div>
@@ -94,7 +94,7 @@ export function SocialProof() {
           </div>
 
           {/* Avatar Stack + Rating */}
-          <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+          <div data-animate="fade-up" data-delay="200" className="flex flex-col md:flex-row items-center justify-center gap-8">
             <div className="flex items-center gap-4">
               <div className="flex -space-x-3">
                 {avatars.map((avatar, i) => (

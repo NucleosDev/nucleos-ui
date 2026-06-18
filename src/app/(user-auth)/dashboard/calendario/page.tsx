@@ -6,18 +6,21 @@ import { useCalendario } from "@/hooks/useCalendario";
 import { useNucleos } from "@/hooks/useNucleo";
 import { toast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CalendarDays, ChevronDown, Layers } from "lucide-react";
+import { CalendarDays, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import type { Nucleo } from "@/types/nucleo";
-import { LiquidGlass } from "@/components/ui/liquid-glass";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function CalendarioPage() {
   const { data: nucleos = [], isLoading: nucleosLoading } = useNucleos();
   const [selectedNucleoId, setSelectedNucleoId] = useState<string | null>(null);
-  const [selectorOpen, setSelectorOpen] = useState(false);
-
-  const activeNucleo = (nucleos as Nucleo[]).find((n) => n.id === selectedNucleoId);
 
   const {
     eventos,
@@ -84,111 +87,13 @@ export default function CalendarioPage() {
 
   return (
     <div className="flex-1 overflow-auto">
-      {/* Header */}
-      <div className="px-5 md:px-8 pt-7 pb-5 border-b border-border/40 flex items-center justify-between gap-4">
+      {/* Sticky header */}
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50 px-5 md:px-6 h-14 flex items-center gap-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/8">
-            <CalendarDays className="h-4 w-4 text-primary" />
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/8">
+            <CalendarDays className="h-3.5 w-3.5 text-primary" />
           </div>
-          <div>
-            <h1 className="text-base font-semibold tracking-tight">Calendário</h1>
-            <p className="text-[11px] text-muted-foreground/50 mt-px">
-              {activeNucleo
-                ? `Núcleo: ${activeNucleo.nome}`
-                : "Selecione um Núcleo para ver os eventos"}
-            </p>
-          </div>
-        </div>
-
-        {/* Nucleo selector */}
-        <div className="relative">
-          <LiquidGlass
-            variant="button"
-            radius="12px"
-            onClick={() => setSelectorOpen((v) => !v)}
-            className="text-sm font-medium text-white"
-          >
-            <span className="flex items-center gap-2 px-3 py-2">
-              {activeNucleo ? (
-                <>
-                  <span
-                    className="h-2 w-2 rounded-full shrink-0"
-                    style={{ background: activeNucleo.corDestaque || "var(--primary)" }}
-                  />
-                  <span className="max-w-[140px] truncate">{activeNucleo.nome}</span>
-                </>
-              ) : (
-                <>
-                  <Layers className="h-3.5 w-3.5 text-white/60" />
-                  <span className="text-white/60">Selecionar Núcleo</span>
-                </>
-              )}
-              <ChevronDown
-                className={cn(
-                  "h-3.5 w-3.5 text-white/40 transition-transform duration-[var(--duration-fast)]",
-                  selectorOpen && "rotate-180",
-                )}
-              />
-            </span>
-          </LiquidGlass>
-
-          <AnimatePresence>
-            {selectorOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -4, scale: 0.97 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -4, scale: 0.97 }}
-                transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-                className={cn(
-                  "absolute right-0 top-full mt-1.5 z-50 min-w-[200px]",
-                  "rounded-xl border border-border/60 bg-card/95 backdrop-blur-[var(--glass-blur)]",
-                  "shadow-[var(--shadow-lg)] overflow-hidden",
-                )}
-              >
-                {nucleosLoading ? (
-                  <div className="p-2 space-y-1.5">
-                    {[0, 1, 2].map((i) => (
-                      <Skeleton key={i} className="h-8 rounded-lg" />
-                    ))}
-                  </div>
-                ) : (nucleos as Nucleo[]).length === 0 ? (
-                  <div className="px-3 py-4 text-center text-sm text-muted-foreground/60">
-                    Nenhum Núcleo encontrado
-                  </div>
-                ) : (
-                  <div className="p-1.5">
-                    {(nucleos as Nucleo[]).map((n) => (
-                      <button
-                        key={n.id}
-                        onClick={() => {
-                          setSelectedNucleoId(n.id);
-                          setSelectorOpen(false);
-                        }}
-                        className={cn(
-                          "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-left",
-                          "hover:bg-accent transition-colors duration-[var(--duration-fast)]",
-                          selectedNucleoId === n.id && "bg-primary/8 text-primary",
-                        )}
-                      >
-                        <span
-                          className="h-2 w-2 rounded-full shrink-0"
-                          style={{ background: n.corDestaque || "var(--primary)" }}
-                        />
-                        <span className="flex-1 truncate font-medium">{n.nome}</span>
-                        {selectedNucleoId === n.id && (
-                          <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {selectorOpen && (
-            <div className="fixed inset-0 z-40" onClick={() => setSelectorOpen(false)} />
-          )}
+          <h1 className="text-sm font-semibold tracking-tight">Calendário</h1>
         </div>
       </div>
 
@@ -197,7 +102,9 @@ export default function CalendarioPage() {
         {!selectedNucleoId ? (
           <EmptyCalendarState
             nucleosCount={(nucleos as Nucleo[]).length}
-            onSelect={() => setSelectorOpen(true)}
+            nucleos={nucleos as Nucleo[]}
+            nucleosLoading={nucleosLoading}
+            onSelect={setSelectedNucleoId}
           />
         ) : (
           <motion.div
@@ -222,12 +129,73 @@ export default function CalendarioPage() {
   );
 }
 
+/**
+ * Dropdown de seleção de Núcleo, reaproveitado tanto no header
+ * quanto no empty state — garante o mesmo comportamento nos dois lugares.
+ */
+function NucleoDropdown({
+  nucleos,
+  nucleosLoading,
+  selectedNucleoId,
+  onSelect,
+  trigger,
+}: {
+  nucleos: Nucleo[];
+  nucleosLoading: boolean;
+  selectedNucleoId: string | null;
+  onSelect: (id: string) => void;
+  trigger: React.ReactNode;
+}) {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="min-w-[200px]">
+        {nucleosLoading ? (
+          <div className="p-2 space-y-1.5">
+            {[0, 1, 2].map((i) => (
+              <Skeleton key={i} className="h-8 rounded-lg" />
+            ))}
+          </div>
+        ) : nucleos.length === 0 ? (
+          <div className="px-3 py-4 text-center text-sm text-muted-foreground/60">
+            Nenhum Núcleo encontrado
+          </div>
+        ) : (
+          nucleos.map((n) => (
+            <DropdownMenuItem
+              key={n.id}
+              onClick={() => onSelect(n.id)}
+              className={cn(
+                "gap-2.5",
+                selectedNucleoId === n.id && "bg-primary/8 text-primary",
+              )}
+            >
+              <span
+                className="h-2 w-2 rounded-full shrink-0"
+                style={{ background: n.corDestaque || "var(--primary)" }}
+              />
+              <span className="flex-1 truncate font-medium">{n.nome}</span>
+              {selectedNucleoId === n.id && (
+                <span className="h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
+              )}
+            </DropdownMenuItem>
+          ))
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 function EmptyCalendarState({
   nucleosCount,
+  nucleos,
+  nucleosLoading,
   onSelect,
 }: {
   nucleosCount: number;
-  onSelect: () => void;
+  nucleos: Nucleo[];
+  nucleosLoading: boolean;
+  onSelect: (id: string) => void;
 }) {
   return (
     <motion.div
@@ -239,8 +207,7 @@ function EmptyCalendarState({
       <div
         className="flex h-16 w-16 items-center justify-center rounded-2xl mb-5"
         style={{
-          background:
-            "linear-gradient(135deg, oklch(0.58 0.19 245 / 0.12), oklch(0.58 0.19 245 / 0.06))",
+          background: "linear-gradient(135deg, oklch(0.58 0.19 245 / 0.12), oklch(0.58 0.19 245 / 0.06))",
           border: "1px solid oklch(0.58 0.19 245 / 0.2)",
         }}
       >
@@ -249,21 +216,27 @@ function EmptyCalendarState({
       <h2 className="text-base font-semibold mb-1.5">Seu calendário pessoal</h2>
       <p className="text-sm text-muted-foreground/60 max-w-xs mb-6">
         {nucleosCount > 0
-          ? "Selecione um Núcleo para visualizar e criar eventos."
+          ? "Escolha um Núcleo abaixo para visualizar e criar eventos."
           : "Crie um Núcleo primeiro para começar a usar o calendário."}
       </p>
       {nucleosCount > 0 && (
-        <LiquidGlass
-          variant="button"
-          radius="12px"
-          onClick={onSelect}
-          className="text-sm font-medium text-white"
-        >
-          <span className="flex items-center gap-2 px-4 py-2.5">
-            <Layers className="h-3.5 w-3.5" />
-            Escolher Núcleo
-          </span>
-        </LiquidGlass>
+        <div className="mt-8">
+          <NucleoDropdown
+            nucleos={nucleos}
+            nucleosLoading={nucleosLoading}
+            selectedNucleoId={null}
+            onSelect={onSelect}
+            trigger={
+              <Button
+                variant="outline"
+                className="h-10 px-4 inline-flex items-center justify-center gap-2 leading-none"
+              >
+                <span className="leading-none">Escolher Núcleo</span>
+                <ArrowRight className="h-3.5 w-3.5 shrink-0" />
+              </Button>
+            }
+          />
+        </div>
       )}
     </motion.div>
   );

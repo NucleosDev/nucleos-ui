@@ -10,6 +10,9 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 const etapas = [
   {
@@ -70,26 +73,26 @@ const etapas = [
 
 export function JourneyTimeline() {
   return (
-    <section className="relative pb-60 pt-30 overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8">
+    <section className="relative overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8">
       {/* GRADIENTE SUPERIOR */}
-      <div className="absolute top-0 left-0 right-0 h-100 pointer-events-none z-10 bg-gradient-to-b from-white via-white/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-100 pointer-events-none z-10 --background-to-b from-white via-white/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
 
       {/* GRADIENTE INFERIOR */}
-      <div className="absolute bottom-0 left-0 right-0 h-64 pointer-events-none z-10 bg-gradient-to-t from-white via-white/60 to-transparent dark:from-black dark:via-black/60 dark:to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-64 pointer-events-none z-10 --background-to-t from-white via-white/60 to-transparent dark:from-black dark:via-black/60 dark:to-transparent" />
 
       {/* SEGUNDA CAMADA DE DEGRADÊ */}
-      <div className="absolute bottom-0 left-0 right-0 h-80 pointer-events-none z-5 bg-gradient-to-t from-white/40 via-transparent to-transparent dark:from-black/40 dark:via-transparent dark:to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-80 pointer-events-none z-5 --background-to-t from-white/40 via-transparent to-transparent dark:from-black/40 dark:via-transparent dark:to-transparent" />
 
       {/* Background elements com parallax */}
-      <motion.div className="absolute inset-0 -z-10">
+      <div className="absolute inset-0 -z-10">
         <div className="absolute top-1/4 left-1/4 size-96 rounded-full bg-background/20 blur-3xl animate-pulse" />
         <div className="absolute right-1/4 bottom-1/4 size-96 rounded-full bg-accent/20 blur-3xl animate-pulse delay-700" />
-      </motion.div>
+      </div>
       {/* Grid pattern sutil */}
       <div className="absolute inset-0 -z-20 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px]" />
 
-      <div className="mx-auto max-w-4xl relative z-20">
-        <motion.div>
+      <div className="mx-auto max-w-4xl relative z-20 flex flex-col items-center">
+        {/* <div data-animate="fade-up">
           <Badge
             variant="outline"
             className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 text-[#4D7CFF]"
@@ -97,26 +100,37 @@ export function JourneyTimeline() {
             <Sparkles className="size-4" />
             <span>Sua Jornada</span>
           </Badge>
-        </motion.div>
-
-        <motion.h2>
+        </div> */}
+        <h2
+          data-animate="fade-up"
+          data-delay="100"
+          className="text-4xl md:text-5xl font-extrabold tracking-tight mt-6 text-neutral-900 dark:text-white text-center"
+        >
           Como você vai{" "}
           <span className="bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
             evoluir
           </span>
           .
-        </motion.h2>
+        </h2>
 
-        <motion.p>Veja o que esperar sendo um usuário do Nucleos.</motion.p>
+        <p
+          data-animate="fade-up"
+          data-delay="200"
+          className="mt-5 text-neutral-500 dark:text-neutral-400 text-lg leading-relaxed text-center"
+        >
+          Veja o que esperar sendo um usuário do Nucleos.
+        </p>
 
-        <div className="mt-12 relative">
+        <div className="mt-12 relative w-full">
           {/* Linha central com gradiente */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#4D7CFF] via-[#00C9A7] to-[#8CD47E] -translate-x-1/2 hidden md:block opacity-50" />
+          <div className="absolute left-1/2 top-0 bottom-0 w-0.5 --background-to-b from-[#4D7CFF] via-[#00C9A7] to-[#8CD47E] -translate-x-1/2 hidden md:block opacity-50" />
 
           <div className="space-y-8 md:space-y-0">
             {etapas.map((etapa, index) => (
               <motion.div
                 key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: index * 0.1 }}
                 viewport={{ once: true }}
                 className={`relative flex flex-col md:flex-row items-center gap-4 md:gap-8 ${
@@ -219,16 +233,27 @@ export function JourneyTimeline() {
 
         {/* Badge de conquista final */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-          viewport={{ once: true }}
-          className="mt-12 flex justify-center"
-        >
-          <div className="flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-[#4D7CFF]/10 to-[#00C9A7]/10 border border-[#4D7CFF]/20">
-            <span className="text-sm font-medium">Dê o primeiro passo.</span>
-          </div>
-        </motion.div>
+  initial={{ opacity: 0, y: 20 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.8, delay: 0.8 }}
+  viewport={{ once: true }}
+  className="mt-12 flex justify-center"
+>
+  <Button
+    size="lg"
+    asChild
+    className="group relative overflow-hidden bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] hover:from-[#00C9A7] hover:to-[#4D7CFF] transition-all duration-500 shadow-lg hover:shadow-xl border-0"
+  >
+    <Link href="/cadastro">
+      <span className="bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
+        <span className="flex items-center gap-2 text-white font-medium text-sm">
+          Dê o primeiro passo.
+          <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+        </span>
+      </span>
+    </Link>
+  </Button>
+</motion.div>
       </div>
     </section>
   );

@@ -520,7 +520,7 @@ export function Testimonials() {
   return (
     <section className="px-6 py-24">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-16 text-center">
+        <div data-animate="fade-up" className="mb-16 text-center">
           <span className="mb-4 inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
             Blocos
           </span>
@@ -529,25 +529,37 @@ export function Testimonials() {
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-pretty text-muted-foreground">
             Cada bloco foi projetado para potencializar uma área da sua vida —
-            combine-os livremente dentro dos seus núcleos.
+            combine-os livremente dentro dos seus Nucleos.
           </p>
         </div>
 
         {/* Row 1: Tarefas (wide) + Timer */}
-        <div className="mb-6 grid gap-6 md:grid-cols-3">
+        <div
+          data-animate="fade-up"
+          data-delay="100"
+          className="mb-6 grid gap-6 md:grid-cols-3"
+        >
           <TarefasMock />
           <TimerMock />
         </div>
 
         {/* Row 2: Calendário + Hábitos + Lista */}
-        <div className="mb-6 grid gap-6 md:grid-cols-3">
+        <div
+          data-animate="fade-up"
+          data-delay="200"
+          className="mb-6 grid gap-6 md:grid-cols-3"
+        >
           <CalendarioMock />
           <HabitosMock />
           <ListaMock />
         </div>
 
         {/* Row 3: Notas + Coleções (wide) */}
-        <div className="grid gap-6 md:grid-cols-3">
+        <div
+          data-animate="fade-up"
+          data-delay="300"
+          className="grid gap-6 md:grid-cols-3"
+        >
           <NotasMock />
           <ColecoesMock />
         </div>

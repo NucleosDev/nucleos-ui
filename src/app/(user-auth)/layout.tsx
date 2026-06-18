@@ -12,6 +12,8 @@ import { useGamificationSocket } from "@/hooks/useGamificationSocket";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { cn } from "@/lib/utils";
 import { BgUser } from "@/components/user/bg-user";
+import { FocusTimerProvider } from "@/contexts/FocusTimerContext";
+import { FocusTimerPopup } from "@/components/focus/FocusTimerPopup";
 
 export default function UserAuthLayout({
   children,
@@ -54,21 +56,9 @@ export default function UserAuthLayout({
 
   return (
     <ProtectedRoute>
+      <FocusTimerProvider>
+      <FocusTimerPopup />
       <div className="relative min-h-screen ">
-        {/* Provavel feature futura: deixar o usuario escolher o fundo */}
-        {/* <div
-          className="fixed inset-0 z-0 opacity-90"
-          style={{
-            backgroundImage: `url('https://thumbs.dreamstime.com/b/frosted-glass-blur-clean-modern-abstract-background-featuring-frosted-glass-effect-smooth-blur-soft-cool-tones-366766907.jpg')`, // Adicione a URL da imagem de fundo aqui.
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-            backgroundAttachment: "fixed",
-          }}
-        >
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
-        </div> */}
-
         <DashboardLayout
           collapsed={isSidebarCollapsed}
           isMobile={isMobile}
@@ -98,6 +88,7 @@ export default function UserAuthLayout({
           </div>
         </DashboardLayout>
       </div>
+      </FocusTimerProvider>
     </ProtectedRoute>
   );
 }

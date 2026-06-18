@@ -86,6 +86,14 @@ export const notificationsService = {
     }
   },
 
+  async deleteNotification(notificationId: string): Promise<void> {
+    try {
+      await api.delete(API_ROUTES.NOTIFICATIONS.DELETE(notificationId));
+    } catch (error: any) {
+      console.error("Erro ao excluir notificação:", error?.message);
+    }
+  },
+
   async getUnreadCount(): Promise<number> {
     try {
       const response = (await api.get(

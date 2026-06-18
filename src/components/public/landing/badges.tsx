@@ -193,7 +193,7 @@ export function Badges() {
   const desbloqueadas = mockAchievements.filter((a) => a.unlockedAt).length;
 
   return (
-    <section className="relative pb-60 pt-60 overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8">
+    <section className="relative overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8">
       {/* GRADIENTE SUPERIOR */}
       <div className="absolute top-0 left-0 right-0 h-100 pointer-events-none z-10 bg-gradient-to-b from-white via-white/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
 

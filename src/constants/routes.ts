@@ -26,6 +26,8 @@ export const API_ROUTES = {
     PLAN: "/users/plan",
     DELETE_ACCOUNT: "/users/account",
     REACTIVATE: "/users/reactivate",
+    REENTRY_STATUS: "/users/reentry-status",
+    REENTRY_PROCESS: "/users/reentry-process",
   },
 
   // NucleoS
@@ -175,14 +177,28 @@ export const API_ROUTES = {
     PROGRESS: (id: string) => `/habitos/${id}/progresso`,
   },
 
+  // EXERCÍCIOS
+
+  EXERCICIOS: {
+    BASE: "/exercicios",
+    BY_ID: (id: string) => `/exercicios/${id}`,
+    BY_BLOCO: (blocoId: string) => `/exercicios/bloco/${blocoId}`,
+    ADD_EXERCICIO: (templateId: string) => `/exercicios/${templateId}/exercicios`,
+    REMOVE_EXERCICIO: (exercicioId: string) => `/exercicios/exercicios/${exercicioId}`,
+  },
+
   // GAMIFICAÇÃO
 
   GAMIFICACAO: {
     STATS: "/gamificacao/stats",
     LEADERBOARD: "/gamificacao/leaderboard",
     ACHIEVEMENTS: "/gamificacao/achievements",
+    CONQUISTAS: "/gamificacao/achievements",
     HISTORY: "/gamificacao/history",
     STREAK: "/gamificacao/streak",
+    STREAKS: "/gamificacao/streak",
+    LEVEL: "/gamificacao/level",
+    ADD_XP: "/gamificacao/xp",
     PROCESS_ACTION: "/gamificacao/process-action",
   },
 
@@ -198,6 +214,9 @@ export const API_ROUTES = {
   PLANS: {
     LIST: "/plans",
     SUBSCRIPTION: "/plans/subscription",
+    CURRENT: "/plans/subscription/current",
+    SUBSCRIBE: (planId: string) => `/plans/${planId}/subscribe`,
+    CANCEL: "/plans/subscription/cancel",
   },
 
   // TIMERS
@@ -245,6 +264,17 @@ export const API_ROUTES = {
   ADMIN: {
     STATS: "/admin/stats",
     USERS: "/admin/users",
+    USER: (id: string) => `/admin/users/${id}`,
+    NUCLEOS: "/admin/nucleos",
+  },
+
+  // IA / CHATBOT
+
+  AI: {
+    INTERACT: "/ai/interact",
+    CONTEXT: "/ai/context",
+    INSIGHTS: "/ai/insights",
+    INSIGHT_APPLY: (id: string) => `/ai/insights/${id}/apply`,
   },
 } as const;
 

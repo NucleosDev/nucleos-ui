@@ -53,6 +53,7 @@ export default function AboutPage() {
     <div className="container mx-auto px-4 py-16 space-y-20">
       {/* HERO */}
       <section className="text-center space-y-6">
+        <div data-animate="fade-up">
         <Badge>Nucleos</Badge>
         <h1 className="text-4xl md:text-5xl font-bold">
           Evolua sua vida como um jogo
@@ -62,6 +63,7 @@ export default function AboutPage() {
           progresso contínuo. Aqui, você evolui em áreas importantes da sua vida
           como se estivesse subindo de nível em um game.
         </p>
+        </div>
         <div className="grid gap-6 md:grid-cols-3 justify-items-center">
           <Link href="/planos"></Link>
           <Link href="/docs">
@@ -72,6 +74,7 @@ export default function AboutPage() {
 
       {/* MISSÃO */}
       <section className="grid md:grid-cols-3 gap-6">
+        <div data-animate="fade-up" data-delay="100">
         <Card>
           <CardContent className="p-6 space-y-3">
             <Target className="w-8 h-8" />
@@ -82,7 +85,9 @@ export default function AboutPage() {
             </p>
           </CardContent>
         </Card>
+        </div>
 
+        <div data-animate="fade-up" data-delay="200">
         <Card>
           <CardContent className="p-6 space-y-3">
             <Rocket className="w-8 h-8" />
@@ -93,7 +98,9 @@ export default function AboutPage() {
             </p>
           </CardContent>
         </Card>
+        </div>
 
+        <div data-animate="fade-up" data-delay="300">
         <Card>
           <CardContent className="p-6 space-y-3">
             <Heart className="w-8 h-8" />
@@ -104,11 +111,12 @@ export default function AboutPage() {
             </p>
           </CardContent>
         </Card>
+        </div>
       </section>
 
       {/* COMO FUNCIONA */}
       <section className="space-y-10">
-        <h2 className="text-3xl font-bold text-center">
+        <h2 data-animate="fade-up" className="text-3xl font-bold text-center">
           Como funciona o Nucleos
         </h2>
 
@@ -137,11 +145,12 @@ export default function AboutPage() {
 
       {/* BENEFÍCIOS */}
       <section className="space-y-10">
-        <h2 className="text-3xl font-bold text-center">
+        <h2 data-animate="fade-up" className="text-3xl font-bold text-center">
           Por que usar o Nucleos?
         </h2>
 
         <div className="grid md:grid-cols-3 gap-6">
+          <div data-animate="fade-up" data-delay="100">
           <Card>
             <CardContent className="p-6 space-y-3">
               <Trophy className="w-8 h-8" />
@@ -151,7 +160,9 @@ export default function AboutPage() {
               </p>
             </CardContent>
           </Card>
+          </div>
 
+          <div data-animate="fade-up" data-delay="200">
           <Card>
             <CardContent className="p-6 space-y-3">
               <Users className="w-8 h-8" />
@@ -161,7 +172,9 @@ export default function AboutPage() {
               </p>
             </CardContent>
           </Card>
+          </div>
 
+          <div data-animate="fade-up" data-delay="300">
           <Card>
             <CardContent className="p-6 space-y-3">
               <Target className="w-8 h-8" />
@@ -171,14 +184,15 @@ export default function AboutPage() {
               </p>
             </CardContent>
           </Card>
+          </div>
         </div>
       </section>
 
       {/* EQUIPE */}
       <section className="space-y-10 text-center">
-        <h2 className="text-3xl font-bold">Criado por</h2>
+        <h2 data-animate="fade-up" className="text-3xl font-bold">Criado por</h2>
 
-        <div className="grid gap-6 md:grid-cols-3 justify-items-center ">
+        <div data-animate="fade-up" className="grid gap-6 md:grid-cols-3 justify-items-center ">
           <Card className="max-w-sm w-full">
             <CardContent className="p-6 space-y-4 flex flex-col items-center">
               <Avatar className="w-20 h-20">
@@ -368,6 +382,7 @@ export default function AboutPage() {
 
       {/* CTA FINAL */}
       <section className="text-center space-y-6">
+        <div data-animate="fade-up">
         <h2 className="text-3xl font-bold">Pronto para evoluir?</h2>
         <p className="text-muted-foreground">
           Comece agora e transforme sua rotina em progresso.
@@ -375,6 +390,7 @@ export default function AboutPage() {
         <Link href="/planos">
           <Button size="lg">Começar gratuitamente</Button>
         </Link>
+        </div>
       </section>
     </div>
   );

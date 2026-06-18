@@ -1,17 +1,9 @@
-// src/components/colecoes/CriarColecaoModal.tsx
 "use client";
 
 import { useState, useEffect } from "react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Layers, Check, Loader2 } from "lucide-react";
-import {
-  GlassModal,
-  GlassModalHeader,
-  GlassInput,
-  GlassModalFooter,
-  GlassButton,
-} from "@/components/ui/glass-modal";
-
-const ACCENT = "#10b981";
+import { cn } from "@/lib/utils";
 
 interface CriarColecaoModalProps {
   open: boolean;
@@ -50,52 +42,74 @@ export function CriarColecaoModal({
   };
 
   return (
-    <GlassModal open={open} onClose={onClose}>
-      <GlassModalHeader
-        title={titulo}
-        description="Organize dados em tabelas flexíveis. Você pode adicionar campos e itens depois."
-        icon={Layers}
-        accent={ACCENT}
-        onClose={onClose}
-      />
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-sm p-0 overflow-hidden gap-0">
+        <div className="px-5 pt-5 pb-4 border-b border-border/60">
+          <div className="flex items-center gap-2.5 mb-0.5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/10">
+              <Layers className="h-3.5 w-3.5 text-emerald-500" />
+            </div>
+            <DialogTitle className="text-sm font-semibold">{titulo}</DialogTitle>
+          </div>
+          <p className="text-xs text-muted-foreground/60 pl-9">
+            Organize dados em tabelas flexíveis — adicione campos e itens depois.
+          </p>
+        </div>
 
-      <form onSubmit={handleSubmit} className="px-5 py-4">
-        <GlassInput
-          label="Nome da coleção"
-          placeholder="Ex: Biblioteca de Filmes, Clientes..."
-          value={nome}
-          onChange={(e) => {
-            setNome(e.target.value);
-            setError(null);
-          }}
-          autoFocus
-          disabled={isSubmitting}
-          error={error}
-        />
-        <GlassModalFooter>
-          <GlassButton
-            variant="outline"
-            type="button"
-            onClick={onClose}
-            disabled={isSubmitting}
-          >
-            Cancelar
-          </GlassButton>
-          <GlassButton
-            type="submit"
-            disabled={isSubmitting || !nome.trim()}
-            style={{ background: ACCENT, boxShadow: `0 4px 12px ${ACCENT}35` }}
-            className="text- hover:opacity-90 bg-transparent"
-          >
-            {isSubmitting ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : (
-              <Check className="h-3.5 w-3.5" />
-            )}
-            Criar
-          </GlassButton>
-        </GlassModalFooter>
-      </form>
-    </GlassModal>
+        <form onSubmit={handleSubmit}>
+          <div className="px-4 pt-4 pb-3">
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-muted-foreground/70">
+                Nome
+              </label>
+              <input
+                autoFocus
+                value={nome}
+                onChange={(e) => {
+                  setNome(e.target.value);
+                  setError(null);
+                }}
+                placeholder="Ex: Biblioteca, Clientes, Produtos…"
+                disabled={isSubmitting}
+                className={cn(
+                  "w-full px-3 py-2 text-sm rounded-[var(--radius-md)] border bg-background",
+                  "placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2",
+                  "transition-[border-color,box-shadow] duration-[var(--duration-fast)]",
+                  error
+                    ? "border-destructive/50 focus:ring-destructive/20"
+                    : "border-border/60 focus:ring-primary/30 focus:border-primary/50",
+                )}
+              />
+              {error && (
+                <p className="text-xs text-destructive font-medium">{error}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-border/40 bg-muted/20">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isSubmitting}
+              className="px-3.5 py-1.5 rounded-[var(--radius-md)] text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting || !nome.trim()}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-[var(--radius-md)] text-sm font-medium bg-emerald-500 text-white hover:opacity-90 disabled:opacity-50 transition-opacity shadow-[0_2px_8px_rgba(16,185,129,0.25)]"
+            >
+              {isSubmitting ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Check className="h-3.5 w-3.5" />
+              )}
+              Criar
+            </button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -39,6 +39,8 @@ interface ColecaoBoardProps {
   colecao: Colecao;
   blocoId: string;
   onRefresh?: () => void;
+  defaultView?: "board" | "table";
+  hideViewToggle?: boolean;
 }
 
 // ── Ícones de tipo (movido para fora do componente) ──────────────────────
@@ -53,6 +55,8 @@ export function ColecaoBoard({
   colecao,
   blocoId,
   onRefresh,
+  defaultView = "board",
+  hideViewToggle = false,
 }: ColecaoBoardProps) {
   const { update: updateBloco } = useBlocos();
   const { atualizarColecao, excluirColecao } = useColecoes(blocoId);
@@ -61,7 +65,7 @@ export function ColecaoBoard({
   const [editNome, setEditNome] = useState(colecao.nome);
   const [showAddForm, setShowAddForm] = useState(false);
   const [novoItem, setNovoItem] = useState<Record<string, any>>({});
-  const [viewMode, setViewMode] = useState<"board" | "table">("board");
+  const [viewMode, setViewMode] = useState<"board" | "table">(defaultView);
   const [gerenciarCamposOpen, setGerenciarCamposOpen] = useState(false);
 
   const { campos, isLoading: loadingCampos } = useCampos(colecao.id);
@@ -224,33 +228,35 @@ export function ColecaoBoard({
             )}
           </div>
           <div className="flex items-center gap-1">
-            {/* View Toggle */}
-            <div className="flex items-center gap-0.5 bg-muted/50 rounded-md p-0.5 mr-1">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setViewMode("board");
-                }}
-                className={cn(
-                  "p-1 rounded-md transition-colors",
-                  viewMode === "board" && "bg-background shadow-sm",
-                )}
-              >
-                <LayoutGrid className="h-3.5 w-3.5" />
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setViewMode("table");
-                }}
-                className={cn(
-                  "p-1 rounded-md transition-colors",
-                  viewMode === "table" && "bg-background shadow-sm",
-                )}
-              >
-                <Table2 className="h-3.5 w-3.5" />
-              </button>
-            </div>
+            {/* View Toggle — hidden when view is fixed by parent */}
+            {!hideViewToggle && (
+              <div className="flex items-center gap-0.5 bg-muted/50 rounded-md p-0.5 mr-1">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setViewMode("board");
+                  }}
+                  className={cn(
+                    "p-1 rounded-md transition-colors",
+                    viewMode === "board" && "bg-background shadow-sm",
+                  )}
+                >
+                  <LayoutGrid className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setViewMode("table");
+                  }}
+                  className={cn(
+                    "p-1 rounded-md transition-colors",
+                    viewMode === "table" && "bg-background shadow-sm",
+                  )}
+                >
+                  <Table2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            )}
             <Button
               variant="ghost"
               size="icon"

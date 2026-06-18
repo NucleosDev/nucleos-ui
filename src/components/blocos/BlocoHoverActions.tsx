@@ -29,7 +29,7 @@ export function BlocoHoverActions({
   if (!hasActions) return null;
 
   return (
-    <div className="absolute -top-[-14px] left-[85%] -translate-x-1/2 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+    <div className="absolute -top-[-14px] left-[85%] -translate-x-1/2 z-30 [@media(hover:hover)]:opacity-0 group-hover:opacity-100 transition-opacity duration-200">
       <div className="flex flex-row items-center gap-0.5 px-1 py-1 bg-black/20 backdrop-blur-md rounded-xl border border-/20 shadow-lg">
         {onOpenFullPage && (
           <button

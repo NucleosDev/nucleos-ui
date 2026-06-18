@@ -7,7 +7,6 @@ import { nucleosService } from "@/services/nucleos.service";
 import { blocosService } from "@/services/blocos.service";
 import type { NucleoTipo } from "@/types/nucleo";
 import type { BlocoTipo } from "@/types/bloco";
-import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { Button } from "@/components/ui/button";
 import {
   BookOpen,
@@ -152,7 +151,7 @@ export default function OnboardingPage() {
       router.push("/dashboard");
     } catch (err) {
       console.error("Erro no onboarding:", err);
-      setError("Ocorreu um erro ao criar seus núcleos. Tente novamente.");
+      setError("Ocorreu um erro ao criar seus Nucleos. Tente novamente.");
       setIsCreating(false);
     }
   }
@@ -164,7 +163,7 @@ export default function OnboardingPage() {
 
   const selectedCount = selected.length;
   const buttonLabel = isCreating
-    ? "Criando seus Núcleos..."
+    ? "Criando seus Nucleos..."
     : selectedCount === 0
       ? "Selecione ao menos uma área"
       : `Criar ${selectedCount} Núcleo${selectedCount !== 1 ? "s" : ""} e Continuar`;
@@ -179,18 +178,16 @@ export default function OnboardingPage() {
           transition={{ duration: 0.5 }}
         >
           <div className="flex justify-center mb-4">
-            <LiquidGlass variant="floating" radius="50%">
-              <div className="p-4">
-                <Sparkles className="w-8 h-8 text-primary" />
-              </div>
-            </LiquidGlass>
+            <div className="p-4 rounded-full bg-primary/10 border border-primary/20">
+              <Sparkles className="w-8 h-8 text-primary" />
+            </div>
           </div>
           <h1 className="text-3xl font-bold tracking-tight">
             Como você quer usar o Nucleos?
           </h1>
           <p className="text-muted-foreground text-base">
             Selecione as áreas que fazem sentido pra você. Criamos tudo
-            automaticamente — núcleos e blocos prontos pra usar.
+            automaticamente — Nucleos e blocos prontos pra usar.
           </p>
         </motion.div>
 
@@ -217,7 +214,7 @@ export default function OnboardingPage() {
                     : { borderRadius: "16px" }
                 }
               >
-                <LiquidGlass variant="interactive" radius="16px">
+                <div className="rounded-2xl border border-border/50 bg-card/60 backdrop-blur-sm hover:bg-card/80 transition-colors">
                   <div className="flex items-center gap-4 p-4">
                     <div
                       className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-200"
@@ -267,7 +264,7 @@ export default function OnboardingPage() {
                       {active && <Check className="w-3 h-3 text-white" />}
                     </div>
                   </div>
-                </LiquidGlass>
+                </div>
               </motion.div>
             );
           })}

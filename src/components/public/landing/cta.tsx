@@ -28,7 +28,7 @@ export function CTA() {
           <div className="absolute top-0 right-0 size-64 rounded-full bg-[#4D7CFF]/20 blur-3xl" />
           <div className="absolute bottom-0 left-0 size-64 rounded-full bg-[#00C9A7]/20 blur-3xl" />
 
-          <div className="relative z-10">
+          <div data-animate="fade-up" className="relative z-10">
             {/* Badge */}
             <div className="mb-6 flex justify-center">
               <Badge
@@ -74,12 +74,15 @@ export function CTA() {
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button
                 size="lg"
-                className="group w-full sm:w-auto bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] hover:from-[#00C9A7] hover:to-[#4D7CFF] text-white border-0 shadow-lg hover:shadow-xl transition-all"
+                className="group relative overflow-hidden w-full sm:w-auto bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] hover:from-[#00C9A7] hover:to-[#4D7CFF] transition-all duration-500 shadow-lg hover:shadow-xl border-0"
                 asChild
               >
                 <Link href="/cadastro">
-                  Criar conta grátis
-                  <ArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
+                  <span className="relative z-10 flex items-center gap-2 text-white font-medium">
+                    Criar conta grátis
+                    <ArrowRight className="size-4" />
+                  </span>
+                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                 </Link>
               </Button>
 

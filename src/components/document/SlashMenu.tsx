@@ -22,6 +22,10 @@ import {
   Layers,
   FileText,
   Columns2,
+  Table2,
+  LayoutGrid,
+  Kanban,
+  Dumbbell,
 } from "lucide-react";
 
 interface SlashMenuProps {
@@ -175,6 +179,38 @@ const ALL_COMMANDS = [
     group: "Módulos",
     shortcut: "",
     accent: "#a855f7",
+  },
+  {
+    type: "tabela",
+    label: "Tabela",
+    icon: Table2,
+    group: "Módulos",
+    shortcut: "",
+    accent: "#14b8a6",
+  },
+  {
+    type: "galeria",
+    label: "Galeria",
+    icon: LayoutGrid,
+    group: "Módulos",
+    shortcut: "",
+    accent: "#f43f5e",
+  },
+  {
+    type: "quadro",
+    label: "Quadro",
+    icon: Kanban,
+    group: "Módulos",
+    shortcut: "",
+    accent: "#f97316",
+  },
+  {
+    type: "exercicios",
+    label: "Exercícios",
+    icon: Dumbbell,
+    group: "Módulos",
+    shortcut: "",
+    accent: "#f97316",
   },
 ];
 

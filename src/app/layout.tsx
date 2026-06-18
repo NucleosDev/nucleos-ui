@@ -8,6 +8,7 @@ import { AuthProvider } from "@/auth/";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { GlobalLoader } from "@/components/logo-loader-provider";
 import { InitialLoader } from "@/components/initial-loader";
+import { ScrollAnimations } from "@/components/scroll-animations";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import "./globals.css";
 
@@ -55,20 +56,11 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      {
-        url: "/icon-light-32x32.png",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark-32x32.png",
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: "/icon.svg",
-        type: "image/svg+xml",
-      },
+      { url: "/favcoin-nucleos.png", type: "image/png" },
+      { url: "/lettermark-nucleos.svg", type: "image/svg+xml" },
     ],
-    apple: "/apple-icon.png",
+    apple: "/favcoin-nucleos.png",
+    shortcut: "/favcoin-nucleos.png",
   },
 };
 
@@ -102,6 +94,7 @@ export default function RootLayout({
           </ThemeProvider>
         </GoogleOAuthProvider>
 
+        <ScrollAnimations />
         <Analytics />
       </body>
     </html>

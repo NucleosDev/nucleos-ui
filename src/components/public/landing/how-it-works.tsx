@@ -43,7 +43,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section className="relative pb-60 pt-60 overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8">
+    <section className="relative overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8">
       {/* GRADIENTE SUPERIOR */}
       <div className="absolute top-0 left-0 right-0 h-100 pointer-events-none z-10 bg-gradient-to-b from-white via-white/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
 
@@ -63,7 +63,7 @@ export function HowItWorks() {
       <div className="absolute inset-0 -z-20 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px]" />
 
       <div className="mx-auto max-w-7xl relative z-20">
-        <div className="mx-auto max-w-2xl text-center">
+        <div data-animate="fade-up" className="mx-auto max-w-2xl text-center">
           <Badge
             variant="outline"
             className="gap-2 bg-[#4D7CFF]/5 px-4 py-2 text-[#4D7CFF] mb-4"
@@ -87,7 +87,7 @@ export function HowItWorks() {
 
         <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-4 overflow-hidden">
           {steps.map((step, index) => (
-            <div key={step.id} className="relative group">
+            <div key={step.id} data-animate="fade-up" data-delay={String((index + 1) * 100)} className="relative group">
               {/* Linha conectora */}
               {index < steps.length - 1 && (
                 <div className="absolute top-12 left-1/2 hidden h-px w-full lg:block">
@@ -146,7 +146,7 @@ export function HowItWorks() {
         </div>
 
         {/* Badge de CTA no final */}
-        <div className="mt-12 flex justify-center">
+        <div data-animate="fade-up" data-delay="200" className="mt-12 flex justify-center">
           <div className="inline-flex items-center gap-2 px-4 py-4 rounded-full bg-gradient-to-r from-[#4D7CFF]/10 to-[#00C9A7]/10 border border-[#4D7CFF]/20">
             <Link href="/get-started">
               <span className="text-sm font-medium">

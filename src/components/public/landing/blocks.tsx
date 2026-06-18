@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { motion } from "framer-motion";
-import { Sparkles, Star } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import {
   CheckSquare,
@@ -88,20 +88,17 @@ function BlocoWrapper({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-lg shadow-black/5 transition-all hover:-translate-y-0.5 hover:shadow-md w-full",
+        "relative overflow-hidden rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-lg shadow-black/5 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-black/10 w-full",
         className,
       )}
     >
       <div className={cn("relative", c.tint)}>
-        {/* Left accent strip */}
         <div
           className={cn(
             "absolute inset-y-0 left-0 w-[3px] rounded-r-full",
             c.accent,
           )}
         />
-
-        {/* Header */}
         <div className="flex items-center gap-2.5 px-5 pt-4 pb-3">
           <div
             className={cn(
@@ -115,8 +112,6 @@ function BlocoWrapper({
             {label}
           </span>
         </div>
-
-        {/* Content */}
         <div className="px-5 pb-5 pt-0">{children}</div>
       </div>
     </div>
@@ -153,14 +148,13 @@ const MOCK_HABITOS = [
 function HabitosMock() {
   const done = MOCK_HABITOS.filter((h) => h.completoHoje).length;
   const total = MOCK_HABITOS.length;
-
   return (
     <BlocoWrapper type="habitos" icon={Activity} label="Hábitos">
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-800">
             <div
-              className="h-full rounded-full bg-emerald-500 transition-all"
+              className=" rounded-full bg-emerald-500 transition-all"
               style={{ width: `${(done / total) * 100}%` }}
             />
           </div>
@@ -221,7 +215,6 @@ const MOCK_ITENS = [
 
 function ListaMock() {
   const done = MOCK_ITENS.filter((i) => i.concluido).length;
-
   return (
     <BlocoWrapper type="lista" icon={ListTodo} label="Lista">
       <div className="overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900">
@@ -286,7 +279,6 @@ function TarefasMock() {
   const total = MOCK_COLS.reduce((s, c) => s + c.tasks.length, 0);
   const done = MOCK_COLS[2].tasks.length;
   const pct = Math.round((done / total) * 100);
-
   return (
     <BlocoWrapper type="tarefas" icon={CheckSquare} label="Tarefas">
       <div className="space-y-3">
@@ -302,7 +294,7 @@ function TarefasMock() {
           <div className="flex flex-1 items-center gap-2">
             <div className="h-1 flex-1 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-800">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-primary to-emerald-500 transition-all"
+                className=" rounded-full bg-gradient-to-r from-primary to-emerald-500 transition-all"
                 style={{ width: `${pct}%` }}
               />
             </div>
@@ -311,7 +303,6 @@ function TarefasMock() {
             </span>
           </div>
         </div>
-
         <div className="grid grid-cols-3 gap-2">
           {MOCK_COLS.map((col, ci) => (
             <div
@@ -504,7 +495,7 @@ function ColecoesMock() {
   );
 }
 
-// ── Blocos como Testemunhas (Cards no lugar dos depoimentos) ─────────────────
+// ── Data ──────────────────────────────────────────────────────────────────────
 const blocosTestemunhas = [
   { component: TarefasMock, id: "tarefas" },
   { component: TimerMock, id: "timer" },
@@ -515,129 +506,103 @@ const blocosTestemunhas = [
   { component: ColecoesMock, id: "colecoes" },
 ];
 
-// Separar em colunas
 const firstColumn = blocosTestemunhas.slice(0, 3);
 const secondColumn = blocosTestemunhas.slice(3, 5);
 const thirdColumn = blocosTestemunhas.slice(5, 7);
 
-// ── Blocos Column ───────────────────────────────────────────────────────────
-const BlocosColumn = (props: {
-  className?: string;
+// ── BlocosColumn — CSS scroll, zero JS overhead ──────────────────────────────
+function BlocosColumn({
+  blocos,
+  duration = 25,
+  className,
+}: {
   blocos: typeof blocosTestemunhas;
   duration?: number;
-}) => {
+  className?: string;
+}) {
   return (
-    <div className={props.className}>
-      <motion.ul
-        animate={{
-          translateY: "-50%",
-        }}
-        transition={{
-          duration: props.duration || 25,
-          repeat: Infinity,
-          ease: "linear",
-          repeatType: "loop",
-        }}
-        className="flex flex-col gap-6 pb-6 list-none m-0 p-0"
+    <div
+      className={cn(
+        "animate-scroll-up-paused overflow-hidden flex-1 min-w-0",
+        className,
+      )}
+    >
+      <ul
+        className="animate-scroll-up flex flex-col gap-6 pb-6 list-none m-0 p-0"
+        style={{ "--scroll-duration": `${duration}s` } as React.CSSProperties}
       >
-        {[
-          ...new Array(2).fill(0).map((_, index) => (
-            <React.Fragment key={index}>
-              {props.blocos.map(({ component: Component, id }, i) => (
-                <motion.li
-                  key={`${index}-${id}-${i}`}
-                  aria-hidden={index === 1 ? "true" : "false"}
-                  tabIndex={index === 1 ? -1 : 0}
-                  whileHover={{
-                    scale: 1.03,
-                    y: -8,
-                    boxShadow:
-                      "0 25px 50px -12px rgba(77, 124, 255, 0.15), 0 10px 10px -5px rgba(0, 201, 167, 0.04), 0 0 0 1px rgba(77, 124, 255, 0.1)",
-                    transition: {
-                      type: "spring",
-                      stiffness: 400,
-                      damping: 17,
-                    },
-                  }}
-                  whileFocus={{
-                    scale: 1.03,
-                    y: -8,
-                    boxShadow:
-                      "0 25px 50px -12px rgba(77, 124, 255, 0.15), 0 10px 10px -5px rgba(0, 201, 167, 0.04), 0 0 0 1px rgba(77, 124, 255, 0.1)",
-                    transition: {
-                      type: "spring",
-                      stiffness: 400,
-                      damping: 17,
-                    },
-                  }}
-                  className="max-w-xs w-full cursor-default select-none group focus:outline-none focus:ring-2 focus:ring-[#4D7CFF]/30"
-                >
-                  <Component />
-                </motion.li>
-              ))}
-            </React.Fragment>
+        {[0, 1].map((copy) =>
+          blocos.map(({ component: Component, id }) => (
+            <li
+              key={`${copy}-${id}`}
+              aria-hidden={copy === 1 ? "true" : "false"}
+              className="w-full cursor-default select-none transition-transform duration-200 hover:-translate-y-2"
+            >
+              <Component />
+            </li>
           )),
-        ]}
-      </motion.ul>
+        )}
+      </ul>
     </div>
   );
-};
+}
 
-// ── Testimonials Section com Blocos ──────────────────────────────────────────
-const Blocks = () => {
+// ── Blocks Section ────────────────────────────────────────────────────────────
+export default function BlocksSection() {
   return (
     <section
-      aria-labelledby="testimonials-heading"
-      className="bg-white dark:bg-neutral-950 py-24 relative overflow-hidden"
+      aria-labelledby="blocks-heading"
+      className="bg-neutral-950 relative overflow-hidden "
     >
-      {/* Gradientes de fundo */}
-      <div className="absolute top-0 left-0 right-0 h-40 pointer-events-none z-10 bg-gradient-to-b from-white via-white/80 to-transparent dark:from-neutral-950 dark:via-neutral-950/80 dark:to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none z-10 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-neutral-950 dark:via-neutral-950/80 dark:to-transparent" />
+      {/* <div className="absolute top-0 left-0 right-0 h-40 pointer-events-none z-10 bg-gradient-to-b from-white via-white/80 to-transparent dark:from-neutral-950 dark:via-neutral-950/80 dark:to-transparent" /> */}
+      {/* <div className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none z-10 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-neutral-950 dark:via-neutral-950/80 dark:to-transparent" /> */}
 
-      {/* Elementos decorativos */}
-      <div className="absolute inset-0 -z-10">
+      <div className="absolute inset-0 -z-10 pointer-events-none">
         <div className="absolute top-1/4 left-1/4 size-96 rounded-full bg-[#4D7CFF]/5 blur-3xl animate-pulse" />
         <div className="absolute right-1/4 bottom-1/4 size-96 rounded-full bg-[#00C9A7]/5 blur-3xl animate-pulse delay-700" />
       </div>
 
-      <motion.div className="container px-4 z-10 mx-auto">
-        <div className="flex flex-col items-center justify-center max-w-[640px] mx-auto mb-16">
-          <div className="flex justify-center">
-            <Badge
-              variant="outline"
-              className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 text-[#4D7CFF]"
-            >
-              <Sparkles className="size-4" />
-              <span>Blocos</span>
-            </Badge>
-          </div>
+      <div className="container px-4 z-10 mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-col items-center justify-center max-w-[640px] mx-auto mb-16"
+        >
+          <Badge
+            variant="outline"
+            className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 text-[#4D7CFF]"
+          >
+            <Sparkles className="size-4" />
+            <span>Blocos</span>
+          </Badge>
 
           <h2
-            id="testimonials-heading"
-            className="text-4xl md:text-5xl font-extrabold tracking-tight mt-6 text-center text-neutral-900 dark:text-white transition-colors"
+            id="blocks-heading"
+            className="text-4xl  md:text-5xl font-extrabold mt-6 text-center text-neutral-900 text-white"
           >
             Tudo que você precisa,{" "}
             <span className="bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
               em um só lugar
             </span>
           </h2>
-          <p className="text-center mt-5 text-neutral-500 dark:text-neutral-400 text-lg leading-relaxed max-w-md transition-colors">
+          <p className="text-center mt-5 text-neutral-500 dark:text-neutral-400 text-lg leading-relaxed max-w-md">
             Cada bloco foi projetado para potencializar uma área da sua vida —
-            combine-os livremente dentro dos seus núcleos.
+            combine-os livremente dentro dos seus Nucleos.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Mobile: rolagem normal. Desktop: perspectiva 3D inclinada para o canto superior esquerdo */}
         <div className="md:[perspective:1100px] md:[perspective-origin:55%_40%]">
           <div
             className={cn(
               "flex justify-center gap-6 mt-10",
               "[mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]",
               "max-h-[740px] overflow-hidden",
-              // Diagonal superior-esquerdo apenas em md+
               "md:[transform:rotateX(18deg)_rotateY(-13deg)]",
               "md:transform-gpu md:[transform-origin:center_top]",
-              "md:scale-[1.08]",
+              "md:scale-[0.95]",
+              "w-full",
             )}
             role="region"
             aria-label="Blocos em Rolagem"
@@ -645,35 +610,17 @@ const Blocks = () => {
             <BlocosColumn blocos={firstColumn} duration={25} />
             <BlocosColumn
               blocos={secondColumn}
-              className="hidden md:block"
               duration={30}
+              className="hidden md:block"
             />
             <BlocosColumn
               blocos={thirdColumn}
-              className="hidden lg:block"
               duration={28}
+              className="hidden lg:block"
             />
           </div>
         </div>
-      </motion.div>
+      </div>
     </section>
-  );
-};
-
-export default function BlocksSection() {
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [isDark]);
-
-  return (
-    <div className="w-screen min-h-screen bg-white dark:bg-neutral-950 transition-colors duration-300 flex flex-col justify-center relative selection:bg-[#4D7CFF] selection:text-white">
-      <Blocks />
-    </div>
   );
 }

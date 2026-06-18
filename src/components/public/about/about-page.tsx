@@ -417,7 +417,7 @@ export default function AboutPage({
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
 
         <div className="mx-auto max-w-6xl space-y-8 px-6">
-          <div>
+          <div data-animate="fade-up">
             <Badge
               variant="outline"
               className="gap-2 border-primary/20 bg-primary/5 px-4 py-2 text-primary animate-border-pulse"
@@ -427,7 +427,7 @@ export default function AboutPage({
             </Badge>
           </div>
 
-          <h1>
+          <h1 data-animate="fade-up" data-delay="100">
             Tudo começa com um{" "}
             <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
               Nucleo
@@ -435,7 +435,7 @@ export default function AboutPage({
             .
           </h1>
 
-          <p>
+          <p data-animate="fade-up" data-delay="200">
             O espaço certo para cada ideia. Organize. Realize. Evolua. Simples,
             flexível e ao seu alcance.
           </p>
@@ -463,7 +463,7 @@ export default function AboutPage({
       {/* ---------------- APRESENTACAO NUCLEOS ---------------- */}
       <section className="py-20 md:py-28 bg-secondary/30">
         <div className="mx-auto max-w-6xl px-6">
-          <div>
+          <div data-animate="fade-up">
             <Badge
               variant="outline"
               className="gap-2 border-primary/20 bg-primary/5 px-4 py-2 text-primary"
@@ -474,7 +474,7 @@ export default function AboutPage({
           </div>
 
           <div className="grid gap-8 md:grid-cols-2 md:gap-12">
-            <h2>
+            <h2 data-animate="fade-up" data-delay="100">
               Use seu potencial para
               <br />
               <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
@@ -511,7 +511,7 @@ export default function AboutPage({
         <div className="mx-auto max-w-6xl px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {achievements.map((achievement, index) => (
-              <div>
+              <div data-animate="fade-up" data-delay={`${(index + 1) * 100}`}>
                 <p className="text-3xl md:text-4xl font-bold text-foreground">
                   {achievement.value}
                 </p>
@@ -568,7 +568,7 @@ export default function AboutPage({
         <div className="mx-auto max-w-6xl px-6">
           <div className="grid gap-6 md:grid-cols-3">
             {nucleosData.map((nucleo, index) => (
-              <div>
+              <div data-animate="fade-up" data-delay={`${(index + 1) * 100}`}>
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div
@@ -610,7 +610,7 @@ export default function AboutPage({
       {/* ---------------- NOTIFICACOES ---------------- */}
       <section className="py-20 bg-secondary/30">
         <div className="mx-auto max-w-6xl px-6">
-          <div className="text-center mb-12">
+          <div data-animate="fade-up" className="text-center mb-12">
             <Badge
               variant="outline"
               className="border-primary/20 bg-primary/5 text-primary mb-4"
@@ -628,7 +628,7 @@ export default function AboutPage({
 
           <div className="grid gap-3 max-w-2xl mx-auto">
             {notifications.map((notif, index) => (
-              <div>
+              <div data-animate="fade-up" data-delay={`${(index + 1) * 50}`}>
                 <div
                   className={`size-8 rounded-full bg-${notif.color}/10 flex items-center justify-center`}
                 >
@@ -645,7 +645,7 @@ export default function AboutPage({
       {/* ---------------- ANTES E DEPOIS ---------------- */}
       <section className="py-20">
         <div className="mx-auto max-w-4xl px-6">
-          <div className="text-center mb-12">
+          <div data-animate="fade-up" className="text-center mb-12">
             <Badge
               variant="outline"
               className="border-primary/20 bg-primary/5 text-primary mb-4"
@@ -686,7 +686,7 @@ export default function AboutPage({
       {/* ---------------- JORNADA ---------------- */}
       <section className="py-20 bg-secondary/30">
         <div className="mx-auto max-w-4xl px-6">
-          <div className="text-center mb-12">
+          <div data-animate="fade-up" className="text-center mb-12">
             <Badge
               variant="outline"
               className="border-primary/20 bg-primary/5 text-primary mb-4"
@@ -705,6 +705,8 @@ export default function AboutPage({
               {journeySteps.map((step, index) => (
                 <div
                   key={index}
+                  data-animate="fade-up"
+                  data-delay={`${(index + 1) * 100}`}
                   className={`relative flex flex-col md:flex-row items-center gap-4 ${index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}
                 >
                   <div
@@ -748,7 +750,7 @@ export default function AboutPage({
       {/* ---------------- COMO FUNCIONA ---------------- */}
       <section className="py-20">
         <div className="mx-auto max-w-6xl px-6">
-          <div className="text-center mb-12">
+          <div data-animate="fade-up" className="text-center mb-12">
             <Badge
               variant="outline"
               className="border-primary/20 bg-primary/5 text-primary mb-4"
@@ -762,7 +764,7 @@ export default function AboutPage({
 
           <div className="grid gap-6 md:grid-cols-4">
             {howItWorks.map((step, index) => (
-              <div>
+              <div data-animate="fade-up" data-delay={`${(index + 1) * 100}`}>
                 <div className="size-16 rounded-2xl bg-primary text-primary-foreground text-2xl font-bold flex items-center justify-center mx-auto mb-4">
                   {step.number}
                 </div>
@@ -777,7 +779,7 @@ export default function AboutPage({
       {/* ---------------- BADGES ---------------- */}
       <section className="py-20 bg-secondary/30">
         <div className="mx-auto max-w-6xl px-6">
-          <div className="text-center mb-12">
+          <div data-animate="fade-up" className="text-center mb-12">
             <Badge
               variant="outline"
               className="border-primary/20 bg-primary/5 text-primary mb-4"
@@ -791,7 +793,7 @@ export default function AboutPage({
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
             {badges.map((badge, index) => (
-              <div>
+              <div data-animate="fade-up" data-delay={`${(index % 6 + 1) * 100}`}>
                 <div
                   className={`size-12 rounded-full mx-auto mb-2 flex items-center justify-center ${
                     badge.unlocked ? "bg-primary/20" : "bg-muted"
@@ -832,7 +834,7 @@ export default function AboutPage({
       {/* ---------------- IMPACTO ---------------- */}
       <section className="py-20">
         <div className="mx-auto max-w-6xl px-6">
-          <div className="text-center mb-12">
+          <div data-animate="fade-up" className="text-center mb-12">
             <Badge
               variant="outline"
               className="border-primary/20 bg-primary/5 text-primary mb-4"
@@ -855,7 +857,7 @@ export default function AboutPage({
               { value: "89%", label: "Taxa de engajamento", progress: 89 },
               { value: "500+", label: "Níveis conquistados", progress: 78 },
             ].map((stat, index) => (
-              <Card key={index} className="text-center p-6">
+              <Card key={index} data-animate="fade-up" data-delay={`${(index + 1) * 100}`} className="text-center p-6">
                 <CardContent className="p-0">
                   <p className="text-3xl font-bold">{stat.value}</p>
                   <p className="text-sm text-muted-foreground mt-1">
@@ -896,7 +898,7 @@ export default function AboutPage({
       {/* ---------------- DEPOIMENTOS ---------------- */}
       <section className="py-20 bg-secondary/30">
         <div className="mx-auto max-w-6xl px-6">
-          <div className="text-center mb-12">
+          <div data-animate="fade-up" className="text-center mb-12">
             <Badge
               variant="outline"
               className="border-primary/20 bg-primary/5 text-primary mb-4"
@@ -913,7 +915,7 @@ export default function AboutPage({
 
           <div className="grid gap-6 md:grid-cols-3">
             {testimonials.map((testimonial, index) => (
-              <div>
+              <div data-animate="fade-up" data-delay={`${(index + 1) * 100}`}>
                 <div className="flex items-center gap-4 mb-4">
                   <Avatar>
                     <AvatarFallback className="bg-primary/10 text-primary">
@@ -956,7 +958,7 @@ export default function AboutPage({
       {/* ---------------- FAQ ---------------- */}
       <section className="py-20">
         <div className="mx-auto max-w-4xl px-6">
-          <div className="text-center mb-12">
+          <div data-animate="fade-up" className="text-center mb-12">
             <Badge
               variant="outline"
               className="border-primary/20 bg-primary/5 text-primary mb-4"
@@ -970,7 +972,7 @@ export default function AboutPage({
 
           <div className="grid gap-4 md:grid-cols-2">
             {faqs.map((faq, index) => (
-              <div>
+              <div data-animate="fade-up" data-delay={`${(index + 1) * 100}`}>
                 <p className="font-medium">{faq}</p>
               </div>
             ))}
@@ -981,7 +983,7 @@ export default function AboutPage({
       {/* ---------------- PRICING ---------------- */}
       <section className="py-20 bg-secondary/30">
         <div className="mx-auto max-w-6xl px-6">
-          <div className="text-center mb-12">
+          <div data-animate="fade-up" className="text-center mb-12">
             <Badge
               variant="outline"
               className="border-primary/20 bg-primary/5 text-primary mb-4"
@@ -998,7 +1000,7 @@ export default function AboutPage({
 
           <div className="grid gap-6 md:grid-cols-3">
             {plans.map((plan, index) => (
-              <div>
+              <div data-animate="fade-up" data-delay={`${(index + 1) * 100}`}>
                 {plan.popular && (
                   <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground">
                     Mais popular
@@ -1038,6 +1040,7 @@ export default function AboutPage({
       {/* ---------------- CTA FINAL ---------------- */}
       <section className="py-20">
         <div className="mx-auto max-w-4xl px-6 text-center">
+          <div data-animate="fade-up">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Pronto para transformar sua produtividade?
           </h2>
@@ -1054,6 +1057,7 @@ export default function AboutPage({
           <p className="text-xs text-muted-foreground mt-4">
             Sem cartão de crédito. Cancele quando quiser.
           </p>
+          </div>
         </div>
       </section>
 

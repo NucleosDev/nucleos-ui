@@ -1,5 +1,4 @@
 import { Check, X, Sparkles, Zap, Trophy, Target, Flame } from "lucide-react";
-import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 
 const comparisons = [
@@ -42,26 +41,26 @@ const comparisons = [
 
 export function Comparison() {
   return (
-    <section className="relative pb-60 pt-60 overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8">
+    <section className="relative overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8 bg-background items-center justify-center">
       {/* Gradientes (sem animação de entrada) */}
-      <div className="absolute top-0 left-0 right-0 h-100 pointer-events-none z-10 bg-gradient-to-b from-white via-white/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-64 pointer-events-none z-10 bg-gradient-to-t from-white via-white/60 to-transparent dark:from-black dark:via-black/60 dark:to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-80 pointer-events-none z-5 bg-gradient-to-t from-white/40 via-transparent to-transparent dark:from-black/40 dark:via-transparent dark:to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-100 pointer-events-none z-10 " />
+      <div className="absolute bottom-0 left-0 right-0 h-64 pointer-events-none z-10 " />
+      <div className="absolute bottom-0 left-0 right-0 h-80 pointer-events-none z-5 " />
 
       {/* Background elements sem animação de entrada */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-1/4 left-1/4 size-96 rounded-full bg-background/20 blur-3xl" />
-        <div className="absolute right-1/4 bottom-1/4 size-96 rounded-full bg-accent/20 blur-3xl" />
+        <div className="absolute top-1/4 left-1/4 size-96 rounded-full" />
+        <div className="absolute right-1/4 bottom-1/4 size-96 rounded-full" />
       </div>
 
       {/* Elementos decorativos de fundo */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-1/4 left-1/4 size-96 rounded-full bg-[#4D7CFF]/5 blur-3xl" />
-        <div className="absolute right-1/4 bottom-1/4 size-96 rounded-full bg-[#00C9A7]/5 blur-3xl" />
+        {/* <div className="absolute top-1/4 left-1/4 size-96 rounded-full bg-[#4D7CFF]/5 blur-3xl" />
+        <div className="absolute right-1/4 bottom-1/4 size-96 rounded-full bg-[#00C9A7]/5 blur-3xl" /> */}
       </div>
 
       <div className="mx-auto max-w-4xl relative z-20">
-        <div className="mb-4 text-center">
+        <div data-animate="fade-up" className="mb-4 text-center">
           <Badge
             variant="outline"
             className="gap-2 border-[#4D7CFF]/20 bg-[#4D7CFF]/5 px-4 py-2 text-[#4D7CFF]"
@@ -71,7 +70,11 @@ export function Comparison() {
           </Badge>
         </div>
 
-        <h2 className="text-balance text-center text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
+        <h2
+          data-animate="fade-up"
+          data-delay="100"
+          className="text-balance text-center text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl"
+        >
           A diferença que o{" "}
           <span className="bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
             Nucleos
@@ -79,11 +82,19 @@ export function Comparison() {
           faz
         </h2>
 
-        <p className="mx-auto mt-4 max-w-2xl text-center text-muted-foreground">
+        <p
+          data-animate="fade-up"
+          data-delay="200"
+          className="mx-auto mt-4 max-w-2xl text-center text-muted-foreground"
+        >
           Compare sua rotina antes e depois de usar o Nucleos.
         </p>
 
-        <div className="mt-12 overflow-hidden rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-xl">
+        <div
+          data-animate="fade-up"
+          data-delay="300"
+          className="mt-12 overflow-hidden rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-xl"
+        >
           {/* Header */}
           <div className="grid grid-cols-3 bg-gradient-to-r from-[#4D7CFF]/5 via-transparent to-[#00C9A7]/5 border-b border-border/50">
             <div className="p-4 font-medium text-foreground/80">Aspecto</div>
@@ -126,7 +137,11 @@ export function Comparison() {
         </div>
 
         {/* Badge de stats no final */}
-        <div className="mt-8 flex justify-center gap-4">
+        <div
+          data-animate="fade-up"
+          data-delay="200"
+          className="mt-8 flex justify-center gap-4"
+        >
           <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#4D7CFF]/10 border border-[#4D7CFF]/20">
             <Trophy className="size-4 text-[#FFD700]" />
             <span className="text-sm font-medium">Conquiste.</span>

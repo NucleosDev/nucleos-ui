@@ -33,6 +33,7 @@ import {
   Mail,
   LayoutDashboard,
   Gem,
+  ArrowRight,
 } from "lucide-react";
 import { ModeToggle } from "@/components/mode-toggle";
 
@@ -284,7 +285,7 @@ export function Header() {
             onClick={closeMenu}
           >
             <Image
-              src="/icon.svg"
+              src="/lettermark-nucleos.svg"
               alt="Nucleos"
               width={64}
               height={64}
@@ -308,9 +309,15 @@ export function Header() {
           <Button
             size="sm"
             asChild
-            className="bg-gradient-to-r from-foreground to-foreground/80 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300"
+            className="group relative overflow-hidden bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] hover:from-[#00C9A7] hover:to-[#4D7CFF] transition-all duration-500 shadow-lg hover:shadow-xl border-0"
           >
-            <Link href="/cadastro">Criar Conta</Link>
+            <Link href="/cadastro">
+              <span className="relative z-10 flex items-center gap-2 text-white font-medium">
+                Criar Conta
+                <ArrowRight className="size-3.5" />
+              </span>
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+            </Link>
           </Button>
         </div>
 
@@ -326,7 +333,7 @@ export function Header() {
             onClick={closeMenu}
           >
             <Image
-              src="/icon.svg"
+              src="/lettermark-nucleos.svg"
               alt="Nucleos"
               width={64}
               height={64}
@@ -504,11 +511,17 @@ export function Header() {
             <Link href="/entrar">Entrar</Link>
           </Button>
           <Button
-            className="w-full bg-gradient-to-r from-foreground to-foreground/80"
+            className="group relative overflow-hidden w-full bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] hover:from-[#00C9A7] hover:to-[#4D7CFF] transition-all duration-500 shadow-lg hover:shadow-xl border-0"
             asChild
             onClick={closeMenu}
           >
-            <Link href="/cadastro">Começar Grátis</Link>
+            <Link href="/cadastro">
+              <span className="relative z-10 flex items-center justify-center gap-2 text-white font-medium">
+                Começar Grátis
+                <ArrowRight className="size-4" />
+              </span>
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+            </Link>
           </Button>
         </div>
       </MobileMenu>

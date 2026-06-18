@@ -187,7 +187,7 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               {/* <Link href="/dashboard" className="flex items-center gap-2">
-                <Image src="/icon.svg" alt="Nucleos" width={32} height={32} />
+                <Image src="/lettermark-nucleos.svg" alt="Nucleos" width={32} height={32} />
                 <span className="text-xl font-semibold">Nucleos</span>
               </Link> */}
               <Badge

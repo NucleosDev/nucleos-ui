@@ -26,7 +26,6 @@ import {
   Globe,
   Sparkles,
   Zap,
-  Award,
   Pencil,
   Trash2,
   Archive,
@@ -42,11 +41,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { EditNucleoModal } from "./edit-nucleo-modal";
 import { getTypeStyles, formatXp } from "./utils/nucleo-helpers";
 import type { NucleoCardProps } from "./nucleo-components.types";
 import { LiquidGlass } from "../ui/liquid-glass";
-import { LiquidGlassCard } from "../uilayouts/liquid-glass";
 
 const tipoIcons: Record<string, React.ElementType> = {
   estudo: BookOpen,
@@ -76,6 +84,7 @@ export function NucleoCard({
 }: NucleoCardProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const {
     id,
@@ -90,10 +99,13 @@ export function NucleoCard({
     createdAt,
     level = 1,
     conquistasDesbloqueadas = 0,
+    xpTotal = 0,
+    nextLevelXp = 1000,
   } = nucleo;
 
   const typeStyles = getTypeStyles(tipo);
   const IconComponent = tipoIcons[tipo] || Layers;
+  const clipId = `nucleo-wave-clip-${id}`;
 
   const capaUrl = imagemCapa || (nucleo as any).imagem_capa || null;
 
@@ -106,15 +118,16 @@ export function NucleoCard({
     return "from-[#4D7CFF] to-[#00C9A7]";
   };
 
-  // Formatar data relativa
+  // Formatar data relativa — comparação por dia-calendário local (sem drift de timezone)
   const getRelativeDate = () => {
     const date = new Date(createdAt);
     const now = new Date();
-    const diffDays = Math.floor(
-      (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24),
-    );
+    // Comparar apenas datas locais (zera horas) para evitar "-1 dias" por diferença de UTC
+    const dateLocal = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const nowLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const diffDays = Math.round((nowLocal.getTime() - dateLocal.getTime()) / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return "Hoje";
+    if (diffDays <= 0) return "Hoje";
     if (diffDays === 1) return "Ontem";
     if (diffDays < 7) return `${diffDays} dias atrás`;
     return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
@@ -135,19 +148,14 @@ export function NucleoCard({
     }
   };
 
-  const handleDelete = async () => {
+  const handleDeleteConfirm = async () => {
     if (!onDelete) return;
-    if (
-      confirm(
-        "Tem certeza que deseja excluir este Nucleo? Esta ação não pode ser desfeita.",
-      )
-    ) {
-      setIsDeleting(true);
-      try {
-        await onDelete();
-      } finally {
-        setIsDeleting(false);
-      }
+    setIsDeleting(true);
+    try {
+      await onDelete();
+    } finally {
+      setIsDeleting(false);
+      setIsDeleteDialogOpen(false);
     }
   };
 
@@ -182,7 +190,7 @@ export function NucleoCard({
             aria-hidden="true"
           >
             <defs>
-              <clipPath id="nucleo-wave-clip" clipPathUnits="objectBoundingBox">
+              <clipPath id={clipId} clipPathUnits="objectBoundingBox">
                 {/*
                   Recriação da wave original (M0,20 C150,-40 340,80 500,40 L500,80 L0,80 Z)
                   convertida para objectBoundingBox. A imagem original tem 200px e a wave
@@ -202,8 +210,8 @@ export function NucleoCard({
           <div
             className="relative w-full overflow-hidden h-[200px]"
             style={{
-              clipPath: "url(#nucleo-wave-clip)",
-              WebkitClipPath: "url(#nucleo-wave-clip)",
+              clipPath: `url(#${clipId})`,
+              WebkitClipPath: `url(#${clipId})`,
             }}
           >
             {capaUrl ? (
@@ -250,7 +258,7 @@ export function NucleoCard({
             {/* Liquid glass type badge */}
             <div className="absolute top-3 right-3 z-30">
               <div
-                className="px-2.5 py-1 rounded-full text-xs font-medium text- capitalize"
+                className="px-2.5 py-1 rounded-full text-xs font-medium text-white capitalize"
                 style={{
                   background: `${corDestaque}55`,
                   backdropFilter: "blur(10px) saturate(140%)",
@@ -276,7 +284,7 @@ export function NucleoCard({
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium text-"
+                className="flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium text-white"
                 style={{
                   background: "rgba(255,255,255,0.18)",
                   backdropFilter: "blur(14px) saturate(160%)",
@@ -287,7 +295,7 @@ export function NucleoCard({
                 }}
               >
                 <Eye className="h-4 w-4" />
-                Explorar Nucleo
+                Explorar Núcleo
               </motion.button>
             </div>
           </div>
@@ -319,7 +327,7 @@ export function NucleoCard({
                     className="object-contain brightness-0 invert"
                   />
                 ) : (
-                  <IconComponent className="h-7 w-7 text-" />
+                  <IconComponent className="h-7 w-7 text-white" />
                 )}
               </div>
             </div>
@@ -356,7 +364,7 @@ export function NucleoCard({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuLabel>Ações do Nucleo</DropdownMenuLabel>
+                  <DropdownMenuLabel>Ações do Núcleo</DropdownMenuLabel>
                   <DropdownMenuSeparator />
 
                   <DropdownMenuItem
@@ -366,7 +374,7 @@ export function NucleoCard({
                     }}
                   >
                     <Pencil className="mr-2 h-4 w-4" />
-                    Editar Nucleo
+                    Editar Núcleo
                   </DropdownMenuItem>
                   {onArchive && (
                     <DropdownMenuItem
@@ -376,7 +384,7 @@ export function NucleoCard({
                       }}
                     >
                       <Archive className="mr-2 h-4 w-4" />
-                      Arquivar Nucleo
+                      Arquivar Núcleo
                     </DropdownMenuItem>
                   )}
                   {onDelete && (
@@ -385,13 +393,13 @@ export function NucleoCard({
                       <DropdownMenuItem
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleDelete();
+                          setIsDeleteDialogOpen(true);
                         }}
                         className="text-destructive"
                         disabled={isDeleting}
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
-                        {isDeleting ? "Deletando..." : "Deletar Nucleo"}
+                        Deletar Núcleo
                       </DropdownMenuItem>
                     </>
                   )}
@@ -432,16 +440,28 @@ export function NucleoCard({
               )}
             </div>
 
-            <div className="flex items-center justify-between pt-3">
-              <div className="flex items-center gap-1.5">
-                <Calendar className="h-3 w-3 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">
-                  Criado {getRelativeDate()}
-                </span>
+            {/* XP Progress */}
+            <div className="pt-3 space-y-1.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <Calendar className="h-3 w-3 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">
+                    Criado {getRelativeDate()}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Zap className="h-3 w-3 text-primary" />
+                  <span className="text-xs font-semibold text-primary">
+                    Nv {level} · {xpTotal.toLocaleString()} XP
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center gap-1">
-                <Award className="h-3 w-3 text-primary" />
-                <span className="text-xs font-medium text-primary">Ativo</span>
+              {/* Progress bar to next level */}
+              <div className="w-full h-1 rounded-full bg-muted overflow-hidden">
+                <div
+                  className={`h-full rounded-full bg-gradient-to-r ${getLevelColor()} transition-all duration-500`}
+                  style={{ width: `${Math.min(100, nextLevelXp > 0 ? (xpTotal / nextLevelXp) * 100 : 0)}%` }}
+                />
               </div>
             </div>
           </div>
@@ -455,6 +475,28 @@ export function NucleoCard({
         nucleo={nucleo}
         onSuccess={handleUpdateComplete}
       />
+
+      {/* Confirmação de exclusão */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Deletar "{nome}"?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita. Todos os blocos, tarefas e hábitos deste Núcleo serão removidos permanentemente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              disabled={isDeleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {isDeleting ? "Deletando..." : "Deletar Núcleo"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

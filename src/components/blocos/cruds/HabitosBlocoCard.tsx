@@ -142,6 +142,9 @@ export function HabitosBlocoCard({ bloco }: HabitosBlocoCardProps) {
                 onRegistrar={handleRegistrar}
                 onEdit={() => setHabitoEditando(habito)}
                 onDelete={handleDeletar}
+                onRename={async (nome) => {
+                  await atualizar({ id: habito.id, payload: { nome } });
+                }}
                 isRegistering={isRegistering}
                 isDeleting={isDeletingHabito}
               />

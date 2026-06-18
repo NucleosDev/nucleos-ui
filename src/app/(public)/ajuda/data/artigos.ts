@@ -321,7 +321,7 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
     conteudo: `O bloco de hábitos inteligentes é um componente que permite acompanhar atividades recorrentes, registrando sua frequência e evolução ao longo do tempo. 
-    Ele auxilia na construção de consistência e no desenvolvimento de rotinas produtivas dentro dos Núcleos.`,
+    Ele auxilia na construção de consistência e no desenvolvimento de rotinas produtivas dentro dos Nucleos.`,
   },
   {
     titulo: "Bloco de timer e Pomodoro",
@@ -335,7 +335,7 @@ export const nucleosBlocosArtigos: Artigo[] = [
     categoriaCor: "#00C9A7",
     autor: "Equipe Nucleos",
     conteudo: `O bloco de Timer e Pomodoro é uma ferramenta que auxilia na gestão do tempo por meio de ciclos de foco e descanso. 
-    Baseado na técnica Pomodoro, ele contribui para o aumento da produtividade e concentração dos usuários dentro dos Núcleos.`,
+    Baseado na técnica Pomodoro, ele contribui para o aumento da produtividade e concentração dos usuários dentro dos Nucleos.`,
   },
   {
     titulo: "Bloco de notas e documentação",

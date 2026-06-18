@@ -2,6 +2,7 @@
 "use client";
 
 import { useRef, useEffect, useState, useCallback } from "react";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { DocumentBlock, DocumentBlockType } from "./document-types";
 
@@ -16,6 +17,9 @@ interface TextBlockRendererProps {
   onSlashMenu?: (pos: { top: number; left: number }) => void;
   readOnly?: boolean;
   listIndex?: number;
+  sectionCollapsed?: boolean;
+  sectionCollapsedCount?: number;
+  onToggleSection?: () => void;
 }
 
 const TYPE_CLASSES: Record<string, string> = {
@@ -75,6 +79,9 @@ export function TextBlockRenderer({
   onSlashMenu,
   readOnly = false,
   listIndex = 1,
+  sectionCollapsed = false,
+  sectionCollapsedCount = 0,
+  onToggleSection,
 }: TextBlockRendererProps) {
   const contentRef = useRef<HTMLDivElement>(null);
   const [localCompleted, setLocalCompleted] = useState(
@@ -321,7 +328,55 @@ export function TextBlockRenderer({
     );
   }
 
-  // ── h1 / h2 / h3 / paragraph ─────────────────────────────────────────────
+  // ── h1 / h2 / h3 — with collapsible section toggle ──────────────────────
+  if (block.tipo === "h1" || block.tipo === "h2" || block.tipo === "h3") {
+    return (
+      <div className="group/heading flex items-center gap-1 py-0.5">
+        {onToggleSection && (
+          <button
+            onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); }}
+            onClick={(e) => { e.stopPropagation(); onToggleSection(); }}
+            className={cn(
+              "shrink-0 flex h-5 w-5 items-center justify-center rounded transition-all duration-150",
+              "text-muted-foreground/25 hover:text-muted-foreground/60 hover:bg-muted/40",
+              "opacity-0 group-hover/heading:opacity-100",
+              sectionCollapsed && "opacity-100 text-muted-foreground/40",
+            )}
+            title={sectionCollapsed ? "Expandir seção" : "Recolher seção"}
+          >
+            <ChevronDown
+              className={cn(
+                "h-3.5 w-3.5 transition-transform duration-200",
+                sectionCollapsed && "-rotate-90",
+              )}
+            />
+          </button>
+        )}
+        <div
+          id={`block-${block.id}`}
+          ref={contentRef}
+          contentEditable={!readOnly}
+          suppressContentEditableWarning
+          className={cn(
+            "outline-none flex-1 min-w-0 space-pre-wrap",
+            "empty:before:content-[attr(data-placeholder)] empty:before:text-muted-foreground/40",
+            TYPE_CLASSES[block.tipo],
+          )}
+          data-placeholder={PLACEHOLDER_MAP[block.tipo]}
+          onInput={handleInput}
+          onKeyDown={handleKeyDown}
+          onClick={onActivate}
+        />
+        {sectionCollapsed && sectionCollapsedCount > 0 && (
+          <span className="shrink-0 text-[11px] font-normal text-muted-foreground/30 ml-1.5 tabular-nums">
+            {sectionCollapsedCount} oculto{sectionCollapsedCount !== 1 ? "s" : ""}
+          </span>
+        )}
+      </div>
+    );
+  }
+
+  // ── paragraph ─────────────────────────────────────────────────────────────
   return (
     <div
       id={`block-${block.id}`}

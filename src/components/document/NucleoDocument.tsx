@@ -27,6 +27,9 @@ import {
   Timer,
   Layers,
   FileText,
+  Table2,
+  Kanban,
+  Dumbbell,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -66,6 +69,64 @@ import {
 import type { CreateBlocoPayload, Bloco } from "@/types/bloco";
 
 const genId = () => crypto.randomUUID();
+
+// ── Section hierarchy helpers ─────────────────────────────────────────────
+
+function getHeadingLevel(tipo: string): number {
+  if (tipo === "h1") return 1;
+  if (tipo === "h2") return 2;
+  if (tipo === "h3") return 3;
+  return 0;
+}
+
+interface BlockSectionInfo {
+  isVisible: boolean;
+  sectionDepth: number;
+  sectionCollapsed: boolean;
+  collapsedCount: number;
+}
+
+function computeSectionInfo(
+  blocks: DocumentBlock[],
+  collapsedSections: Set<string>,
+): Map<string, BlockSectionInfo> {
+  const map = new Map<string, BlockSectionInfo>();
+  const sectionStack: Array<{ id: string; level: number }> = [];
+
+  for (let i = 0; i < blocks.length; i++) {
+    const block = blocks[i];
+    if (block.tipo === "header") {
+      map.set(block.id, { isVisible: true, sectionDepth: 0, sectionCollapsed: false, collapsedCount: 0 });
+      continue;
+    }
+    const level = getHeadingLevel(block.tipo);
+    const isHeading = level > 0;
+
+    if (isHeading) {
+      while (sectionStack.length > 0 && sectionStack[sectionStack.length - 1].level >= level) {
+        sectionStack.pop();
+      }
+      const isVisible = !sectionStack.some((s) => collapsedSections.has(s.id));
+      const sectionDepth = sectionStack.length;
+      const sectionCollapsed = collapsedSections.has(block.id);
+      let collapsedCount = 0;
+      if (sectionCollapsed) {
+        for (let j = i + 1; j < blocks.length; j++) {
+          const bLevel = getHeadingLevel(blocks[j].tipo);
+          if (bLevel > 0 && bLevel <= level) break;
+          collapsedCount++;
+        }
+      }
+      map.set(block.id, { isVisible, sectionDepth, sectionCollapsed, collapsedCount });
+      sectionStack.push({ id: block.id, level });
+    } else {
+      const isVisible = !sectionStack.some((s) => collapsedSections.has(s.id));
+      const sectionDepth = sectionStack.length;
+      map.set(block.id, { isVisible, sectionDepth, sectionCollapsed: false, collapsedCount: 0 });
+    }
+  }
+  return map;
+}
 
 function toCanvasItems(blocks: DocumentBlock[]) {
   return blocks
@@ -140,6 +201,31 @@ export function NucleoDocument({
   });
 
   const [blocoPickerOpen, setBlocoPickerOpen] = useState(false);
+
+  const [collapsedSections, setCollapsedSections] = useState<Set<string>>(() => {
+    if (typeof window === "undefined") return new Set();
+    try {
+      const saved = localStorage.getItem(`nucleo:${nucleoId}:collapsed`);
+      return saved ? new Set(JSON.parse(saved) as string[]) : new Set();
+    } catch {
+      return new Set();
+    }
+  });
+
+  const toggleSection = useCallback(
+    (headingId: string) => {
+      setCollapsedSections((prev) => {
+        const next = new Set(prev);
+        if (next.has(headingId)) next.delete(headingId);
+        else next.add(headingId);
+        try {
+          localStorage.setItem(`nucleo:${nucleoId}:collapsed`, JSON.stringify([...next]));
+        } catch {}
+        return next;
+      });
+    },
+    [nucleoId],
+  );
 
   const [slashMenu, setSlashMenu] = useState<{
     open: boolean;
@@ -491,6 +577,18 @@ export function NucleoDocument({
         const initializer =
           BLOCO_INITIALIZERS[tipo as keyof typeof BLOCO_INITIALIZERS];
         if (initializer) await initializer(criado.id, titulo);
+
+        const newDocBlock: DocumentBlock = {
+          id: criado.id,
+          nucleoId,
+          tipo: tipo as DocumentBlockType,
+          titulo: titulo,
+          posicao: 9999,
+          isDeletable: true,
+          blocoRef: criado,
+        };
+        setBlocks((prev) => [...prev, newDocBlock]);
+
         toast({ title: `Bloco "${titulo || tipo}" criado!` });
       } catch {
         toast({ title: "Erro ao criar bloco", variant: "destructive" });
@@ -688,6 +786,9 @@ export function NucleoDocument({
       );
     }
 
+    const sectionInfo = sectionInfoMap.get(block.id);
+    const isHeadingBlock = block.tipo === "h1" || block.tipo === "h2" || block.tipo === "h3";
+
     return (
       <TextBlockRenderer
         block={block}
@@ -704,6 +805,11 @@ export function NucleoDocument({
         }
         readOnly={readOnly}
         listIndex={listIndexMap.get(block.id)}
+        {...(isHeadingBlock && {
+          sectionCollapsed: sectionInfo?.sectionCollapsed ?? false,
+          sectionCollapsedCount: sectionInfo?.collapsedCount ?? 0,
+          onToggleSection: () => toggleSection(block.id),
+        })}
       />
     );
   };
@@ -724,6 +830,21 @@ export function NucleoDocument({
   const gridBlocks = useMemo(
     () => uniqueBlocks.filter((b) => b.tipo !== "header"),
     [uniqueBlocks],
+  );
+
+  const sectionInfoMap = useMemo(
+    () => computeSectionInfo(uniqueBlocks, collapsedSections),
+    [uniqueBlocks, collapsedSections],
+  );
+
+  const visibleBlocks = useMemo(
+    () => uniqueBlocks.filter((b) => sectionInfoMap.get(b.id)?.isVisible !== false),
+    [uniqueBlocks, sectionInfoMap],
+  );
+
+  const visibleGridBlocks = useMemo(
+    () => visibleBlocks.filter((b) => b.tipo !== "header"),
+    [visibleBlocks],
   );
 
   // ═══════════════════════════════════════════════════════════════════════
@@ -848,6 +969,30 @@ export function NucleoDocument({
                         icon: FileText,
                         accent: "#a855f7",
                       },
+                      {
+                        tipo: "tabela",
+                        label: "Tabela",
+                        icon: Table2,
+                        accent: "#14b8a6",
+                      },
+                      {
+                        tipo: "galeria",
+                        label: "Galeria",
+                        icon: LayoutGrid,
+                        accent: "#f43f5e",
+                      },
+                      {
+                        tipo: "quadro",
+                        label: "Quadro",
+                        icon: Kanban,
+                        accent: "#f97316",
+                      },
+                      {
+                        tipo: "exercicios",
+                        label: "Exercícios",
+                        icon: Dumbbell,
+                        accent: "#f97316",
+                      },
                     ].map(({ tipo, label, icon: Icon, accent }) => (
                       <button
                         key={tipo}
@@ -929,7 +1074,7 @@ export function NucleoDocument({
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={uniqueBlocks.map((b) => b.id)}
+            items={visibleBlocks.map((b) => b.id)}
             strategy={verticalListSortingStrategy}
           >
             {viewMode === "grid" ? (
@@ -939,7 +1084,7 @@ export function NucleoDocument({
                   "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
                 )}
               >
-                {gridBlocks.map((block) => (
+                {visibleGridBlocks.map((block) => (
                   <div key={block.id} className="h-full">
                     <SortableDocumentBlock
                       block={block}
@@ -968,29 +1113,37 @@ export function NucleoDocument({
               </div>
             ) : (
               <div className="space-y-0.5">
-                {uniqueBlocks.map((block) => (
-                  <SortableDocumentBlock
-                    key={block.id}
-                    block={block}
-                    isSelected={selectedIds.has(block.id)}
-                    isActive={activeBlockId === block.id}
-                    onSelect={handleBlockClick}
-                    onUpdate={(updates) => handleUpdateBlock(block.id, updates)}
-                    onDelete={() =>
-                      isFunctional(block.tipo)
-                        ? handleDeleteFunctional(block.id)
-                        : handleDeleteBlock(block.id)
-                    }
-                    onAddBelow={
-                      block.tipo !== "header" && !readOnly
-                        ? () => handleAddBlock("paragraph", block.id)
-                        : undefined
-                    }
-                    readOnly={readOnly}
-                  >
-                    {renderBlockContent(block)}
-                  </SortableDocumentBlock>
-                ))}
+                {visibleBlocks.map((block) => {
+                  const sectionInfo = sectionInfoMap.get(block.id);
+                  const depth = sectionInfo?.sectionDepth ?? 0;
+                  return (
+                    <div
+                      key={block.id}
+                      style={depth > 0 ? { paddingLeft: `${depth * 16}px` } : undefined}
+                    >
+                      <SortableDocumentBlock
+                        block={block}
+                        isSelected={selectedIds.has(block.id)}
+                        isActive={activeBlockId === block.id}
+                        onSelect={handleBlockClick}
+                        onUpdate={(updates) => handleUpdateBlock(block.id, updates)}
+                        onDelete={() =>
+                          isFunctional(block.tipo)
+                            ? handleDeleteFunctional(block.id)
+                            : handleDeleteBlock(block.id)
+                        }
+                        onAddBelow={
+                          block.tipo !== "header" && !readOnly
+                            ? () => handleAddBlock("paragraph", block.id)
+                            : undefined
+                        }
+                        readOnly={readOnly}
+                      >
+                        {renderBlockContent(block)}
+                      </SortableDocumentBlock>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </SortableContext>

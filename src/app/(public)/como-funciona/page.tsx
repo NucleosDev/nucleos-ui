@@ -36,7 +36,7 @@ export default function ComoFunciona() {
             <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
               Crie seu Nucleo
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text dark:text-gray-300">
               Comece organizando seus projetos e ideias em nucleos
               personalizados, com blocos modulares e fáceis de usar.
             </p>
@@ -67,7 +67,7 @@ export default function ComoFunciona() {
             <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
               Personalize e organize
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text dark:text-gray-300">
               Adicione blocos, configure estilos, e organize seus nucleos da
               forma que preferir para otimizar sua produtividade.
             </p>
@@ -93,7 +93,7 @@ export default function ComoFunciona() {
             <h3 className="text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
               Compartilhe e colabore
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text dark:text-gray-300">
               Compartilhe seus nucleos com a comunidade ou equipe, colaborando
               em tempo real e aumentando seu impacto.
             </p>

@@ -19,7 +19,6 @@ import {
   Calculator,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { LiquidGlass } from "@/components/ui/liquid-glass";
 
 const blocoIconMap: Record<string, LucideIcon> = {
   tarefas: CheckSquare,
@@ -95,14 +94,12 @@ export default function BlocoLayout({
           <p className="text-sm text-muted-foreground mb-5">
             O bloco foi removido ou não existe.
           </p>
-          <LiquidGlass
-            variant="button"
-            radius="var(--radius-md)"
+          <button
             onClick={() => router.back()}
-            className="text-sm font-medium text-"
+            className="px-4 py-2 text-sm font-medium rounded-lg border border-border/50 hover:bg-accent transition-colors"
           >
-            <span className="px-4 py-2 block">Voltar</span>
-          </LiquidGlass>
+            Voltar
+          </button>
         </div>
       </div>
     );
@@ -113,14 +110,12 @@ export default function BlocoLayout({
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-base font-semibold mb-2">Núcleo não encontrado</p>
-          <LiquidGlass
-            variant="button"
-            radius="var(--radius-md)"
+          <button
             onClick={() => router.push("/dashboard/nucleos")}
-            className="mt-4 text-sm font-medium text-"
+            className="mt-4 px-4 py-2 text-sm font-medium rounded-lg border border-border/50 hover:bg-accent transition-colors"
           >
-            <span className="px-4 py-2 block">Ver Núcleos</span>
-          </LiquidGlass>
+            Ver Nucleos
+          </button>
         </div>
       </div>
     );
@@ -173,18 +168,14 @@ export default function BlocoLayout({
           </svg>
         </div>
 
-        {/* Glass back button */}
-        <LiquidGlass
-          variant="button"
-          radius="999px"
+        {/* Back button */}
+        <button
           onClick={() => router.push(`/dashboard/nucleos/${nucleoId}`)}
-          className="absolute top-4 left-4 z-20 text-sm font-medium text-"
+          className="absolute top-4 left-4 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium bg-background/60 backdrop-blur-md border border-border/40 hover:bg-background/80 transition-colors"
         >
-          <span className="flex items-center gap-2 px-3 py-1.5">
-            <ArrowLeft className="h-4 w-4" />
-            {nucleo.nome}
-          </span>
-        </LiquidGlass>
+          <ArrowLeft className="h-4 w-4" />
+          {nucleo.nome}
+        </button>
 
         {/* Glass bloco type badge */}
         <div

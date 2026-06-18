@@ -3,6 +3,7 @@ import { listasService } from "@/services/index.service";
 import { tarefasService } from "@/services/tarefas.service";
 import { colecoesService } from "@/services/colecoes.service";
 import { habitosService } from "@/services/habitos.service";
+import { exerciciosService } from "@/services/exercicios.service";
 import type { BlocoTipo } from "@/types/bloco";
 
 export type BlocoInitializer = (
@@ -74,5 +75,12 @@ export const BLOCO_INITIALIZERS: Partial<Record<BlocoTipo, BlocoInitializer>> =
 
     canvas: async (blocoId, titulo) => {
       console.log(`Canvas criado: ${blocoId}`);
+    },
+
+    exercicios: async (blocoId, titulo) => {
+      await exerciciosService.criarTreino({
+        blocoId,
+        nome: titulo || "Treino A",
+      });
     },
   };

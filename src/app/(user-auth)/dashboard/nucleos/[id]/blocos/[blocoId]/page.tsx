@@ -22,10 +22,15 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  GlassModal,
-  GlassModalFooter,
-  GlassButton,
-} from "@/components/ui/glass-modal";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "@/hooks/use-toast";
 import { CriarBlocoModal } from "@/components/blocos/CriarBlocoModal";
 import { ColecoesBlocoCard } from "@/components/blocos/cruds/ColecoesBlocoCard";
@@ -37,7 +42,6 @@ import { HabitosBlocoCard } from "@/components/blocos/cruds/HabitosBlocoCard";
 import { BlocoDeNotas } from "@/components/blocos/cruds/BlocoDeNotas";
 import { BLOCO_INITIALIZERS } from "@/lib/bloco-initializers";
 import { cn } from "@/lib/utils";
-import { LiquidGlass } from "@/components/ui/liquid-glass";
 import type { CreateBlocoPayload, Bloco } from "@/types/bloco";
 
 const BLOCO_ICONS: Record<string, LucideIcon> = {
@@ -174,14 +178,12 @@ export default function BlocoDetalhesPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
         <p className="text-muted-foreground">Bloco não encontrado.</p>
-        <LiquidGlass
-          variant="button"
-          radius="8px"
+        <button
           onClick={() => router.back()}
-          className="text-sm font-medium text-/80"
+          className="px-3 py-1.5 text-sm font-medium rounded-lg border border-border/50 hover:bg-accent transition-colors"
         >
-          <span className="px-3 py-1.5 block">Voltar</span>
-        </LiquidGlass>
+          Voltar
+        </button>
       </div>
     );
   }
@@ -204,17 +206,13 @@ export default function BlocoDetalhesPage() {
             Sub-blocos
           </span>
           <div className="flex-1 border-t border-border/40" />
-          <LiquidGlass
-            variant="button"
-            radius="8px"
+          <button
             onClick={() => setModalAberto(true)}
-            className="text-xs font-medium text-/70"
+            className="flex items-center gap-1.5 h-7 px-2.5 rounded-md text-xs font-medium border border-border/50 hover:bg-accent transition-colors"
           >
-            <span className="flex items-center gap-1.5 h-7 px-2.5">
-              <Plus className="h-3.5 w-3.5" />
-              Sub-bloco
-            </span>
-          </LiquidGlass>
+            <Plus className="h-3.5 w-3.5" />
+            Sub-bloco
+          </button>
         </div>
 
         {subBlocos.length === 0 ? (
@@ -310,26 +308,27 @@ export default function BlocoDetalhesPage() {
         parentId={blocoId}
       />
 
-      <GlassModal
-        open={!!deleteTarget}
-        onClose={() => setDeleteTarget(null)}
-        size="max-w-sm"
-      >
-        <div className="px-5 pt-5 pb-2 space-y-3">
-          <h3 className="text-sm font-semibold">Excluir sub-bloco?</h3>
-          <p className="text-xs text-muted-foreground/70">
-            Esta ação não pode ser desfeita.
-          </p>
-        </div>
-        <GlassModalFooter>
-          <GlassButton variant="outline" onClick={() => setDeleteTarget(null)}>
-            Cancelar
-          </GlassButton>
-          <GlassButton variant="destructive" onClick={confirmExcluirSub}>
-            Excluir
-          </GlassButton>
-        </GlassModalFooter>
-      </GlassModal>
+      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir sub-bloco?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeleteTarget(null)}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmExcluirSub}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
