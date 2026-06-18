@@ -1,24 +1,23 @@
 // components/layout/dashboard-layout.tsx
 "use client";
 
-// import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { useGamification } from "@/hooks/useGamification";
 import {
-  Flame,
   CalendarDays,
   Trophy,
-  BarChart3,
   Bell,
   User,
   Settings,
   Grid2x2,
   MessageSquare,
   Aperture,
-  ChevronRight,
-  Zap,
   TrendingUp,
   Inbox,
   Lightbulb,
+  Plus,
+  MoreHorizontal,
+  ChevronRight,
+  Timer,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCurrentUser } from "@/hooks/useDashboard";
@@ -26,6 +25,7 @@ import { useNucleos } from "@/hooks/useNucleo";
 import type { Nucleo } from "@/types/nucleo";
 import { useTotalBlocosCount } from "@/hooks/useBlocos";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -76,8 +76,14 @@ const NAV_MAIN = [
     href: "/dashboard/calendario",
   },
   {
+    id: "foco",
+    label: "Foco",
+    icon: Timer,
+    href: "/dashboard/foco",
+  },
+  {
     id: "insights",
-    label: "Dicas",
+    label: "Insights",
     icon: Lightbulb,
     href: "/dashboard/insights",
   },
@@ -92,50 +98,30 @@ const NAV_SECONDARY = [
   },
   {
     id: "gamificacao",
-    label: "Ranking",
+    label: "Gamificação",
     icon: TrendingUp,
     href: "/dashboard/gamificacao",
   },
   {
-    id: "chatbot",
+    id: "orbit",
     label: "Orbit",
     icon: MessageSquare,
-    href: "/dashboard/chatbot",
+    href: "/dashboard/orbit",
   },
-  {
-    id: "inbox",
-    label: "Social",
-    icon: Inbox,
-    href: "/dashboard/inbox",
-  },
-  {
-    id: "notificacoes",
-    label: "Notificações",
-    icon: Bell,
-    href: "/dashboard/notificacoes",
-  },
-];
-
-const NAV_BOTTOM = [
-  { id: "perfil", label: "Perfil", icon: User, href: "/dashboard/perfil" },
-  {
-    id: "configuracoes",
-    label: "Configurações",
-    icon: Settings,
-    href: "/dashboard/configuracoes",
-  },
+  { id: "inbox", label: "Notificações", icon: Inbox, href: "/dashboard/inbox" },
 ];
 
 const COLLAPSED_LINKS = [
   { icon: Grid2x2, href: "/dashboard", label: "Início" },
   { icon: Aperture, href: "/dashboard/nucleos", label: "Núcleos" },
   { icon: CalendarDays, href: "/dashboard/calendario", label: "Calendário" },
-  { icon: Lightbulb, href: "/dashboard/insights", label: "Dicas" },
+  { icon: Timer, href: "/dashboard/foco", label: "Foco" },
+  { icon: Lightbulb, href: "/dashboard/insights", label: "Insights" },
+  { icon: Trophy, href: "/dashboard/conquistas", label: "Conquistas" },
+  { icon: TrendingUp, href: "/dashboard/gamificacao", label: "Gamificação" },
 ];
 
-// ── BgUser (fundo blur extraído) ─────────────────────────────────────────────
-
-// ── NavLink (sidebar expandida) ──────────────────────────────────────────────
+// ── NavLink ──────────────────────────────────────────────────────────────────
 
 function NavLink({
   href,
@@ -155,134 +141,191 @@ function NavLink({
       href={href}
       onClick={onClick}
       className={cn(
-        "relative bg-transparent flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200",
+        "relative flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150",
         isActive
-          ? "text-foreground"
-          : "text-foreground/40 hover:text-foreground/75",
+          ? "text-foreground bg-accent"
+          : "text-muted-foreground hover:text-foreground hover:bg-accent/60",
       )}
     >
-      {isActive && (
-        <span className="absolute inset-0 rounded-xl border border-primary/30 bg-primary/5" />
-      )}
-
       <Icon
         className={cn(
-          "h-4 w-4 shrink-0 relative z-10 transition-colors duration-200",
-          isActive ? "text-primary" : "text-foreground/40",
+          "h-4 w-4 shrink-0 transition-colors duration-150",
+          isActive ? "text-primary" : "text-muted-foreground/70",
         )}
       />
-      <span className="relative z-10">{label}</span>
+      <span>{label}</span>
+      {isActive && (
+        <span className="ml-auto h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
+      )}
     </Link>
-  );
-}
-
-// ── NavIcon (sidebar colapsada standalone - usado apenas no settings) ─────────
-
-function NavIcon({
-  href,
-  icon: Icon,
-  label,
-  isActive,
-}: {
-  href: string;
-  icon: React.ElementType;
-  label: string;
-  isActive: boolean;
-}) {
-  return (
-    <div className="">
-      <Link
-        href={href}
-        title={label}
-        className="relative flex items-center justify-center w-11 h-11 rounded-2xl transition-all duration-300 group"
-      >
-        {isActive ? (
-          <div
-            className="absolute inset-0 rounded-2xl backdrop-blur-sm"
-            style={{
-              background: "rgba(255,255,255,0.09)",
-              boxShadow:
-                "inset 1.5px 1.5px 1px 0 rgba(255,255,255,0.3), inset -1.5px -1.5px 1px 0 rgba(255,255,255,0.10), 0 4px 10px rgba(0,0,0,0.25)",
-            }}
-          />
-        ) : (
-          <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-/[0.05]" />
-        )}
-        <Icon
-          className={cn(
-            "h-[18px] w-[18px] relative z-10 transition-all duration-300",
-            isActive ? "text" : "text/40 group-hover:text/70",
-          )}
-          strokeWidth={isActive ? 2.2 : 1.5}
-        />
-      </Link>
-    </div>
   );
 }
 
 // ── SidebarContent ───────────────────────────────────────────────────────────
 
-function SidebarContent({ userData, onClose }: DashboardSidebarProps) {
+function SidebarContent({
+  userData,
+  recentNucleos,
+  nucleosCount,
+  onClose,
+}: DashboardSidebarProps) {
   const pathname = usePathname();
 
+  const getInitials = () => {
+    if (!userData.fullName) return "U";
+    return userData.fullName
+      .split(" ")
+      .map((n) => n[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
+  };
+
   return (
-    <div className="flex flex-col flex-1 overflow-y-auto py-4">
-      {/* Main nav */}
-      <div className="px-3 space-y-1">
-        <p className="px-3 text-[10px] font-semibold text/25 uppercase tracking-widest mb-2">
+    <div className="flex flex-col flex-1 overflow-y-auto">
+      {/* ── Principal ── */}
+      <div className="px-3 pt-3 pb-1">
+        <p className="px-3 text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-widest mb-1.5">
           Principal
         </p>
-        {NAV_MAIN.map((link) => (
-          <NavLink
-            key={link.id}
-            href={link.href}
-            icon={link.icon}
-            label={link.label}
-            isActive={
-              link.href === "/dashboard"
-                ? pathname === link.href
-                : pathname === link.href ||
-                  pathname?.startsWith(link.href + "/")
-            }
-            onClick={onClose}
-          />
-        ))}
+        <div className="space-y-0.5">
+          {NAV_MAIN.map((link) => (
+            <NavLink
+              key={link.id}
+              href={link.href}
+              icon={link.icon}
+              label={link.label}
+              isActive={
+                link.href === "/dashboard"
+                  ? pathname === link.href
+                  : pathname === link.href ||
+                    pathname?.startsWith(link.href + "/")
+              }
+              onClick={onClose}
+            />
+          ))}
+        </div>
       </div>
 
-      {/* Divider */}
-      <div className="mx-4 my-4 h-px bg-/[0.06]" />
+      <div className="mx-4 my-2 h-px bg-border/50" />
 
-      {/* Secondary nav */}
-      <div className="px-3 space-y-1">
-        <p className="px-3 text-[10px] font-semibold text/25 uppercase tracking-widest mb-2">
+      {/* ── Explorar ── */}
+      <div className="px-3 pb-1">
+        <p className="px-3 text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-widest mb-1.5">
           Explorar
         </p>
-        {NAV_SECONDARY.map((link) => (
-          <NavLink
-            key={link.id}
-            href={link.href}
-            icon={link.icon}
-            label={link.label}
-            isActive={
-              pathname === link.href || pathname?.startsWith(link.href + "/")
-            }
-            onClick={onClose}
-          />
-        ))}
+        <div className="space-y-0.5">
+          {NAV_SECONDARY.map((link) => (
+            <NavLink
+              key={link.id}
+              href={link.href}
+              icon={link.icon}
+              label={link.label}
+              isActive={
+                pathname === link.href || pathname?.startsWith(link.href + "/")
+              }
+              onClick={onClose}
+            />
+          ))}
+        </div>
       </div>
 
-      {/* Bottom nav */}
-      <div className="mt-auto pt-3 mx-3 space-y-1 ">
-        {NAV_BOTTOM.map((link) => (
+      <div className="mx-4 my-2 h-px bg-border/50" />
+
+      {/* ── Meus Núcleos (Documents-style) ── */}
+      <div className="px-3 pb-2">
+        <div className="flex items-center justify-between px-3 mb-1.5">
+          <p className="text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-widest">
+            Meus Núcleos
+          </p>
+          <Link
+            href="/dashboard/nucleos"
+            onClick={onClose}
+            className="flex items-center justify-center h-4 w-4 rounded text-muted-foreground/40 hover:text-foreground transition-colors"
+          >
+            <Plus className="h-3 w-3" />
+          </Link>
+        </div>
+
+        {recentNucleos.length === 0 ? (
+          <p className="px-3 py-1.5 text-xs text-muted-foreground/40">
+            Nenhum núcleo ainda
+          </p>
+        ) : (
+          <div className="space-y-0.5">
+            {recentNucleos.map((n) => (
+              <Link
+                key={n.id}
+                href={`/dashboard/nucleos/${n.id}`}
+                onClick={onClose}
+                className={cn(
+                  "flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors duration-150 group",
+                  pathname === `/dashboard/nucleos/${n.id}`
+                    ? "bg-accent text-foreground"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent/60",
+                )}
+              >
+                <span
+                  className="h-2 w-2 rounded-full shrink-0"
+                  style={{ background: n.corDestaque || "#4D7CFF" }}
+                />
+                <span className="truncate flex-1">{n.nome}</span>
+                <ChevronRight className="h-3 w-3 opacity-0 group-hover:opacity-40 transition-opacity shrink-0" />
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {nucleosCount > 6 && (
+          <Link
+            href="/dashboard/nucleos"
+            onClick={onClose}
+            className="flex items-center px-3 py-1.5 text-[11px] text-muted-foreground/50 hover:text-muted-foreground transition-colors mt-0.5"
+          >
+            Ver todos ({nucleosCount})
+          </Link>
+        )}
+      </div>
+
+      {/* ── Bottom: Settings + User ── */}
+      <div className="mt-auto border-t border-border/50">
+        <div className="px-3 pt-2 pb-1 space-y-0.5">
           <NavLink
-            key={link.id}
-            href={link.href}
-            icon={link.icon}
-            label={link.label}
-            isActive={pathname === link.href}
+            href="/dashboard/perfil"
+            icon={User}
+            label="Perfil"
+            isActive={pathname === "/dashboard/perfil"}
             onClick={onClose}
           />
-        ))}
+          <NavLink
+            href="/dashboard/configuracoes"
+            icon={Settings}
+            label="Configurações"
+            isActive={pathname === "/dashboard/configuracoes"}
+            onClick={onClose}
+          />
+        </div>
+
+        {/* User profile card — shadcn style */}
+        <div className="px-3 pb-3 pt-1">
+          <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-muted/40 hover:bg-muted/70 transition-colors cursor-default group">
+            <Avatar className="h-7 w-7 shrink-0 ring-1 ring-border">
+              <AvatarImage src={userData.avatarUrl || undefined} />
+              <AvatarFallback className="text-[10px] font-semibold bg-primary/10 text-primary">
+                {getInitials()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-semibold truncate text-foreground/90 leading-tight">
+                {userData.fullName || "Usuário"}
+              </p>
+              <p className="text-[10px] text-muted-foreground/60 leading-tight mt-px">
+                Nível {userData.level || 1} · {userData.streak || 0} dias streak
+              </p>
+            </div>
+            <MoreHorizontal className="h-3.5 w-3.5 text-muted-foreground/30 group-hover:text-muted-foreground/60 transition-colors shrink-0" />
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -299,16 +342,24 @@ function SidebarDesktop({
 }: DashboardSidebarProps) {
   const pathname = usePathname();
 
+  const getInitials = () => {
+    if (!userData.fullName) return "U";
+    return userData.fullName
+      .split(" ")
+      .map((n) => n[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
+  };
+
   return (
     <motion.aside
       initial={false}
-      animate={{ width: collapsed ? 72 : 240 }}
+      animate={{ width: collapsed ? 64 : 240 }}
       transition={{ type: "spring", stiffness: 280, damping: 36, mass: 1 }}
-      className="hidden md:flex sticky top-0 z-40 h-screen overflow-hidden shrink-0 box-border bg-foreground/5 backdrop-blur-lg border-r border-border/30"
+      className="hidden md:flex sticky top-0 z-40 h-screen overflow-hidden shrink-0 border-r border-border/50 bg-background"
     >
-      <div className="flex flex-col h-full w-full bg-background">
-        {/* Fundo BgUser quando colapsada */}
-
+      <div className="flex flex-col h-full w-full">
         <AnimatePresence mode="wait" initial={false}>
           {collapsed ? (
             <motion.div
@@ -316,66 +367,76 @@ function SidebarDesktop({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.14, ease: "easeInOut" }}
-              className="relative z-10 flex flex-col items-center pt-4 w-full h-full"
+              transition={{ duration: 0.14 }}
+              className="flex flex-col items-center h-full w-full py-3 gap-0.5"
             >
-              {/* Glass pill — logo + nav icons together */}
-              <div className="relative w-full px-3">
-                <div className="absolute top-[-12] z-10 flex flex-col items-center gap-0.5 py-2">
-                  {/* Logo inside the pill */}
-                  <Link
-                    href="/dashboard"
-                    title="Início"
-                    className="flex items-center justify-center w-10 h-10 rounded-xl hover:opacity-75 transition-opacity"
-                  >
-                    <Image
-                      src="/lettermark-nucleos.svg"
-                      height={32}
-                      width={32}
-                      alt="logo"
-                    />
-                  </Link>
-
-                  {COLLAPSED_LINKS.map((item) => {
-                    const Icon = item.icon;
-                    const isActive =
-                      item.href === "/dashboard"
-                        ? pathname === item.href
-                        : pathname === item.href ||
-                          pathname?.startsWith(item.href + "/");
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        title={item.label}
-                        className="relative flex items-center justify-center w-10 h-10 rounded-xl group transition-colors duration-200"
-                      >
-                        {isActive && (
-                          <span
-                            className="absolute inset-0 rounded-xl"
-                            style={{ background: "rgba(255,255,255,0.09)" }}
-                          />
-                        )}
-                        <Icon
-                          className={cn(
-                            "h-[18px] w-[18px] relative z-10 transition-all duration-200",
-                            isActive ? "text" : "text/35 group-hover:text/65",
-                          )}
-                          strokeWidth={isActive ? 2.2 : 1.5}
-                        />
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="mt-auto">
-                <NavIcon
-                  href="/dashboard/configuracoes"
-                  icon={Settings}
-                  label="Configurações"
-                  isActive={pathname === "/dashboard/configuracoes"}
+              {/* Logo */}
+              <Link
+                href="/dashboard"
+                className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-accent transition-colors mb-2"
+                title="Início"
+              >
+                <Image
+                  src="/lettermark-nucleos.svg"
+                  height={28}
+                  width={28}
+                  alt="Nucleos"
                 />
+              </Link>
+
+              {/* Nav icons */}
+              {COLLAPSED_LINKS.map((item) => {
+                const Icon = item.icon;
+                const isActive =
+                  item.href === "/dashboard"
+                    ? pathname === item.href
+                    : pathname === item.href ||
+                      pathname?.startsWith(item.href + "/");
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    title={item.label}
+                    className={cn(
+                      "relative flex items-center justify-center w-10 h-10 rounded-lg transition-colors duration-150",
+                      isActive
+                        ? "bg-accent text-foreground"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent/60",
+                    )}
+                  >
+                    <Icon
+                      className="h-[18px] w-[18px]"
+                      strokeWidth={isActive ? 2.2 : 1.8}
+                    />
+                    {isActive && (
+                      <span className="absolute right-1.5 top-1/2 -translate-y-1/2 h-1.5 w-1.5 rounded-full bg-primary" />
+                    )}
+                  </Link>
+                );
+              })}
+
+              {/* Bottom */}
+              <div className="mt-auto flex flex-col items-center gap-0.5 border-t border-border/50 pt-2 w-full px-1.5">
+                <Link
+                  href="/dashboard/configuracoes"
+                  title="Configurações"
+                  className={cn(
+                    "flex items-center justify-center w-10 h-10 rounded-lg transition-colors",
+                    pathname === "/dashboard/configuracoes"
+                      ? "bg-accent text-foreground"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent/60",
+                  )}
+                >
+                  <Settings className="h-[18px] w-[18px]" strokeWidth={1.8} />
+                </Link>
+                <div className="flex items-center justify-center w-10 h-10">
+                  <Avatar className="h-7 w-7 ring-1 ring-border">
+                    <AvatarImage src={userData.avatarUrl || undefined} />
+                    <AvatarFallback className="text-[10px] font-semibold bg-primary/10 text-primary">
+                      {getInitials()}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
               </div>
             </motion.div>
           ) : (
@@ -384,19 +445,19 @@ function SidebarDesktop({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.14, ease: "easeInOut" }}
+              transition={{ duration: 0.14 }}
               className="flex flex-col w-full h-full"
             >
-              {/* Logo + nav expandida */}
-              <div className="px-5 py-4 ">
-                <Link href="/dashboard" className="block">
+              {/* Logo */}
+              <div className="flex items-center justify-center px-3 py-6 border-b border-border/50 shrink-0">
+                <Link href="/dashboard" className="block w-full">
                   <Image
                     src="/logotype-nucleos.svg"
-                    width={120}
-                    height={32}
+                    width={200}
+                    height={100}
                     alt="Nucleos"
                     priority
-                    className="h-8 w-auto"
+                    style={{ width: "100%", height: "auto" }}
                   />
                 </Link>
               </div>
@@ -430,6 +491,7 @@ export function DashboardLayout({
   const { data: totalBlocos = 0 } = useTotalBlocosCount(nucleos || []);
   const gamification = useGamification();
   const { data: stats } = gamification.useStats();
+  const { data: streak } = gamification.useStreak();
 
   const userData = {
     fullName: user?.fullName || user?.email?.split("@")[0] || "Usuário",
@@ -437,11 +499,11 @@ export function DashboardLayout({
     level: stats?.level,
     currentXp: stats?.currentXp,
     nextLevelXp: stats?.nextLevelXp,
-    streak: stats?.currentStreak,
+    streak: streak?.currentStreak,
   };
 
   const nucleosCount = nucleos?.length ?? 0;
-  const recentNucleos = (nucleos ?? []).slice(0, 5).map((n: Nucleo) => ({
+  const recentNucleos = (nucleos ?? []).slice(0, 6).map((n: Nucleo) => ({
     id: n.id,
     nome: n.nome,
     tipo: n.tipo,
@@ -463,16 +525,16 @@ export function DashboardLayout({
         <Sheet open={isMobileMenuOpen} onOpenChange={onMobileMenuClose}>
           <SheetContent
             side="left"
-            className="w-[240px] p-0 bg-black/90 backdrop-blur-3xl"
+            className="w-[260px] p-0 bg-background border-r border-border/50"
           >
-            <div className="px-5 py-4 ">
+            <div className="px-5 py-4 border-b border-border/50">
               <Image
                 src="/logotype-nucleos.svg"
-                width={120}
-                height={32}
+                width={110}
+                height={28}
                 alt="Nucleos"
                 priority
-                className="h-8 w-auto"
+                className="h-7 w-auto"
               />
             </div>
             <SidebarContent {...sidebarProps} onClose={onMobileMenuClose} />
@@ -485,22 +547,17 @@ export function DashboardLayout({
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      {/* Sidebar */}
       <SidebarDesktop {...sidebarProps} />
-
-      {/* Main area */}
       <main className="relative flex-1 min-w-0 overflow-y-auto bg-background">
-        {/* Content */}
-        <div className="relative z-10 min-h-full">
-          <motion.div
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 4 }}
-            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {children}
-          </motion.div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 4 }}
+          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+          className="min-h-full"
+        >
+          {children}
+        </motion.div>
       </main>
     </div>
   );

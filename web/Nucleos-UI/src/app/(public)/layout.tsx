@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { siteConfig } from "@/config/site";
-import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/auth/";
 import { Header } from "@/components/public/landing/header";
 import { Footer } from "@/components/public/landing/footer";
@@ -68,22 +67,18 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({
+export default function PublicLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
-      <AuthProvider>
-        <div className="relative flex flex-col">
-          <Header />
-          <main className="flex-1 ">{children}</main>
-          <Footer />
-        </div>
-      </AuthProvider>
-
-      <Analytics />
-    </html>
+    <AuthProvider>
+      <div className="relative flex min-h-screen flex-col">
+        <Header />
+        <main className="flex-1">{children}</main>
+        <Footer />
+      </div>
+    </AuthProvider>
   );
 }
