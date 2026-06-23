@@ -308,7 +308,7 @@ export default function Dashboard() {
         </motion.div>
 
         {/* Weekly pulse */}
-        <WeeklyPulseWidget delay={0.13} />
+        {/* <WeeklyPulseWidget delay={0.13} /> */}
 
         {/* Nucleos overview */}
         <motion.div

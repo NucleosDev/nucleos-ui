@@ -63,7 +63,7 @@ export default function NucleosMost() {
         <div className="pt-4 pb-10 sm:pt-6 sm:pb-12 text-center">
           <div className="relative max-w-2xl mx-auto">
             <h1 className="text-3xl sm:text-5xl md:text-6xl text-gray-800 dark:text-gray-200 font-bold tracking-tight">
-              Organize-se como nunca antes
+            Interagir com a Orbit é mais do que apenas usar uma ferramenta, é uma experiência de crescimento pessoal e profissional.
             </h1>
             <p className="mt-4 text-lg text-gray-500 dark:text-gray-400">
               Crie espaços dedicados para cada área da sua vida, acompanhe seu

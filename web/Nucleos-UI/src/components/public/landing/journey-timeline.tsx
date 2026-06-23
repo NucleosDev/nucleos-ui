@@ -73,23 +73,8 @@ const etapas = [
 
 export function JourneyTimeline() {
   return (
-    <section className="relative overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8">
+    <section className="overflow-hidden bg-black sm:px-6 lg:px-8">
       {/* GRADIENTE SUPERIOR */}
-      <div className="absolute top-0 left-0 right-0 h-100 pointer-events-none z-10 --background-to-b from-white via-white/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
-
-      {/* GRADIENTE INFERIOR */}
-      <div className="absolute bottom-0 left-0 right-0 h-64 pointer-events-none z-10 --background-to-t from-white via-white/60 to-transparent dark:from-black dark:via-black/60 dark:to-transparent" />
-
-      {/* SEGUNDA CAMADA DE DEGRADÊ */}
-      <div className="absolute bottom-0 left-0 right-0 h-80 pointer-events-none z-5 --background-to-t from-white/40 via-transparent to-transparent dark:from-black/40 dark:via-transparent dark:to-transparent" />
-
-      {/* Background elements com parallax */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-1/4 left-1/4 size-96 rounded-full bg-background/20 blur-3xl animate-pulse" />
-        <div className="absolute right-1/4 bottom-1/4 size-96 rounded-full bg-accent/20 blur-3xl animate-pulse delay-700" />
-      </div>
-      {/* Grid pattern sutil */}
-      <div className="absolute inset-0 -z-20 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px]" />
 
       <div className="mx-auto max-w-4xl relative z-20 flex flex-col items-center">
         {/* <div data-animate="fade-up">
@@ -233,27 +218,27 @@ export function JourneyTimeline() {
 
         {/* Badge de conquista final */}
         <motion.div
-  initial={{ opacity: 0, y: 20 }}
-  whileInView={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.8, delay: 0.8 }}
-  viewport={{ once: true }}
-  className="mt-12 flex justify-center"
->
-  <Button
-    size="lg"
-    asChild
-    className="group relative overflow-hidden bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] hover:from-[#00C9A7] hover:to-[#4D7CFF] transition-all duration-500 shadow-lg hover:shadow-xl border-0"
-  >
-    <Link href="/cadastro">
-      <span className="bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
-        <span className="flex items-center gap-2 text-white font-medium text-sm">
-          Dê o primeiro passo.
-          <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-        </span>
-      </span>
-    </Link>
-  </Button>
-</motion.div>
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+          viewport={{ once: true }}
+          className="mt-12 flex justify-center"
+        >
+          <Button
+            size="lg"
+            asChild
+            className="group relative overflow-hidden bg-gradient-to-r from-[#4D7CFF] to-[#00C9A7] hover:from-[#00C9A7] hover:to-[#4D7CFF] transition-all duration-500 shadow-lg hover:shadow-xl border-0"
+          >
+            <Link href="/cadastro">
+              <span className="bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
+                <span className="flex items-center gap-2 text-white font-medium text-sm">
+                  Dê o primeiro passo.
+                  <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                </span>
+              </span>
+            </Link>
+          </Button>
+        </motion.div>
       </div>
     </section>
   );

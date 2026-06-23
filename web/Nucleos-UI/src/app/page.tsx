@@ -103,6 +103,7 @@ export default function LandingPage() {
           <WaveDivider
             waveColor="#000"
             flipY={true}
+            flipX={true}
             className="left-0 right-0 w-full "
           />
         </div>
@@ -110,7 +111,7 @@ export default function LandingPage() {
         {/* ── Comparison → Dashboard (background) ── */}
         <div className="relative pb-16">
           <Comparison />
-          <WaveDivider waveColor="#000" className="left-0 right-0 w-full " />
+          {/* <WaveDivider waveColor="#000" className="left-0 right-0 w-full " /> */}
         </div>
 
         {/* ── Dashboard → Journey (muted) ── */}
@@ -118,21 +119,21 @@ export default function LandingPage() {
           <WaveDivider
             waveColor="#000"
             className="left-0 right-0 w-full "
-            flipY={true}
-            flipX={true}
+            // flipY={true}
+            // flipX={true}
           />
           {/* <div className="relative  pb-16"></div> */}
           <DashboardMosty />
         </div>
 
         {/* ── Journey → Users (background) ── */}
-        <div className="relative  pb-26">
+        <div className="relative pb-16">
           <JourneyTimeline />
           <WaveDivider
             waveColor="#000"
             className="left-0 right-0 w-full "
             // flipY={true}
-            flipX={true}
+            flipY={true}
           />
         </div>
 
@@ -140,13 +141,13 @@ export default function LandingPage() {
         <div className="relative pb-16">
           <div className="absolute inset-0 pointer-events-none"></div>
           <Users />
-          <WaveDivider waveColor="#000" flipY={true} flipX={true} />
+          {/* <WaveDivider waveColor="#000" flipY={true} flipX={true} /> */}
         </div>
 
         {/* ── FAQ → Pricing (background) ── */}
         <div className="relative  pb-16">
           <FAQ />
-          <WaveDivider waveColor="#000" flipX />
+          <WaveDivider waveColor="#000" />
         </div>
 
         {/* ── Pricing → CTA (muted) ── */}

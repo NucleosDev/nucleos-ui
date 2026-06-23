@@ -11,25 +11,30 @@ const NucleosHero = () => {
       <div className="hero-vignette" aria-hidden="true" />
 
       {/* HERO CONTENT */}
-      <div className="hero-content">
+      <div className="hero-content px-12">
         <h1>
-          Agents that do the work
+          Tudo começa com um{" "}
+          <span className="bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
+            Nucleo
+          </span>
+          .
           <br />
-          Approvals that keep you safe.
         </h1>
 
         <p className="subtitle">
-          Deploy AI agents that plan, act through your tools, and report
-          outcomes—without changing how your teams work.
+          O espaço certo para cada ideia. Organize. Realize. Evolua.
         </p>
 
         <div className="cta-row">
-          <a href="#" className="btn-primary">
-            Start your free trial
-          </a>
+          <div className="btn-primary">
+            <span className="btn-gradient-text font-bold">
+              Comece agora gratuitamente.
+            </span>
+            <span className="btn-arrow">→</span>
+          </div>
 
           <a href="#" className="btn-text">
-            View role based demos
+            Ver demonstração
           </a>
         </div>
       </div>
