@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 const NucleosHero = () => {
   return (
@@ -26,16 +27,20 @@ const NucleosHero = () => {
         </p>
 
         <div className="cta-row">
-          <div className="btn-primary">
-            <span className="btn-gradient-text font-bold">
-              Comece agora gratuitamente.
-            </span>
-            <span className="btn-arrow">→</span>
-          </div>
+          <Link
+            href="/cadastro"
+            className="inline-flex items-center justify-center h-12 px-[22px] rounded-[10px] text-[15px] font-semibold text-white no-underline bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] animate-gradient-bg transition-[transform,opacity] duration-200 hover:-translate-y-0.5 hover:opacity-90"
+          >
+            <span className="font-bold">Comece agora gratuitamente.</span>
+            <span className="ml-1.5">→</span>
+          </Link>
 
-          <a href="#" className="btn-text">
+          <Link
+            href="/cadastro"
+            className="inline-flex items-center justify-center h-12 px-[22px] rounded-[10px] text-[15px] font-semibold text-[#0a0a0a] no-underline bg-white transition-[transform,opacity] duration-200 hover:-translate-y-0.5 hover:opacity-85"
+          >
             Ver demonstração
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -64,7 +69,7 @@ const NucleosHero = () => {
           {/* SECONDARY PANEL */}
           <div className="panel dashboard-secondary">
             <Image
-              src="/nucleo-hero-1.svg"
+              src="/000.svg"
               alt="Dashboard secundário"
               fill
               priority
@@ -213,55 +218,6 @@ const NucleosHero = () => {
           gap: 28px;
         }
 
-        .btn-primary {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-
-          height: 48px;
-
-          padding: 0 22px;
-
-          background: #ffffff;
-          color: #0a0a0a;
-
-          border-radius: 10px;
-
-          font-size: 15px;
-          font-weight: 600;
-
-          text-decoration: none;
-
-          transition:
-            transform 0.2s ease,
-            background 0.2s ease,
-            opacity 0.2s ease;
-        }
-
-        .btn-primary:hover {
-          transform: translateY(-2px);
-          background: #ececec;
-        }
-
-        .btn-text {
-          color: #ffffff;
-
-          text-decoration: none;
-
-          font-size: 15px;
-          font-weight: 500;
-
-          opacity: 0.92;
-
-          transition:
-            opacity 0.2s ease,
-            transform 0.2s ease;
-        }
-
-        .btn-text:hover {
-          opacity: 0.65;
-          transform: translateX(2px);
-        }
 
         /* ------------------------------- */
         /* 3D STAGE */

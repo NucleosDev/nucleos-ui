@@ -11,6 +11,7 @@ import { Impact } from "@/components/public/landing/impact";
 import { FAQ } from "@/components/public/landing/faq";
 import { Badges } from "@/components/public/landing/badges";
 import DashboardMosty from "@/components/public/landing/dashboard-most";
+import NucleosMost from "@/components/ui/dashboard-nucleos-most";
 import Users from "@/components/public/landing/users";
 import { Header } from "@/components/public/landing/header";
 import { Footer } from "@/components/public/landing/footer";
@@ -18,7 +19,7 @@ import NucleosHero from "@/components/ui/hero-section-sm";
 import NucleosHeroMd from "@/components/ui/hero-section-md";
 import NucleosHeroDesktop from "@/components/public/landing/HeroSection";
 import CardsNucleos from "@/components/public/landing/cards-nucleos";
-// import { Testimonials } from "@/components/public/landing/testimonials";
+import { Testimonials } from "@/components/public/landing/testimonials";
 import BlocksSection from "@/components/public/landing/blocks";
 import { WaveDivider } from "@/components/public/landing/wave-divider";
 
@@ -110,7 +111,8 @@ export default function LandingPage() {
 
         {/* ── Comparison → Dashboard (background) ── */}
         <div className="relative pb-16">
-          <Comparison />
+          <NucleosMost />
+
           {/* <WaveDivider waveColor="#000" className="left-0 right-0 w-full " /> */}
         </div>
 
