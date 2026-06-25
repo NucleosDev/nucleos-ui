@@ -206,7 +206,7 @@ export function useGamificationDerived() {
   return {
     stats,
     achievements,
-    xpLogs: xpLogs.sort((a, b) => b.created_at.localeCompare(a.created_at)),
+    xpLogs: xpLogs.filter((l) => l.created_at).sort((a, b) => b.created_at.localeCompare(a.created_at)),
     streak: streakData,
     isLoading,
     condicoes,
