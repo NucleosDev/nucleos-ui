@@ -69,15 +69,15 @@ const faqs = [
 
 export function FAQ() {
   return (
-    <section className="relative overflow-hidden px-4 min-h-screen sm:px-6 lg:px-8">
+    <section className="relative overflow-hidden px-4 min-h-80 sm:px-6 lg:px-8">
       {/* GRADIENTE SUPERIOR */}
-      <div className="absolute top-0 left-0 right-0 h-100 pointer-events-none z-10 bg-gradient-to-b from-white via-white/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
+      {/* <div className="absolute top-0 left-0 right-0 h-100 pointer-events-none z-10 bg-gradient-to-b from-white via-white/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" /> */}
 
       {/* GRADIENTE INFERIOR */}
-      <div className="absolute bottom-0 left-0 right-0 h-64 pointer-events-none z-10 bg-gradient-to-t from-white via-white/60 to-transparent dark:from-black dark:via-black/60 dark:to-transparent" />
+      {/* <div className="absolute bottom-0 left-0 right-0 h-64 pointer-events-none z-10 bg-gradient-to-t from-white via-white/60 to-transparent dark:from-black dark:via-black/60 dark:to-transparent" /> */}
 
       {/* SEGUNDA CAMADA DE DEGRADÊ */}
-      <div className="absolute bottom-0 left-0 right-0 h-80 pointer-events-none z-5 bg-gradient-to-t from-white/40 via-transparent to-transparent dark:from-black/40 dark:via-transparent dark:to-transparent" />
+      {/* <div className="absolute bottom-0 left-0 right-0 h-80 pointer-events-none z-5 bg-gradient-to-t from-white/40 via-transparent to-transparent dark:from-black/40 dark:via-transparent dark:to-transparent" /> */}
 
       {/* Background elements com parallax */}
       <div className="absolute inset-0 -z-10">
@@ -175,7 +175,7 @@ export function FAQ() {
           viewport={{ once: true }}
           className="mt-8 text-center"
         >
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground mb-10">
             Ainda tem dúvidas?{" "}
             <Link
               href="/contato"
@@ -187,7 +187,7 @@ export function FAQ() {
         </motion.div>
 
         {/* Badges de categorias */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 1.2 }}
@@ -215,7 +215,7 @@ export function FAQ() {
             <Infinity className="size-3" />
             Técnico
           </Badge>
-        </motion.div>
+        </motion.div> */}
       </div>
     </section>
   );

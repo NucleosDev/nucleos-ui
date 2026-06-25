@@ -49,8 +49,8 @@ interface MockNucleoCardProps {
 }
 
 interface FeatureGridProps {
-  sectionTitle: string;
-  sectionDescription: string;
+  sectionTitle: React.ReactNode; // Mudado de string para ReactNode
+  sectionDescription: React.ReactNode; // Mudado de string para ReactNode
   features?: Feature[];
   className?: string;
   ref?: React.Ref<HTMLElement>;

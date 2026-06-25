@@ -89,7 +89,7 @@ export function JourneyTimeline() {
         <h2
           data-animate="fade-up"
           data-delay="100"
-          className="text-4xl md:text-5xl font-extrabold tracking-tight mt-6 text-neutral-900 dark:text-white text-center"
+          className="text-4xl md:text-5xl font-extrabold tracking-tight mt-6 text-white dark:text-white text-center"
         >
           Como você vai{" "}
           <span className="bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
