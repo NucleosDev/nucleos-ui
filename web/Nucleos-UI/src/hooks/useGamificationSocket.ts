@@ -56,9 +56,8 @@ export function useGamificationSocket() {
     // Dynamic import avoids Turbopack statically bundling engine.io-client's
     // broken ESM build (transports/index.js missing in @6.6.4).
     import("socket.io-client").then(({ io }) => {
-      const socket = io(
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000",
-        {
+      const socketUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1").replace(/\/api\/v\d+$/, "");
+      const socket = io(socketUrl, {
           path: "/socket.io",
           transports: ["websocket"],
           auth: { token },

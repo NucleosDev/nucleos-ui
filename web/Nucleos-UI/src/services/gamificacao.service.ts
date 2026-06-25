@@ -47,7 +47,7 @@ export function computeStreakFromLogs(
   if (logs.length === 0)
     return { currentStreak: 0, maxStreak: 0, lastActivityDate: null };
 
-  const activeDays = new Set(logs.map((l) => l.created_at.slice(0, 10)));
+  const activeDays = new Set(logs.filter((l) => l.created_at).map((l) => l.created_at.slice(0, 10)));
   const sortedDays = Array.from(activeDays).sort();
 
   const today = new Date().toISOString().slice(0, 10);
@@ -165,7 +165,7 @@ export const gamificacaoService = {
         computeXpStats(totalXp);
       const today = new Date().toISOString().slice(0, 10);
       const todayXp = logs
-        .filter((l) => l.created_at.slice(0, 10) === today)
+        .filter((l) => l.created_at && l.created_at.slice(0, 10) === today)
         .reduce((s, l) => s + (l.xp_amount ?? 0), 0);
       const streak = computeStreakFromLogs(logs);
       const achievements = await this.getAchievements();
