@@ -1,6 +1,7 @@
 
 dependencies
 /node_modules
+node_modules/
 /.pnp
 .pnp.*
 .yarn/*
@@ -14,7 +15,12 @@ testing
 
 next.js
 /.next/
+.next/
 /out/
+
+claude worktrees
+.claude/
+nucleos-ios/
 
 production
 /build

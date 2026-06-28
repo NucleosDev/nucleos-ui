@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 import { motion, Variants, Transition } from "framer-motion";
 import Link from "next/link";
-
+// import { MacbookScroll } from "@/components/ui/macbook-scroll";
 export default function NucleosMost() {
   const gradientRef = useRef<HTMLDivElement>(null);
 
@@ -109,46 +109,25 @@ export default function NucleosMost() {
           </div>
         </div>
 
-        <AnimatedGroup
-          variants={{
-            container: {
-              visible: {
-                transition: {
-                  staggerChildren: 0.05,
-                  delayChildren: 0.75,
-                },
-              },
-            },
-            item: transitionVariants.item,
-          }}
-        >
+        <div>
           <div className="relative overflow-hidden px-2">
             <div
               aria-hidden
               className="bg-gradient-to-b from-background to-background absolute inset-0 z-10 from-transparent from-35%"
             />
-            <div className="inset-shadow-2xs max-h-[40vh] ring-background dark:inset-shadow-white/20 bg-background relative mx-auto max-w-5xl overflow-hidden rounded-t-2xl border border-gray-50 border-b-0 p-4 shadow-lg shadow-zinc-950/15 ring-1">
-              <Link href="https://nucleos.app" target="_blank">
-                <Image
-                  className="bg-background aspect-15/8 relative hidden rounded-2xl dark:block"
-                  src="https://tailark.com/_next/image?url=%2Fmail2.png&w=3840&q=75"
-                  alt="app screen"
-                  width={2700}
-                  height={1440}
-                  unoptimized
-                />
-                <Image
-                  className="z-2 border-border/25 aspect-15/8 relative rounded-2xl dark:hidden"
-                  src="https://tailark.com/_next/image?url=%2Fmail2-light.png&w=3840&q=75"
-                  alt="app screen"
-                  width={2700}
-                  height={1440}
-                  unoptimized
-                />
-              </Link>
-            </div>
+            <div className="relative overflow-hidden px-2">
+              <div
+                aria-hidden
+                className="bg-gradient-to-b from-background to-background absolute inset-0 z-10 from-transparent from-35%"
+              />
+              {/* 
+              <MacbookScroll
+                src="/demo-image.png" // coloca uma imagem sua em /public
+                showGradient
+              /> */}
+            </div>{" "}
           </div>
-        </AnimatedGroup>
+        </div>
       </div>
       <BrandsGrid />
     </div>
