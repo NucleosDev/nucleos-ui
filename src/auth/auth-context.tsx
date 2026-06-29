@@ -9,14 +9,28 @@ import {
   type ReactNode,
 } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import authService from "@/services/auth.service";
 import type { User } from "@/types/user";
 import type {
   LoginCredentials,
   RegisterData,
   AuthResponse,
 } from "@/types/auth";
-import { GoogleLogin } from "@react-oauth/google";
+
+// ─── Credenciais fixas para demonstração ────────────────────────────────────
+const DEMO_EMAIL = "nucleos@hotmail.com";
+const DEMO_PASSWORD = "nucleos2026";
+const DEMO_TOKEN = "demo-token-nucleos-2026";
+
+const DEMO_USER: User = {
+  userId: "demo-user-001",
+  email: DEMO_EMAIL,
+  fullName: "Nucleos Demo",
+  avatarUrl: undefined,
+  emailVerified: true,
+  active: true,
+  createdAt: new Date().toISOString(),
+};
+// ─────────────────────────────────────────────────────────────────────────────
 
 interface AuthContextType {
   user: User | null;
@@ -26,7 +40,7 @@ interface AuthContextType {
   register: (data: RegisterData) => Promise<AuthResponse>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
-  loginWithGoogle: (token: string) => Promise<void>; // GOOGLE LOGIN
+  loginWithGoogle: (token: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -48,29 +62,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryClient.clear();
   }, [queryClient]);
 
-  // 🔄 REFRESH USER
   const refreshUser = useCallback(async () => {
     const token = localStorage.getItem(TOKEN_KEY);
-
-    if (!token) {
+    if (token === DEMO_TOKEN) {
+      setUser(DEMO_USER);
+    } else {
       setUser(null);
-      return;
     }
-
-    try {
-      const currentUser = await authService.getCurrentUser();
-
-      if (currentUser) {
-        setUser(currentUser);
-        localStorage.setItem(USER_KEY, JSON.stringify(currentUser));
-      } else {
-        clearAuth();
-      }
-    } catch (error) {
-      console.error("Erro ao buscar usuário:", error);
-      clearAuth();
-    }
-  }, [clearAuth]);
+  }, []);
 
   useEffect(() => {
     const initAuth = async () => {
@@ -78,52 +77,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await refreshUser();
       setIsLoading(false);
     };
-
     initAuth();
   }, [refreshUser]);
 
-  // LOGIN
-  const login = async (
-    credentials: LoginCredentials,
-  ): Promise<AuthResponse> => {
-    const response = await authService.login(credentials);
+  const login = async (credentials: LoginCredentials): Promise<AuthResponse> => {
+    if (
+      credentials.email === DEMO_EMAIL &&
+      credentials.password === DEMO_PASSWORD
+    ) {
+      localStorage.setItem(TOKEN_KEY, DEMO_TOKEN);
+      localStorage.setItem(USER_KEY, JSON.stringify(DEMO_USER));
+      setUser(DEMO_USER);
 
-    localStorage.setItem(TOKEN_KEY, response.token);
-    await refreshUser();
-
-    return response;
-  };
-
-  // REGISTER
-  const register = async (data: RegisterData): Promise<AuthResponse> => {
-    const response = await authService.register(data);
-
-    localStorage.setItem(TOKEN_KEY, response.token);
-    await refreshUser();
-
-    return response;
-  };
-
-  // GOOGLE LOGIN
-  const loginWithGoogle = useCallback(
-    async (token: string) => {
-      const response = await authService.loginWithGoogle(token);
-
-      localStorage.setItem(TOKEN_KEY, response.token);
-      await refreshUser(); // usa seu fluxo padrão 🔥
-    },
-    [refreshUser],
-  );
-
-  // LOGOUT
-  const logout = async () => {
-    try {
-      await authService.logout();
-    } catch (error) {
-      console.error("Erro ao fazer logout:", error);
-    } finally {
-      clearAuth();
+      return {
+        success: true,
+        message: "Login realizado com sucesso",
+        token: DEMO_TOKEN,
+        refreshToken: DEMO_TOKEN,
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString(),
+        userId: DEMO_USER.userId,
+        email: DEMO_USER.email,
+        fullName: DEMO_USER.fullName,
+      };
     }
+
+    throw new Error("E-mail ou senha incorretos");
+  };
+
+  const register = async (_data: RegisterData): Promise<AuthResponse> => {
+    throw new Error("Cadastro desabilitado nesta versão de demonstração.");
+  };
+
+  const loginWithGoogle = async (_token: string) => {
+    throw new Error("Login com Google desabilitado nesta versão de demonstração.");
+  };
+
+  const logout = async () => {
+    clearAuth();
   };
 
   return (
@@ -136,7 +126,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         register,
         logout,
         refreshUser,
-        loginWithGoogle, // GOOGLE LOGIN
+        loginWithGoogle,
       }}
     >
       {children}
@@ -149,3 +139,4 @@ export function useAuth() {
   if (!context) throw new Error("useAuth must be used within AuthProvider");
   return context;
 }
+
