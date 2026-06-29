@@ -18,7 +18,6 @@ export function LoginForm() {
     password: "",
   });
 
-  // Redirecionamento após autenticação bem-sucedida
   useEffect(() => {
     if (isAuthenticated) {
       router.replace("/dashboard");
@@ -41,11 +40,8 @@ export function LoginForm() {
         email: formData.email,
         password: formData.password,
       });
-      // Redirecionamento acontece via useEffect quando isAuthenticated mudar
     } catch (err: any) {
-      const errorMessage =
-        err.response?.data?.message || err.message || "Erro ao fazer login";
-      setError(errorMessage);
+      setError(err?.message || "E-mail ou senha incorretos");
     } finally {
       setIsSubmitting(false);
     }
@@ -116,18 +112,6 @@ export function LoginForm() {
           >
             {isSubmitting ? "Entrando..." : "Entrar"}
           </button>
-
-          <div className="flex justify-between w-full text-sm">
-            <a
-              href="/recuperar-senha"
-              className="text-muted-foreground hover:text-primary transition-colors"
-            >
-              Esqueceu a senha?
-            </a>
-            <a href="/cadastro" className="text-primary hover:underline">
-              Criar conta
-            </a>
-          </div>
         </div>
       </form>
     </div>
