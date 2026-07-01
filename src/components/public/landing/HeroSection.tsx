@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { LiquidGlass } from "@/components/ui/liquid-glass";
 
 const NucleosHero = () => {
@@ -14,7 +15,7 @@ const NucleosHero = () => {
       <div className="hero-content px-12">
         <h1>
           Tudo começa com um{" "}
-<span className="bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
+          <span className="bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
             Nucleo
           </span>
           .
@@ -26,16 +27,20 @@ const NucleosHero = () => {
         </p>
 
         <div className="cta-row">
-          <div className="btn-primary">
-            <span className="btn-gradient-text font-bold">
-              Comece agora gratuitamente.
-            </span>
-            <span className="btn-arrow">→</span>
-          </div>
+          <Link
+            href="/cadastro"
+            className="inline-flex items-center justify-center h-10 px-[18px] rounded-lg text-sm font-semibold text-white no-underline bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] animate-gradient-bg transition-[transform,opacity] duration-200 hover:-translate-y-px hover:opacity-90"
+          >
+            <span className="font-bold">Comece agora gratuitamente.</span>
+            <span className="ml-1.5">→</span>
+          </Link>
 
-          <a href="#" className="btn-text">
+          <Link
+            href="/cadastro"
+            className="inline-flex items-center justify-center h-10 px-[18px] rounded-lg text-sm font-semibold text-[#0a0a0a] no-underline bg-white transition-[transform,opacity] duration-200 hover:-translate-y-px hover:opacity-85"
+          >
             Ver demonstração
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -213,84 +218,6 @@ const NucleosHero = () => {
           gap: 20px;
         }
 
-        .btn-primary {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-
-          height: 40px;
-          padding: 0 18px;
-
-          background: #ffffff;
-          color: #0a0a0a;
-
-          border-radius: 8px;
-
-          font-size: 14px;
-          font-weight: 600;
-
-          text-decoration: none;
-
-          transition:
-            transform 0.2s ease,
-            background 0.2s ease,
-            opacity 0.2s ease;
-        }
-
-        .btn-gradient-text {
-          background: linear-gradient(to right, #4d7cff, #00c9a7, #4d7cff);
-          background-size: 200% auto;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          animation: gradientShift 4s ease infinite;
-        }
-
-        .btn-arrow {
-          margin-left: 6px;
-          background: linear-gradient(to right, #4d7cff, #00c9a7, #4d7cff);
-          background-size: 200% auto;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          animation: gradientShift 4s ease infinite;
-          animation-delay: 0.2s;
-        }
-
-        @keyframes gradientShift {
-          0% {
-            background-position: 0% center;
-          }
-          50% {
-            background-position: 100% center;
-          }
-          100% {
-            background-position: 0% center;
-          }
-        }
-
-        .btn-primary:hover {
-          transform: translateY(-1px);
-          background: #ececec;
-        }
-
-        .btn-text {
-          color: #ffffff;
-          text-decoration: none;
-          font-size: 14px;
-          font-weight: 500;
-
-          opacity: 0.92;
-
-          transition:
-            opacity 0.2s ease,
-            transform 0.2s ease;
-        }
-
-        .btn-text:hover {
-          opacity: 0.65;
-          transform: translateX(2px);
-        }
 
         /* -------------------------------- */
         /* 3D STAGE */
@@ -320,7 +247,7 @@ const NucleosHero = () => {
           top: -90px;
           left: 50px;
 
-          opacity: 1.95;
+          opacity: 1;
 
           transform: rotate(-40deg);
 
@@ -367,20 +294,7 @@ const NucleosHero = () => {
         /* EDGE FALLOFF */
         .stack::after {
           content: "";
-
-          position: absolute;
-          inset: -15%;
-
-          background: radial-gradient(
-            ellipse at center,
-            transparent 42%,
-            rgba(0, 0, 0, 0.42) 100%
-          );
-
-          filter: blur(90px);
-
-          z-index: 19;
-          pointer-events: none;
+          display: none;
         }
 
         /* -------------------------------- */
@@ -441,19 +355,17 @@ const NucleosHero = () => {
           background:
             linear-gradient(
               to right,
-              transparent 75%,
-              rgba(0, 0, 0, 0.18) 88%,
-              rgba(0, 0, 0, 0.45) 95%,
-              rgba(0, 0, 0, 0.8) 99%,
-              #000000 100%
+              transparent 80%,
+              rgba(0, 0, 0, 0.06) 90%,
+              rgba(0, 0, 0, 0.14) 97%,
+              rgba(0, 0, 0, 0.22) 100%
             ),
             linear-gradient(
               to bottom,
-              transparent 80%,
-              rgba(0, 0, 0, 0.15) 90%,
-              rgba(0, 0, 0, 0.4) 96%,
-              rgba(0, 0, 0, 0.75) 99.5%,
-              #000000 100%
+              transparent 82%,
+              rgba(0, 0, 0, 0.06) 92%,
+              rgba(0, 0, 0, 0.16) 98%,
+              rgba(0, 0, 0, 0.24) 100%
             );
         }
 
@@ -465,19 +377,17 @@ const NucleosHero = () => {
           background:
             linear-gradient(
               to right,
-              transparent 68%,
-              rgba(0, 0, 0, 0.25) 82%,
-              rgba(0, 0, 0, 0.55) 92%,
-              rgba(0, 0, 0, 0.85) 98%,
-              #000000 100%
+              transparent 72%,
+              rgba(0, 0, 0, 0.05) 84%,
+              rgba(0, 0, 0, 0.14) 94%,
+              rgba(0, 0, 0, 0.2) 100%
             ),
             linear-gradient(
               to bottom,
-              transparent 72%,
-              rgba(0, 0, 0, 0.2) 85%,
-              rgba(0, 0, 0, 0.5) 94%,
-              rgba(0, 0, 0, 0.82) 98.5%,
-              #000000 100%
+              transparent 75%,
+              rgba(0, 0, 0, 0.05) 88%,
+              rgba(0, 0, 0, 0.14) 96%,
+              rgba(0, 0, 0, 0.2) 100%
             );
         }
 
@@ -826,12 +736,10 @@ const NucleosHero = () => {
         @keyframes stackIn {
           from {
             opacity: 0;
-            transform: rotate(-40deg) translateY(40px);
           }
 
           to {
             opacity: 1;
-            transform: rotate(-40deg) translateY(0);
           }
         }
 
@@ -923,9 +831,9 @@ const NucleosHero = () => {
         }
       `}</style>
       <div
-        className="absolute bottom-[-40px] left-0 w-full h-[30%] pointer-events-none z-10"
+        className="absolute bottom-[-40px] left-0 w-full h-[20%] pointer-events-none z-10"
         style={{
-          background: "linear-gradient(to top, #000000 0%, transparent 100%)",
+          background: "linear-gradient(to top, rgba(0,0,0,0.35) 0%, transparent 100%)",
         }}
       />
     </section>

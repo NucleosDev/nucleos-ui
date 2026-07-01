@@ -329,8 +329,8 @@ const TestimonialsColumn = (props: {
 const TestimonialsSection = () => {
   return (
     <section
-      aria-labelledby="testimonials-heading"
-      className="bg-transparent py-24 relative overflow-hidden"
+      aria-labelledby="testimonials-heading bg-black"
+      className="bg-black py-24 relative overflow-hidden"
     >
       {/* Gradientes de fundo */}
       <div className="absolute top-0 left-0 right-0 h-40 pointer-events-none z-10 bg-gradient-to-b from-white via-white/80 to-transparent dark:from-black dark:via-black/80 dark:to-transparent" />
@@ -356,7 +356,7 @@ const TestimonialsSection = () => {
 
           <h2
             id="testimonials-heading"
-            className="text-4xl md:text-5xl font-extrabold tracking-tight mt-6 text-center text-neutral-900 dark:text-white transition-colors"
+            className="text-4xl md:text-5xl font-extrabold tracking-tight mt-6 text-center text-white transition-colors"
           >
             Feito para{" "}
             <span className="bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">

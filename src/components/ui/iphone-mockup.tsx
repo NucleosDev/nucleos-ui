@@ -365,22 +365,20 @@ export const IPhoneMockup: React.FC<IPhoneMockupProps> = ({
       <div style={frameBoxStyle} aria-label={`iPhone mockup (${model})`}>
         <div style={screenBoxStyle}>
           {/* Imagem placeholder como wallpaper */}
-          <div
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/nucleos-hero-mobile.svg"
+            alt="iPhone screen"
             style={{
               position: "absolute",
               inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "contain",
+              objectPosition: "center top",
               zIndex: 0,
             }}
-          >
-            <Image
-              src="/hero-nucleos-mobile.svg"
-              alt="iPhone screen"
-              fill
-              sizes={`${screenWidth}px`}
-              style={{ objectFit: "cover" }}
-              priority
-            />
-          </div>
+          />
 
           {/* Wallpaper adicional se fornecido */}
           {wallpaper && <div aria-hidden style={wallpaperStyle} />}
@@ -412,6 +410,15 @@ export const IPhoneMockup: React.FC<IPhoneMockupProps> = ({
               }}
             >
               <defs>
+                <style>{`
+                  @keyframes ecg-draw-${finalIslandW} {
+                    0%   { stroke-dashoffset: 560; opacity: 0; }
+                    6%   { opacity: 1; }
+                    68%  { stroke-dashoffset: 0; opacity: 1; }
+                    84%  { stroke-dashoffset: 0; opacity: 0; }
+                    100% { stroke-dashoffset: 560; opacity: 0; }
+                  }
+                `}</style>
                 <linearGradient
                   id={`islandEcgGrad-${finalIslandW}`}
                   x1="0%"
@@ -446,7 +453,7 @@ export const IPhoneMockup: React.FC<IPhoneMockupProps> = ({
                   />
                 </linearGradient>
                 <filter id={`islandGlow-${finalIslandW}`}>
-                  <feGaussianBlur stdDeviation="0.6" result="blur" />
+                  <feGaussianBlur stdDeviation="0.8" result="blur" />
                   <feMerge>
                     <feMergeNode in="blur" />
                     <feMergeNode in="SourceGraphic" />
@@ -461,6 +468,11 @@ export const IPhoneMockup: React.FC<IPhoneMockupProps> = ({
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 filter={`url(#islandGlow-${finalIslandW})`}
+                style={{
+                  strokeDasharray: 560,
+                  strokeDashoffset: 560,
+                  animation: `ecg-draw-${finalIslandW} 2.2s ease-in-out infinite`,
+                }}
               />
             </svg>
 
@@ -476,7 +488,7 @@ export const IPhoneMockup: React.FC<IPhoneMockupProps> = ({
               }}
             >
               <Image
-                src="/Icon.svg"
+                src="/lettermark-nucleos.svg"
                 alt="Logo"
                 width={finalIslandH * 0.8}
                 height={finalIslandH * 0.8}

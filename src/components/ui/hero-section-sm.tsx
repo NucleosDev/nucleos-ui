@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { LiquidGlass } from "@/components/ui/liquid-glass";
 import IPhoneMockup from "./iphone-mockup";
 const NucleosHero = () => {
@@ -11,24 +12,35 @@ const NucleosHero = () => {
       {/* Vignette */}
 
       {/* HERO CONTENT */}
-      <div className="hero-content">
+      <div className="hero-content px-12">
         <h1>
-          Lorem Ipsum is simply
+          Tudo começa com um{" "}
+          <span className="bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient">
+            Nucleo
+          </span>
+          .
           <br />
-          dummy text of the printing
         </h1>
 
         <p className="subtitle">
-          Lorem Ipsum has been the industry's standard dummy text ever since the
-          1500s, when an unknown
+          O espaço certo para cada ideia. Organize. Realize. Evolua.
         </p>
 
         <div className="cta-row">
-          <div className="btn-primary">Start your free trial</div>
+          <Link
+            href="/cadastro"
+            className="inline-flex items-center justify-center h-10 px-[18px] rounded-lg text-sm font-semibold text-white no-underline bg-gradient-to-r from-[#4D7CFF] via-[#00C9A7] to-[#4D7CFF] animate-gradient-bg transition-[transform,opacity] duration-200 hover:-translate-y-px hover:opacity-90"
+          >
+            <span className="font-bold">Comece agora gratuitamente.</span>
+            <span className="ml-1.5">→</span>
+          </Link>
 
-          <a href="#" className="btn-text">
-            View role based demos
-          </a>
+          <Link
+            href="/cadastro"
+            className="inline-flex items-center justify-center h-10 px-[18px] rounded-lg text-sm font-semibold text-[#0a0a0a] no-underline bg-white transition-[transform,opacity] duration-200 hover:-translate-y-px hover:opacity-85"
+          >
+            Ver demonstração
+          </Link>
         </div>
       </div>
 
@@ -62,11 +74,10 @@ const NucleosHero = () => {
           z-index: 10;
 
           border-radius: 200px;
-          top: 30%;
+          top: 35%;
           left: 15%;
 
-          transform: rotateX(25.5deg) rotateY(15.5deg) translateZ(5px)
-            translateX(60px) translateY(-30px);
+       
         }
 
         .hero {
@@ -180,52 +191,6 @@ const NucleosHero = () => {
           gap: 20px;
         }
 
-        .btn-primary {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-
-          height: 40px;
-          padding: 0 18px;
-
-          background: #ffffff;
-          color: #0a0a0a;
-
-          border-radius: 8px;
-
-          font-size: 14px;
-          font-weight: 600;
-
-          text-decoration: none;
-
-          transition:
-            transform 0.2s ease,
-            background 0.2s ease,
-            opacity 0.2s ease;
-        }
-
-        .btn-primary:hover {
-          transform: translateY(-1px);
-          background: #ececec;
-        }
-
-        .btn-text {
-          color: #ffffff;
-          text-decoration: none;
-          font-size: 14px;
-          font-weight: 500;
-
-          opacity: 0.92;
-
-          transition:
-            opacity 0.2s ease,
-            transform 0.2s ease;
-        }
-
-        .btn-text:hover {
-          opacity: 0.65;
-          transform: translateX(2px);
-        }
 
         /* -------------------------------- */
         /* 3D STAGE */

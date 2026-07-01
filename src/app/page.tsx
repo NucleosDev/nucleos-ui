@@ -11,6 +11,7 @@ import { Impact } from "@/components/public/landing/impact";
 import { FAQ } from "@/components/public/landing/faq";
 import { Badges } from "@/components/public/landing/badges";
 import DashboardMosty from "@/components/public/landing/dashboard-most";
+import NucleosMost from "@/components/ui/dashboard-nucleos-most";
 import Users from "@/components/public/landing/users";
 import { Header } from "@/components/public/landing/header";
 import { Footer } from "@/components/public/landing/footer";
@@ -18,7 +19,7 @@ import NucleosHero from "@/components/ui/hero-section-sm";
 import NucleosHeroMd from "@/components/ui/hero-section-md";
 import NucleosHeroDesktop from "@/components/public/landing/HeroSection";
 import CardsNucleos from "@/components/public/landing/cards-nucleos";
-// import { Testimonials } from "@/components/public/landing/testimonials";
+import { Testimonials } from "@/components/public/landing/testimonials";
 import BlocksSection from "@/components/public/landing/blocks";
 import { WaveDivider } from "@/components/public/landing/wave-divider";
 
@@ -56,7 +57,7 @@ export default function LandingPage() {
 
       <main>
         {/* ── Hero → Cards (muted) ── */}
-        <div className="relative bg-background pb-16">
+        <div className="relative bg-background pb-14">
           <div className="absolute inset-0 pointer-events-none">
             <div
               className="w-full h-full"
@@ -103,14 +104,16 @@ export default function LandingPage() {
           <WaveDivider
             waveColor="#000"
             flipY={true}
+            flipX={true}
             className="left-0 right-0 w-full "
           />
         </div>
 
         {/* ── Comparison → Dashboard (background) ── */}
         <div className="relative pb-16">
-          <Comparison />
-          <WaveDivider waveColor="#000" className="left-0 right-0 w-full " />
+          <NucleosMost />
+
+          {/* <WaveDivider waveColor="#000" className="left-0 right-0 w-full " /> */}
         </div>
 
         {/* ── Dashboard → Journey (muted) ── */}
@@ -118,21 +121,21 @@ export default function LandingPage() {
           <WaveDivider
             waveColor="#000"
             className="left-0 right-0 w-full "
-            flipY={true}
-            flipX={true}
+            // flipY={true}
+            // flipX={true}
           />
           {/* <div className="relative  pb-16"></div> */}
           <DashboardMosty />
         </div>
 
         {/* ── Journey → Users (background) ── */}
-        <div className="relative  pb-26">
+        <div className="relative pb-16">
           <JourneyTimeline />
           <WaveDivider
             waveColor="#000"
             className="left-0 right-0 w-full "
             // flipY={true}
-            flipX={true}
+            flipY={true}
           />
         </div>
 
@@ -140,13 +143,13 @@ export default function LandingPage() {
         <div className="relative pb-16">
           <div className="absolute inset-0 pointer-events-none"></div>
           <Users />
-          <WaveDivider waveColor="#000" flipY={true} flipX={true} />
+          {/* <WaveDivider waveColor="#000" flipY={true} flipX={true} /> */}
         </div>
 
         {/* ── FAQ → Pricing (background) ── */}
         <div className="relative  pb-16">
           <FAQ />
-          <WaveDivider waveColor="#000" flipX />
+          <WaveDivider waveColor="#000" />
         </div>
 
         {/* ── Pricing → CTA (muted) ── */}

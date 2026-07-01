@@ -144,7 +144,7 @@ export function useGamificationDerived() {
 
   const today = new Date().toISOString().slice(0, 10);
   const todayXp = xpLogs
-    .filter((l) => l.created_at.slice(0, 10) === today)
+    .filter((l) => l.created_at && l.created_at.slice(0, 10) === today)
     .reduce((s, l) => s + l.xp_amount, 0);
 
   // Streak a partir dos hábitos (máximo entre todos os hábitos)
@@ -190,8 +190,8 @@ export function useGamificationDerived() {
     maxStreak: streakMaximo,
     lastActivityDate:
       xpLogs.length > 0
-        ? xpLogs.sort((a, b) => b.created_at.localeCompare(a.created_at))[0]
-            .created_at.slice(0, 10)
+        ? (xpLogs.filter((l) => l.created_at).sort((a, b) => b.created_at.localeCompare(a.created_at))[0]
+            ?.created_at?.slice(0, 10) ?? null)
         : null,
   };
 
@@ -206,7 +206,7 @@ export function useGamificationDerived() {
   return {
     stats,
     achievements,
-    xpLogs: xpLogs.sort((a, b) => b.created_at.localeCompare(a.created_at)),
+    xpLogs: xpLogs.filter((l) => l.created_at).sort((a, b) => b.created_at.localeCompare(a.created_at)),
     streak: streakData,
     isLoading,
     condicoes,

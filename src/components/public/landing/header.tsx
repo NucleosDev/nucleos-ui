@@ -277,8 +277,8 @@ export function Header() {
           </NavigationMenu>
         </div>
 
-        {/* Logo Centralizada (Desktop e Mobile) */}
-        <div className="absolute left-1/2 transform -translate-x-1/2">
+        {/* Logo Centralizada (Desktop apenas) */}
+        <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2">
           <Link
             href="/"
             className="flex items-center justify-center hover:opacity-80 transition-opacity group"

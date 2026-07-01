@@ -20,7 +20,10 @@ function buildWeeklyData(
     day.setDate(now.getDate() - i - weeksBack * 7);
     const iso = day.toISOString().slice(0, 10);
     const total = transactions
-      .filter((t) => t.created_at.slice(0, 10) === iso)
+      .filter(
+        (t) =>
+          typeof t.created_at === "string" && t.created_at.slice(0, 10) === iso,
+      )
       .reduce((sum, t) => sum + (t.xp_amount ?? 0), 0);
     days.push(total);
   }
@@ -77,7 +80,12 @@ export default function XPSparklineWidget({ delay = 0 }: { delay?: number }) {
         transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1], delay }}
         className="h-[200px]"
       >
-        <LiquidGlass variant="subtle" radius="var(--radius-lg)" interactive={false} className="h-[200px]">
+        <LiquidGlass
+          variant="subtle"
+          radius="var(--radius-lg)"
+          interactive={false}
+          className="h-[200px]"
+        >
           <div className="p-5 space-y-3">
             <Skeleton className="h-4 w-24" />
             <Skeleton className="h-8 w-32" />
@@ -136,8 +144,16 @@ export default function XPSparklineWidget({ delay = 0 }: { delay?: number }) {
             >
               <defs>
                 <linearGradient id="xpGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="currentColor" stopOpacity="0.20" />
-                  <stop offset="100%" stopColor="currentColor" stopOpacity="0" />
+                  <stop
+                    offset="0%"
+                    stopColor="currentColor"
+                    stopOpacity="0.20"
+                  />
+                  <stop
+                    offset="100%"
+                    stopColor="currentColor"
+                    stopOpacity="0"
+                  />
                 </linearGradient>
               </defs>
 
