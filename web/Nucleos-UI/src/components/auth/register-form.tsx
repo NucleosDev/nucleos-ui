@@ -34,7 +34,7 @@ export function RegisterForm() {
         router.replace("/dashboard");
       } else {
         localStorage.removeItem("onboarding");
-        router.replace("/dashboard/onboarding");
+        router.replace("/onboarding");
       }
     }
   }, [isAuthenticated, router]);
